@@ -1,0 +1,19 @@
+<g-k>program</g-k> <g-v>Strings</g-v><g-pd>;</g-pd>
+<g-k>{$APPTYPE CONSOLE}</g-k>
+<g-k>{$R *.res}</g-k>
+
+<g-k>const</g-k>
+  <g-v>Greeting</g-v> <g-o>=</g-o> <g-s>'It</g-s><g-se>''</g-se><g-s>s Pascal'</g-s> <g-o>+</g-o> <g-s>#13#10</g-s> <g-o>+</g-o> <g-s>'Hello'</g-s><g-pd>;</g-pd>
+  <g-v>Mask</g-v> <g-o>=</g-o> <g-n>$FF</g-n><g-pd>;</g-pd>
+  <g-v>Bits</g-v> <g-o>=</g-o> <g-n>%1010</g-n><g-pd>;</g-pd>
+  <g-v>Octal</g-v> <g-o>=</g-o> <g-n>&amp;17</g-n><g-pd>;</g-pd>
+  <g-v>MessageText</g-v> <g-o>=</g-o> <g-s>'''
+    This is a Delphi 12
+    multiline string.
+    '''</g-s><g-pd>;</g-pd>
+
+<g-k>begin</g-k>
+  <g-c>(* A parenthesized comment with {braces} inside. *)</g-c>
+  <g-c>// &amp;begin is an escaped identifier, not a keyword.</g-c>
+  <g-f>WriteLn</g-f><g-pb>(</g-pb><g-v>Greeting</g-v><g-pd>,</g-pd> <g-n>1.5e3</g-n><g-pd>,</g-pd> <g-v>Mask</g-v><g-pd>,</g-pd> <g-v>Bits</g-v><g-pd>,</g-pd> <g-v>Octal</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>end</g-k><g-pd>.</g-pd>

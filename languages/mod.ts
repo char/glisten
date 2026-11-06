@@ -68,6 +68,7 @@ import nix from "./build/nix/grammar.ts";
 import objc from "./systems/objc/grammar.ts";
 import ocaml from "./functional/ocaml/grammar.ts";
 import odin from "./systems/odin/grammar.ts";
+import pascal from "./systems/pascal/grammar.ts";
 import perl from "./scripting/perl/grammar.ts";
 import php from "./web/php/grammar.ts";
 import powershell from "./shell/powershell/grammar.ts";
@@ -178,6 +179,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   objc,
   ocaml,
   odin,
+  pascal,
   perl,
   php,
   powershell,

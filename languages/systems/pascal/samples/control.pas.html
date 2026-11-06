@@ -1,0 +1,26 @@
+<g-k>unit</g-k> <g-v>Control</g-v><g-pd>;</g-pd>
+<g-k>interface</g-k>
+
+<g-k>procedure</g-k> <g-f>Run</g-f><g-pd>;</g-pd> <g-k>cdecl</g-k><g-pd>;</g-pd>
+
+<g-k>implementation</g-k>
+<g-k>(*$IFDEF DEBUG*)</g-k>
+<g-k>procedure</g-k> <g-f>Run</g-f><g-pd>;</g-pd>
+<g-k>var</g-k> <g-v>I</g-v><g-pd>:</g-pd> <g-t>Integer</g-t><g-pd>;</g-pd>
+<g-k>begin</g-k>
+  <g-k>for</g-k> <g-v>I</g-v> <g-o>:=</g-o> <g-n>3</g-n> <g-k>downto</g-k> <g-n>1</g-n> <g-k>do</g-k>
+    <g-k>try</g-k>
+      <g-k>if</g-k> <g-v>I</g-v> <g-k>mod</g-k> <g-n>2</g-n> <g-o>=</g-o> <g-n>0</g-n> <g-k>then</g-k>
+        <g-f>WriteLn</g-f><g-pb>(</g-pb><g-s>'even'</g-s><g-pb>)</g-pb>
+      <g-k>else</g-k>
+        <g-f>WriteLn</g-f><g-pb>(</g-pb><g-s>'odd'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>except</g-k>
+      <g-k>on</g-k> <g-v>E</g-v><g-pd>:</g-pd> <g-t>Exception</g-t> <g-k>do</g-k> <g-k>raise</g-k><g-pd>;</g-pd>
+    <g-k>end</g-k><g-pd>;</g-pd>
+<g-k>end</g-k><g-pd>;</g-pd>
+<g-k>(*$ENDIF*)</g-k>
+<g-k>initialization</g-k>
+  <g-v>Run</g-v><g-pd>;</g-pd>
+<g-k>finalization</g-k>
+  <g-c>{ Closing }</g-c> <g-f>Writeln</g-f><g-pb>(</g-pb><g-s>'done'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>end</g-k><g-pd>.</g-pd>

@@ -1,0 +1,31 @@
+<g-k>unit</g-k> <g-v>Account</g-v><g-pd>;</g-pd>
+
+<g-k>interface</g-k>
+
+<g-k>uses</g-k> <g-v>System</g-v><g-pd>.</g-pd><g-v>SysUtils</g-v><g-pd>,</g-pd> <g-v>System</g-v><g-pd>.</g-pd><g-v>Generics</g-v><g-pd>.</g-pd><g-v>Collections</g-v><g-pd>;</g-pd>
+
+<g-k>type</g-k>
+  <g-t>TAccount</g-t> <g-o>=</g-o> <g-k>class</g-k>
+  <g-k>private</g-k>
+    <g-v>FBalance</g-v><g-pd>:</g-pd> <g-t>Double</g-t><g-pd>;</g-pd>
+  <g-k>public</g-k>
+    <g-k>constructor</g-k> <g-f>Create</g-f><g-pb>(</g-pb><g-v>Initial</g-v><g-pd>:</g-pd> <g-t>Double</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>procedure</g-k> <g-f>Deposit</g-f><g-pb>(</g-pb><g-v>Amount</g-v><g-pd>:</g-pd> <g-t>Double</g-t><g-pb>)</g-pb><g-pd>;</g-pd> <g-k>virtual</g-k><g-pd>;</g-pd>
+    <g-k>property</g-k> <g-f>Balance</g-f><g-pd>:</g-pd> <g-t>Double</g-t> <g-k>read</g-k> <g-v>FBalance</g-v><g-pd>;</g-pd>
+  <g-k>end</g-k><g-pd>;</g-pd>
+
+<g-k>implementation</g-k>
+
+<g-k>constructor</g-k> <g-t>TAccount</g-t><g-pd>.</g-pd><g-f>Create</g-f><g-pb>(</g-pb><g-v>Initial</g-v><g-pd>:</g-pd> <g-t>Double</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>begin</g-k>
+  <g-k>inherited</g-k> <g-v>Create</g-v><g-pd>;</g-pd>
+  <g-v>FBalance</g-v> <g-o>:=</g-o> <g-v>Initial</g-v><g-pd>;</g-pd>
+<g-k>end</g-k><g-pd>;</g-pd>
+
+<g-k>procedure</g-k> <g-t>TAccount</g-t><g-pd>.</g-pd><g-f>Deposit</g-f><g-pb>(</g-pb><g-v>Amount</g-v><g-pd>:</g-pd> <g-t>Double</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>begin</g-k>
+  <g-k>if</g-k> <g-v>Amount</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-k>then</g-k>
+    <g-v>FBalance</g-v> <g-o>:=</g-o> <g-v>FBalance</g-v> <g-o>+</g-o> <g-v>Amount</g-v><g-pd>;</g-pd>
+<g-k>end</g-k><g-pd>;</g-pd>
+
+<g-k>end</g-k><g-pd>.</g-pd>
