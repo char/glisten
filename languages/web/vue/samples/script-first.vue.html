@@ -1,0 +1,17 @@
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>setup</g-at> <g-at>lang</g-at><g-o>=</g-o><g-s>"tsx"</g-s><g-pb>&gt;</g-pb>
+<g-k>import</g-k> <g-pb>{</g-pb> <g-v>ref</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>"vue"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>items</g-v> <g-o>=</g-o> <g-v>ref</g-v><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>[]&gt;([</g-pb><g-s>"a"</g-s><g-pd>,</g-pd> <g-s>"b"</g-s><g-pb>])</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>card</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb>Ready<g-pb>&lt;/</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>template</g-tg> <g-at>v-for</g-at><g-o>=</g-o><g-ps>"</g-ps><g-pb>(</g-pb><g-v>item</g-v><g-pd>,</g-pd> <g-v>index</g-v><g-pb>)</g-pb> <g-k>in</g-k> <g-v>items</g-v><g-ps>"</g-ps> <g-ps>:</g-ps><g-pr>key</g-pr><g-o>=</g-o><g-ps>"</g-ps><g-v>item</g-v><g-ps>"</g-ps><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>li</g-tg> <g-at>v-if</g-at><g-o>=</g-o><g-ps>"</g-ps><g-v>index</g-v> <g-o>&lt;</g-o> <g-n>3</g-n><g-ps>"</g-ps> <g-at>v-bind</g-at><g-ps>:</g-ps><g-pb>[</g-pb><g-pr>name</g-pr><g-pb>]</g-pb><g-ps>.</g-ps><g-l>camel</g-l><g-o>=</g-o><g-ps>"</g-ps><g-v>item</g-v><g-ps>"</g-ps><g-pb>&gt;</g-pb><g-ps>{{</g-ps> <g-v>item</g-v> <g-k>as</g-k> <g-t>string</g-t> <g-ps>}}</g-ps><g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;/</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>slot</g-tg> <g-ps>#</g-ps><g-pr>default</g-pr><g-o>=</g-o><g-ps>"</g-ps><g-pb>{</g-pb> <g-v>item</g-v> <g-pb>}</g-pb><g-ps>"</g-ps> <g-pb>/&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"scss"</g-s> <g-at>scoped</g-at><g-pb>&gt;</g-pb>
+<g-v>$accent</g-v><g-pd>:</g-pd> <g-co v="#369"><g-s>#369</g-s></g-co><g-pd>;</g-pd>
+<g-tg>ul</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>$accent</g-v><g-pd>;</g-pd> <g-tg>li</g-tg> <g-pb>{</g-pb> <g-pr>font-weight</g-pr><g-pd>:</g-pd> bold<g-pd>;</g-pd> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>

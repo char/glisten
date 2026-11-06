@@ -1,0 +1,20 @@
+<g-pb>&lt;</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>section</g-tg> <g-at>class</g-at><g-o>=</g-o><g-s>"counter"</g-s><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb><g-ps>{{</g-ps> <g-v>title</g-v> <g-ps>}}</g-ps><g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-ps>:</g-ps><g-pr>disabled</g-pr><g-o>=</g-o><g-ps>"</g-ps><g-v>count</g-v> <g-o>&gt;=</g-o> <g-v>limit</g-v><g-ps>"</g-ps> <g-ps>@</g-ps><g-pr>click</g-pr><g-ps>.</g-ps><g-l>prevent</g-l><g-o>=</g-o><g-ps>"</g-ps><g-f>increment</g-f><g-pb>()</g-pb><g-ps>"</g-ps><g-pb>&gt;</g-pb><g-ps>{{</g-ps> <g-v>count</g-v> <g-ps>}}</g-ps><g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>p</g-tg> <g-at>v-if</g-at><g-o>=</g-o><g-ps>"</g-ps><g-v>count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-ps>"</g-ps><g-pb>&gt;</g-pb>Ready <g-se>&amp;amp;</g-se> waiting<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>section</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>setup</g-at> <g-at>lang</g-at><g-o>=</g-o><g-s>"ts"</g-s><g-pb>&gt;</g-pb>
+<g-k>import</g-k> <g-pb>{</g-pb> <g-v>ref</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>"vue"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>title</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>"Counter"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-f>ref</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>limit</g-v> <g-o>=</g-o> <g-n>5</g-n><g-pd>;</g-pd>
+<g-k>function</g-k> <g-f>increment</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-v>count</g-v><g-o>.</g-o><g-vm>value</g-vm><g-o>++</g-o><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>scoped</g-at><g-pb>&gt;</g-pb>
+<g-pd>.</g-pd><g-pr>counter</g-pr> <g-pb>{</g-pb> <g-pr>display</g-pr><g-pd>:</g-pd> grid<g-pd>;</g-pd> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="rebeccapurple">rebeccapurple</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>i18n</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"json"</g-s><g-pb>&gt;</g-pb>
+<g-pb>{</g-pb><g-pr>"en"</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb><g-pr>"title"</g-pr><g-pd>:</g-pd> <g-s>"Counter"</g-s><g-pb>}}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>i18n</g-tg><g-pb>&gt;</g-pb>

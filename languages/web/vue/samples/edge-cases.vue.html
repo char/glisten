@@ -1,0 +1,15 @@
+<g-pb>&lt;</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+  <g-c>&lt;!-- attributes and text have different contexts --&gt;</g-c>
+  <g-pb>&lt;</g-pb><g-tg>Widget</g-tg> <g-ps>:</g-ps><g-pr>title</g-pr><g-o>=</g-o><g-ps>"</g-ps><g-se>&amp;quot;</g-se><g-v>hello</g-v><g-se>&amp;quot;</g-se> <g-o>+</g-o> <g-v>name</g-v><g-ps>"</g-ps> <g-ps>@</g-ps><g-pr>update</g-pr><g-ps>:</g-ps><g-pr>model-value</g-pr><g-ps>.</g-ps><g-l>once</g-l><g-o>=</g-o><g-ps>"</g-ps><g-f>onUpdate</g-f><g-pb>(</g-pb><g-v>$event</g-v><g-pb>)</g-pb><g-ps>"</g-ps>
+          <g-at>v-bind</g-at><g-ps>:</g-ps><g-pb>[</g-pb><g-pr>dynamicKey</g-pr><g-pb>]</g-pb><g-ps>.</g-ps><g-l>prop</g-l><g-o>=</g-o><g-ps>"</g-ps><g-v>value</g-v><g-ps>"</g-ps> <g-ps>#</g-ps><g-pr>header</g-pr><g-o>=</g-o><g-ps>"</g-ps><g-pb>{</g-pb> <g-v>label</g-v> <g-pb>}</g-pb><g-ps>"</g-ps><g-pb>&gt;</g-pb>
+    <g-ps>{{</g-ps> <g-v>message</g-v> <g-ps>}}</g-ps> <g-pb>&lt;</g-pb><g-tg>template</g-tg> <g-ps>#</g-ps><g-pr>fallback</g-pr><g-pb>&gt;&lt;</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb>Empty<g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;&lt;/</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>Widget</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>template</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"jsx"</g-s><g-pb>&gt;</g-pb>
+<g-k>const</g-k> <g-v>view</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>docs</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"text"</g-s><g-pb>&gt;</g-pb>
+Literal &lt;tag&gt; and {{ notAnExpression }}.
+<g-pb>&lt;/</g-pb><g-tg>docs</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>i18n</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"json"</g-s><g-pb>&gt;{</g-pb><g-pr>"x"</g-pr><g-pd>:</g-pd><g-s>"a &lt;/not-i18n&gt; b"</g-s><g-pb>}&lt;/</g-pb><g-tg>i18n</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"unknown"</g-s><g-pb>&gt;</g-pb>$notCss: true;<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
