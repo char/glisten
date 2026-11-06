@@ -1,0 +1,10 @@
+
+ * A typed lookup. See {@linkcode Lookup} and {@inheritDoc Base.lookup}.
+ * @typeParam T - The result type.
+ * @param key - The lookup key.
+ * @returns A value if present.
+ * @remarks This API is experimental.
+ * @privateRemarks The cache is shared.
+ * @beta
+ * @defaultValue undefined
+ 

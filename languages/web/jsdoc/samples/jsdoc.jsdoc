@@ -1,0 +1,7 @@
+
+ * Compute a greeting for {@link Person#name a person}.
+ * @param {string} name - The person's name.
+ * @param {{ upper: boolean, locale: string }} [options={}] - Settings.
+ * @returns {string|null} The greeting.
+ * @throws {Error} When the input is invalid.
+ 

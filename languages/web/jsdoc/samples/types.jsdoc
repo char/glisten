@@ -1,0 +1,9 @@
+
+ * @typedef {{
+ *   run: (a: number) => void,
+ *   nested: { value: Array<string>|null }
+ * }} Task
+ * @example
+ * const task = { run: () => {} };
+ * @deprecated Use {@linkcode NewTask} instead.
+ 
