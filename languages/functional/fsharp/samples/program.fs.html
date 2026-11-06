@@ -1,0 +1,17 @@
+<g-k>namespace</g-k> <g-t>Example</g-t>
+<g-k>open</g-k> <g-t>System</g-t>
+
+<g-c>/// Classifies a number and prints a description.</g-c>
+<g-pb>[&lt;</g-pb><g-at>RequireQualifiedAccess</g-at><g-pb>&gt;]</g-pb>
+<g-k>module</g-k> <g-t>Numbers</g-t> <g-o>=</g-o>
+    <g-k>let</g-k> <g-pb>(</g-pb><g-o>|</g-o><g-t>Even</g-t><g-o>|</g-o><g-t>Odd</g-t><g-o>|</g-o><g-pb>)</g-pb> <g-v>value</g-v> <g-o>=</g-o>
+        <g-k>if</g-k> <g-v>value</g-v> <g-o>%</g-o> <g-n>2</g-n> <g-o>=</g-o> <g-n>0</g-n> <g-k>then</g-k> <g-t>Even</g-t> <g-k>else</g-k> <g-t>Odd</g-t>
+
+    <g-k>let</g-k> <g-k>rec</g-k> <g-f>describe</g-f> <g-v>value</g-v> <g-o>=</g-o>
+        <g-k>match</g-k> <g-v>value</g-v> <g-k>with</g-k>
+        <g-o>|</g-o> <g-t>Even</g-t> <g-o>-&gt;</g-o> <g-s>$"</g-s><g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-s> is even"</g-s>
+        <g-o>|</g-o> <g-t>Odd</g-t> <g-k>when</g-k> <g-v>value</g-v> <g-o>&gt;</g-o> <g-n>1</g-n> <g-o>-&gt;</g-o> <g-s>$"</g-s><g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-s> is odd"</g-s>
+        <g-o>|</g-o> <g-v>_</g-v> <g-o>-&gt;</g-o> <g-s>"small"</g-s>
+
+    <g-k>let</g-k> <g-f>report</g-f> <g-v>values</g-v> <g-o>=</g-o>
+        <g-v>values</g-v> <g-o>|&gt;</g-o> <g-t>List</g-t><g-pd>.</g-pd><g-vm>map</g-vm> <g-v>describe</g-v> <g-o>|&gt;</g-o> <g-t>String</g-t><g-pd>.</g-pd><g-vm>concat</g-vm> <g-s>", "</g-s>

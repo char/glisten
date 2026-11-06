@@ -20,6 +20,7 @@ import elm from "./functional/elm/grammar.ts";
 import erlang from "./functional/erlang/grammar.ts";
 import fish from "./shell/fish/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
+import fsharp from "./functional/fsharp/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import gleam from "./functional/gleam/grammar.ts";
 import go from "./managed/go/grammar.ts";
@@ -97,6 +98,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   erlang,
   fish,
   fjson,
+  fsharp,
   gitattributes,
   gleam,
   go,

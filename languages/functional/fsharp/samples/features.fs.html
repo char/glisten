@@ -1,0 +1,21 @@
+<g-k>module</g-k> <g-t>Features</g-t>
+
+<g-pb>[&lt;</g-pb><g-at>Measure</g-at><g-pb>&gt;]</g-pb> <g-k>type</g-k> <g-t>m</g-t>
+<g-pb>[&lt;</g-pb><g-at>Measure</g-at><g-pb>&gt;]</g-pb> <g-k>type</g-k> <g-t>s</g-t>
+<g-k>let</g-k> <g-f>speed</g-f> <g-pb>(</g-pb><g-v>distance</g-v><g-o>:</g-o> <g-t>float</g-t><g-o>&lt;</g-o><g-t>m</g-t><g-o>&gt;</g-o><g-pb>)</g-pb> <g-pb>(</g-pb><g-v>duration</g-v><g-o>:</g-o> <g-t>float</g-t><g-o>&lt;</g-o><g-t>s</g-t><g-o>&gt;</g-o><g-pb>)</g-pb> <g-o>:</g-o> <g-t>float</g-t><g-o>&lt;</g-o><g-t>m</g-t><g-o>/</g-o><g-t>s</g-t><g-o>&gt;</g-o> <g-o>=</g-o> <g-v>distance</g-v> <g-o>/</g-o> <g-v>duration</g-v>
+
+<g-k>type</g-k> <g-t>Box</g-t><g-o>&lt;</g-o><g-t>'a</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>'a</g-t><g-pb>)</g-pb> <g-o>=</g-o>
+    <g-k>member</g-k> <g-v>_</g-v><g-pd>.</g-pd><g-vm>Value</g-vm> <g-o>=</g-o> <g-v>value</g-v>
+    <g-k>member</g-k> <g-v>_</g-v><g-pd>.</g-pd><g-f>Map</g-f><g-pb>(</g-pb><g-v>f</g-v><g-o>:</g-o> <g-t>'a</g-t> <g-o>-&gt;</g-o> <g-t>'b</g-t><g-pb>)</g-pb> <g-o>=</g-o> <g-t>Box</g-t><g-pb>(</g-pb><g-v>f</g-v> <g-v>value</g-v><g-pb>)</g-pb>
+
+<g-k>let</g-k> <g-k>inline</g-k> <g-v>zero</g-v><g-o>&lt;</g-o> <g-t>^T</g-t> <g-k>when</g-k> <g-t>^T</g-t> <g-o>:</g-o> <g-pb>(</g-pb><g-k>static</g-k> <g-k>member</g-k> <g-t>Zero</g-t> <g-o>:</g-o> <g-t>^T</g-t><g-pb>)</g-pb><g-o>&gt;</g-o> <g-o>=</g-o>
+    <g-pb>((</g-pb><g-t>^T</g-t><g-pb>)</g-pb> <g-o>:</g-o> <g-pb>(</g-pb><g-k>static</g-k> <g-k>member</g-k> <g-t>Zero</g-t> <g-o>:</g-o> <g-t>^T</g-t><g-pb>)</g-pb> <g-pb>())</g-pb>
+
+<g-k>let</g-k> <g-f>workflow</g-f> <g-v>input</g-v> <g-o>=</g-o> <g-v>async</g-v> <g-pb>{</g-pb>
+    <g-k>let!</g-k> <g-v>value</g-v> <g-o>=</g-o> <g-v>input</g-v>
+    <g-k>do!</g-k> <g-t>Async</g-t><g-pd>.</g-pd><g-vm>Sleep</g-vm> <g-n>1</g-n>
+    <g-k>return!</g-k> <g-v>async</g-v> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v> <g-o>+</g-o> <g-n>1</g-n> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>let</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-v>seq</g-v> <g-pb>{</g-pb> <g-k>yield!</g-k> <g-pb>[</g-pb><g-n>1</g-n><g-pd>;</g-pd> <g-n>2</g-n><g-pb>]</g-pb><g-pd>;</g-pd> <g-k>yield</g-k> <g-n>3</g-n> <g-pb>}</g-pb>
+<g-k>let</g-k> <g-v>transform</g-v> <g-o>=</g-o> <g-t>List</g-t><g-pd>.</g-pd><g-f>map</g-f> <g-pb>((</g-pb><g-o>+</g-o><g-pb>)</g-pb> <g-n>1</g-n><g-pb>)</g-pb> <g-o>&gt;&gt;</g-o> <g-t>List</g-t><g-pd>.</g-pd><g-vm>rev</g-vm>
+<g-k>let</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>;</g-pd> <g-n>2</g-n><g-pb>]</g-pb> <g-o>|&gt;</g-o> <g-v>transform</g-v>
