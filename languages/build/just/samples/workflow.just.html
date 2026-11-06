@@ -1,0 +1,19 @@
+<g-c># Workspace defaults</g-c>
+<g-k>set</g-k> <g-k>shell</g-k> <g-o>:=</g-o> <g-pb>[</g-pb><g-s>"bash"</g-s><g-pd>,</g-pd> <g-s>"-cu"</g-s><g-pb>]</g-pb>
+<g-k>export</g-k> <g-v>PROJECT</g-v> <g-o>:=</g-o> <g-f>env</g-f><g-pb>(</g-pb><g-s>"PROJECT"</g-s><g-pd>,</g-pd> <g-s>"orchard"</g-s><g-pb>)</g-pb>
+<g-k>import</g-k><g-o>?</g-o> <g-s>'tasks.just'</g-s>
+<g-k>mod</g-k> <g-v>tools</g-v> <g-s>'tools.just'</g-s>
+<g-k>alias</g-k> <g-v>b</g-v> <g-o>:=</g-o> <g-v>build</g-v>
+
+<g-pb>[</g-pb><g-at>private</g-at><g-pb>]</g-pb>
+<g-pb>[</g-pb><g-at>group</g-at><g-pb>(</g-pb><g-s>'build'</g-s><g-pb>)]</g-pb>
+<g-o>@</g-o><g-f>build</g-f> <g-v>target</g-v><g-o>=</g-o><g-s>'debug'</g-s> <g-o>+</g-o><g-v>features</g-v><g-o>:</g-o> <g-pb>(</g-pb><g-f>prepare</g-f> <g-v>target</g-v><g-pb>)</g-pb> <g-o>&amp;&amp;</g-o> <g-f>notify</g-f>
+    <g-o>@</g-o><g-cb>echo</g-cb> <g-s>"building </g-s><g-ps>{{</g-ps><g-v>target</g-v><g-ps>}}</g-ps><g-s> for </g-s><g-ps>${</g-ps><g-v>PROJECT</g-v><g-ps>}</g-ps><g-s>"</g-s>
+    <g-f>cargo</g-f> build --profile <g-ps>{{</g-ps><g-v>target</g-v><g-ps>}}</g-ps> <g-ps>{{</g-ps><g-v>features</g-v><g-ps>}}</g-ps>
+    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>'{{{{literal braces}}'</g-s>
+
+<g-f>prepare</g-f> <g-v>profile</g-v><g-o>:</g-o>
+    <g-f>mkdir</g-f> -p <g-s>"out/</g-s><g-ps>{{</g-ps><g-v>profile</g-v><g-ps>}}</g-ps><g-s>"</g-s>
+
+<g-f>notify</g-f><g-o>:</g-o>
+    <g-cb>echo</g-cb> done

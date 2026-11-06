@@ -1,0 +1,20 @@
+<g-c># An exact supported shebang selects Python.</g-c>
+<g-f>python</g-f><g-o>:</g-o>
+    <g-c>#!/usr/bin/env python3</g-c>
+    <g-f>print</g-f><g-pb>(</g-pb><g-s>"snow 雪 </g-s><g-ps>{{</g-ps><g-v>name</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+
+<g-v>choice</g-v> <g-o>:=</g-o> <g-k>if</g-k> <g-f>os</g-f><g-pb>()</g-pb> <g-o>==</g-o> <g-s>'linux'</g-s> <g-pb>{</g-pb>
+    <g-s>'yes'</g-s>
+<g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb>
+    <g-s>'no'</g-s>
+<g-pb>}</g-pb>
+
+<g-f>build</g-f><g-o>:</g-o>
+    <g-cb>echo</g-cb> <g-ps>{{</g-ps><g-f>env</g-f><g-pb>(</g-pb><g-s>"HOME"</g-s><g-pd>,</g-pd> <g-s>"fallback"</g-s><g-pb>)</g-pb><g-ps>}}</g-ps>
+    <g-cb>echo</g-cb> <g-ps>{{</g-ps><g-k>if</g-k> <g-v>ok</g-v> <g-pb>{</g-pb> <g-s>'yes'</g-s> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>'no'</g-s> <g-pb>}</g-pb><g-ps>}}</g-ps>
+<g-f>next</g-f><g-o>:</g-o>
+    <g-o>@</g-o><g-cb>echo</g-cb> done
+
+<g-c># A genuinely unterminated string stays open through EOF.</g-c>
+<g-v>unfinished</g-v> <g-o>:=</g-o> <g-s>'not closed 雪
+</g-s>

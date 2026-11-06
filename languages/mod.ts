@@ -20,6 +20,7 @@ import javascript from "./web/javascript/grammar.ts";
 import jq from "./query/jq/grammar.ts";
 import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
+import just from "./build/just/grammar.ts";
 import kconfig from "./build/kconfig/grammar.ts";
 import kdl from "./config/kdl/grammar.ts";
 import lua from "./scripting/lua/grammar.ts";
@@ -64,6 +65,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   jq,
   json,
   jsx,
+  just,
   kconfig,
   kdl,
   lua,

@@ -1,0 +1,15 @@
+<g-v>base</g-v> <g-o>:=</g-o> <g-f>env</g-f><g-pb>(</g-pb><g-s>"ROOT"</g-s><g-pd>,</g-pd> <g-s>"/tmp"</g-s><g-pb>)</g-pb>
+<g-v>output</g-v> <g-o>:=</g-o> <g-k>if</g-k> <g-f>os</g-f><g-pb>()</g-pb> <g-o>==</g-o> <g-s>"linux"</g-s> <g-pb>{</g-pb> <g-v>base</g-v> <g-o>/</g-o> <g-s>'release'</g-s> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-v>base</g-v> <g-o>/</g-o> <g-s>"other"</g-s> <g-pb>}</g-pb>
+<g-v>pattern</g-v> <g-o>:=</g-o> <g-k>if</g-k> <g-f>arch</g-f><g-pb>()</g-pb> <g-o>=~</g-o> <g-s>"x86.*"</g-s> <g-pb>{</g-pb> <g-s>'wide'</g-s> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>'narrow'</g-s> <g-pb>}</g-pb>
+<g-v>script</g-v> <g-o>:=</g-o> <g-s>`printf '%s' hello`</g-s>
+<g-v>description</g-v> <g-o>:=</g-o> <g-s>'''
+  A long note
+  with more than one line.
+'''</g-s>
+<g-v>expanded</g-v> <g-o>:=</g-o> <g-s>x'${HOME}/cache'</g-s>
+
+<g-pb>[</g-pb><g-at>confirm</g-at><g-pb>(</g-pb><g-s>"Deploy now?"</g-s><g-pb>)]</g-pb>
+<g-pb>[</g-pb><g-at>linux</g-at><g-pb>]</g-pb>
+<g-f>deploy</g-f> <g-o>$</g-o><g-v>TOKEN</g-v><g-o>=</g-o><g-s>'test'</g-s> <g-o>*</g-o><g-v>targets</g-v><g-o>:</g-o> <g-f>build</g-f>
+    <g-cb>echo</g-cb> <g-s>"deploy </g-s><g-ps>{{</g-ps><g-k>if</g-k> <g-v>TOKEN</g-v> <g-o>!=</g-o> <g-s>''</g-s> <g-pb>{</g-pb> <g-v>TOKEN</g-v> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>'none'</g-s> <g-pb>}</g-pb><g-ps>}}</g-ps><g-s>"</g-s>
+    <g-k>for</g-k> <g-v>host</g-v> <g-k>in</g-k> <g-ps>{{</g-ps><g-v>targets</g-v><g-ps>}}</g-ps><g-o>;</g-o> <g-k>do</g-k> <g-cb>echo</g-cb> <g-s>"</g-s><g-v>$host</g-v><g-s>"</g-s><g-o>;</g-o> <g-k>done</g-k>
