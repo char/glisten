@@ -1,0 +1,17 @@
+<g-k>CREATE</g-k> <g-k>OR</g-k> <g-k>ALTER</g-k> <g-k>PROCEDURE</g-k> <g-v>[dbo]</g-v><g-pd>.</g-pd><g-v>[update_salary]</g-v>
+  <g-v>@employee_id</g-v> <g-t>int</g-t><g-pd>,</g-pd>
+  <g-v>@amount</g-v> <g-t>decimal</g-t><g-pb>(</g-pb><g-n>10</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb>
+<g-k>AS</g-k>
+<g-k>BEGIN</g-k>
+  <g-k>SET</g-k> NOCOUNT <g-k>ON</g-k><g-pd>;</g-pd>
+  <g-k>BEGIN</g-k> <g-k>TRY</g-k>
+    <g-k>UPDATE</g-k> <g-v>[dbo]</g-v><g-pd>.</g-pd><g-v>[Employee]</g-v>
+      <g-k>SET</g-k> salary <g-o>=</g-o> salary <g-o>+</g-o> <g-v>@amount</g-v>
+      <g-k>OUTPUT</g-k> <g-k>inserted</g-k><g-pd>.</g-pd>employee_id<g-pd>,</g-pd> <g-k>deleted</g-k><g-pd>.</g-pd>salary<g-pd>,</g-pd> <g-k>inserted</g-k><g-pd>.</g-pd>salary
+      <g-k>WHERE</g-k> employee_id <g-o>=</g-o> <g-v>@employee_id</g-v><g-pd>;</g-pd>
+  <g-k>END</g-k> <g-k>TRY</g-k>
+  <g-k>BEGIN</g-k> <g-k>CATCH</g-k>
+    <g-k>THROW</g-k><g-pd>;</g-pd>
+  <g-k>END</g-k> <g-k>CATCH</g-k><g-pd>;</g-pd>
+<g-k>END</g-k><g-pd>;</g-pd>
+<g-k>GO</g-k>

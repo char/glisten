@@ -97,6 +97,7 @@ import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
 import tlaplus from "./proof/tlaplus/grammar.ts";
 import toml from "./config/toml/grammar.ts";
+import tsql from "./query/tsql/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
 import typst from "./markup/typst/grammar.ts";
@@ -211,6 +212,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   thrift,
   tlaplus,
   toml,
+  tsql,
   tsx,
   typescript,
   typst,

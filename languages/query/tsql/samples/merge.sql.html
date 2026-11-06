@@ -1,0 +1,10 @@
+<g-k>MERGE</g-k> <g-k>INTO</g-k> <g-v>[dbo]</g-v><g-pd>.</g-pd><g-v>[inventory]</g-v> <g-k>AS</g-k> target
+<g-k>USING</g-k> <g-v>##incoming</g-v> <g-k>AS</g-k> source
+<g-k>ON</g-k> target<g-pd>.</g-pd>id <g-o>=</g-o> source<g-pd>.</g-pd>id
+<g-k>WHEN</g-k> <g-k>MATCHED</g-k> <g-k>THEN</g-k>
+  <g-k>UPDATE</g-k> <g-k>SET</g-k> target<g-pd>.</g-pd>quantity <g-o>=</g-o> source<g-pd>.</g-pd>quantity
+<g-k>WHEN</g-k> <g-k>NOT</g-k> <g-k>MATCHED</g-k> <g-k>THEN</g-k>
+  <g-k>INSERT</g-k> <g-pb>(</g-pb>id<g-pd>,</g-pd> quantity<g-pb>)</g-pb> <g-k>VALUES</g-k> <g-pb>(</g-pb>source<g-pd>.</g-pd>id<g-pd>,</g-pd> source<g-pd>.</g-pd>quantity<g-pb>)</g-pb>
+<g-k>OUTPUT</g-k> <g-k>inserted</g-k><g-pd>.</g-pd>id<g-pd>,</g-pd> <g-k>deleted</g-k><g-pd>.</g-pd>quantity<g-pd>,</g-pd> <g-k>inserted</g-k><g-pd>.</g-pd>quantity<g-pd>;</g-pd>
+<g-k>GO</g-k>
+<g-k>EXEC</g-k> <g-v>[dbo]</g-v><g-pd>.</g-pd><g-v>[audit_inventory]</g-v> <g-v>@mode</g-v> <g-o>=</g-o> <g-s>N'full'</g-s><g-pd>;</g-pd>
