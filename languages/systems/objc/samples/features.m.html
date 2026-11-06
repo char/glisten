@@ -1,0 +1,16 @@
+<g-k>#import</g-k> <g-s>&lt;Foundation/Foundation.h&gt;</g-s>
+<g-k>@import</g-k> <g-t>Foundation</g-t><g-pd>;</g-pd>
+
+<g-t>void</g-t> <g-f>demo</g-f><g-pb>(</g-pb><g-t>id</g-t> <g-v>object</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>__weak</g-k> <g-t>id</g-t> <g-v>weakObject</g-v> <g-o>=</g-o> <g-v>object</g-v><g-pd>;</g-pd>
+    <g-t>NSArray</g-t><g-o>&lt;</g-o><g-t>NSString</g-t> <g-o>*&gt;</g-o> <g-o>*</g-o><g-v>items</g-v> <g-o>=</g-o> <g-ps>@</g-ps><g-pb>[</g-pb><g-s>@"one"</g-s><g-pd>,</g-pd> <g-s>@"two"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-t>NSDictionary</g-t> <g-o>*</g-o><g-v>values</g-v> <g-o>=</g-o> <g-ps>@</g-ps><g-pb>{</g-pb><g-s>@"count"</g-s><g-o>:</g-o> <g-ps>@</g-ps><g-n>42</g-n><g-pd>,</g-pd> <g-s>@"ready"</g-s><g-o>:</g-o> <g-cb>@YES</g-cb><g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-t>SEL</g-t> <g-v>selector</g-v> <g-o>=</g-o> <g-k>@selector</g-k><g-pb>(</g-pb><g-f>greet</g-f><g-o>:</g-o><g-f>prefix</g-f><g-o>:</g-o><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-t>id</g-t> <g-v>result</g-v> <g-o>=</g-o> <g-pb>[[</g-pb><g-v>object</g-v> <g-f>builder</g-f><g-pb>]</g-pb> <g-f>item</g-f><g-o>:</g-o><g-s>@"x"</g-s> <g-f>other</g-f><g-o>:</g-o><g-ps>@</g-ps><g-pb>(</g-pb><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-pb>)]</g-pb><g-pd>;</g-pd>
+    <g-t>void</g-t> <g-pb>(</g-pb><g-o>^</g-o><g-v>block</g-v><g-pb>)(</g-pb><g-t>int</g-t><g-pb>)</g-pb> <g-o>=</g-o> <g-o>^</g-o><g-pb>(</g-pb><g-t>int</g-t> <g-v>x</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-f>NSLog</g-f><g-pb>(</g-pb><g-s>@"%d"</g-s><g-pd>,</g-pd> <g-v>x</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>@try</g-k> <g-pb>{</g-pb> <g-pb>[</g-pb><g-v>object</g-v> <g-f>performSelector</g-f><g-o>:</g-o><g-v>selector</g-v><g-pb>]</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>@catch</g-k> <g-pb>(</g-pb><g-t>NSException</g-t> <g-o>*</g-o><g-v>exception</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>@throw</g-k> <g-v>exception</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>@finally</g-k> <g-pb>{</g-pb> <g-k>@autoreleasepool</g-k> <g-pb>{</g-pb> <g-f>block</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb> <g-pb>}</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-k>@available</g-k><g-pb>(</g-pb><g-v>macOS</g-v> <g-n>12</g-n><g-pd>,</g-pd> <g-o>*</g-o><g-pb>))</g-pb> <g-pb>{</g-pb> <g-f>NSLog</g-f><g-pb>(</g-pb><g-s>@"%@"</g-s><g-pd>,</g-pd> <g-v>values</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>weakObject</g-v> <g-o>!=</g-o> <g-cb>nil</g-cb> <g-o>&amp;&amp;</g-o> <g-v>result</g-v> <g-o>!=</g-o> <g-cb>Nil</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb> <g-f>NSLog</g-f><g-pb>(</g-pb><g-s>@"%@"</g-s><g-pd>,</g-pd> <g-v>items</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

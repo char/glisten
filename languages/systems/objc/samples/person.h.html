@@ -1,0 +1,11 @@
+<g-k>#import</g-k> <g-s>&lt;Foundation/Foundation.h&gt;</g-s>
+
+<g-k>@protocol</g-k> <g-t>Greeting</g-t> <g-o>&lt;</g-o><g-t>NSObject</g-t><g-o>&gt;</g-o>
+<g-o>-</g-o> <g-pb>(</g-pb><g-t>NSString</g-t> <g-o>*</g-o><g-pb>)</g-pb><g-f>greet</g-f><g-o>:</g-o><g-pb>(</g-pb><g-t>NSString</g-t> <g-o>*</g-o><g-pb>)</g-pb><g-v>name</g-v> <g-f>prefix</g-f><g-o>:</g-o><g-pb>(</g-pb><g-t>NSString</g-t> <g-o>*</g-o><g-pb>)</g-pb><g-v>prefix</g-v><g-pd>;</g-pd>
+<g-k>@end</g-k>
+
+<g-k>@interface</g-k> <g-t>Person</g-t> <g-o>:</g-o> <g-t>NSObject</g-t> <g-o>&lt;</g-o><g-t>Greeting</g-t><g-o>&gt;</g-o>
+<g-k>@property</g-k><g-pb>(</g-pb><g-k>nonatomic</g-k><g-pd>,</g-pd> <g-k>strong</g-k><g-pd>,</g-pd> <g-k>nullable</g-k><g-pb>)</g-pb> <g-t>NSString</g-t> <g-o>*</g-o><g-v>name</g-v><g-pd>;</g-pd>
+<g-k>@property</g-k><g-pb>(</g-pb><g-k>nonatomic</g-k><g-pd>,</g-pd> <g-k>assign</g-k><g-pd>,</g-pd> <g-k>getter</g-k><g-o>=</g-o><g-v>isReady</g-v><g-pb>)</g-pb> <g-t>BOOL</g-t> <g-v>ready</g-v><g-pd>;</g-pd>
+<g-o>-</g-o> <g-pb>(</g-pb><g-t>instancetype</g-t><g-pb>)</g-pb><g-f>initWithName</g-f><g-o>:</g-o><g-pb>(</g-pb><g-t>NSString</g-t> <g-o>*</g-o><g-pb>)</g-pb><g-v>name</g-v><g-pd>;</g-pd>
+<g-k>@end</g-k>
