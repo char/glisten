@@ -1,0 +1,36 @@
+<g-k>package</g-k> <g-v>literals</g-v>
+
+<g-k>const</g-k> <g-pb>(</g-pb>
+    <g-v>zero</g-v> <g-o>=</g-o> <g-n>0</g-n>
+    <g-v>decimal</g-v> <g-o>=</g-o> <g-n>1_234_567</g-n>
+    <g-v>octal</g-v> <g-o>=</g-o> <g-n>0o755</g-n>
+    <g-v>legacy</g-v> <g-o>=</g-o> <g-n>0755</g-n>
+    <g-v>binary</g-v> <g-o>=</g-o> <g-n>0b1010_0011</g-n>
+    <g-v>hexadecimal</g-v> <g-o>=</g-o> <g-n>0xCAFE_F00D</g-n>
+    <g-v>fraction</g-v> <g-o>=</g-o> <g-n>.125</g-n>
+    <g-v>exponent</g-v> <g-o>=</g-o> <g-n>1.25e-3</g-n>
+    <g-v>hexFloat</g-v> <g-o>=</g-o> <g-n>0x1.fp+2</g-n>
+    <g-v>imaginary</g-v> <g-o>=</g-o> <g-n>2.5i</g-n>
+    <g-v>binaryImaginary</g-v> <g-o>=</g-o> <g-n>0b10i</g-n>
+<g-pb>)</g-pb>
+
+<g-k>var</g-k> <g-pb>(</g-pb>
+    <g-v>a</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s>
+    <g-v>b</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\x41</g-se><g-s>'</g-s>
+    <g-v>c</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\123</g-se><g-s>'</g-s>
+    <g-v>d</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u03bb</g-se><g-s>'</g-s>
+    <g-v>e</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\U0001f600</g-se><g-s>'</g-s>
+    <g-v>quoted</g-v> <g-o>=</g-o> <g-s>"tab</g-s><g-se>\t</g-se><g-s> slash</g-s><g-se>\\</g-se><g-s> quote</g-s><g-se>\"</g-se><g-s> bell</g-s><g-se>\a</g-se><g-s>"</g-s>
+    <g-v>escaped</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\x41\101\u03bb\U0001f600</g-se><g-s>"</g-s>
+    <g-v>raw</g-v> <g-o>=</g-o> <g-s>`first line
+second line \n is literal`</g-s>
+<g-pb>)</g-pb>
+
+<g-c>// A line comment.</g-c>
+<g-c>/* A block comment
+   with another // marker. */</g-c>
+<g-k>func</g-k> <g-f>values</g-f><g-pb>()</g-pb> <g-pb>[]</g-pb><g-t>any</g-t> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-pb>[]</g-pb><g-t>any</g-t><g-pb>{</g-pb><g-v>zero</g-v><g-pd>,</g-pd> <g-v>decimal</g-v><g-pd>,</g-pd> <g-v>octal</g-v><g-pd>,</g-pd> <g-v>legacy</g-v><g-pd>,</g-pd> <g-v>binary</g-v><g-pd>,</g-pd> <g-v>hexadecimal</g-v><g-pd>,</g-pd>
+        <g-v>fraction</g-v><g-pd>,</g-pd> <g-v>exponent</g-v><g-pd>,</g-pd> <g-v>hexFloat</g-v><g-pd>,</g-pd> <g-v>imaginary</g-v><g-pd>,</g-pd> <g-v>binaryImaginary</g-v><g-pd>,</g-pd>
+        <g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pd>,</g-pd> <g-v>c</g-v><g-pd>,</g-pd> <g-v>d</g-v><g-pd>,</g-pd> <g-v>e</g-v><g-pd>,</g-pd> <g-v>quoted</g-v><g-pd>,</g-pd> <g-v>escaped</g-v><g-pd>,</g-pd> <g-v>raw</g-v><g-pd>,</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd> <g-cb>false</g-cb><g-pd>,</g-pd> <g-cb>nil</g-cb><g-pb>}</g-pb>
+<g-pb>}</g-pb>

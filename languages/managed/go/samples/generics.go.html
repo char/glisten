@@ -1,0 +1,41 @@
+<g-k>package</g-k> <g-v>main</g-v>
+
+<g-k>import</g-k> <g-pb>(</g-pb>
+    <g-s>"fmt"</g-s>
+    <g-s>"strings"</g-s>
+<g-pb>)</g-pb>
+
+<g-k>type</g-k> <g-v>Item</g-v><g-pb>[</g-pb><g-v>T</g-v> <g-t>comparable</g-t><g-pb>]</g-pb> <g-k>struct</g-k> <g-pb>{</g-pb>
+    <g-v>Value</g-v> <g-v>T</g-v> <g-s>`json:"value"`</g-s>
+    <g-v>Count</g-v> <g-t>int</g-t> <g-s>`json:"count,omitempty"`</g-s>
+<g-pb>}</g-pb>
+
+<g-k>type</g-k> <g-v>Store</g-v><g-pb>[</g-pb><g-v>T</g-v> <g-t>comparable</g-t><g-pb>]</g-pb> <g-k>struct</g-k> <g-pb>{</g-pb>
+    <g-v>items</g-v> <g-k>map</g-k><g-pb>[</g-pb><g-v>T</g-v><g-pb>]</g-pb><g-t>int</g-t>
+<g-pb>}</g-pb>
+
+<g-k>func</g-k> <g-f>NewStore</g-f><g-pb>[</g-pb><g-v>T</g-v> <g-t>comparable</g-t><g-pb>]()</g-pb> <g-o>*</g-o><g-v>Store</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>]</g-pb> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-o>&amp;</g-o><g-v>Store</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>]{</g-pb><g-v>items</g-v><g-pd>:</g-pd> <g-f>make</g-f><g-pb>(</g-pb><g-k>map</g-k><g-pb>[</g-pb><g-v>T</g-v><g-pb>]</g-pb><g-t>int</g-t><g-pb>)}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>func</g-k> <g-pb>(</g-pb><g-v>s</g-v> <g-o>*</g-o><g-v>Store</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>])</g-pb> <g-f>Add</g-f><g-pb>(</g-pb><g-v>value</g-v> <g-v>T</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-v>s</g-v><g-pd>.</g-pd><g-vm>items</g-vm><g-pb>[</g-pb><g-v>value</g-v><g-pb>]</g-pb><g-o>++</g-o>
+<g-pb>}</g-pb>
+
+<g-k>func</g-k> <g-pb>(</g-pb><g-v>s</g-v> <g-o>*</g-o><g-v>Store</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>])</g-pb> <g-f>Items</g-f><g-pb>()</g-pb> <g-pb>[]</g-pb><g-v>Item</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>]</g-pb> <g-pb>{</g-pb>
+    <g-v>result</g-v> <g-o>:=</g-o> <g-f>make</g-f><g-pb>([]</g-pb><g-v>Item</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>]</g-pb><g-pd>,</g-pd> <g-n>0</g-n><g-pd>,</g-pd> <g-f>len</g-f><g-pb>(</g-pb><g-v>s</g-v><g-pd>.</g-pd><g-vm>items</g-vm><g-pb>))</g-pb>
+    <g-k>for</g-k> <g-v>value</g-v><g-pd>,</g-pd> <g-v>count</g-v> <g-o>:=</g-o> <g-k>range</g-k> <g-v>s</g-v><g-pd>.</g-pd><g-vm>items</g-vm> <g-pb>{</g-pb>
+        <g-v>result</g-v> <g-o>=</g-o> <g-f>append</g-f><g-pb>(</g-pb><g-v>result</g-v><g-pd>,</g-pd> <g-v>Item</g-v><g-pb>[</g-pb><g-v>T</g-v><g-pb>]{</g-pb><g-v>Value</g-v><g-pd>:</g-pd> <g-v>value</g-v><g-pd>,</g-pd> <g-v>Count</g-v><g-pd>:</g-pd> <g-v>count</g-v><g-pb>})</g-pb>
+    <g-pb>}</g-pb>
+    <g-k>return</g-k> <g-v>result</g-v>
+<g-pb>}</g-pb>
+
+<g-k>func</g-k> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-v>store</g-v> <g-o>:=</g-o> <g-f>NewStore</g-f><g-pb>[</g-pb><g-t>string</g-t><g-pb>]()</g-pb>
+    <g-k>for</g-k> <g-v>_</g-v><g-pd>,</g-pd> <g-v>word</g-v> <g-o>:=</g-o> <g-k>range</g-k> <g-v>strings</g-v><g-pd>.</g-pd><g-f>Fields</g-f><g-pb>(</g-pb><g-s>"red blue red"</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-v>store</g-v><g-pd>.</g-pd><g-f>Add</g-f><g-pb>(</g-pb><g-v>word</g-v><g-pb>)</g-pb>
+    <g-pb>}</g-pb>
+    <g-k>for</g-k> <g-v>_</g-v><g-pd>,</g-pd> <g-v>item</g-v> <g-o>:=</g-o> <g-k>range</g-k> <g-v>store</g-v><g-pd>.</g-pd><g-f>Items</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-v>fmt</g-v><g-pd>.</g-pd><g-f>Printf</g-f><g-pb>(</g-pb><g-s>"%s: %d</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-v>item</g-v><g-pd>.</g-pd><g-vm>Value</g-vm><g-pd>,</g-pd> <g-v>item</g-v><g-pd>.</g-pd><g-vm>Count</g-vm><g-pb>)</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>

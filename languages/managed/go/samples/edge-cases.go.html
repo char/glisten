@@ -1,0 +1,36 @@
+<g-k>package</g-k> <g-v>edge</g-v>
+
+<g-c>// Keyword near misses and Unicode identifiers.</g-c>
+<g-k>var</g-k> <g-v>variable</g-v> <g-o>=</g-o> <g-n>1</g-n>
+<g-k>var</g-k> <g-v>interfaceValue</g-v> <g-o>=</g-o> <g-n>2</g-n>
+<g-k>var</g-k> <g-v>trueValue</g-v> <g-o>=</g-o> <g-cb>false</g-cb>
+<g-k>var</g-k> <g-v>integer</g-v> <g-o>=</g-o> <g-n>3</g-n>
+<g-k>var</g-k> <g-v>café</g-v> <g-o>=</g-o> <g-s>"☕"</g-s>
+<g-k>var</g-k> <g-v>日本語</g-v> <g-o>=</g-o> <g-s>`日本語`</g-s>
+<g-k>var</g-k> <g-v>Δ2</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u0394</g-se><g-s>'</g-s>
+
+<g-k>func</g-k> <g-f>inspect</g-f><g-pb>(</g-pb><g-v>ch</g-v> <g-k>chan</g-k> <g-t>int</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+<g-l>outer</g-l><g-pd>:</g-pd>
+    <g-k>for</g-k> <g-pb>{</g-pb>
+        <g-k>select</g-k> <g-pb>{</g-pb>
+        <g-k>case</g-k> <g-v>n</g-v> <g-o>:=</g-o> <g-o>&lt;-</g-o><g-v>ch</g-v><g-pd>:</g-pd>
+            <g-k>if</g-k> <g-v>n</g-v> <g-o>==</g-o> <g-n>0</g-n> <g-pb>{</g-pb>
+                <g-k>break</g-k> <g-l>outer</g-l>
+            <g-pb>}</g-pb>
+        <g-k>default</g-k><g-pd>:</g-pd>
+            <g-k>continue</g-k> <g-l>outer</g-l>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>var</g-k> <g-v>valid</g-v> <g-o>=</g-o> <g-n>0X_1.Ap-2</g-n> <g-o>+</g-o> <g-n>42i</g-n> <g-o>+</g-o> <g-n>.5e+2</g-n>
+<g-k>var</g-k> <g-v>dot</g-v> <g-o>=</g-o> <g-v>object</g-v><g-pd>.</g-pd><g-vm>field</g-vm>
+<g-k>var</g-k> <g-v>call</g-v> <g-o>=</g-o> <g-v>object</g-v><g-pd>.</g-pd><g-f>Method</g-f><g-pb>()</g-pb>
+<g-k>var</g-k> <g-v>missing</g-v> <g-o>=</g-o> <g-s>"unterminated</g-s>
+<g-k>var</g-k> <g-v>next</g-v> <g-o>=</g-o> <g-n>1</g-n>
+<g-k>var</g-k> <g-v>missingRune</g-v> <g-o>=</g-o> <g-s>'x</g-s>
+<g-k>var</g-k> <g-v>after</g-v> <g-o>=</g-o> <g-n>2</g-n>
+<g-k>var</g-k> <g-v>strange</g-v> <g-o>=</g-o> <g-s>"\q \xZ1"</g-s>
+<g-k>var</g-k> <g-v>unfinished</g-v> <g-o>=</g-o> <g-s>`raw string continues
+through the end of the file
+</g-s>
