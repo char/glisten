@@ -9,7 +9,7 @@
 <g-k>const</g-k> <g-v>comparison</g-v> <g-o>=</g-o> <g-v>readonlyField</g-v> <g-o>&lt;</g-o> <g-n>10</g-n> <g-o>&amp;&amp;</g-o> <g-n>10</g-n> <g-o>&gt;</g-o> <g-v>readonlyField</g-v><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>genericCall</g-v> <g-o>=</g-o> <g-v>arrow</g-v><g-pb>&lt;</g-pb><g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;&gt;([</g-pb><g-s>'x'</g-s><g-pb>])</g-pb><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>quotient</g-v> <g-o>=</g-o> <g-n>10</g-n> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/&lt;[^/]+</g-s><g-se>\/</g-se><g-s>&gt;/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/&lt;</g-s><g-pb>[</g-pb><g-o>^</g-o><g-s>/</g-s><g-pb>]</g-pb><g-o>+</g-o><g-se>\/</g-se><g-s>&gt;/g</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>template</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps><g-v>quotient</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>view</g-v> <g-o>=</g-o> <g-pb>(</g-pb>
   <g-pb>&lt;</g-pb><g-t>UI.Panel</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-pr>data-kind</g-pr><g-o>=</g-o><g-s>"x"</g-s> <g-pr>title</g-pr><g-o>=</g-o><g-s>'café'</g-s><g-pb>&gt;</g-pb>
@@ -25,7 +25,7 @@
 <g-k>const</g-k> <g-v>badEscape</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\x</g-se><g-s>ZZ'</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>missingString</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
 <g-k>const</g-k> <g-v>recovered</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/[abc</g-s>
+<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-s>abc</g-s>
 <g-k>const</g-k> <g-v>recoveredAgain</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 <g-c>// Unfinished JSX attribute at end of file.</g-c>
 <g-k>const</g-k> <g-v>partial</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>Widget</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-pr>title</g-pr><g-o>=</g-o><g-s>"unfinished

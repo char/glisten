@@ -4,7 +4,7 @@
 <g-k>const</g-k> <g-v>empty</g-v> <g-o>=</g-o> <g-pb>&lt;&gt;&lt;/&gt;</g-pb><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>note</g-v> <g-o>=</g-o> <g-s>'line</g-s><g-se>\n\u{1F331}</g-se><g-s>'</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-n>0x10</g-n> <g-o>+</g-o> <g-n>0b10</g-n> <g-o>+</g-o> <g-n>1_000</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>matcher</g-v> <g-o>=</g-o> <g-s>/[&lt;&gt;/]+/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>matcher</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-s>&lt;&gt;/</g-s><g-pb>]</g-pb><g-o>+</g-o><g-s>/g</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>fraction</g-v> <g-o>=</g-o> <g-v>count</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 
 <g-k>export</g-k> <g-k>function</g-k> <g-f>Preview</g-f><g-pb>({</g-pb> <g-vm>title</g-vm><g-pd>,</g-pd> <g-vm>entries</g-vm><g-pd>,</g-pd> <g-vm>active</g-vm> <g-pb>})</g-pb> <g-pb>{</g-pb>

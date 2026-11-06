@@ -5,6 +5,7 @@ import {
   character,
   choice,
   classify,
+  closeInjection,
   defineGrammar,
   except,
   keywordTable,
@@ -13,6 +14,7 @@ import {
   notNext,
   on,
   oneOf,
+  openInjection,
   optional,
   paint,
   popState,
@@ -282,7 +284,17 @@ function code(
     token('"', "string", setState(after), pushState("double")),
     token("'", "string", setState(after), pushState("single")),
     token("`", "string", setState(after), pushState("template")),
-    ...(mayStart ? [token("/", "string", setState(after), pushState("regex"))] : []),
+    ...(mayStart
+      ? [
+          token(
+            "/",
+            "string",
+            setState(after),
+            pushState("regex"),
+            openInjection({ static: "regex" }),
+          ),
+        ]
+      : []),
     ...(types
       ? [
           on(
@@ -595,10 +607,11 @@ export function javascript({
             "/",
             literal("/"),
             bytes(union(range("a", "z"), range("A", "Z")), { min: 0 }),
+            closeInjection(),
             paint("string"),
             popState(),
           ),
-          redispatch("\n\r", popState()),
+          redispatch("\n\r", closeInjection(), popState()),
         ],
       },
       regexClass: {

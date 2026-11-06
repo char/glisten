@@ -4,7 +4,7 @@
 <g-c>/** Summarize a small inventory, including names such as café. */</g-c>
 <g-k>export</g-k> <g-k>async</g-k> <g-k>function</g-k> <g-f>summarize</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pd>,</g-pd> <g-v>limit</g-v> <g-o>=</g-o> <g-n>10</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
   <g-k>const</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-k>await</g-k> <g-f>read</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pd>,</g-pd> <g-s>'utf8'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
-  <g-k>const</g-k> <g-v>rows</g-v> <g-o>=</g-o> <g-v>text</g-v><g-o>.</g-o><g-vm>split</g-vm><g-pb>(</g-pb><g-s>/</g-s><g-se>\r</g-se><g-s>?</g-s><g-se>\n</g-se><g-s>/</g-s><g-pb>)</g-pb><g-o>.</g-o><g-vm>filter</g-vm><g-pb>(</g-pb><g-v>Boolean</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-v>rows</g-v> <g-o>=</g-o> <g-v>text</g-v><g-o>.</g-o><g-vm>split</g-vm><g-pb>(</g-pb><g-s>/</g-s><g-se>\r</g-se><g-o>?</g-o><g-se>\n</g-se><g-s>/</g-s><g-pb>)</g-pb><g-o>.</g-o><g-vm>filter</g-vm><g-pb>(</g-pb><g-v>Boolean</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
   <g-k>let</g-k> <g-v>total</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
   <g-k>for</g-k> <g-pb>(</g-pb><g-k>const</g-k> <g-v>row</g-v> <g-k>of</g-k> <g-v>rows</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
     <g-k>const</g-k> <g-pb>[</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>raw</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>row</g-v><g-o>.</g-o><g-vm>split</g-vm><g-pb>(</g-pb><g-s>':'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>

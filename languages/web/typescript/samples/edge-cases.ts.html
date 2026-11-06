@@ -14,13 +14,13 @@
 <g-k>const</g-k> <g-v>genericArrow</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-pb>{</g-pb> <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>string</g-t> <g-pb>}&gt;(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=&gt;</g-o> <g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>cast</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;&gt;</g-pb><g-v>generic</g-v><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>tricky</g-v> <g-o>=</g-o> <g-v>limit</g-v> <g-o>/</g-o> <g-n>2</g-n> <g-o>/</g-o> <g-n>5</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/[</g-s><g-se>\]</g-se><g-s>/]+/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-se>\]</g-se><g-s>/</g-s><g-pb>]</g-pb><g-o>+</g-o><g-s>/g</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>template</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps><g-v>generic</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>badHex</g-v> <g-o>=</g-o> <g-n>0</g-n><g-v>xQ</g-v><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>badEscape</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u</g-se><g-s>12XZ'</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>missingString</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
 <g-k>const</g-k> <g-v>recovered</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/[abc</g-s>
+<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-s>abc</g-s>
 <g-k>const</g-k> <g-v>recoveredAgain</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 <g-k>type</g-k> <g-t>PartialGeneric</g-t> <g-o>=</g-o> <g-t>Map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;&gt;</g-pb><g-pd>;</g-pd>
 <g-k>type</g-k> <g-t>Conditional</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-t>T</g-t> <g-k>extends</g-k> <g-t>string</g-t> <g-o>?</g-o> <g-t>T</g-t><g-pb>[]</g-pb> <g-pd>:</g-pd> <g-t>never</g-t><g-pd>;</g-pd>

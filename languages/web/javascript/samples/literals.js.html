@@ -11,8 +11,8 @@
 <g-k>const</g-k> <g-v>octal</g-v> <g-o>=</g-o> <g-n>0o755</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>huge</g-v> <g-o>=</g-o> <g-n>9_007_199_254_740_993n</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>mask</g-v> <g-o>=</g-o> <g-n>0xffn</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>slash</g-v> <g-o>=</g-o> <g-s>/[/</g-s><g-se>\\</g-se><g-s>]/gu</g-s><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>words</g-v> <g-o>=</g-o> <g-s>/</g-s><g-se>\b</g-se><g-s>[a-z]+(?:-[a-z]+)?</g-s><g-se>\b</g-se><g-s>/gi</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>slash</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-s>/</g-s><g-se>\\</g-se><g-pb>]</g-pb><g-s>/gu</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>words</g-v> <g-o>=</g-o> <g-s>/</g-s><g-se>\b</g-se><g-pb>[</g-pb><g-s>a</g-s><g-o>-</g-o><g-s>z</g-s><g-pb>]</g-pb><g-o>+</g-o><g-pb>(?:</g-pb><g-s>-</g-s><g-pb>[</g-pb><g-s>a</g-s><g-o>-</g-o><g-s>z</g-s><g-pb>]</g-pb><g-o>+</g-o><g-pb>)</g-pb><g-o>?</g-o><g-se>\b</g-se><g-s>/gi</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>ratio</g-v> <g-o>=</g-o> <g-v>decimal</g-v> <g-o>/</g-o> <g-v>fraction</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>test</g-v> <g-o>=</g-o> <g-v>words</g-v><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>greeting</g-v><g-pb>)</g-pb> <g-o>?</g-o> <g-s>/yes/i</g-s> <g-pd>:</g-pd> <g-s>/no/i</g-s><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-s>`Hello </g-s><g-ps>${</g-ps><g-v>greeting</g-v><g-ps>}</g-ps><g-s>, </g-s><g-ps>${</g-ps>
@@ -30,7 +30,7 @@
 <g-k>const</g-k> <g-v>list</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>]</g-pb><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>n</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>n</g-v> <g-o>**</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
 <g-c>// Regex after a return; division after a call.</g-c>
 <g-k>function</g-k> <g-f>match</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
-  <g-k>return</g-k> <g-s>/a[</g-s><g-se>\/</g-se><g-s>]b/u</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-s>/a</g-s><g-pb>[</g-pb><g-se>\/</g-se><g-pb>]</g-pb><g-s>b/u</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
 <g-pb>}</g-pb>
 <g-k>const</g-k> <g-v>perItem</g-v> <g-o>=</g-o> <g-v>list</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>/</g-o> <g-v>Math</g-v><g-o>.</g-o><g-vm>max</g-vm><g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-v>object</g-v><g-o>.</g-o><g-vm>method</g-vm><g-pb>(</g-pb><g-n>2</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
 <g-k>export</g-k> <g-pb>{</g-pb> <g-v>message</g-v><g-pd>,</g-pd> <g-v>raw</g-v><g-pd>,</g-pd> <g-v>flag</g-v><g-pd>,</g-pd> <g-v>perItem</g-v><g-pd>,</g-pd> <g-v>match</g-v><g-pd>,</g-pd> <g-v>slash</g-v><g-pd>,</g-pd> <g-v>quoted</g-v><g-pd>,</g-pd> <g-v>continued</g-v><g-pd>,</g-pd> <g-v>hex</g-v><g-pd>,</g-pd> <g-v>binary</g-v><g-pd>,</g-pd> <g-v>octal</g-v><g-pd>,</g-pd> <g-v>huge</g-v><g-pd>,</g-pd> <g-v>mask</g-v><g-pd>,</g-pd> <g-v>trailing</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
