@@ -1,0 +1,11 @@
+# Unicode comment: 雪 and 🐝
+[example . # a comment inside an extension name
+  audit]: { note: 'line\n\u0041\U0001f600' }
+valid: 10f
+near_miss: 10suffix
+invalid_octal: 089
+bad_escape: "keep \q and \x1"
+missing_colon 17
+broken: "unterminated
+next_field: false
+unfinished { nested: [1, 2

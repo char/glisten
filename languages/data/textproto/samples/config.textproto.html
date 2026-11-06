@@ -1,0 +1,14 @@
+<g-c># proto-file: examples/config.proto</g-c>
+<g-c># proto-message: example.Config</g-c>
+<g-pr>name</g-pr><g-pd>:</g-pd> <g-s>"north"</g-s> <g-s>"-station"</g-s>
+<g-pr>enabled</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb>
+<g-pr>retries</g-pr><g-pd>:</g-pd> <g-n>3</g-n>
+<g-pr>timeout_seconds</g-pr><g-pd>:</g-pd> <g-n>1.25f</g-n>
+<g-pr>mode</g-pr><g-pd>:</g-pd> <g-cb>ACTIVE</g-cb>
+<g-pr>labels</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-s>"public"</g-s><g-pd>,</g-pd> <g-s>'stable'</g-s><g-pb>]</g-pb>
+<g-pr>endpoint</g-pr> <g-pb>{</g-pb>
+  <g-pr>host</g-pr><g-pd>:</g-pd> <g-s>"edge.example"</g-s>
+  <g-pr>port</g-pr><g-pd>:</g-pd> <g-n>0x1f90</g-n>
+<g-pb>}</g-pb>
+<g-pr>endpoint</g-pr> <g-pb>&lt;</g-pb> <g-pr>host</g-pr><g-pd>:</g-pd> <g-s>"backup.example"</g-s> <g-pr>port</g-pr><g-pd>:</g-pd> <g-n>8081</g-n> <g-pb>&gt;</g-pb>
+<g-pb>[</g-pb><g-pr>example</g-pr><g-pd>.</g-pd><g-pr>settings</g-pr><g-pd>.</g-pd><g-pr>priority</g-pr><g-pb>]</g-pb><g-pd>:</g-pd> <g-n>7</g-n>

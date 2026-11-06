@@ -19,6 +19,7 @@ import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
+import textproto from "./data/textproto/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
@@ -46,6 +47,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   python,
   rust,
   "ssh-config": ssh_config,
+  textproto,
   toml,
   tsx,
   typescript,

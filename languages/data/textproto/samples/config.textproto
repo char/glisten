@@ -1,0 +1,14 @@
+# proto-file: examples/config.proto
+# proto-message: example.Config
+name: "north" "-station"
+enabled: true
+retries: 3
+timeout_seconds: 1.25f
+mode: ACTIVE
+labels: ["public", 'stable']
+endpoint {
+  host: "edge.example"
+  port: 0x1f90
+}
+endpoint < host: "backup.example" port: 8081 >
+[example.settings.priority]: 7

@@ -1,0 +1,13 @@
+# Sensor calibration and Any payload.
+readings: [0, -1, 077, 1e3, .5, -Infinity, nan]
+metadata: [
+  { key: "city" value: "Montréal" },
+  < key: "status" value: "ready\nnow" >,
+]
+payload {
+  [type.googleapis.com/example.Sensor] {
+    serial: "s\x2d" '42'
+    active: t
+    data: "\001\377\?"
+  }
+}
