@@ -1,0 +1,12 @@
+<g-c>;;;; A small report generator.</g-c>
+<g-pb>(</g-pb><g-k>defpackage</g-k> <g-cb>:report</g-cb> <g-pb>(</g-pb><g-cb>:use</g-cb> <g-cb>:cl</g-cb><g-pb>)</g-pb> <g-pb>(</g-pb><g-cb>:export</g-cb> <g-cb>:summarize</g-cb><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>in-package</g-k> <g-cb>:report</g-cb><g-pb>)</g-pb>
+
+<g-pb>(</g-pb><g-k>defun</g-k> <g-f>summarize</g-f> <g-pb>(</g-pb><g-f>numbers</g-f> <g-v>&amp;key</g-v> <g-pb>(</g-pb><g-f>scale</g-f> <g-n>1.0d0</g-n><g-pb>))</g-pb>
+  <g-pb>(</g-pb><g-k>let</g-k> <g-pb>((</g-pb><g-f>total</g-f> <g-pb>(</g-pb><g-k>loop</g-k> <g-k>for</g-k> <g-v>n</g-v> <g-k>in</g-k> <g-v>numbers</g-v> <g-k>sum</g-k> <g-v>n</g-v><g-pb>)))</g-pb>
+    <g-pb>(</g-pb><g-k>when</g-k> <g-v>numbers</g-v>
+      <g-pb>(</g-pb><g-f>format</g-f> <g-cb>nil</g-cb> <g-s>"Total: ~,2f"</g-s> <g-pb>(</g-pb><g-f>*</g-f> <g-v>total</g-v> <g-v>scale</g-v><g-pb>)))))</g-pb>
+
+<g-pb>(</g-pb><g-k>defmethod</g-k> <g-f>describe-object</g-f> <g-pb>((</g-pb><g-f>value</g-f> <g-v>report</g-v><g-pb>)</g-pb> <g-v>stream</g-v><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-f>print-unreadable-object</g-f> <g-pb>(</g-pb><g-f>value</g-f> <g-v>stream</g-v> <g-cb>:type</g-cb> <g-cb>t</g-cb><g-pb>)</g-pb>
+    <g-pb>(</g-pb><g-f>write-string</g-f> <g-pb>(</g-pb><g-f>report-name</g-f> <g-v>value</g-v><g-pb>)</g-pb> <g-v>stream</g-v><g-pb>)))</g-pb>

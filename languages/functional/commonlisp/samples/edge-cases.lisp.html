@@ -1,0 +1,9 @@
+<g-pb>(</g-pb><g-k>DEFUN</g-k> <g-f>|Case Sensitive|</g-f> <g-pb>(</g-pb><g-f>x</g-f><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-f>list</g-f> <g-ps>'</g-ps><g-v>|odd symbol|</g-v> <g-ps>'</g-ps><g-v>foo\ bar</g-v> <g-ps>'</g-ps><g-v>pkg:|Mixed Case|</g-v> <g-s>"a</g-s><g-se>\\</g-se><g-s>b</g-s><g-se>\"</g-se><g-s>c"</g-s> <g-v>x</g-v><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>defun</g-k> <g-pb>(</g-pb><g-f>setf</g-f> <g-f>value</g-f><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>new</g-f> <g-v>object</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-k>setf</g-k> <g-pb>(</g-pb><g-f>slot-value</g-f> <g-v>object</g-v> <g-ps>'</g-ps><g-v>value</g-v><g-pb>)</g-pb> <g-v>new</g-v><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>loop</g-k> <g-k>with</g-k> <g-v>total</g-v> <g-v>=</g-v> <g-n>0</g-n> <g-k>:for</g-k> <g-v>item</g-v> <g-k>in</g-k> <g-ps>'</g-ps><g-pb>(</g-pb><g-n>1</g-n> <g-n>2</g-n> <g-n>3</g-n><g-pb>)</g-pb> <g-k>when</g-k> <g-v>item</g-v> <g-k>:sum</g-k> <g-v>item</g-v> <g-k>into</g-k> <g-v>total</g-v> <g-k>finally</g-k> <g-pb>(</g-pb><g-k>return</g-k> <g-v>total</g-v><g-pb>))</g-pb>
+<g-ps>#+</g-ps><g-pb>(</g-pb><g-at>and</g-at> <g-at>foo</g-at> <g-pb>(</g-pb><g-at>or</g-at> <g-at>bar</g-at> <g-pb>(</g-pb><g-at>not</g-at> <g-at>baz</g-at><g-pb>)))</g-pb> <g-pb>(</g-pb><g-f>print</g-f> <g-s>"enabled"</g-s><g-pb>)</g-pb>
+<g-c>#| outer #| inner |# still outer |#</g-c> <g-pb>(</g-pb><g-f>list</g-f> <g-cb>t</g-cb> <g-cb>nil</g-cb> <g-cb>:|mixed keyword|</g-cb><g-pb>)</g-pb>
+<g-pb>(</g-pb><g-f>list</g-f> <g-n>123.</g-n> <g-n>-.5</g-n> <g-n>+1e3</g-n> <g-n>2d0</g-n> <g-n>#xdead</g-n> <g-v>#b102</g-v> <g-v>#37r1</g-v> <g-v>123abc</g-v><g-pb>)</g-pb>
+<g-ps>#+</g-ps><g-at>prefix|feature name|suffix</g-at> <g-pb>(</g-pb><g-f>write-line</g-f> <g-s>"always highlighted"</g-s><g-pb>)</g-pb>
+<g-pb>(</g-pb><g-k>with-slots</g-k> <g-pb>(</g-pb><g-f>value</g-f><g-pb>)</g-pb> <g-v>object</g-v> <g-pb>(</g-pb><g-k>check-type</g-k> <g-v>value</g-v> <g-v>integer</g-v><g-pb>))</g-pb>
