@@ -1,0 +1,38 @@
+<g-c>// Intentionally incomplete and invalid lexical probes.</g-c>
+<g-k>const</g-k> <g-v>iffy</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>return_value</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>while2</g-v> <g-o>=</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>trueish</g-v> <g-o>=</g-o> <g-cb>false</g-cb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>u8suffix</g-v> <g-o>=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-s>@"field with space"</g-s> <g-o>=</g-o> <g-n>5</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>escaped_name</g-v> <g-o>=</g-o> <g-s>@"quote</g-s><g-se>\"</g-se><g-s>name"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>caf</g-v>é <g-o>=</g-o> <g-s>"unicode identifier"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>Weird</g-t> <g-o>=</g-o> <g-k>struct</g-k> <g-pb>{</g-pb>
+    <g-vm>field</g-vm><g-pd>:</g-pd> <g-t>u32</g-t><g-pd>,</g-pd>
+    <g-vm>callback</g-vm><g-pd>:</g-pd> <g-o>*</g-o><g-k>const</g-k> <g-k>fn</g-k> <g-pb>(</g-pb><g-t>u8</g-t><g-pb>)</g-pb> <g-t>void</g-t><g-pd>,</g-pd>
+    <g-vm>nested</g-vm><g-pd>:</g-pd> <g-k>struct</g-k> <g-pb>{</g-pb> <g-vm>value</g-vm><g-pd>:</g-pd> <g-t>i8</g-t> <g-pb>}</g-pb><g-pd>,</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>fn</g-k> <g-f>probe</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>Weird</g-t><g-pb>)</g-pb> <g-t>void</g-t> <g-pb>{</g-pb>
+    <g-k>const</g-k> <g-v>x</g-v> <g-o>=</g-o> <g-v>item</g-v><g-pd>.</g-pd><g-vm>field</g-vm><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>y</g-v> <g-o>=</g-o> <g-v>item</g-v><g-pd>.</g-pd><g-f>callback</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>ranges</g-v> <g-o>=</g-o> <g-pd>.</g-pd><g-pb>{</g-pb> <g-n>1</g-n><g-o>..</g-o><g-n>2</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-o>...</g-o><g-n>2</g-n><g-pd>,</g-pd> <g-n>1.0</g-n><g-pd>,</g-pd> <g-n>0x1.fp-2</g-n> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>bad_numbers</g-v> <g-o>=</g-o> <g-pd>.</g-pd><g-pb>{</g-pb> <g-n>0b102</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-v>xZZ</g-v><g-pd>,</g-pd> <g-n>1</g-n><g-v>e</g-v><g-o>+</g-o> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>bad_escape</g-v> <g-o>=</g-o> <g-s>"bad \q and \u{zz}"</g-s><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>bad_char</g-v> <g-o>=</g-o> <g-s>'\xZ0'</g-s><g-pd>;</g-pd>
+    <g-l>named</g-l><g-pd>:</g-pd> <g-k>while</g-k> <g-pb>(</g-pb><g-cb>true</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>if</g-k> <g-pb>(</g-pb><g-v>x</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>break</g-k> <g-pd>:</g-pd><g-l>named</g-l><g-pd>;</g-pd>
+        <g-k>continue</g-k> <g-pd>:</g-pd><g-l>named</g-l><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+    <g-v>_</g-v> <g-o>=</g-o> <g-pd>.</g-pd><g-pb>{</g-pb> <g-v>x</g-v><g-pd>,</g-pd> <g-v>y</g-v><g-pd>,</g-pd> <g-v>ranges</g-v><g-pd>,</g-pd> <g-v>bad_numbers</g-v><g-pd>,</g-pd> <g-v>bad_escape</g-v><g-pd>,</g-pd> <g-v>bad_char</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-c>// Zig has no block comments: these delimiters are operators.</g-c>
+<g-o>/*</g-o> <g-v>not</g-v> <g-v>a</g-v> <g-v>block</g-v> <g-v>comment</g-v> <g-o>*/</g-o>
+<g-k>const</g-k> <g-v>after</g-v> <g-o>=</g-o> <g-n>42</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>broken</g-v> <g-o>=</g-o> <g-s>"unterminated</g-s>
+<g-k>const</g-k> <g-v>recovered</g-v> <g-o>=</g-o> <g-n>7</g-n><g-pd>;</g-pd>
+<g-c>// Multiline strings end at the physical line, even with quotes:</g-c>
+<g-k>const</g-k> <g-v>lines</g-v> <g-o>=</g-o>
+    <g-s>\\raw "quotes" and \n are literal</g-s>
+    <g-s>\\second line, λ</g-s>
+<g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>unfinished</g-v> <g-o>=</g-o> <g-s>"unterminated at EOF</g-s>

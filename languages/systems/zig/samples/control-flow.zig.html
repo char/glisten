@@ -1,0 +1,39 @@
+<g-k>const</g-k> <g-v>std</g-v> <g-o>=</g-o> <g-f>@import</g-f><g-pb>(</g-pb><g-s>"std"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-c>//! A small example of labels, builtins, and strings.</g-c>
+<g-k>const</g-k> <g-v>help</g-v> <g-o>=</g-o>
+    <g-s>\\Usage: sensor [options]</g-s>
+    <g-s>\\  --name  choose a sensor, e.g. café</g-s>
+    <g-s>\\  --help  print this text</g-s>
+<g-pd>;</g-pd>
+
+<g-k>fn</g-k> <g-f>findPositive</g-f><g-pb>(</g-pb><g-v>values</g-v><g-pd>:</g-pd> <g-pb>[]</g-pb><g-k>const</g-k> <g-t>i32</g-t><g-pb>)</g-pb> <g-o>?</g-o><g-t>usize</g-t> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-l>search</g-l><g-pd>:</g-pd> <g-pb>{</g-pb>
+        <g-k>for</g-k> <g-pb>(</g-pb><g-v>values</g-v><g-pd>,</g-pd> <g-n>0</g-n><g-o>..</g-o><g-pb>)</g-pb> <g-o>|</g-o><g-v>value</g-v><g-pd>,</g-pd> <g-v>index</g-v><g-o>|</g-o> <g-pb>{</g-pb>
+            <g-k>if</g-k> <g-pb>(</g-pb><g-v>value</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>break</g-k> <g-pd>:</g-pd><g-l>search</g-l> <g-v>index</g-v><g-pd>;</g-pd>
+        <g-pb>}</g-pb>
+        <g-k>break</g-k> <g-pd>:</g-pd><g-l>search</g-l> <g-cb>null</g-cb><g-pd>;</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>fn</g-k> <g-f>sumUntil</g-f><g-pb>(</g-pb><g-v>values</g-v><g-pd>:</g-pd> <g-pb>[]</g-pb><g-k>const</g-k> <g-t>i32</g-t><g-pd>,</g-pd> <g-v>limit</g-v><g-pd>:</g-pd> <g-t>i32</g-t><g-pb>)</g-pb> <g-t>i32</g-t> <g-pb>{</g-pb>
+    <g-k>var</g-k> <g-v>total</g-v><g-pd>:</g-pd> <g-t>i32</g-t> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+    <g-l>outer</g-l><g-pd>:</g-pd> <g-k>for</g-k> <g-pb>(</g-pb><g-v>values</g-v><g-pb>)</g-pb> <g-o>|</g-o><g-v>value</g-v><g-o>|</g-o> <g-pb>{</g-pb>
+        <g-k>if</g-k> <g-pb>(</g-pb><g-v>value</g-v> <g-o>&lt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>continue</g-k> <g-pd>:</g-pd><g-l>outer</g-l><g-pd>;</g-pd>
+        <g-v>total</g-v> <g-o>+=</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+        <g-k>if</g-k> <g-pb>(</g-pb><g-v>total</g-v> <g-o>&gt;=</g-o> <g-v>limit</g-v><g-pb>)</g-pb> <g-k>break</g-k> <g-pd>:</g-pd><g-l>outer</g-l><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+    <g-k>return</g-k> <g-v>total</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>test</g-k> <g-s>"search and sum"</g-s> <g-pb>{</g-pb>
+    <g-k>const</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-v>_</g-v><g-pb>]</g-pb><g-t>i32</g-t><g-pb>{</g-pb> <g-o>-</g-o><g-n>1</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-pd>,</g-pd> <g-n>5</g-n><g-pd>,</g-pd> <g-n>9</g-n> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>index</g-v> <g-o>=</g-o> <g-f>findPositive</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-v>values</g-v><g-pb>)</g-pb> <g-k>orelse</g-k> <g-k>return</g-k> <g-k>error</g-k><g-pd>.</g-pd><g-vm>NotFound</g-vm><g-pd>;</g-pd>
+    <g-k>try</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-vm>testing</g-vm><g-pd>.</g-pd><g-f>expectEqual</g-f><g-pb>(</g-pb><g-f>@as</g-f><g-pb>(</g-pb><g-t>usize</g-t><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>index</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>try</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-vm>testing</g-vm><g-pd>.</g-pd><g-f>expectEqual</g-f><g-pb>(</g-pb><g-f>@as</g-f><g-pb>(</g-pb><g-t>i32</g-t><g-pd>,</g-pd> <g-n>5</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-f>sumUntil</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-v>values</g-v><g-pd>,</g-pd> <g-n>4</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>"tab</g-s><g-se>\t</g-se><g-s> newline</g-s><g-se>\n</g-se><g-s> lambda </g-s><g-se>\u{3bb}</g-se><g-s> hex </g-s><g-se>\x41</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>letter</g-v><g-pd>:</g-pd> <g-t>u8</g-t> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>number</g-v> <g-o>=</g-o> <g-n>0xff</g-n> <g-o>+</g-o> <g-n>0b1010</g-n> <g-o>+</g-o> <g-n>0o17</g-n><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>ratio</g-v><g-pd>:</g-pd> <g-t>f64</g-t> <g-o>=</g-o> <g-n>0x1.fp+2</g-n> <g-o>+</g-o> <g-n>1.2e-3</g-n><g-pd>;</g-pd>
+    <g-v>_</g-v> <g-o>=</g-o> <g-pd>.</g-pd><g-pb>{</g-pb> <g-v>help</g-v><g-pd>,</g-pd> <g-v>text</g-v><g-pd>,</g-pd> <g-v>letter</g-v><g-pd>,</g-pd> <g-v>number</g-v><g-pd>,</g-pd> <g-v>ratio</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

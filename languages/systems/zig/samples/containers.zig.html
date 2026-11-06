@@ -1,0 +1,35 @@
+<g-k>const</g-k> <g-v>std</g-v> <g-o>=</g-o> <g-f>@import</g-f><g-pb>(</g-pb><g-s>"std"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-c>/// A sensor reading with a name in UTF-8: café.</g-c>
+<g-c>///</g-c>
+<g-c>/// The value is signed so that negative readings are possible.</g-c>
+<g-k>pub</g-k> <g-k>const</g-k> <g-t>Reading</g-t> <g-o>=</g-o> <g-k>struct</g-k> <g-pb>{</g-pb>
+    <g-vm>name</g-vm><g-pd>:</g-pd> <g-pb>[]</g-pb><g-k>const</g-k> <g-t>u8</g-t><g-pd>,</g-pd>
+    <g-vm>value</g-vm><g-pd>:</g-pd> <g-t>i32</g-t><g-pd>,</g-pd>
+    <g-vm>active</g-vm><g-pd>:</g-pd> <g-t>bool</g-t> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>,</g-pd>
+
+    <g-k>pub</g-k> <g-k>fn</g-k> <g-f>scaled</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pd>:</g-pd> <g-t>Reading</g-t><g-pd>,</g-pd> <g-v>factor</g-v><g-pd>:</g-pd> <g-t>i32</g-t><g-pb>)</g-pb> <g-t>i32</g-t> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-v>self</g-v><g-pd>.</g-pd><g-vm>value</g-vm> <g-o>*</g-o> <g-v>factor</g-v><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>const</g-k> <g-t>State</g-t> <g-o>=</g-o> <g-k>enum</g-k> <g-pb>{</g-pb> <g-v>idle</g-v><g-pd>,</g-pd> <g-v>running</g-v><g-pd>,</g-pd> <g-v>stopped</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>Result</g-t> <g-o>=</g-o> <g-k>union</g-k><g-pb>(</g-pb><g-k>enum</g-k><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-vm>reading</g-vm><g-pd>:</g-pd> <g-t>Reading</g-t><g-pd>,</g-pd>
+    <g-vm>failure</g-vm><g-pd>:</g-pd> <g-t>anyerror</g-t><g-pd>,</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>fn</g-k> <g-f>inspect</g-f><g-pb>(</g-pb><g-v>result</g-v><g-pd>:</g-pd> <g-t>Result</g-t><g-pb>)</g-pb> <g-t>i32</g-t> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-k>switch</g-k> <g-pb>(</g-pb><g-v>result</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-pd>.</g-pd><g-vm>reading</g-vm> <g-o>=&gt;</g-o> <g-o>|</g-o><g-v>reading</g-v><g-o>|</g-o> <g-v>reading</g-v><g-pd>.</g-pd><g-f>scaled</g-f><g-pb>(</g-pb><g-n>2</g-n><g-pb>)</g-pb><g-pd>,</g-pd>
+        <g-pd>.</g-pd><g-vm>failure</g-vm> <g-o>=&gt;</g-o> <g-n>0</g-n><g-pd>,</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>test</g-k> <g-s>"reading scales"</g-s> <g-pb>{</g-pb>
+    <g-k>const</g-k> <g-v>reading</g-v> <g-o>=</g-o> <g-t>Reading</g-t><g-pb>{</g-pb> <g-pd>.</g-pd><g-vm>name</g-vm> <g-o>=</g-o> <g-s>"温度"</g-s><g-pd>,</g-pd> <g-pd>.</g-pd><g-vm>value</g-vm> <g-o>=</g-o> <g-o>-</g-o><g-n>3</g-n> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>try</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-vm>testing</g-vm><g-pd>.</g-pd><g-f>expectEqual</g-f><g-pb>(</g-pb><g-f>@as</g-f><g-pb>(</g-pb><g-t>i32</g-t><g-pd>,</g-pd> <g-o>-</g-o><g-n>6</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>reading</g-v><g-pd>.</g-pd><g-f>scaled</g-f><g-pb>(</g-pb><g-n>2</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>result</g-v><g-pd>:</g-pd> <g-t>Result</g-t> <g-o>=</g-o> <g-pd>.</g-pd><g-pb>{</g-pb> <g-pd>.</g-pd><g-vm>reading</g-vm> <g-o>=</g-o> <g-v>reading</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>try</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-vm>testing</g-vm><g-pd>.</g-pd><g-f>expect</g-f><g-pb>(</g-pb><g-f>inspect</g-f><g-pb>(</g-pb><g-v>result</g-v><g-pb>)</g-pb> <g-o>&lt;</g-o> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-v>_</g-v> <g-o>=</g-o> <g-t>State</g-t><g-pd>.</g-pd><g-vm>idle</g-vm><g-pd>;</g-pd>
+<g-pb>}</g-pb>
