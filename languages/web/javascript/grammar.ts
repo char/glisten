@@ -107,6 +107,14 @@ const expressionKeywords = new Set([
 ]);
 const comments = [
   token("//", "comment", pushState("lineComment")),
+  on(
+    "/",
+    literal("/**"),
+    notNext("/"),
+    paint("comment"),
+    pushState("docComment"),
+    openInjection({ static: "jsdoc" }),
+  ),
   token("/*", "comment", pushState("blockComment")),
 ];
 const number = (after: string) =>
@@ -645,6 +653,10 @@ export function javascript({
       ),
       lineComment: { style: "comment", arms: [redispatch("\n\r", popState())] },
       blockComment: { style: "comment", arms: [token("*/", "comment", popState())] },
+      docComment: {
+        style: "comment",
+        arms: [on("*", literal("*/"), closeInjection(), paint("comment"), popState())],
+      },
       ...(jsx
         ? {
             ...jsxStates,

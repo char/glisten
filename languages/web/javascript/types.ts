@@ -10,6 +10,7 @@ import {
   lookahead,
   on,
   oneOf,
+  openInjection,
   optional,
   paint,
   popState,
@@ -30,6 +31,14 @@ const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const comments = [
   token("//", "comment", pushState("lineComment")),
+  on(
+    "/",
+    literal("/**"),
+    notNext("/"),
+    paint("comment"),
+    pushState("docComment"),
+    openInjection({ static: "jsdoc" }),
+  ),
   token("/*", "comment", pushState("blockComment")),
 ];
 const trivia = [on(" \t\r\n", bytes(" \t\r\n"), paint("plain")), ...comments];
