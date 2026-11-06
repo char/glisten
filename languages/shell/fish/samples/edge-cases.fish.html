@@ -1,0 +1,12 @@
+<g-c># Quotes, escapes, and comment boundaries</g-c>
+<g-f>echo</g-f> <g-s>'it</g-s><g-se>\'</g-se><g-s>s </g-s><g-se>\\</g-se><g-s> fine \q'</g-s> <g-s>"value: </g-s><g-v>$HOME</g-v><g-s> and </g-s><g-se>\$</g-se><g-s>literal"</g-s>
+<g-f>echo</g-f> prefix#suffix <g-s>"</g-s><g-v>$USER</g-v><g-s>"</g-s>#suffix <g-v>$HOME</g-v>#suffix <g-c># real comment</g-c>
+<g-f>echo</g-f> one<g-se>\ </g-se>two <g-se>\#</g-se>literal <g-pb>{</g-pb><g-v>$USER</g-v>,guest<g-pb>}</g-pb> <g-o>**</g-o>/<g-o>*</g-o>.fish
+<g-f>echo</g-f> <g-v>$items</g-v><g-pb>[</g-pb><g-n>-1</g-n><g-o>..</g-o><g-n>2</g-n><g-pb>]</g-pb> <g-v>$$indirect</g-v> <g-s>"</g-s><g-ps>$(</g-ps><g-f>string</g-f> upper <g-v>$USER</g-v><g-ps>)</g-ps><g-s>"</g-s>
+<g-f>echo</g-f> before<g-ps>(</g-ps><g-f>echo</g-f> inner <g-ps>(</g-ps><g-f>pwd</g-f><g-ps>))</g-ps>after
+<g-k>function</g-k> example <g-at>-a</g-at> input <g-at>--description</g-at>=<g-s>"sample"</g-s>
+    <g-k>while</g-k> <g-f>test</g-f> <g-at>-n</g-at> <g-s>"</g-s><g-v>$input</g-v><g-s>"</g-s>
+        <g-k>break</g-k>
+    <g-k>end</g-k>
+    <g-k>return</g-k> 0
+<g-k>end</g-k>

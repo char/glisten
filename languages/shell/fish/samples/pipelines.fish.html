@@ -1,0 +1,8 @@
+<g-k>begin</g-k>
+    <g-f>set</g-f> <g-at>-l</g-at> files <g-o>*</g-o>.fish
+    <g-f>printf</g-f> <g-s>'%s\n'</g-s> <g-v>$files</g-v><g-pb>[</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>2</g-n><g-pb>]</g-pb> <g-o>|</g-o> <g-f>string</g-f> upper <g-o>&gt;?</g-o> output.txt
+    <g-f>command</g-f> cat input.txt <g-o>2&gt;&amp;1</g-o> <g-o>&amp;|</g-o> <g-f>string</g-f> match <g-at>--regex</g-at> <g-s>'warning'</g-s>
+    <g-f>false</g-f><g-pd>;</g-pd> <g-k>and</g-k> <g-f>echo</g-f> skipped
+    <g-f>true</g-f> <g-o>&amp;&amp;</g-o> <g-f>echo</g-f> yes <g-o>||</g-o> <g-f>echo</g-f> no
+    <g-f>echo</g-f> <g-ps>(</g-ps><g-f>string</g-f> join , <g-pb>{</g-pb>red,green,blue<g-pb>}</g-pb><g-ps>)</g-ps> <g-ps>$(</g-ps><g-f>pwd</g-f><g-ps>)</g-ps>
+<g-k>end</g-k>

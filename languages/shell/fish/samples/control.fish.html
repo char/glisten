@@ -1,0 +1,19 @@
+<g-c># A small interactive helper</g-c>
+<g-k>function</g-k> greet <g-at>--description</g-at> <g-s>'Greet a visitor'</g-s>
+    <g-k>if</g-k> <g-f>test</g-f> <g-ps>(</g-ps><g-f>count</g-f> <g-v>$argv</g-v><g-ps>)</g-ps> <g-at>-gt</g-at> 0
+        <g-f>echo</g-f> <g-s>"Hello, </g-s><g-v>$argv</g-v><g-pb>[</g-pb><g-n>1</g-n><g-pb>]</g-pb><g-s>!"</g-s>
+    <g-k>else</g-k> <g-k>if</g-k> <g-f>set</g-f> <g-at>-q</g-at> USER
+        <g-f>echo</g-f> <g-s>"Hello, </g-s><g-v>$USER</g-v><g-s>"</g-s>
+    <g-k>else</g-k>
+        <g-f>echo</g-f> <g-s>'Hello, stranger'</g-s>
+    <g-k>end</g-k>
+<g-k>end</g-k>
+
+<g-k>for</g-k> item <g-k>in</g-k> alpha beta gamma
+    <g-k>switch</g-k> <g-v>$item</g-v>
+        <g-k>case</g-k> alpha
+            <g-f>greet</g-f> <g-v>$item</g-v>
+        <g-k>case</g-k> <g-s>'*'</g-s>
+            <g-k>continue</g-k>
+    <g-k>end</g-k>
+<g-k>end</g-k>
