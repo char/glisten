@@ -1,0 +1,14 @@
+<g-k>#include</g-k> <g-s>&lt;cuda_runtime.h&gt;</g-s>
+
+<g-k>__global__</g-k> <g-t>void</g-t> <g-f>add</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-t>float4</g-t><g-o>*</g-o> <g-v>a</g-v><g-pd>,</g-pd> <g-k>const</g-k> <g-t>float4</g-t><g-o>*</g-o> <g-v>b</g-v><g-pd>,</g-pd> <g-t>float4</g-t><g-o>*</g-o> <g-v>out</g-v><g-pd>,</g-pd> <g-t>unsigned</g-t> <g-v>n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-t>unsigned</g-t> <g-v>i</g-v> <g-o>=</g-o> <g-cb>blockIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>*</g-o> <g-cb>blockDim</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>+</g-o> <g-cb>threadIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm><g-pd>;</g-pd>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-v>i</g-v> <g-o>&lt;</g-o> <g-v>n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-v>out</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-f>make_float4</g-f><g-pb>(</g-pb><g-v>a</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb><g-o>.</g-o><g-vm>x</g-vm> <g-o>+</g-o> <g-v>b</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb><g-o>.</g-o><g-vm>x</g-vm><g-pd>,</g-pd> <g-v>a</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb><g-o>.</g-o><g-vm>y</g-vm> <g-o>+</g-o> <g-v>b</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb><g-o>.</g-o><g-vm>y</g-vm><g-pd>,</g-pd> <g-n>0.0f</g-n><g-pd>,</g-pd> <g-n>1.0f</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-t>void</g-t> <g-f>launch</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-t>float4</g-t><g-o>*</g-o> <g-v>a</g-v><g-pd>,</g-pd> <g-k>const</g-k> <g-t>float4</g-t><g-o>*</g-o> <g-v>b</g-v><g-pd>,</g-pd> <g-t>float4</g-t><g-o>*</g-o> <g-v>out</g-v><g-pd>,</g-pd> <g-t>unsigned</g-t> <g-v>n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-t>dim3</g-t> <g-f>threads</g-f><g-pb>(</g-pb><g-n>256</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-t>dim3</g-t> <g-f>blocks</g-f><g-pb>((</g-pb><g-v>n</g-v> <g-o>+</g-o> <g-n>255</g-n><g-pb>)</g-pb> <g-o>/</g-o> <g-n>256</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-f>add</g-f><g-pb>&lt;&lt;&lt;</g-pb><g-v>blocks</g-v><g-pd>,</g-pd> <g-v>threads</g-v><g-pb>&gt;&gt;&gt;(</g-pb><g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pd>,</g-pd> <g-v>out</g-v><g-pd>,</g-pd> <g-v>n</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

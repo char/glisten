@@ -1,0 +1,13 @@
+<g-k>#include</g-k> <g-s>&lt;cuda_runtime.h&gt;</g-s>
+
+<g-k>__global__</g-k> <g-k>__launch_bounds__</g-k><g-pb>(</g-pb><g-n>256</g-n><g-pb>)</g-pb> <g-t>void</g-t> <g-f>reduce</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-t>float</g-t><g-o>*</g-o> <g-v>in</g-v><g-pd>,</g-pd> <g-t>float</g-t><g-o>*</g-o> <g-v>out</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>__shared__</g-k> <g-t>float</g-t> <g-v>values</g-v><g-pb>[</g-pb><g-n>256</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>unsigned</g-t> <g-v>lane</g-v> <g-o>=</g-o> <g-cb>threadIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm><g-pd>;</g-pd>
+  <g-v>values</g-v><g-pb>[</g-pb><g-v>lane</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>in</g-v><g-pb>[</g-pb><g-cb>blockIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>*</g-o> <g-cb>blockDim</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>+</g-o> <g-v>lane</g-v><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-f>__syncthreads</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+  <g-k>for</g-k> <g-pb>(</g-pb><g-t>unsigned</g-t> <g-v>stride</g-v> <g-o>=</g-o> <g-cb>blockDim</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd> <g-v>stride</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>;</g-pd> <g-v>stride</g-v> <g-o>&gt;&gt;=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>lane</g-v> <g-o>&lt;</g-o> <g-v>stride</g-v><g-pb>)</g-pb> <g-v>values</g-v><g-pb>[</g-pb><g-v>lane</g-v><g-pb>]</g-pb> <g-o>+=</g-o> <g-v>values</g-v><g-pb>[</g-pb><g-v>lane</g-v> <g-o>+</g-o> <g-v>stride</g-v><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-f>__syncthreads</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-v>lane</g-v> <g-o>==</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-f>atomicAdd</g-f><g-pb>(</g-pb><g-v>out</g-v><g-pd>,</g-pd> <g-v>values</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>])</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

@@ -17,6 +17,7 @@ import cobol from "./managed/cobol/grammar.ts";
 import commonlisp from "./functional/commonlisp/grammar.ts";
 import cpp from "./systems/cpp/grammar.ts";
 import css from "./web/css/grammar.ts";
+import cuda from "./shaders/cuda/grammar.ts";
 import d from "./systems/d/grammar.ts";
 import dart from "./managed/dart/grammar.ts";
 import devicetree from "./data/devicetree/grammar.ts";
@@ -132,6 +133,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   commonlisp,
   cpp,
   css,
+  cuda,
   d,
   dart,
   devicetree,

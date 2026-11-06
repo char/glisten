@@ -1,0 +1,13 @@
+<g-k>#include</g-k> <g-s>&lt;cuda_runtime.h&gt;</g-s>
+
+<g-k>template</g-k> <g-o>&lt;</g-o><g-k>typename</g-k> <g-t>T</g-t><g-o>&gt;</g-o>
+<g-k>__global__</g-k> <g-t>void</g-t> <g-f>transform</g-f><g-pb>(</g-pb><g-cb>T</g-cb><g-o>*</g-o> <g-v>data</g-v><g-pd>,</g-pd> <g-t>int</g-t> <g-v>count</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-t>int</g-t> <g-v>index</g-v> <g-o>=</g-o> <g-cb>blockIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>*</g-o> <g-cb>blockDim</g-cb><g-o>.</g-o><g-vm>x</g-vm> <g-o>+</g-o> <g-cb>threadIdx</g-cb><g-o>.</g-o><g-vm>x</g-vm><g-pd>;</g-pd>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-v>index</g-v> <g-o>&lt;</g-o> <g-v>count</g-v><g-pb>)</g-pb> <g-v>data</g-v><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-f>__shfl_sync</g-f><g-pb>(</g-pb><g-n>0xffffffffu</g-n><g-pd>,</g-pd> <g-v>data</g-v><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb><g-pd>,</g-pd> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-t>void</g-t> <g-f>run</g-f><g-pb>(</g-pb><g-t>float</g-t><g-o>*</g-o> <g-v>device</g-v><g-pd>,</g-pd> <g-t>int</g-t> <g-v>count</g-v><g-pd>,</g-pd> <g-t>cudaStream_t</g-t> <g-v>stream</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-t>int</g-t> <g-v>blocks</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>count</g-v> <g-o>+</g-o> <g-n>127</g-n><g-pb>)</g-pb> <g-o>/</g-o> <g-n>128</g-n><g-pd>;</g-pd>
+  <g-f>transform</g-f><g-o>&lt;</g-o><g-t>float</g-t><g-o>&gt;</g-o><g-pb>&lt;&lt;&lt;</g-pb><g-v>blocks</g-v><g-pd>,</g-pd> <g-n>128</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-pd>,</g-pd> <g-v>stream</g-v><g-pb>&gt;&gt;&gt;(</g-pb><g-v>device</g-v><g-pd>,</g-pd> <g-v>count</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-t>int</g-t> <g-v>shifted</g-v> <g-o>=</g-o> <g-v>count</g-v> <g-o>&gt;&gt;</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb>
