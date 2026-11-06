@@ -1,0 +1,20 @@
+syntax = 'proto2';
+package demo.legacy;
+import weak 'older.proto';
+option (demo.file_policy).enabled = true;
+
+message Envelope {
+  required int64 id = 1;
+  optional bytes payload = 2 [default = '\x41\101\n\?', deprecated = true];
+  extensions 100 to max;
+  optional group Audit = 3 {
+    required string actor = 4;
+  }
+  extend .demo.legacy.Envelope {
+    optional string trace = 101;
+  }
+}
+enum Result {
+  RESULT_UNKNOWN = 0;
+  FAILURE = -1 [(demo.reason) = "error"];
+}

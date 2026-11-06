@@ -1,0 +1,13 @@
+<g-k>edition</g-k> <g-o>=</g-o> <g-s>"2023"</g-s><g-pd>;</g-pd>
+<g-c>// Unicode stays in the comment: 雪</g-c>
+<g-k>message</g-k> <g-t>NearMiss</g-t> <g-pb>{</g-pb>
+  <g-t>string</g-t> <g-pr>keywordish</g-pr> <g-o>=</g-o> <g-n>1</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-s>"a</g-s><g-se>\n\x41\101\u0041\U0001f600</g-se><g-s>"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>double</g-t> <g-pr>infinity</g-pr> <g-o>=</g-o> <g-n>2</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-n>inf</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>double</g-t> <g-pr>not_a_number</g-pr> <g-o>=</g-o> <g-n>3</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-n>nan</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>int32</g-t> <g-pr>optionality</g-pr> <g-o>=</g-o> <g-n>01</g-n><g-pd>;</g-pd>
+  <g-t>double</g-t> <g-pr>noisy</g-pr> <g-o>=</g-o> <g-n>4</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> 1<g-t>e2suffix</g-t><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>string</g-t> <g-pr>tricky</g-pr> <g-o>=</g-o> <g-n>5</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-s>"bad \q valid </g-s><g-se>\x1</g-se><g-s>"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>string</g-t> <g-pr>broken</g-pr> <g-o>=</g-o> <g-s>"unterminated</g-s>
+  <g-c>/* unterminated block
+}
+</g-c>

@@ -1,0 +1,12 @@
+edition = "2023";
+// Unicode stays in the comment: 雪
+message NearMiss {
+  string keywordish = 1 [default = "a\n\x41\101\u0041\U0001f600"];
+  double infinity = 2 [default = inf];
+  double not_a_number = 3 [default = nan];
+  int32 optionality = 01;
+  double noisy = 4 [default = 1e2suffix];
+  string tricky = 5 [default = "bad \q valid \x1"];
+  string broken = "unterminated
+  /* unterminated block
+}

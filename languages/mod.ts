@@ -15,6 +15,7 @@ import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
 import nix from "./build/nix/grammar.ts";
+import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
@@ -41,6 +42,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   jsx,
   markdown,
   nix,
+  proto,
   python,
   rust,
   "ssh-config": ssh_config,

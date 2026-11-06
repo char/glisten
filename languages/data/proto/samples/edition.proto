@@ -1,0 +1,21 @@
+edition = "2023";
+package demo.telemetry;
+import option "demo/options.proto";
+option features.field_presence = EXPLICIT;
+option (demo.settings) = {
+  enabled: true labels: ["hot", "cold"]
+  ratio: -1.25e+2 threshold: .5 count: 0x2a
+  # Text-format comments are allowed inside aggregate options.
+  details < note: "hello" " world" >
+};
+message Reading {
+  double value = 1 [default = -inf];
+  string unit = 2 [json_name = "unit\u005fname"];
+  reserved 3 to 5, 8;
+  reserved "legacy_unit";
+}
+service Reader {
+  rpc Subscribe(stream Reading) returns (stream Reading) {
+    option deprecated = false;
+  }
+}

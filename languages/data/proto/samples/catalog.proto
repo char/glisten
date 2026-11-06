@@ -1,0 +1,22 @@
+syntax = "proto3";
+package shop.catalog;
+
+import public "common/money.proto";
+option java_package = "example.shop";
+
+// A product available for sale.
+message Product {
+  string name = 1;
+  repeated string tags = 2;
+  map<string, int32> stock = 3;
+  oneof price {
+    double amount = 4;
+    common.Money money = 5;
+  }
+  reserved 6, 9 to 12;
+  reserved "old_name";
+}
+enum Status { STATUS_UNSPECIFIED = 0; AVAILABLE = 1; }
+service Catalog {
+  rpc Watch(stream Product) returns (stream Product);
+}

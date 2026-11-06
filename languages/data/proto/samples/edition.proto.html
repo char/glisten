@@ -1,0 +1,21 @@
+<g-k>edition</g-k> <g-o>=</g-o> <g-s>"2023"</g-s><g-pd>;</g-pd>
+<g-k>package</g-k> demo<g-pd>.</g-pd>telemetry<g-pd>;</g-pd>
+<g-k>import</g-k> <g-k>option</g-k> <g-s>"demo/options.proto"</g-s><g-pd>;</g-pd>
+<g-k>option</g-k> <g-pr>features</g-pr><g-pd>.</g-pd><g-pr>field_presence</g-pr> <g-o>=</g-o> <g-cb>EXPLICIT</g-cb><g-pd>;</g-pd>
+<g-k>option</g-k> <g-pb>(</g-pb><g-pr>demo</g-pr><g-pd>.</g-pd><g-pr>settings</g-pr><g-pb>)</g-pb> <g-o>=</g-o> <g-pb>{</g-pb>
+  <g-pr>enabled</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb> <g-pr>labels</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-s>"hot"</g-s><g-pd>,</g-pd> <g-s>"cold"</g-s><g-pb>]</g-pb>
+  <g-pr>ratio</g-pr><g-pd>:</g-pd> <g-o>-</g-o><g-n>1.25e+2</g-n> <g-pr>threshold</g-pr><g-pd>:</g-pd> <g-n>.5</g-n> <g-pr>count</g-pr><g-pd>:</g-pd> <g-n>0x2a</g-n>
+  <g-c># Text-format comments are allowed inside aggregate options.</g-c>
+  <g-pr>details</g-pr> <g-pb>&lt;</g-pb> <g-pr>note</g-pr><g-pd>:</g-pd> <g-s>"hello"</g-s> <g-s>" world"</g-s> <g-pb>&gt;</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>message</g-k> <g-t>Reading</g-t> <g-pb>{</g-pb>
+  <g-t>double</g-t> <g-pr>value</g-pr> <g-o>=</g-o> <g-n>1</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-o>-</g-o><g-n>inf</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-t>string</g-t> <g-pr>unit</g-pr> <g-o>=</g-o> <g-n>2</g-n> <g-pb>[</g-pb><g-pr>json_name</g-pr> <g-o>=</g-o> <g-s>"unit</g-s><g-se>\u005f</g-se><g-s>name"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-k>reserved</g-k> <g-n>3</g-n> <g-k>to</g-k> <g-n>5</g-n><g-pd>,</g-pd> <g-n>8</g-n><g-pd>;</g-pd>
+  <g-k>reserved</g-k> <g-s>"legacy_unit"</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>service</g-k> <g-t>Reader</g-t> <g-pb>{</g-pb>
+  <g-k>rpc</g-k> <g-f>Subscribe</g-f><g-pb>(</g-pb><g-k>stream</g-k> <g-t>Reading</g-t><g-pb>)</g-pb> <g-k>returns</g-k> <g-pb>(</g-pb><g-k>stream</g-k> <g-t>Reading</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>option</g-k> <g-pr>deprecated</g-pr> <g-o>=</g-o> <g-cb>false</g-cb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

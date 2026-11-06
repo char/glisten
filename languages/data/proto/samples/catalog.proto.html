@@ -1,0 +1,22 @@
+<g-k>syntax</g-k> <g-o>=</g-o> <g-s>"proto3"</g-s><g-pd>;</g-pd>
+<g-k>package</g-k> shop<g-pd>.</g-pd>catalog<g-pd>;</g-pd>
+
+<g-k>import</g-k> <g-k>public</g-k> <g-s>"common/money.proto"</g-s><g-pd>;</g-pd>
+<g-k>option</g-k> <g-pr>java_package</g-pr> <g-o>=</g-o> <g-s>"example.shop"</g-s><g-pd>;</g-pd>
+
+<g-c>// A product available for sale.</g-c>
+<g-k>message</g-k> <g-t>Product</g-t> <g-pb>{</g-pb>
+  <g-t>string</g-t> <g-pr>name</g-pr> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+  <g-k>repeated</g-k> <g-t>string</g-t> <g-pr>tags</g-pr> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+  <g-k>map</g-k><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>int32</g-t><g-pb>&gt;</g-pb> <g-pr>stock</g-pr> <g-o>=</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+  <g-k>oneof</g-k> <g-t>price</g-t> <g-pb>{</g-pb>
+    <g-t>double</g-t> <g-pr>amount</g-pr> <g-o>=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+    <g-t>common</g-t><g-pd>.</g-pd><g-t>Money</g-t> <g-pr>money</g-pr> <g-o>=</g-o> <g-n>5</g-n><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>reserved</g-k> <g-n>6</g-n><g-pd>,</g-pd> <g-n>9</g-n> <g-k>to</g-k> <g-n>12</g-n><g-pd>;</g-pd>
+  <g-k>reserved</g-k> <g-s>"old_name"</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>enum</g-k> <g-t>Status</g-t> <g-pb>{</g-pb> <g-cb>STATUS_UNSPECIFIED</g-cb> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd> <g-cb>AVAILABLE</g-cb> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>service</g-k> <g-t>Catalog</g-t> <g-pb>{</g-pb>
+  <g-k>rpc</g-k> <g-f>Watch</g-f><g-pb>(</g-pb><g-k>stream</g-k> <g-t>Product</g-t><g-pb>)</g-pb> <g-k>returns</g-k> <g-pb>(</g-pb><g-k>stream</g-k> <g-t>Product</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

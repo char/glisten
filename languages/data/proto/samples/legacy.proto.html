@@ -1,0 +1,20 @@
+<g-k>syntax</g-k> <g-o>=</g-o> <g-s>'proto2'</g-s><g-pd>;</g-pd>
+<g-k>package</g-k> demo<g-pd>.</g-pd>legacy<g-pd>;</g-pd>
+<g-k>import</g-k> <g-k>weak</g-k> <g-s>'older.proto'</g-s><g-pd>;</g-pd>
+<g-k>option</g-k> <g-pb>(</g-pb><g-pr>demo</g-pr><g-pd>.</g-pd><g-pr>file_policy</g-pr><g-pb>)</g-pb><g-pd>.</g-pd><g-pr>enabled</g-pr> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+
+<g-k>message</g-k> <g-t>Envelope</g-t> <g-pb>{</g-pb>
+  <g-k>required</g-k> <g-t>int64</g-t> <g-pr>id</g-pr> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+  <g-k>optional</g-k> <g-t>bytes</g-t> <g-pr>payload</g-pr> <g-o>=</g-o> <g-n>2</g-n> <g-pb>[</g-pb><g-pr>default</g-pr> <g-o>=</g-o> <g-s>'</g-s><g-se>\x41\101\n\?</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-pr>deprecated</g-pr> <g-o>=</g-o> <g-cb>true</g-cb><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-k>extensions</g-k> <g-n>100</g-n> <g-k>to</g-k> <g-k>max</g-k><g-pd>;</g-pd>
+  <g-k>optional</g-k> <g-k>group</g-k> <g-t>Audit</g-t> <g-o>=</g-o> <g-n>3</g-n> <g-pb>{</g-pb>
+    <g-k>required</g-k> <g-t>string</g-t> <g-pr>actor</g-pr> <g-o>=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>extend</g-k> <g-pd>.</g-pd><g-t>demo</g-t><g-pd>.</g-pd><g-t>legacy</g-t><g-pd>.</g-pd><g-t>Envelope</g-t> <g-pb>{</g-pb>
+    <g-k>optional</g-k> <g-t>string</g-t> <g-pr>trace</g-pr> <g-o>=</g-o> <g-n>101</g-n><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>enum</g-k> <g-t>Result</g-t> <g-pb>{</g-pb>
+  <g-cb>RESULT_UNKNOWN</g-cb> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+  <g-cb>FAILURE</g-cb> <g-o>=</g-o> <g-o>-</g-o><g-n>1</g-n> <g-pb>[(</g-pb><g-pr>demo</g-pr><g-pd>.</g-pd><g-pr>reason</g-pr><g-pb>)</g-pb> <g-o>=</g-o> <g-s>"error"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
