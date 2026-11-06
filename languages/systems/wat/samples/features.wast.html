@@ -1,0 +1,9 @@
+<g-pb>(</g-pb><g-k>module</g-k>
+  <g-pb>(</g-pb><g-k>type</g-k> <g-v>$pair</g-v> <g-pb>(</g-pb><g-t>struct</g-t> <g-pb>(</g-pb><g-k>field</g-k> <g-pb>(</g-pb><g-k>mut</g-k> <g-t>i32</g-t><g-pb>))</g-pb> <g-pb>(</g-pb><g-k>field</g-k> <g-t>externref</g-t><g-pb>)))</g-pb>
+  <g-pb>(</g-pb><g-k>func</g-k> <g-v>$example</g-v> <g-pb>(</g-pb><g-k>param</g-k> <g-v>$p</g-v> <g-pb>(</g-pb><g-k>ref</g-k> <g-k>null</g-k> <g-v>$pair</g-v><g-pb>))</g-pb> <g-pb>(</g-pb><g-k>result</g-k> <g-t>v128</g-t><g-pb>)</g-pb>
+    <g-pb>(</g-pb><g-k>drop</g-k> <g-pb>(</g-pb><g-k>ref.is_null</g-k> <g-pb>(</g-pb><g-k>local.get</g-k> <g-v>$p</g-v><g-pb>)))</g-pb>
+    <g-pb>(</g-pb><g-k>v128.const</g-k> <g-k>i32x4</g-k> <g-n>1</g-n> <g-n>2</g-n> <g-n>3</g-n> <g-n>4</g-n><g-pb>))</g-pb>
+  <g-pb>(</g-pb><g-k>func</g-k> <g-pb>(</g-pb><g-k>param</g-k> <g-t>i32</g-t><g-pb>)</g-pb> <g-pb>(</g-pb><g-k>result</g-k> <g-t>i32</g-t><g-pb>)</g-pb>
+    <g-pb>(</g-pb><g-k>i32.load</g-k> <g-pr>offset=</g-pr><g-n>8</g-n> <g-pr>align=</g-pr><g-n>4</g-n> <g-pb>(</g-pb><g-k>local.get</g-k> <g-n>0</g-n><g-pb>))))</g-pb>
+<g-pb>(</g-pb><g-k>assert_return</g-k> <g-pb>(</g-pb><g-k>invoke</g-k> <g-s>"add"</g-s> <g-pb>(</g-pb><g-k>i32.const</g-k> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>(</g-pb><g-k>i32.const</g-k> <g-n>2</g-n><g-pb>))</g-pb> <g-pb>(</g-pb><g-k>i32.const</g-k> <g-n>3</g-n><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>assert_return</g-k> <g-pb>(</g-pb><g-k>invoke</g-k> <g-s>"float-result"</g-s><g-pb>)</g-pb> <g-pb>(</g-pb><g-k>f32.const</g-k> <g-n>nan:canonical</g-n><g-pb>))</g-pb>

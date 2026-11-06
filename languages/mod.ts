@@ -120,6 +120,7 @@ import verilog from "./hdl/verilog/grammar.ts";
 import vhdl from "./hdl/vhdl/grammar.ts";
 import vim from "./scripting/vim/grammar.ts";
 import vue from "./web/vue/grammar.ts";
+import wat from "./systems/wat/grammar.ts";
 import wgsl from "./shaders/wgsl/grammar.ts";
 import wit from "./data/wit/grammar.ts";
 import x86asm from "./systems/x86asm/grammar.ts";
@@ -250,6 +251,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   vhdl,
   vim,
   vue,
+  wat,
   wgsl,
   wit,
   x86asm,
