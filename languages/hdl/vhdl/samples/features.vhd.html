@@ -1,0 +1,23 @@
+<g-k>package</g-k> <g-v>features</g-v> <g-k>is</g-k>
+  <g-k>subtype</g-k> <g-v>byte_t</g-v> <g-k>is</g-k> <g-t>bit_vector</g-t><g-pb>(</g-pb><g-n>7</g-n> <g-k>downto</g-k> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>constant</g-k> <g-v>init</g-v> <g-pd>:</g-pd> <g-v>byte_t</g-v> <g-o>:=</g-o> <g-s>8X"FF"</g-s><g-pd>;</g-pd>
+  <g-k>constant</g-k> <g-v>hex_value</g-v> <g-pd>:</g-pd> <g-t>integer</g-t> <g-o>:=</g-o> <g-n>16#FF#</g-n><g-pd>;</g-pd>
+  <g-k>constant</g-k> <g-v>\name with spaces\</g-v> <g-pd>:</g-pd> <g-t>integer</g-t> <g-o>:=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+  <g-k>function</g-k> <g-f>ready</g-f><g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-t>bit</g-t><g-pb>)</g-pb> <g-k>return</g-k> <g-t>boolean</g-t><g-pd>;</g-pd>
+<g-k>end</g-k> <g-k>package</g-k><g-pd>;</g-pd>
+
+<g-k>package</g-k> <g-k>body</g-k> <g-v>features</g-v> <g-k>is</g-k>
+  <g-k>function</g-k> <g-f>ready</g-f><g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-t>bit</g-t><g-pb>)</g-pb> <g-k>return</g-k> <g-t>boolean</g-t> <g-k>is</g-k>
+  <g-k>begin</g-k>
+    <g-c>/* VHDL-2008 block comment */</g-c>
+    <g-k>return</g-k> <g-v>x</g-v> <g-o>/=</g-o> <g-s>'0'</g-s><g-pd>;</g-pd>
+  <g-k>end</g-k> <g-k>function</g-k><g-pd>;</g-pd>
+<g-k>end</g-k> <g-k>package</g-k> <g-k>body</g-k><g-pd>;</g-pd>
+
+<g-k>architecture</g-k> <g-v>rtl</g-v> <g-k>of</g-k> <g-v>demo</g-v> <g-k>is</g-k>
+  <g-k>signal</g-k> <g-v>bus_data</g-v> <g-pd>:</g-pd> <g-t>bit_vector</g-t><g-pb>(</g-pb><g-n>7</g-n> <g-k>downto</g-k> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>begin</g-k>
+  <g-v>bus_data</g-v> <g-o>&lt;=</g-o> <g-v>byte_t</g-v><g-pd>'</g-pd><g-pb>(</g-pb><g-s>b"10101010"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-c>-- Qualified expressions and attributes are different uses of apostrophes.</g-c>
+  <g-k>assert</g-k> <g-f>bus_data</g-f><g-pb>(</g-pb><g-v>bus_data</g-v><g-pd>'</g-pd><g-at>low</g-at><g-pb>)</g-pb> <g-o>=</g-o> <g-s>'0'</g-s> <g-k>or</g-k> <g-v>bus_data</g-v><g-pd>'</g-pd><g-at>length</g-at> <g-o>=</g-o> <g-n>8</g-n><g-pd>;</g-pd>
+<g-k>end</g-k> <g-k>architecture</g-k><g-pd>;</g-pd>

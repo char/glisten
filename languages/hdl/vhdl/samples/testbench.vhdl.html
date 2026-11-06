@@ -1,0 +1,20 @@
+<g-k>LIBRARY</g-k> <g-v>ieee</g-v><g-pd>;</g-pd>
+<g-k>USE</g-k> <g-v>ieee</g-v><g-pd>.</g-pd><g-v>std_logic_1164</g-v><g-pd>.</g-pd><g-k>ALL</g-k><g-pd>;</g-pd>
+
+<g-k>ENTITY</g-k> <g-v>testbench</g-v> <g-k>IS</g-k> <g-k>END</g-k> <g-k>ENTITY</g-k><g-pd>;</g-pd>
+<g-k>ARCHITECTURE</g-k> <g-v>simulation</g-v> <g-k>OF</g-k> <g-v>testbench</g-v> <g-k>IS</g-k>
+  <g-k>SIGNAL</g-k> <g-v>clk</g-v> <g-pd>:</g-pd> <g-t>std_logic</g-t> <g-o>:=</g-o> <g-s>'0'</g-s><g-pd>;</g-pd>
+  <g-k>SIGNAL</g-k> <g-v>data</g-v> <g-pd>:</g-pd> <g-t>std_logic_vector</g-t><g-pb>(</g-pb><g-n>7</g-n> <g-k>DOWNTO</g-k> <g-n>0</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>x"FF"</g-s><g-pd>;</g-pd>
+<g-k>BEGIN</g-k>
+  <g-v>clk</g-v> <g-o>&lt;=</g-o> <g-k>NOT</g-k> <g-v>clk</g-v> <g-k>AFTER</g-k> <g-n>5</g-n> <g-v>ns</g-v><g-pd>;</g-pd>
+  <g-v>uut</g-v> <g-pd>:</g-pd> <g-k>ENTITY</g-k> <g-v>work</g-v><g-pd>.</g-pd><g-f>counter</g-f><g-pb>(</g-pb><g-v>rtl</g-v><g-pb>)</g-pb>
+    <g-k>GENERIC</g-k> <g-k>MAP</g-k> <g-pb>(</g-pb><g-v>WIDTH</g-v> <g-o>=&gt;</g-o> <g-n>8</g-n><g-pb>)</g-pb>
+    <g-k>PORT</g-k> <g-k>MAP</g-k> <g-pb>(</g-pb><g-v>clk</g-v> <g-o>=&gt;</g-o> <g-v>clk</g-v><g-pd>,</g-pd> <g-v>reset_n</g-v> <g-o>=&gt;</g-o> <g-s>'1'</g-s><g-pd>,</g-pd> <g-v>count</g-v> <g-o>=&gt;</g-o> <g-k>OPEN</g-k><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>PROCESS</g-k>
+  <g-k>BEGIN</g-k>
+    <g-k>WAIT</g-k> <g-k>UNTIL</g-k> <g-v>clk</g-v><g-pd>'</g-pd><g-at>EVENT</g-at> <g-k>AND</g-k> <g-v>clk</g-v> <g-o>=</g-o> <g-s>'1'</g-s><g-pd>;</g-pd>
+    <g-k>ASSERT</g-k> <g-v>data</g-v><g-pd>'</g-pd><g-at>LENGTH</g-at> <g-o>=</g-o> <g-n>8</g-n> <g-k>REPORT</g-k> <g-s>"unexpected </g-s><g-se>""</g-se><g-s>width</g-s><g-se>""</g-se><g-s>"</g-s> <g-k>SEVERITY</g-k> <g-v>error</g-v><g-pd>;</g-pd>
+    <g-k>WAIT</g-k> <g-k>FOR</g-k> <g-n>12</g-n> <g-v>ns</g-v><g-pd>;</g-pd>
+    <g-k>WAIT</g-k><g-pd>;</g-pd>
+  <g-k>END</g-k> <g-k>PROCESS</g-k><g-pd>;</g-pd>
+<g-k>END</g-k> <g-k>ARCHITECTURE</g-k><g-pd>;</g-pd>

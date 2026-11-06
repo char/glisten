@@ -1,0 +1,24 @@
+<g-k>library</g-k> <g-v>ieee</g-v><g-pd>;</g-pd>
+<g-k>use</g-k> <g-v>ieee</g-v><g-pd>.</g-pd><g-v>std_logic_1164</g-v><g-pd>.</g-pd><g-k>all</g-k><g-pd>;</g-pd>
+<g-k>use</g-k> <g-v>ieee</g-v><g-pd>.</g-pd><g-v>numeric_std</g-v><g-pd>.</g-pd><g-k>all</g-k><g-pd>;</g-pd>
+
+<g-k>entity</g-k> <g-v>counter</g-v> <g-k>is</g-k>
+  <g-k>generic</g-k> <g-pb>(</g-pb><g-v>WIDTH</g-v> <g-pd>:</g-pd> <g-t>positive</g-t> <g-o>:=</g-o> <g-n>8</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>port</g-k> <g-pb>(</g-pb><g-v>clk</g-v><g-pd>,</g-pd> <g-v>reset_n</g-v> <g-pd>:</g-pd> <g-k>in</g-k> <g-t>std_logic</g-t><g-pd>;</g-pd> <g-v>count</g-v> <g-pd>:</g-pd> <g-k>out</g-k> <g-t>unsigned</g-t><g-pb>(</g-pb><g-v>WIDTH</g-v> <g-o>-</g-o> <g-n>1</g-n> <g-k>downto</g-k> <g-n>0</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-k>end</g-k> <g-k>entity</g-k><g-pd>;</g-pd>
+
+<g-k>architecture</g-k> <g-v>rtl</g-v> <g-k>of</g-k> <g-v>counter</g-v> <g-k>is</g-k>
+  <g-k>signal</g-k> <g-v>value</g-v> <g-pd>:</g-pd> <g-t>unsigned</g-t><g-pb>(</g-pb><g-v>WIDTH</g-v> <g-o>-</g-o> <g-n>1</g-n> <g-k>downto</g-k> <g-n>0</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-pb>(</g-pb><g-k>others</g-k> <g-o>=&gt;</g-o> <g-s>'0'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>begin</g-k>
+  <g-k>process</g-k><g-pb>(</g-pb><g-v>clk</g-v><g-pb>)</g-pb>
+  <g-k>begin</g-k>
+    <g-k>if</g-k> <g-f>rising_edge</g-f><g-pb>(</g-pb><g-v>clk</g-v><g-pb>)</g-pb> <g-k>then</g-k>
+      <g-k>if</g-k> <g-v>reset_n</g-v> <g-o>=</g-o> <g-s>'0'</g-s> <g-k>then</g-k>
+        <g-v>value</g-v> <g-o>&lt;=</g-o> <g-pb>(</g-pb><g-k>others</g-k> <g-o>=&gt;</g-o> <g-s>'0'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+      <g-k>else</g-k>
+        <g-v>value</g-v> <g-o>&lt;=</g-o> <g-v>value</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+      <g-k>end</g-k> <g-k>if</g-k><g-pd>;</g-pd>
+    <g-k>end</g-k> <g-k>if</g-k><g-pd>;</g-pd>
+  <g-k>end</g-k> <g-k>process</g-k><g-pd>;</g-pd>
+  <g-v>count</g-v> <g-o>&lt;=</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+<g-k>end</g-k> <g-k>architecture</g-k><g-pd>;</g-pd>

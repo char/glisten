@@ -73,6 +73,7 @@ import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
 import typst from "./markup/typst/grammar.ts";
 import verilog from "./hdl/verilog/grammar.ts";
+import vhdl from "./hdl/vhdl/grammar.ts";
 import vue from "./web/vue/grammar.ts";
 import wit from "./data/wit/grammar.ts";
 import xml from "./markup/xml/grammar.ts";
@@ -155,6 +156,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   typescript,
   typst,
   verilog,
+  vhdl,
   vue,
   wit,
   xml,
