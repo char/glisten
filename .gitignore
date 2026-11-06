@@ -1,0 +1,6 @@
+*.wasm
+/dist/
+/.avril/
+/.cache/
+/result
+/result-*

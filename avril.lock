@@ -1,0 +1,8 @@
+version: 1
+jsrRegistry: "https://jsr.io/"
+specifiers: {
+  "jsr:@char/justin@^0.4.2": "0.4.2"
+}
+packages: {
+  "https://jsr.io/@char/justin/0.4.2_meta.json": "sha256-b36347b7151ad60fe4f38274abfb7ab0eac4d1c8dc85775529ef2595df26f867"
+}
