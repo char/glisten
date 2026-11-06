@@ -1,0 +1,15 @@
+import sites/*.caddy
+import sites/name#part.caddy # trailing comment
+
+(logging) {
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+}
+
+:443 {
+    import logging
+    root * /srv/www
+    file_server
+}

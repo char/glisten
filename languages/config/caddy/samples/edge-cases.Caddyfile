@@ -1,0 +1,14 @@
+# Addresses, matchers, placeholders and comments
+http://localhost:8080, {$DOMAIN} {
+    @named path /foo* /bar/*
+    respond @named "Hello, {http.request.host}: {$USER}" 200
+    respond /literal* `backtick {env.HOME} # not a comment`
+    header X-Example value#not-comment # comment
+    reverse_proxy * localhost:8000 \
+        localhost:8001
+    respond <<END
+        hello {http.request.host}
+        # literal body
+        END
+    respond "escaped \"quote\" and \\ slash"
+}

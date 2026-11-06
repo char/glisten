@@ -1,0 +1,15 @@
+<g-k>import</g-k> <g-s>sites/*.caddy</g-s>
+<g-k>import</g-k> <g-s>sites/name#part.caddy</g-s> <g-c># trailing comment</g-c>
+
+<g-l>(logging)</g-l> <g-pb>{</g-pb>
+    <g-k>log</g-k> <g-pb>{</g-pb>
+        <g-k>output</g-k> <g-s>file</g-s> <g-s>/var/log/caddy/access.log</g-s>
+        <g-k>format</g-k> <g-s>json</g-s>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-l>:443</g-l> <g-pb>{</g-pb>
+    <g-k>import</g-k> <g-s>logging</g-s>
+    <g-k>root</g-k> <g-tg>*</g-tg> <g-s>/srv/www</g-s>
+    <g-k>file_server</g-k>
+<g-pb>}</g-pb>

@@ -1,0 +1,17 @@
+# One site without braces
+{
+    email admin@example.org
+}
+
+http://localhost:8080, 127.0.0.1:8080 # site addresses
+@api {
+    path /api/*
+    method GET
+}
+handle @api {
+    reverse_proxy localhost:9000
+}
+@host `{http.request.host} == "localhost"`
+respond @host "local"
+root * /srv/www
+file_server

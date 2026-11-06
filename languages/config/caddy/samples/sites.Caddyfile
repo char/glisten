@@ -1,0 +1,22 @@
+{
+    email admin@example.org
+    admin off
+}
+
+(common) {
+    encode gzip zstd
+    header X-Host "{http.request.host}"
+}
+
+https://example.com,
+    *.example.org :8080 {
+    import common
+    @api {
+        path /api/*
+        method GET POST
+    }
+    handle @api {
+        reverse_proxy localhost:9000
+    }
+    file_server
+}

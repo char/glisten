@@ -1,0 +1,17 @@
+<g-c># One site without braces</g-c>
+<g-pb>{</g-pb>
+    <g-k>email</g-k> <g-s>admin@example.org</g-s>
+<g-pb>}</g-pb>
+
+<g-l>http://localhost:8080</g-l><g-pd>,</g-pd> <g-l>127.0.0.1:8080</g-l> <g-c># site addresses</g-c>
+<g-tg>@api</g-tg> <g-pb>{</g-pb>
+    <g-k>path</g-k> <g-tg>/api/*</g-tg>
+    <g-k>method</g-k> <g-s>GET</g-s>
+<g-pb>}</g-pb>
+<g-k>handle</g-k> <g-tg>@api</g-tg> <g-pb>{</g-pb>
+    <g-k>reverse_proxy</g-k> <g-s>localhost:9000</g-s>
+<g-pb>}</g-pb>
+<g-tg>@host</g-tg> <g-s>`</g-s><g-v>{http.request.host}</g-v><g-s> == "localhost"`</g-s>
+<g-k>respond</g-k> <g-tg>@host</g-tg> <g-s>"local"</g-s>
+<g-k>root</g-k> <g-tg>*</g-tg> <g-s>/srv/www</g-s>
+<g-k>file_server</g-k>

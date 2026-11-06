@@ -1,0 +1,22 @@
+<g-pb>{</g-pb>
+    <g-k>email</g-k> <g-s>admin@example.org</g-s>
+    <g-k>admin</g-k> <g-s>off</g-s>
+<g-pb>}</g-pb>
+
+<g-l>(common)</g-l> <g-pb>{</g-pb>
+    <g-k>encode</g-k> <g-s>gzip</g-s> <g-s>zstd</g-s>
+    <g-k>header</g-k> <g-s>X-Host</g-s> <g-s>"</g-s><g-v>{http.request.host}</g-v><g-s>"</g-s>
+<g-pb>}</g-pb>
+
+<g-l>https://example.com</g-l><g-pd>,</g-pd>
+    <g-l>*.example.org</g-l> <g-l>:8080</g-l> <g-pb>{</g-pb>
+    <g-k>import</g-k> <g-s>common</g-s>
+    <g-tg>@api</g-tg> <g-pb>{</g-pb>
+        <g-k>path</g-k> <g-tg>/api/*</g-tg>
+        <g-k>method</g-k> <g-s>GET</g-s> <g-s>POST</g-s>
+    <g-pb>}</g-pb>
+    <g-k>handle</g-k> <g-tg>@api</g-tg> <g-pb>{</g-pb>
+        <g-k>reverse_proxy</g-k> <g-s>localhost:9000</g-s>
+    <g-pb>}</g-pb>
+    <g-k>file_server</g-k>
+<g-pb>}</g-pb>
