@@ -1,0 +1,10 @@
+<g-k>strict</g-k> <g-k>digraph</g-k> workflow <g-pb>{</g-pb>
+  <g-k>graph</g-k> <g-pb>[</g-pb>rankdir<g-o>=</g-o>LR<g-pd>;</g-pd> label<g-o>=</g-o><g-s>"Build pipeline"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-k>node</g-k> <g-pb>[</g-pb>shape<g-o>=</g-o>box<g-pd>,</g-pd> style<g-o>=</g-o>filled<g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-k>edge</g-k> <g-pb>[</g-pb>color<g-o>=</g-o>gray<g-pb>]</g-pb><g-pd>;</g-pd>
+  source<g-pd>:</g-pd>out<g-pd>:</g-pd>e <g-o>-&gt;</g-o> build<g-pd>:</g-pd>in<g-pd>:</g-pd>w <g-o>-&gt;</g-o> deploy <g-pb>[</g-pb>label<g-o>=</g-o><g-s>"next"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-k>subgraph</g-k> cluster_checks <g-pb>{</g-pb>
+    label<g-o>=</g-o><g-s>"Checks"</g-s><g-pd>;</g-pd>
+    build <g-o>-&gt;</g-o> test<g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

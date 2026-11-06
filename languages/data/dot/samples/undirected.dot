@@ -1,0 +1,8 @@
+graph network {
+  a -- b -- c;
+  { a; b } -- { c; d } [label="links", weight=2];
+  subgraph cluster_0 {
+    node [color=blue]
+    0 -- 1 [label=<simple>]
+  }
+}

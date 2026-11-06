@@ -4,6 +4,7 @@ import c from "./systems/c/grammar.ts";
 import css from "./web/css/grammar.ts";
 import diff from "./data/diff/grammar.ts";
 import dockerfile from "./build/dockerfile/grammar.ts";
+import dot from "./data/dot/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import go from "./managed/go/grammar.ts";
@@ -36,6 +37,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   css,
   diff,
   dockerfile,
+  dot,
   fjson,
   gitattributes,
   go,

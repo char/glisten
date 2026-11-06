@@ -1,0 +1,14 @@
+# 42 "generated.dot"
+DiGrApH G {
+  // Keywords are case-insensitive only as whole bare IDs.
+  # An indented hash also starts a comment.
+  GRAPH [label="graph // not a comment"];
+  node_name -> graph2 [weight=-.5, width=12., height=-12.34];
+  _x -> café [label="a \"quote\"" + " and " + "more"];
+  a:port:sw -> b:n; /* a block
+    comment with // and # inside */
+  a [label="continued \
+line", tooltip="literal \\n", path="dir\\\\"];
+  after_path -> next;
+  html [label=<<TABLE><TR><TD>one &amp; two</TD></TR></TABLE>>];
+}

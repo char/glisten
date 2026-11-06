@@ -1,0 +1,10 @@
+strict digraph workflow {
+  graph [rankdir=LR; label="Build pipeline"];
+  node [shape=box, style=filled];
+  edge [color=gray];
+  source:out:e -> build:in:w -> deploy [label="next"];
+  subgraph cluster_checks {
+    label="Checks";
+    build -> test;
+  }
+}
