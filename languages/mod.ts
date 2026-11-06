@@ -37,6 +37,7 @@ import markdown from "./markup/markdown/grammar.ts";
 import nginx from "./config/nginx/grammar.ts";
 import ninja from "./build/ninja/grammar.ts";
 import nix from "./build/nix/grammar.ts";
+import ocaml from "./functional/ocaml/grammar.ts";
 import php from "./web/php/grammar.ts";
 import powershell from "./shell/powershell/grammar.ts";
 import proto from "./data/proto/grammar.ts";
@@ -99,6 +100,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   nginx,
   ninja,
   nix,
+  ocaml,
   php,
   powershell,
   proto,

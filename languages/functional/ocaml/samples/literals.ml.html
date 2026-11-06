@@ -1,0 +1,10 @@
+<g-c>#!/usr/bin/env ocaml</g-c>
+<g-c>#use "topfind";;</g-c>
+<g-c>(* Nested (* comment *) with a quoted "*)" and a char '*' inside. *)</g-c>
+<g-k>let</g-k> <g-v>raw</g-v> <g-pd>=</g-pd> <g-s>{tag|One |other} two *) " \n |tag}</g-s>
+<g-k>let</g-k> <g-v>empty</g-v> <g-pd>=</g-pd> <g-s>{|ordinary |wrong} literal|}</g-s>
+<g-k>let</g-k> <g-v>chars</g-v> <g-pd>=</g-pd> <g-pb>[</g-pb><g-s>'a'</g-s><g-pd>;</g-pd> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>;</g-pd> <g-s>'</g-s><g-se>\123</g-se><g-s>'</g-s><g-pd>;</g-pd> <g-s>'</g-s><g-se>\x41</g-se><g-s>'</g-s><g-pb>]</g-pb>
+<g-k>let</g-k> <g-v>values</g-v> <g-pd>=</g-pd> <g-pb>[</g-pb><g-n>0xffl</g-n><g-pd>;</g-pd> <g-n>0o77L</g-n><g-pd>;</g-pd> <g-n>0b10_01n</g-n><g-pd>;</g-pd> <g-n>1_234</g-n><g-pd>;</g-pd> <g-n>1.25e-3</g-n><g-pd>;</g-pd> <g-n>0x1.fp3</g-n><g-pb>]</g-pb>
+<g-k>let</g-k> <g-v>poly</g-v> <g-pd>:</g-pd> <g-pb>[</g-pb> <g-t>`Red</g-t> <g-pd>|</g-pd> <g-t>`Blue</g-t> <g-k>of</g-k> <g-v>int</g-v> <g-pb>]</g-pb> <g-pd>=</g-pd> <g-t>`Blue</g-t> <g-n>42</g-n>
+<g-k>let</g-k> <g-v>read</g-v> <g-pd>?</g-pd><g-vm>default</g-vm> <g-pd>~</g-pd><g-vm>name</g-vm><g-pd>:</g-pd><g-v>label</g-v> <g-pd>=</g-pd> <g-v>label</g-v> <g-o>|&gt;</g-o> <g-t>String</g-t><g-pd>.</g-pd><g-v>trim</g-v>
+<g-k>let</g-k> <g-v>run</g-v> <g-pd>=</g-pd> <g-ps>[%</g-ps><g-at>extension</g-at> <g-v>payload</g-v><g-pb>]</g-pb> <g-ps>[@@</g-ps><g-at>warning</g-at> <g-s>"-3"</g-s><g-pb>]</g-pb>

@@ -1,0 +1,7 @@
+<g-c>(** Public interface. *)</g-c>
+<g-k>type</g-k> <g-v>'a</g-v> <g-v>tree</g-v> <g-pd>=</g-pd> <g-t>Leaf</g-t> <g-pd>|</g-pd> <g-t>Node</g-t> <g-k>of</g-k> <g-v>'a</g-v> <g-o>*</g-o> <g-v>'a</g-v> <g-v>tree</g-v> <g-v>list</g-v>
+<g-k>val</g-k> <g-v>map</g-v> <g-pd>:</g-pd> <g-v>f</g-v><g-pd>:</g-pd><g-pb>(</g-pb><g-v>'a</g-v> <g-pd>-&gt;</g-pd> <g-v>'b</g-v><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-v>'a</g-v> <g-v>tree</g-v> <g-pd>-&gt;</g-pd> <g-v>'b</g-v> <g-v>tree</g-v>
+<g-k>module</g-k> <g-t>Make</g-t> <g-pd>:</g-pd> <g-k>functor</g-k> <g-pb>(</g-pb><g-t>M</g-t> <g-pd>:</g-pd> <g-k>sig</g-k> <g-k>type</g-k> <g-v>t</g-v> <g-k>val</g-k> <g-v>compare</g-v> <g-pd>:</g-pd> <g-v>t</g-v> <g-pd>-&gt;</g-pd> <g-v>t</g-v> <g-pd>-&gt;</g-pd> <g-v>int</g-v> <g-k>end</g-k><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-k>sig</g-k>
+  <g-k>val</g-k> <g-v>compare_tree</g-v> <g-pd>:</g-pd> <g-t>M</g-t><g-pd>.</g-pd><g-v>t</g-v> <g-pd>-&gt;</g-pd> <g-t>M</g-t><g-pd>.</g-pd><g-v>t</g-v> <g-pd>-&gt;</g-pd> <g-v>int</g-v>
+<g-k>end</g-k>
+<g-k>val</g-k> <g-v>example</g-v> <g-pd>:</g-pd> <g-v>int</g-v> <g-v>option</g-v>
