@@ -1,0 +1,15 @@
+<g-ps>-----------------------------</g-ps> <g-k>MODULE</g-k> <g-v>Counter</g-v> <g-ps>-----------------------------</g-ps>
+<g-k>EXTENDS</g-k> <g-v>Naturals</g-v><g-pd>,</g-pd> <g-v>FiniteSets</g-v>
+<g-k>CONSTANT</g-k> <g-v>Limit</g-v>
+<g-k>VARIABLE</g-k> <g-v>count</g-v>
+
+<g-f>Init</g-f> <g-o>==</g-o> <g-v>count</g-v> <g-o>=</g-o> <g-n>0</g-n>
+<g-f>Next</g-f> <g-o>==</g-o> <g-o>/\</g-o> <g-v>count</g-v> <g-o>&lt;</g-o> <g-v>Limit</g-v>
+        <g-o>/\</g-o> <g-v>count</g-v><g-o>'</g-o> <g-o>=</g-o> <g-v>count</g-v> <g-o>+</g-o> <g-n>1</g-n>
+<g-f>Spec</g-f> <g-o>==</g-o> <g-v>Init</g-v> <g-o>/\</g-o> <g-o>[]</g-o><g-pb>[</g-pb><g-v>Next</g-v><g-pb>]</g-pb><g-v>_count</g-v>
+
+<g-f>TypeOK</g-f> <g-o>==</g-o> <g-v>count</g-v> <g-o>\in</g-o> <g-n>0</g-n><g-o>..</g-o><g-v>Limit</g-v>
+<g-k>THEOREM</g-k> <g-f>Safety</g-f> <g-o>==</g-o> <g-v>Spec</g-v> <g-o>=&gt;</g-o> <g-o>[]</g-o><g-v>TypeOK</g-v>
+<g-k>PROOF</g-k>
+  <g-k>OBVIOUS</g-k>
+<g-ps>=============================================================================</g-ps>

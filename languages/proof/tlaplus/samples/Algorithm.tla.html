@@ -1,0 +1,19 @@
+<g-ps>-----------------------------</g-ps> <g-k>MODULE</g-k> <g-v>Algorithm</g-v> <g-ps>-----------------------------</g-ps>
+<g-k>EXTENDS</g-k> <g-v>Naturals</g-v>
+
+<g-c>(* A nested comment: (* inner *) back outside. *)</g-c>
+<g-c>(*</g-c> <g-k>--fair</g-k> <g-k>algorithm</g-k> <g-v>Countdown</g-v> <g-pb>{</g-pb>
+  <g-k>variables</g-k> <g-v>n</g-v> <g-o>=</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+  <g-k>process</g-k> <g-pb>(</g-pb><g-v>worker</g-v> <g-o>=</g-o> <g-s>"worker"</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-l>start</g-l><g-pd>:</g-pd>
+      <g-k>while</g-k> <g-pb>(</g-pb><g-v>n</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>await</g-k> <g-v>n</g-v> <g-o>\in</g-o> <g-v>Nat</g-v><g-pd>;</g-pd>
+        <g-v>n</g-v> <g-o>:=</g-o> <g-v>n</g-v> <g-o>-</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+      <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-l>finish</g-l><g-pd>:</g-pd>
+      <g-k>either</g-k> <g-pb>{</g-pb> <g-k>goto</g-k> <g-v>done</g-v><g-pd>;</g-pd> <g-pb>}</g-pb> <g-k>or</g-k> <g-pb>{</g-pb> <g-k>skip</g-k><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-l>done</g-l><g-pd>:</g-pd> <g-k>skip</g-k><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb> <g-c>*)</g-c>
+<g-c>\* The algorithm above is a comment in TLA+, but contains PlusCal code.</g-c>
+<g-ps>=============================================================================</g-ps>

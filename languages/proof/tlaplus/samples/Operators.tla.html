@@ -1,0 +1,20 @@
+<g-ps>----------------------------</g-ps> <g-k>MODULE</g-k> <g-v>Operators</g-v> <g-ps>----------------------------</g-ps>
+<g-k>EXTENDS</g-k> <g-v>Naturals</g-v><g-pd>,</g-pd> <g-v>Sequences</g-v><g-pd>,</g-pd> <g-v>TLC</g-v>
+<g-k>CONSTANTS</g-k> <g-v>S</g-v><g-pd>,</g-pd> <g-v>F</g-v>
+<g-k>VARIABLE</g-k> <g-v>x</g-v>
+
+<g-f>Choose</g-f><g-pb>(</g-pb><g-v>s</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-k>CHOOSE</g-k> <g-v>y</g-v> <g-o>\in</g-o> <g-v>s</g-v><g-pd>:</g-pd> <g-v>y</g-v> <g-o>&gt;</g-o> <g-n>0</g-n>
+<g-f>Pair</g-f><g-pb>(</g-pb><g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-pb>&lt;&lt;</g-pb><g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pb>&gt;&gt;</g-pb>
+<g-v>Apply</g-v><g-pb>(</g-pb><g-v>op</g-v><g-pb>(</g-pb><g-v>_</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>value</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-v>op</g-v><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+<g-f>Transform</g-f><g-pb>(</g-pb><g-v>s</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-k>LET</g-k> <g-f>f</g-f><g-pb>(</g-pb><g-v>z</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-v>z</g-v> <g-o>+</g-o> <g-n>1</g-n> <g-k>IN</g-k> <g-pb>{</g-pb> <g-v>Apply</g-v><g-pb>(</g-pb><g-k>LAMBDA</g-k> <g-v>t</g-v><g-pd>:</g-pd> <g-v>f</g-v><g-pb>(</g-pb><g-v>t</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>y</g-v><g-pb>)</g-pb> <g-pd>:</g-pd> <g-v>y</g-v> <g-o>\in</g-o> <g-v>s</g-v> <g-pb>}</g-pb>
+<g-f>Test</g-f> <g-o>==</g-o> <g-k>IF</g-k> <g-v>x</g-v> <g-o>\in</g-o> <g-v>S</g-v> <g-k>THEN</g-k> <g-cb>TRUE</g-cb> <g-k>ELSE</g-k> <g-cb>FALSE</g-cb>
+<g-f>Cases</g-f> <g-o>==</g-o> <g-k>CASE</g-k> <g-v>x</g-v> <g-o>=</g-o> <g-n>0</g-n> <g-o>-&gt;</g-o> <g-s>"zero"</g-s> <g-o>[]</g-o> <g-k>OTHER</g-k> <g-o>-&gt;</g-o> <g-s>"nonzero</g-s><g-se>\n</g-se><g-s>value"</g-s>
+<g-f>Update</g-f> <g-o>==</g-o> <g-pb>[</g-pb><g-v>F</g-v> <g-k>EXCEPT</g-k> <g-pd>!</g-pd><g-pb>[</g-pb><g-v>x</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-o>@</g-o> <g-o>+</g-o> <g-n>1</g-n><g-pb>]</g-pb>
+<g-f>Functions</g-f> <g-o>==</g-o> <g-pb>(</g-pb><g-n>1</g-n> <g-o>:&gt;</g-o> <g-s>"one"</g-s><g-pb>)</g-pb> <g-o>@@</g-o> <g-pb>(</g-pb><g-n>2</g-n> <g-o>:&gt;</g-o> <g-s>"two"</g-s><g-pb>)</g-pb>
+<g-f>Bases</g-f> <g-o>==</g-o> <g-pb>&lt;&lt;</g-pb><g-n>\b101</g-n><g-pd>,</g-pd> <g-n>\o17</g-n><g-pd>,</g-pd> <g-n>\h1F</g-n><g-pd>,</g-pd> <g-n>42</g-n><g-pd>,</g-pd> <g-n>3.14</g-n><g-pb>&gt;&gt;</g-pb>
+<g-f>Unicode</g-f> <g-o>==</g-o> <g-o>∀</g-o> <g-v>y</g-v> <g-o>∈</g-o> <g-v>S</g-v> <g-pd>:</g-pd> <g-pb>(</g-pb><g-v>y</g-v> <g-o>∈</g-o> <g-v>S</g-v> <g-o>∧</g-o> <g-v>y</g-v> <g-o>⊆</g-o> <g-v>S</g-v><g-pb>)</g-pb> <g-o>⇒</g-o> <g-pb>(</g-pb><g-v>y</g-v> <g-o>∈</g-o> <g-v>S</g-v> <g-o>∨</g-o> <g-v>y</g-v> <g-o>∉</g-o> <g-v>S</g-v><g-pb>)</g-pb>
+<g-f>Temporal</g-f> <g-o>==</g-o> <g-o>□</g-o><g-pb>(</g-pb><g-k>ENABLED</g-k> <g-v>Test</g-v><g-pb>)</g-pb> <g-o>∧</g-o> <g-o>◇</g-o><g-pb>(</g-pb><g-v>x</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-o>∧</g-o> <g-pb>(</g-pb><g-v>Test</g-v> <g-o>~&gt;</g-o> <g-v>Test</g-v><g-pb>)</g-pb>
+<g-f>Stutter</g-f> <g-o>==</g-o> <g-k>UNCHANGED</g-k> <g-v>x</g-v>
+<g-f>ASCII</g-f> <g-o>==</g-o> <g-pb>(</g-pb><g-o>\A</g-o> <g-v>y</g-v> <g-o>\in</g-o> <g-v>S</g-v> <g-pd>:</g-pd> <g-v>y</g-v> <g-o>\in</g-o> <g-v>S</g-v><g-pb>)</g-pb> <g-o>/\</g-o> <g-pb>(</g-pb><g-o>\E</g-o> <g-v>y</g-v> <g-o>\in</g-o> <g-v>S</g-v> <g-pd>:</g-pd> <g-v>y</g-v> <g-o>\in</g-o> <g-v>S</g-v><g-pb>)</g-pb>
+<g-f>Sets</g-f> <g-o>==</g-o> <g-pb>(</g-pb><g-k>SUBSET</g-k> <g-v>S</g-v><g-pb>)</g-pb> <g-o>\X</g-o> <g-pb>(</g-pb><g-k>UNION</g-k> <g-v>S</g-v><g-pb>)</g-pb>
+<g-ps>=============================================================================</g-ps>

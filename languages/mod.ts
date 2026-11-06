@@ -71,6 +71,7 @@ import svelte from "./web/svelte/grammar.ts";
 import swift from "./managed/swift/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
+import tlaplus from "./proof/tlaplus/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
@@ -157,6 +158,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   swift,
   textproto,
   thrift,
+  tlaplus,
   toml,
   tsx,
   typescript,
