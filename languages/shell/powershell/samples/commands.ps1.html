@@ -1,0 +1,25 @@
+<g-c>&lt;#
+</g-c><g-k>.SYNOPSIS</g-k><g-c>
+    List source files and print their lengths.
+</g-c><g-k>.DESCRIPTION</g-k><g-c>
+    Demonstrates parameters, types, pipelines, and comment help.
+</g-c><g-k>.EXAMPLE</g-k><g-c>
+    Get-SourceStats -Path . -Verbose
+#&gt;</g-c>
+<g-pb>[</g-pb><g-at>CmdletBinding</g-at><g-pb>()]</g-pb>
+<g-k>param</g-k><g-pb>(</g-pb>
+    <g-pb>[</g-pb><g-at>Parameter</g-at><g-pb>(</g-pb><g-at>Mandatory</g-at> <g-o>=</g-o> <g-cb>$true</g-cb><g-pb>)]</g-pb>
+    <g-pb>[</g-pb><g-t>string</g-t><g-pb>]</g-pb> <g-v>$Path</g-v><g-pd>,</g-pd>
+    <g-pb>[</g-pb><g-t>int</g-t><g-pb>]</g-pb> <g-v>$Limit</g-v> <g-o>=</g-o> <g-n>1kb</g-n>
+<g-pb>)</g-pb>
+
+<g-k>function</g-k> <g-f>Get-SourceStats</g-f> <g-pb>{</g-pb>
+    <g-k>param</g-k><g-pb>([</g-pb><g-t>string</g-t><g-pb>]</g-pb> <g-v>$Root</g-v><g-pb>)</g-pb>
+    <g-v>$items</g-v> <g-o>=</g-o> <g-f>Get-ChildItem</g-f> <g-at>-Path</g-at> <g-v>$Root</g-v> <g-at>-Recurse</g-at> <g-o>|</g-o>
+        <g-f>Where-Object</g-f> <g-pb>{</g-pb> <g-v>$_</g-v><g-pd>.</g-pd><g-vm>Length</g-vm> <g-o>-ge</g-o> <g-n>0x10L</g-n> <g-o>-and</g-o> <g-v>$PSItem</g-v><g-pd>.</g-pd><g-vm>Name</g-vm> <g-o>-like</g-o> <g-s>'*.ps1'</g-s> <g-pb>}</g-pb>
+    <g-k>foreach</g-k> <g-pb>(</g-pb><g-v>$item</g-v> <g-k>in</g-k> <g-v>$items</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-f>Write-Host</g-f> <g-at>-Object</g-at> <g-s>"</g-s><g-ps>$(</g-ps><g-v>$item</g-v><g-pd>.</g-pd><g-vm>Name</g-vm><g-pb>)</g-pb><g-s>: </g-s><g-ps>$(</g-ps><g-v>$item</g-v><g-pd>.</g-pd><g-vm>Length</g-vm><g-pb>)</g-pb><g-se>`n</g-se><g-s>"</g-s>
+    <g-pb>}</g-pb>
+    <g-k>return</g-k> <g-pb>[</g-pb><g-t>System</g-t><g-pd>.</g-pd><g-t>IO</g-t><g-pd>.</g-pd><g-t>File</g-t><g-pb>]</g-pb><g-o>::</g-o><g-f>Exists</g-f><g-pb>(</g-pb><g-v>$Root</g-v><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+<g-f>Get-SourceStats</g-f> <g-at>-Path</g-at> <g-v>$env:PATH</g-v> <g-at>-Limit</g-at> <g-v>$Limit</g-v>

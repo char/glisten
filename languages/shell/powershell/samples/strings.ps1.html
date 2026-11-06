@@ -1,0 +1,12 @@
+<g-v>$single</g-v> <g-o>=</g-o> <g-s>'don</g-s><g-se>''</g-se><g-s>t expand $env:HOME or `n'</g-s>
+<g-v>$double</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-v>$env:USER</g-v><g-s>; </g-s><g-ps>$(</g-ps><g-f>Get-Date</g-f> <g-at>-Format</g-at> <g-s>'yyyy'</g-s><g-pb>)</g-pb><g-s>; </g-s><g-v>${odd name}</g-v><g-se>`n</g-se><g-s>"</g-s>
+<g-v>$plain</g-v> <g-o>=</g-o> <g-s>@'
+Literal $x and $(Get-Date)
+not a terminator '@ unless at line start
+'@</g-s>
+<g-v>$expanded</g-v> <g-o>=</g-o> <g-s>@"
+User: </g-s><g-v>$env:USERNAME</g-v><g-s>
+Value: </g-s><g-ps>$(</g-ps><g-v>$script:value</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-s>
+Indented "@ is not a terminator.
+"@</g-s>
+<g-v>$escaped</g-v> <g-o>=</g-o> <g-s>"escaped </g-s><g-se>`"</g-se><g-s>quote</g-s><g-se>`"</g-se><g-s> and </g-s><g-se>``</g-se><g-s>backtick</g-s><g-se>``</g-se><g-s>"</g-s>

@@ -1,0 +1,19 @@
+<g-k>using</g-k> <g-f>namespace</g-f> System<g-pd>.</g-pd><g-vm>Collections</g-vm><g-pd>.</g-pd><g-vm>Generic</g-vm>
+<g-v>$settings</g-v> <g-o>=</g-o> <g-ps>@{</g-ps>
+    <g-pr>Name</g-pr> <g-o>=</g-o> <g-s>'worker'</g-s>
+    <g-pr>Enabled</g-pr> <g-o>=</g-o> <g-cb>$true</g-cb>
+    <g-pr>Missing</g-pr> <g-o>=</g-o> <g-cb>$null</g-cb>
+    <g-pr>Values</g-pr> <g-o>=</g-o> <g-ps>@(</g-ps><g-n>1</g-n><g-pd>,</g-pd> <g-n>2.5</g-n><g-pd>,</g-pd> <g-n>0x10L</g-n><g-pd>,</g-pd> <g-n>1kb</g-n><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+<g-v>$argsForChild</g-v> <g-o>=</g-o> <g-ps>@{</g-ps> <g-pr>Path</g-pr> <g-o>=</g-o> <g-s>'.'</g-s><g-o>;</g-o> <g-pr>ErrorAction</g-pr> <g-o>=</g-o> <g-s>'Stop'</g-s> <g-pb>}</g-pb>
+<g-f>Get-Item</g-f> <g-v>@argsForChild</g-v> <g-o>|</g-o> <g-f>ForEach-Object</g-f> <g-pb>{</g-pb>
+    <g-v>$script:count</g-v> <g-o>+=</g-o> <g-n>1</g-n>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>$_</g-v><g-pd>.</g-pd><g-vm>Name</g-vm> <g-o>-MATCH</g-o> <g-s>'test'</g-s> <g-o>-or</g-o> <g-cb>$false</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-f>Write-Output</g-f> <g-pb>(</g-pb><g-v>$_</g-v><g-pd>.</g-pd><g-vm>Name</g-vm> <g-o>??</g-o> <g-s>'unknown'</g-s><g-pb>)</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-v>$result</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-t>System</g-t><g-pd>.</g-pd><g-t>IO</g-t><g-pd>.</g-pd><g-t>File</g-t><g-pb>]</g-pb><g-o>::</g-o><g-f>Exists</g-f><g-pb>(</g-pb><g-v>$settings</g-v><g-pd>.</g-pd><g-vm>Name</g-vm><g-pb>)</g-pb>
+<g-v>$maybe</g-v> <g-o>=</g-o> <g-v>$settings</g-v><g-o>?.</g-o><g-vm>Name</g-vm>
+<g-c># </g-c><g-k>.SYNOPSIS</g-k><g-c> a line-help keyword</g-c>
+<g-f>Write-Output</g-f> <g-se>`
+</g-se>    <g-v>$using:result</g-v>
