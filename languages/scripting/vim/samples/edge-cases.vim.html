@@ -18,3 +18,9 @@
 <g-s> END
 </g-s><g-l>END</g-l>
 <g-k>let</g-k> <g-v>after_heredocs</g-v> <g-o>=</g-o> <g-s>'done'</g-s>
+<g-k>let</g-k> <g-v>greeting</g-v> <g-o>=&lt;&lt;</g-o> <g-k>trim</g-k> <g-k>eval</g-k> <g-l>TEXT</g-l> <g-c>" interpolated header</g-c>
+<g-s>  Hello </g-s><g-pb>{</g-pb><g-v>g:name</g-v><g-pb>}</g-pb><g-s>; </g-s><g-pb>{</g-pb><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-pb>}</g-pb><g-s>; </g-s><g-se>{{</g-se><g-s>literal braces</g-s><g-se>}}</g-se><g-s>
+</g-s><g-l>TEXT</g-l>
+<g-k>let</g-k> <g-v>plain_text</g-v> <g-o>=&lt;&lt;</g-o> <g-l>TEXT</g-l>
+<g-s>  {g:name} remains literal
+</g-s><g-l>TEXT</g-l>

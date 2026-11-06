@@ -25,3 +25,6 @@
 <g-k>setlocal</g-k> path=one\ two <g-c># option comment</g-c>
 <g-k>legacy</g-k> <g-k>let</g-k> <g-v>g:old</g-v> <g-o>=</g-o> <g-s>"legacy value"</g-s> <g-c>" legacy comment</g-c>
 <g-k>var</g-k> <g-v>newer</g-v> <g-o>=</g-o> <g-s>"vim9 value"</g-s> <g-c># vim9 comment</g-c>
+<g-k>var</g-k> <g-v>result</g-v> <g-o>=&lt;&lt;</g-o> <g-k>eval</g-k> <g-l>END</g-l> <g-c># interpolated header</g-c>
+<g-s>  Result: </g-s><g-pb>{</g-pb><g-f>Format</g-f><g-pb>(</g-pb><g-s>'world'</g-s><g-pb>)}</g-pb><g-s> and </g-s><g-se>{{</g-se><g-s>literal</g-s><g-se>}}</g-se><g-s>
+</g-s><g-l>END</g-l>

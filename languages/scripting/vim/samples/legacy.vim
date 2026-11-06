@@ -21,6 +21,7 @@ setlocal path=one\ two,three\"four " option comment
 syntax keyword Demo contained ALPHA BETA
 syntax match Demo /"quoted"/ contained
 syntax region Quoted start=+"+ skip=+\\"+ end=+"+
+syntax sync match Demo grouphere NONE /"sync"/
 highlight default link Demo Comment " highlight comment
 normal! i"literal | normal text
 vim9cmd var greeting = "vim9 string" # vim9 comment

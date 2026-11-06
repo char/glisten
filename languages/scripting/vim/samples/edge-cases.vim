@@ -18,3 +18,9 @@ let untrimmed =<< END
  END
 END
 let after_heredocs = 'done'
+let greeting =<< trim eval TEXT " interpolated header
+  Hello {g:name}; {1 + 2}; {{literal braces}}
+TEXT
+let plain_text =<< TEXT
+  {g:name} remains literal
+TEXT

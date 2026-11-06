@@ -245,11 +245,10 @@ const continuationComment = (d: Dialect) =>
     pushState("lineComment"),
   );
 
-// Syntax subcommand abbreviations, :syntax sync patterns and some command
-// mini-languages are approximated. Continuation does not model 'cpoptions' or every
-// intervening comment line. Captured heredoc indent plus marker is capped at
-// 256 bytes; omitted markers, eval interpolation and header comments are not
-// fully parsed.
+// Some :syntax and other Ex mini-languages are approximated. Continuation does
+// not model 'cpoptions' or every intervening comment line. Captured heredoc
+// indent plus marker is capped at 256 bytes; omitted and invalid markers are
+// not fully parsed.
 const patternDelimiter = slot.run("syntax-pattern");
 for (const d of ["legacy", "vim9"] as const) {
   const cases = [
@@ -657,7 +656,12 @@ for (const d of ["legacy", "vim9"] as const) {
                 pushState(expr(d, group, true, false)),
               ),
             ),
-            token("=<<", "operator", setState(`${d}_heredocReturn`), pushState("heredocHeader")),
+            token(
+              "=<<",
+              "operator",
+              setState(`${d}_heredocReturn`),
+              pushState(`${d}_heredocHeader`),
+            ),
             token("||", "operator", setState(before)),
             ...(g === "top"
               ? endBar
@@ -686,37 +690,72 @@ states.singleString = {
     redispatch("\n", popState()),
   ],
 };
-for (const trim of [false, true]) {
-  const header = trim ? "heredocHeaderTrim" : "heredocHeader";
-  states[header] = {
-    style: "plain",
-    arms: [
-      on(
-        except(all, " \t\r\n"),
-        bytes(except(all, " \t\r\n")),
-        classify(
-          [
-            ...(trim
-              ? []
-              : [{ text: "trim", then: [paint("keyword"), setState("heredocHeaderTrim")] }]),
-            { text: "eval", then: [paint("keyword")] },
-          ],
-          [
-            paint("label"),
-            ...(trim ? [] : [shell.captureReset()]),
-            shell.captureAppend(),
-            setState("heredocAfterMarker"),
-          ],
+for (const d of ["legacy", "vim9"] as const) {
+  for (const trim of [false, true])
+    for (const evaluate of [false, true]) {
+      const header = `${d}_heredocHeader${trim ? "Trim" : ""}${evaluate ? "Eval" : ""}`;
+      const afterMarker = `${d}_heredocAfterMarker${evaluate ? "Eval" : ""}`;
+      states[header] = {
+        style: "plain",
+        arms: [
+          on(
+            except(all, " \t\r\n"),
+            bytes(except(all, " \t\r\n")),
+            classify(
+              [
+                ...(trim
+                  ? []
+                  : [
+                      {
+                        text: "trim",
+                        then: [
+                          paint("keyword"),
+                          setState(`${d}_heredocHeaderTrim${evaluate ? "Eval" : ""}`),
+                        ],
+                      },
+                    ]),
+                {
+                  text: "eval",
+                  then: [paint("keyword"), setState(`${d}_heredocHeader${trim ? "Trim" : ""}Eval`)],
+                },
+              ],
+              [
+                paint("label"),
+                ...(trim ? [] : [shell.captureReset()]),
+                shell.captureAppend(),
+                setState(afterMarker),
+              ],
+            ),
+          ),
+          token("\n", "plain", setState(evaluate ? `${d}_heredocEvalBody` : "heredocBody")),
+        ],
+      };
+    }
+  for (const evaluate of [false, true]) {
+    states[`${d}_heredocAfterMarker${evaluate ? "Eval" : ""}`] = {
+      style: "plain",
+      arms: [
+        on(
+          d === "legacy" ? '"' : "#",
+          previousNotIn(except(all, " \t\n")),
+          literal(d === "legacy" ? '"' : "#"),
+          paint("comment"),
+          pushState("lineComment"),
         ),
-      ),
-      token("\n", "plain", setState("heredocBody")),
+        token("\n", "plain", setState(evaluate ? `${d}_heredocEvalBody` : "heredocBody")),
+      ],
+    };
+  }
+  states[`${d}_heredocEvalBody`] = {
+    style: "string",
+    arms: [
+      on(all, lineStart(), shell.captured(), lineEnd(), paint("label"), popState()),
+      token("{{", "string.escape"),
+      token("}}", "string.escape"),
+      token("{", "punctuation.bracket", pushState(expr(d, "brace", true, false))),
     ],
   };
 }
-states.heredocAfterMarker = {
-  style: "plain",
-  arms: [token("\n", "plain", setState("heredocBody"))],
-};
 states.heredocBody = {
   style: "string",
   arms: [on(all, lineStart(), shell.captured(), lineEnd(), paint("label"), popState())],

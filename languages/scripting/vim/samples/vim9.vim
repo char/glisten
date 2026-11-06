@@ -25,3 +25,6 @@ echo Name
 setlocal path=one\ two # option comment
 legacy let g:old = "legacy value" " legacy comment
 var newer = "vim9 value" # vim9 comment
+var result =<< eval END # interpolated header
+  Result: {Format('world')} and {{literal}}
+END
