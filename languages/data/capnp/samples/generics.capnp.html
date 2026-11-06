@@ -1,0 +1,18 @@
+<g-l>@0xaad48d5c192f3571</g-l><g-pd>;</g-pd>
+
+<g-k>annotation</g-k> obsolete<g-pb>(</g-pb>field<g-pd>,</g-pd> method<g-pb>)</g-pb> <g-ps>:</g-ps><g-t>Text</g-t><g-pd>;</g-pd>
+<g-k>const</g-k> maxEntries <g-ps>:</g-ps><g-t>UInt32</g-t> <g-o>=</g-o> <g-n>0x400</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> defaults <g-ps>:</g-ps><g-t>List</g-t><g-pb>(</g-pb><g-t>Int32</g-t><g-pb>)</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-o>-</g-o><g-n>1</g-n><g-pd>,</g-pd> <g-n>075</g-n><g-pd>,</g-pd> <g-n>250</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> rate <g-ps>:</g-ps><g-t>Float64</g-t> <g-o>=</g-o> <g-n>2.5e2</g-n><g-pd>;</g-pd>
+
+<g-k>struct</g-k> <g-t>Pair</g-t><g-pb>(</g-pb><g-t>First</g-t><g-pd>,</g-pd> <g-t>Second</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pr>first</g-pr> <g-l>@0</g-l> <g-ps>:</g-ps><g-t>First</g-t><g-pd>;</g-pd>
+  <g-pr>second</g-pr> <g-l>@1</g-l> <g-ps>:</g-ps><g-t>Second</g-t><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>struct</g-k> <g-t>Message</g-t> <g-pb>{</g-pb>
+  <g-pr>pair</g-pr> <g-l>@0</g-l> <g-ps>:</g-ps><g-t>Pair</g-t><g-pb>(</g-pb><g-t>Text</g-t><g-pd>,</g-pd> <g-t>UInt64</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  details <g-ps>:</g-ps><g-k>group</g-k> <g-pb>{</g-pb>
+    <g-pr>label</g-pr> <g-l>@1</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-ps>$</g-ps><g-at>obsolete</g-at><g-pb>(</g-pb><g-s>"use pair"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pr>enabled</g-pr> <g-l>@2</g-l> <g-ps>:</g-ps><g-t>Bool</g-t> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

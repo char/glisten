@@ -1,0 +1,13 @@
+<g-l>@0x123</g-l><g-pd>;</g-pd> <g-c># short ID, still a lexical ID</g-c>
+<g-k>struct</g-k> <g-t>Caf</g-t>é <g-pb>{</g-pb>
+  <g-c># Delimiters in strings are not syntax.</g-c>
+  <g-pr>note</g-pr> <g-l>@0</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-o>=</g-o> <g-s>"quote: </g-s><g-se>\"</g-se><g-s>; # 雪"</g-s><g-pd>;</g-pd>
+  <g-pr>blob</g-pr> <g-l>@1</g-l> <g-ps>:</g-ps><g-t>Data</g-t> <g-o>=</g-o> <g-s>0x"00 ff
+    ab"</g-s><g-pd>;</g-pd>
+  <g-pr>doc</g-pr> <g-l>@2</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-o>=</g-o> <g-s>`literal # text</g-s>
+      <g-s>`second line</g-s>
+  <g-pr>unfinished</g-pr> <g-l>@3</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-o>=</g-o> <g-s>"unterminated</g-s>
+  <g-pr>near</g-pr> <g-l>@4</g-l> <g-ps>:</g-ps><g-t>UInt64</g-t> <g-o>=</g-o> 0xnotHex<g-pd>;</g-pd>
+  <g-pr>numberish</g-pr> <g-l>@5</g-l> <g-ps>:</g-ps><g-t>UInt32</g-t> <g-o>=</g-o> 123abc<g-pd>;</g-pd>
+  <g-pr>annotationish</g-pr> <g-l>@6</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-ps>$</g-ps><g-at>x</g-at><g-pd>.</g-pd><g-at>y</g-at><g-pb>(</g-pb><g-s>"v"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

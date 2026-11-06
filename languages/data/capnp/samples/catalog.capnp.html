@@ -1,0 +1,30 @@
+<g-l>@0xb813f725d4a690cd</g-l><g-pd>;</g-pd>
+
+<g-k>using</g-k> <g-t>Go</g-t> <g-o>=</g-o> <g-k>import</g-k> <g-s>"/go.capnp"</g-s><g-pd>;</g-pd>
+<g-ps>$</g-ps><g-at>Go</g-at><g-pd>.</g-pd><g-at>package</g-at><g-pb>(</g-pb><g-s>"catalog"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-c># A record exposed by the inventory service.</g-c>
+<g-k>struct</g-k> <g-t>Item</g-t> <g-pb>{</g-pb>
+  <g-pr>id</g-pr> <g-l>@0</g-l> <g-ps>:</g-ps><g-t>UInt64</g-t><g-pd>;</g-pd>
+  <g-pr>name</g-pr> <g-l>@1</g-l> <g-ps>:</g-ps><g-t>Text</g-t> <g-o>=</g-o> <g-s>"unnamed"</g-s><g-pd>;</g-pd>
+  <g-pr>tags</g-pr> <g-l>@2</g-l> <g-ps>:</g-ps><g-t>List</g-t><g-pb>(</g-pb><g-t>Text</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>payload</g-pr> <g-l>@3</g-l> <g-ps>:</g-ps><g-t>Data</g-t> <g-o>=</g-o> <g-s>0x"de ad be ef"</g-s><g-pd>;</g-pd>
+  status <g-ps>:</g-ps><g-k>union</g-k> <g-pb>{</g-pb>
+    <g-pr>available</g-pr> <g-l>@4</g-l> <g-ps>:</g-ps><g-t>Void</g-t><g-pd>;</g-pd>
+    <g-pr>reserved</g-pr> <g-l>@5</g-l> <g-ps>:</g-ps><g-t>Text</g-t><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>enum</g-k> <g-t>SortOrder</g-t> <g-pb>{</g-pb>
+  <g-pr>ascending</g-pr> <g-l>@0</g-l><g-pd>;</g-pd>
+  <g-pr>descending</g-pr> <g-l>@1</g-l><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>struct</g-k> <g-t>Listing</g-t> <g-pb>{</g-pb>
+  <g-pr>item</g-pr> <g-l>@0</g-l> <g-ps>:</g-ps><g-t>Item</g-t> <g-o>=</g-o> <g-pb>(</g-pb>id <g-o>=</g-o> <g-n>1</g-n><g-pd>,</g-pd> name <g-o>=</g-o> <g-s>"sample"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>interface</g-k> <g-t>Inventory</g-t> <g-pb>{</g-pb>
+  <g-f>fetch</g-f> <g-l>@0</g-l> <g-pb>(</g-pb>id <g-ps>:</g-ps><g-t>UInt64</g-t><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-pb>(</g-pb>item <g-ps>:</g-ps><g-t>Item</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-f>list</g-f> <g-l>@1</g-l> <g-pb>(</g-pb>order <g-ps>:</g-ps><g-t>SortOrder</g-t><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-pb>(</g-pb>items <g-ps>:</g-ps><g-t>List</g-t><g-pb>(</g-pb><g-t>Item</g-t><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
