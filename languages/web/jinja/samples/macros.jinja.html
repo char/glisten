@@ -1,0 +1,15 @@
+<g-c>{# Shared menu helpers #}</g-c>
+<g-ps>{%</g-ps> <g-k>import</g-k> <g-s>"forms.html"</g-s> <g-k>as</g-k> <g-v>forms</g-v> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>from</g-k> <g-s>"ui.html"</g-s> <g-k>import</g-k> <g-v>button</g-v> <g-k>as</g-k> <g-v>render_button</g-v> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>macro</g-k> <g-f>menu</g-f><g-pb>(</g-pb><g-v>items</g-v><g-pd>,</g-pd> <g-v>selected</g-v><g-o>=</g-o><g-cb>none</g-cb><g-pb>)</g-pb> <g-ps>-%}</g-ps>
+  &lt;ul&gt;
+  <g-ps>{%</g-ps> <g-k>for</g-k> <g-v>item</g-v> <g-k>in</g-k> <g-v>items</g-v> <g-k>recursive</g-k> <g-ps>%}</g-ps>
+    &lt;li&gt;<g-ps>{{</g-ps> <g-v>loop</g-v><g-pd>.</g-pd><g-vm>index</g-vm> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-f>render_button</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>.</g-pd><g-vm>label</g-vm><g-pb>)</g-pb> <g-ps>}}</g-ps>&lt;/li&gt;
+    <g-ps>{%</g-ps> <g-k>if</g-k> <g-v>item</g-v><g-pd>.</g-pd><g-vm>children</g-vm> <g-ps>%}{{</g-ps> <g-f>loop</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>.</g-pd><g-vm>children</g-vm><g-pb>)</g-pb> <g-ps>}}{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>else</g-k> <g-ps>%}</g-ps>
+    &lt;li&gt;Empty&lt;/li&gt;
+  <g-ps>{%</g-ps> <g-k>endfor</g-k> <g-ps>%}</g-ps>
+  &lt;/ul&gt;
+<g-ps>{%-</g-ps> <g-k>endmacro</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>set</g-k> <g-v>title</g-v> <g-o>=</g-o> <g-s>"Menu"</g-s> <g-o>~</g-o> <g-s>" items"</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>with</g-k> <g-v>count</g-v><g-o>=</g-o><g-v>items</g-v> <g-o>|</g-o> <g-f>length</g-f> <g-ps>%}{{</g-ps> <g-v>count</g-v> <g-ps>}}{%</g-ps> <g-k>endwith</g-k> <g-ps>%}</g-ps>

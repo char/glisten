@@ -1,0 +1,11 @@
+before {#- comment {{ ignored }} +#} after
+{%- raw -%}
+{{ this_is_not_a_tag | upper }}
+{% if ignored %}{# literal #}{% endrawx %}
+{%+ endraw +%}
+{{ {"key": [1, {"nested": "}}"}]}["key"][0] }}
+{{ "escaped \" quote" ~ 'and \' single' }}
+{%+ if value is not defined +%}missing{% endif %}
+{% set data %}inside {{ user.name }}{% endset %}
+{% filter upper %}filtered{% endfilter %}
+{% trans name=user.name %}Hello {{ name }}{% endtrans %}

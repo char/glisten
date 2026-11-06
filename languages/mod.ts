@@ -45,6 +45,7 @@ import idris from "./functional/idris/grammar.ts";
 import ini from "./config/ini/grammar.ts";
 import java from "./managed/java/grammar.ts";
 import javascript from "./web/javascript/grammar.ts";
+import jinja from "./web/jinja/grammar.ts";
 import jq from "./query/jq/grammar.ts";
 import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
@@ -151,6 +152,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ini,
   java,
   javascript,
+  jinja,
   jq,
   json,
   jsx,

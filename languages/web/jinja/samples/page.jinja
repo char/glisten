@@ -1,0 +1,10 @@
+<!doctype html>
+<title>{{ page.title | default("Untitled") }}</title>
+{% extends "base.html" %}
+{% block content %}
+  {% if user is defined and user.active %}
+    <h1>Hello, {{ user.name | title }}!</h1>
+  {% else %}
+    <p>Welcome, visitor.</p>
+  {% endif %}
+{% endblock content %}

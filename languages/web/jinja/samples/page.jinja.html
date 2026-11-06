@@ -1,0 +1,10 @@
+&lt;!doctype html&gt;
+&lt;title&gt;<g-ps>{{</g-ps> <g-v>page</g-v><g-pd>.</g-pd><g-vm>title</g-vm> <g-o>|</g-o> <g-f>default</g-f><g-pb>(</g-pb><g-s>"Untitled"</g-s><g-pb>)</g-pb> <g-ps>}}</g-ps>&lt;/title&gt;
+<g-ps>{%</g-ps> <g-k>extends</g-k> <g-s>"base.html"</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>block</g-k> <g-v>content</g-v> <g-ps>%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>if</g-k> <g-v>user</g-v> <g-k>is</g-k> <g-f>defined</g-f> <g-k>and</g-k> <g-v>user</g-v><g-pd>.</g-pd><g-vm>active</g-vm> <g-ps>%}</g-ps>
+    &lt;h1&gt;Hello, <g-ps>{{</g-ps> <g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-o>|</g-o> <g-f>title</g-f> <g-ps>}}</g-ps>!&lt;/h1&gt;
+  <g-ps>{%</g-ps> <g-k>else</g-k> <g-ps>%}</g-ps>
+    &lt;p&gt;Welcome, visitor.&lt;/p&gt;
+  <g-ps>{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>endblock</g-k> <g-v>content</g-v> <g-ps>%}</g-ps>

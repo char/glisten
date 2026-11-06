@@ -1,0 +1,11 @@
+before <g-c>{#- comment {{ ignored }} +#}</g-c> after
+<g-ps>{%-</g-ps> <g-k>raw</g-k> <g-ps>-%}</g-ps>
+{{ this_is_not_a_tag | upper }}
+{% if ignored %}{# literal #}{% endrawx %}
+<g-ps>{%+</g-ps> <g-k>endraw</g-k> <g-ps>+%}</g-ps>
+<g-ps>{{</g-ps> <g-pb>{</g-pb><g-s>"key"</g-s><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-pb>{</g-pb><g-s>"nested"</g-s><g-pd>:</g-pd> <g-s>"}}"</g-s><g-pb>}]}[</g-pb><g-s>"key"</g-s><g-pb>][</g-pb><g-n>0</g-n><g-pb>]</g-pb> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-s>"escaped </g-s><g-se>\"</g-se><g-s> quote"</g-s> <g-o>~</g-o> <g-s>'and </g-s><g-se>\'</g-se><g-s> single'</g-s> <g-ps>}}</g-ps>
+<g-ps>{%+</g-ps> <g-k>if</g-k> <g-v>value</g-v> <g-k>is</g-k> <g-k>not</g-k> <g-f>defined</g-f> <g-ps>+%}</g-ps>missing<g-ps>{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>set</g-k> <g-v>data</g-v> <g-ps>%}</g-ps>inside <g-ps>{{</g-ps> <g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-ps>}}{%</g-ps> <g-k>endset</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>filter</g-k> <g-f>upper</g-f> <g-ps>%}</g-ps>filtered<g-ps>{%</g-ps> <g-k>endfilter</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>trans</g-k> <g-v>name</g-v><g-o>=</g-o><g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-ps>%}</g-ps>Hello <g-ps>{{</g-ps> <g-v>name</g-v> <g-ps>}}{%</g-ps> <g-k>endtrans</g-k> <g-ps>%}</g-ps>

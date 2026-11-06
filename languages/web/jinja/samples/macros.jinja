@@ -1,0 +1,15 @@
+{# Shared menu helpers #}
+{% import "forms.html" as forms %}
+{% from "ui.html" import button as render_button %}
+{% macro menu(items, selected=none) -%}
+  <ul>
+  {% for item in items recursive %}
+    <li>{{ loop.index }} {{ render_button(item.label) }}</li>
+    {% if item.children %}{{ loop(item.children) }}{% endif %}
+  {% else %}
+    <li>Empty</li>
+  {% endfor %}
+  </ul>
+{%- endmacro %}
+{% set title = "Menu" ~ " items" %}
+{% with count=items | length %}{{ count }}{% endwith %}
