@@ -27,6 +27,7 @@ import devicetree from "./data/devicetree/grammar.ts";
 import diff from "./data/diff/grammar.ts";
 import dockerfile from "./build/dockerfile/grammar.ts";
 import dot from "./data/dot/grammar.ts";
+import dotenv from "./config/dotenv/grammar.ts";
 import elisp from "./functional/elisp/grammar.ts";
 import elixir from "./functional/elixir/grammar.ts";
 import elm from "./functional/elm/grammar.ts";
@@ -156,6 +157,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   diff,
   dockerfile,
   dot,
+  dotenv,
   elisp,
   elixir,
   elm,
