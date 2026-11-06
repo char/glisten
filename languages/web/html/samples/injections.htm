@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Injections &lt;here&gt;</title>
+  <style media="screen">
+    .message { color: red; padding: 1rem; }
+    @media (min-width: 30rem) {
+      .message { color: blue; }
+    }
+  </style>
+</head>
+<body>
+  <button onclick="return activate(event)"
+          style="color: red; --gap: 2px; margin: var(--gap)">
+    Activate
+  </button>
+  <textarea>One &amp; two <b>not markup</b></textarea>
+  <script>
+    const count = 2;
+    console.log(count);
+  </script>
+  <script type="module">
+    import { start } from './app.js';
+    start();
+  </script>
+  <script type="application/json">
+    { "count": 2, "ready": true }
+  </script>
+  <script type="text/x-template">
+    <h1>{{ title }}</h1>
+  </script>
+</body>
+</html>

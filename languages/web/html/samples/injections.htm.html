@@ -1,0 +1,33 @@
+<g-k>&lt;!DOCTYPE html&gt;</g-k>
+<g-pb>&lt;</g-pb><g-tg>html</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>head</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>title</g-tg><g-pb>&gt;</g-pb>Injections <g-se>&amp;lt;</g-se>here<g-se>&amp;gt;</g-se><g-pb>&lt;/</g-pb><g-tg>title</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>media</g-at><g-o>=</g-o><g-s>"screen"</g-s><g-pb>&gt;</g-pb>
+    <g-pd>.</g-pd><g-pr>message</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="red">red</g-co><g-pd>;</g-pd> <g-pr>padding</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-t>rem</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>@media</g-k> <g-pb>(</g-pb><g-pr>min-width</g-pr><g-pd>:</g-pd> <g-n>30</g-n><g-t>rem</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+      <g-pd>.</g-pd><g-pr>message</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="blue">blue</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>head</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>body</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-at>onclick</g-at><g-o>=</g-o><g-s>"</g-s><g-k>return</g-k> <g-f>activate</g-f><g-pb>(</g-pb><g-v>event</g-v><g-pb>)</g-pb><g-s>"</g-s>
+          <g-at>style</g-at><g-o>=</g-o><g-s>"</g-s><g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="red">red</g-co><g-pd>;</g-pd> <g-v>--gap</g-v><g-pd>:</g-pd> <g-n>2</g-n><g-t>px</g-t><g-pd>;</g-pd> <g-pr>margin</g-pr><g-pd>:</g-pd> <g-f>var</g-f><g-pb>(</g-pb><g-v>--gap</g-v><g-pb>)</g-pb><g-s>"</g-s><g-pb>&gt;</g-pb>
+    Activate
+  <g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>textarea</g-tg><g-pb>&gt;</g-pb>One <g-se>&amp;amp;</g-se> two &lt;b&gt;not markup&lt;/b&gt;<g-pb>&lt;/</g-pb><g-tg>textarea</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+    <g-k>const</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+    <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>count</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>type</g-at><g-o>=</g-o><g-s>"module"</g-s><g-pb>&gt;</g-pb>
+    <g-k>import</g-k> <g-pb>{</g-pb> <g-v>start</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'./app.js'</g-s><g-pd>;</g-pd>
+    <g-f>start</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+  <g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>type</g-at><g-o>=</g-o><g-s>"application/json"</g-s><g-pb>&gt;</g-pb>
+    <g-pb>{</g-pb> <g-pr>"count"</g-pr><g-pd>:</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-pr>"ready"</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb> <g-pb>}</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>type</g-at><g-o>=</g-o><g-s>"text/x-template"</g-s><g-pb>&gt;</g-pb>
+    &lt;h1&gt;{{ title }}&lt;/h1&gt;
+  <g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>body</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>html</g-tg><g-pb>&gt;</g-pb>
