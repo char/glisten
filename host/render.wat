@@ -81,6 +81,26 @@
           (if (i32.lt_u (i32.sub (local.get $end) (i32.add (local.get $source) (local.get $start))) (i32.const 16))
             (then
               (local.set $scan (i32.add (local.get $source) (local.get $start)))
+              ;; Input has 16 readable padding bytes; mask out the following span.
+              (if (i32.ge_u (i32.sub (local.get $end) (local.get $scan)) (i32.const 4)) (then
+                (local.set $chunk (v128.load (local.get $scan)))
+                (local.set $mask (i8x16.bitmask (v128.or
+                  (v128.or (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 38)))
+                    (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 60))))
+                  (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 62))))))
+                (if (i32.eqz (i32.and (local.get $mask)
+                  (i32.sub (i32.shl (i32.const 1) (i32.sub (local.get $end) (local.get $scan))) (i32.const 1)))) (then
+                  (if (i32.ge_u (i32.sub (local.get $end) (local.get $scan)) (i32.const 8))
+                    (then
+                      (i64.store align=1 (local.get $out) (i64.load align=1 (local.get $scan)))
+                      (i64.store align=1 (i32.add (local.get $out) (i32.sub (i32.sub (local.get $end) (local.get $scan)) (i32.const 8)))
+                        (i64.load align=1 (i32.sub (local.get $end) (i32.const 8)))))
+                    (else
+                      (i32.store align=1 (local.get $out) (i32.load align=1 (local.get $scan)))
+                      (i32.store align=1 (i32.add (local.get $out) (i32.sub (i32.sub (local.get $end) (local.get $scan)) (i32.const 4)))
+                        (i32.load align=1 (i32.sub (local.get $end) (i32.const 4))))))
+                  (local.set $out (i32.add (local.get $out) (i32.sub (local.get $end) (local.get $scan))))
+                  (br $text_complete)))))
               (loop $short
                 (br_if $text_complete (i32.ge_u (local.get $scan) (local.get $end)))
                 (local.set $byte (i32.load8_u (local.get $scan)))

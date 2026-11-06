@@ -106,6 +106,20 @@ test("highlighter maps module style indices and resolves aliases", async () => {
   );
 });
 
+test("single-module results remain owned across later highlights", async () => {
+  const host = new Highlighter({ checks: true });
+  await host.add(
+    await puppet(manifest(), [
+      { records: [{ kind: "span", end: 3, style: 1 }], injections: 0 },
+      { records: [{ kind: "span", end: 3, style: 0 }], injections: 0 },
+    ]),
+  );
+  const result = host._process("root", "abc");
+  assert(result.status === "ok");
+  host.highlight("root", "xyz");
+  equal(Array.from(result.spans), [3, 1]);
+});
+
 test("resource traps are reported and unrelated traps propagate", async () => {
   const failing = new Highlighter();
   await failing.add(

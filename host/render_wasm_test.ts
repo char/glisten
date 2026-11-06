@@ -14,7 +14,7 @@ const manifest = (language: string, styles: Manifest["styles"], embeds: string[]
 });
 
 test("escape scanning stops at every span boundary, including SIMD boundaries", async () => {
-  for (const count of [1, 7, 8, 15, 16, 17, 31, 32, 33]) {
+  for (const count of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 31, 32, 33]) {
     const host = new Highlighter({ checks: true });
     const records: OutputRecord[] = [
       { kind: "span", end: count, style: 1 },

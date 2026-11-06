@@ -19,6 +19,7 @@ export class Arena {
   readonly memory: WebAssembly.Memory;
   private areasEnd = 0;
   private cursor = 0;
+  private readonly encoder = new TextEncoder();
 
   /** Create an arena with an exact logical byte limit and page-rounded backing memory. */
   constructor(readonly limit: number) {
@@ -70,7 +71,7 @@ export class Arena {
     const destination = new Uint8Array(this.memory.buffer, input, capacity);
     let length: number;
     if (typeof source === "string") {
-      const encoded = new TextEncoder().encodeInto(source, destination);
+      const encoded = this.encoder.encodeInto(source, destination);
       if (encoded.read < source.length) throw new ResourceError("Memory limit exceeded");
       length = encoded.written;
     } else {
