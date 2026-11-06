@@ -54,6 +54,28 @@ test("empty source avoids calls", () => {
   equal([Array.from(result.spans), result.missing, root.calls.length], [[], [], 0]);
 });
 
+test("a whole-document root is called once and resource failure does not affect the next call", () => {
+  const root = new Fake(manifest("root"), [
+    { records: [], resource: true },
+    { records: [{ kind: "span", end: 3, style: 0 }] },
+  ]);
+  const source = new TextEncoder().encode("abc");
+  equal(composeWith([root], "root", source, { checks: true }), { status: "resource" });
+  const result = composeWith([root], "root", source, { checks: true });
+  assert(result.status === "ok");
+  equal(
+    [Array.from(result.spans), result.missing, root.calls.map((call) => call.documents)],
+    [
+      [3, 0],
+      [],
+      [
+        [0, 3],
+        [0, 3],
+      ],
+    ],
+  );
+});
+
 test("unknown top-level names get one missing span", () => {
   const result = composeWith([], "Unknown", new Uint8Array([1, 2]));
   assert(result.status === "ok");
@@ -87,6 +109,7 @@ test("interleaved injections are batched by target and spliced in source order",
   const result = composeWith([root, child], "ROOT", bytes, { checks: true });
   assert(result.status === "ok");
   equal(Array.from(result.spans), [2, 1, 4, 0, 8, 1, 10, 0]);
+  equal(root.calls.length, 1);
   equal(child.calls[0]!.documents, [10, 14, 4, 6]);
   equal(Array.from(child.calls[0]!.source.subarray(10, 14)), [97, 98, 103, 104]);
 });

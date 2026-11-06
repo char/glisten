@@ -6,6 +6,20 @@ import { ResourceError } from "./memory.ts";
 
 const single = new Uint32Array(2);
 
+/** Invoke a callee on one whole document without allocating a segment layout. */
+export function callWhole(
+  callee: Callee,
+  context: CallContext,
+  length: number,
+  checks = false,
+): CallResult {
+  single[0] = 0;
+  single[1] = length;
+  const result = callee.call(context, single);
+  if (checks && result.status === "ok") checkRecords(result.records(), single, result.injections);
+  return result;
+}
+
 /** Invoke a callee on contiguous documents and map its records onto source pieces. */
 export function callJoined(
   callee: Callee,

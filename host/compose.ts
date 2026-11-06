@@ -1,11 +1,11 @@
 import { checkRecords, segment } from "#/abi/mod.ts";
-import type { Callee, CallContext } from "./engine.ts";
+import type { Callee, CallContext, CallResult } from "./engine.ts";
 import { emit, type Call } from "./emit.ts";
 import { extractGroups } from "./extract_groups.ts";
 import { Names } from "./names.ts";
 import { group, recordRanges, scan, Scratch, writeBatches } from "./planning.ts";
 import { Styles } from "./styles.ts";
-import { callJoined, segmentRanges } from "./joined.ts";
+import { callJoined, callWhole, segmentRanges } from "./joined.ts";
 
 /** A successful span tiling, or a resource failure. */
 export type Result =
@@ -19,6 +19,14 @@ export type Result =
   | { status: "resource" };
 
 class Failure extends Error {}
+
+type ComposeOptions = {
+  names: Names<Callee>;
+  missingStyle: number;
+  checks: boolean;
+  scratch?: Scratch;
+  copySpans?: boolean;
+};
 
 /** Compose any set of ABI callees; style mappings are installed before the first call. */
 export function composeWith(
@@ -46,20 +54,8 @@ export function composeWith(
 }
 
 /** Plan calls and emit spans without depending on a particular callee implementation. */
-export function compose(
-  language: string,
-  context: CallContext,
-  options: {
-    names: Names<Callee>;
-    missingStyle: number;
-    checks: boolean;
-    scratch?: Scratch;
-    copySpans?: boolean;
-  },
-): Result {
+export function compose(language: string, context: CallContext, options: ComposeOptions): Result {
   const { names, missingStyle, checks } = options;
-  const scratch = options.scratch ?? new Scratch();
-  const mark = scratch.mark();
   const length = context.source().length;
   if (!length) return { status: "ok", spans: new Uint32Array(), missing: [] };
   const root = names.get(language);
@@ -69,10 +65,35 @@ export function compose(
       spans: new Uint32Array([length, missingStyle]),
       missing: [language],
     };
+  const result = callWhole(root, context, length, checks);
+  if (result.status === "resource") return { status: "resource" };
+  if (!result.injections && !((result.groups ?? 0) > 0)) {
+    const records = result.records();
+    return {
+      status: "ok",
+      spans: options.copySpans === false ? records : records.slice(),
+      missing: [],
+    };
+  }
+  return composeChildren(root, result, context, length, options);
+}
+
+function composeChildren(
+  root: Callee,
+  rootResult: Extract<CallResult, { status: "ok" }>,
+  context: CallContext,
+  length: number,
+  options: ComposeOptions,
+): Result {
+  const { names, missingStyle, checks } = options;
+  const scratch = options.scratch ?? new Scratch();
+  const mark = scratch.mark();
   const missing = new Set<string>();
 
   function plan(callee: Callee, segments: Uint32Array, rootCall = false): Call {
-    const joined = callJoined(callee, context, segments, checks);
+    const joined = rootCall
+      ? { result: rootResult, context }
+      : callJoined(callee, context, segments, checks);
     const result = joined.result;
     if (result.status === "resource") throw new Failure();
     const words = result.records();
@@ -121,14 +142,6 @@ export function compose(
 
   try {
     const tree = plan(root, new Uint32Array([0, length, segment.starts | segment.ends]), true);
-    if (!tree.result.injections && !tree.hasGroups) {
-      const records = tree.result.records();
-      return {
-        status: "ok",
-        spans: options.copySpans === false ? records : records.slice(),
-        missing: [],
-      };
-    }
     if (!tree.result.injections) {
       const extracted = extractGroups(tree.result, tree.words, options.copySpans !== false);
       return { status: "ok", missing: [], ...extracted };
