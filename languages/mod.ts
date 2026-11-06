@@ -17,6 +17,7 @@ import cmake from "./build/cmake/grammar.ts";
 import cobol from "./managed/cobol/grammar.ts";
 import commonlisp from "./functional/commonlisp/grammar.ts";
 import cpp from "./systems/cpp/grammar.ts";
+import crystal from "./scripting/crystal/grammar.ts";
 import css from "./web/css/grammar.ts";
 import cuda from "./shaders/cuda/grammar.ts";
 import d from "./systems/d/grammar.ts";
@@ -142,6 +143,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   cobol,
   commonlisp,
   cpp,
+  crystal,
   css,
   cuda,
   d,

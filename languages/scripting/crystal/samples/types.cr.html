@@ -1,0 +1,23 @@
+<g-ps>@[</g-ps><g-at>Deprecated</g-at><g-pb>(</g-pb><g-s>"Use Shape"</g-s><g-pb>)</g-pb><g-ps>]</g-ps>
+<g-k>abstract</g-k> <g-k>class</g-k> <g-t>Shape</g-t>
+  <g-k>abstract</g-k> <g-k>def</g-k> <g-f>area</g-f><g-pb>(</g-pb><g-v>scale</g-v> <g-pd>:</g-pd> <g-t>Float64</g-t> <g-o>=</g-o> <g-n>1.0_f64</g-n><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>Float64</g-t>
+<g-k>end</g-k>
+
+<g-k>alias</g-k> <g-t>MaybeName</g-t> <g-o>=</g-o> <g-t>String</g-t> <g-o>|</g-o> <g-t>Nil</g-t>
+<g-f>record</g-f> <g-t>Point</g-t><g-pd>,</g-pd> <g-v>x</g-v> <g-pd>:</g-pd> <g-t>Int32</g-t><g-pd>,</g-pd> <g-v>y</g-v> <g-pd>:</g-pd> <g-t>Int32</g-t>
+
+<g-k>class</g-k> <g-t>Circle</g-t> <g-o>&lt;</g-o> <g-t>Shape</g-t>
+  <g-f>getter</g-f> <g-v>radius</g-v> <g-pd>:</g-pd> <g-t>Float64</g-t>
+
+  <g-k>def</g-k> <g-f>initialize</g-f><g-pb>(</g-pb><g-vm>@radius</g-vm> <g-pd>:</g-pd> <g-t>Float64</g-t><g-pb>)</g-pb>
+  <g-k>end</g-k>
+
+  <g-k>def</g-k> <g-f>area</g-f><g-pb>(</g-pb><g-v>scale</g-v> <g-pd>:</g-pd> <g-t>Float64</g-t> <g-o>=</g-o> <g-n>1.0_f64</g-n><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>Float64</g-t>
+    <g-t>Math</g-t><g-o>::</g-o><g-t>PI</g-t> <g-o>*</g-o> <g-v>radius</g-v> <g-o>**</g-o> <g-n>2</g-n> <g-o>*</g-o> <g-v>scale</g-v>
+  <g-k>end</g-k>
+<g-k>end</g-k>
+
+<g-v>values</g-v> <g-pd>:</g-pd> <g-t>Array</g-t><g-pb>(</g-pb><g-t>Int32</g-t> <g-o>|</g-o> <g-t>Nil</g-t><g-pb>)</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1_i32</g-n><g-pd>,</g-pd> <g-cb>nil</g-cb><g-pd>,</g-pd> <g-n>0xff_u8</g-n><g-pd>.</g-pd><g-f>to_i</g-f><g-pb>]</g-pb>
+<g-v>name</g-v> <g-pd>:</g-pd> <g-t>String</g-t><g-o>?</g-o> <g-o>=</g-o> <g-v>values</g-v><g-pd>.</g-pd><g-f>first?</g-f><g-pd>.</g-pd><g-f>try</g-f><g-pb>(</g-pb><g-o>&amp;.</g-o><g-f>to_s</g-f><g-pb>)</g-pb>
+<g-v>count</g-v> <g-o>=</g-o> <g-v>values</g-v><g-pd>.</g-pd><g-f>count</g-f> <g-pb>{</g-pb> <g-o>|</g-o><g-v>value</g-v><g-o>|</g-o> <g-v>value</g-v><g-pd>.</g-pd><g-f>is_a?</g-f><g-pb>(</g-pb><g-t>Int32</g-t><g-pb>)</g-pb> <g-pb>}</g-pb>
+<g-v>callback</g-v> <g-o>=</g-o> <g-o>-&gt;</g-o><g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-t>Int32</g-t><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>x</g-v> <g-o>+</g-o> <g-n>1</g-n> <g-pb>}</g-pb>

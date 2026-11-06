@@ -1,0 +1,18 @@
+<g-c># Literals and ambiguous slash contexts</g-c>
+<g-v>letter</g-v> <g-o>=</g-o> <g-s>'λ'</g-s>
+<g-v>newline</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s>
+<g-v>message</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-ps>#{</g-ps><g-v>user</g-v><g-pd>.</g-pd><g-f>name</g-f><g-ps>}</g-ps><g-s>!"</g-s>
+<g-v>words</g-v> <g-o>=</g-o> <g-s>%w[red green blue]</g-s>
+<g-v>symbols</g-v> <g-o>=</g-o> <g-s>%i[small medium large]</g-s>
+<g-v>raw</g-v> <g-o>=</g-o> <g-s>%q(no #{expansion})</g-s>
+<g-v>expanded</g-v> <g-o>=</g-o> <g-s>%Q(hello </g-s><g-ps>#{</g-ps><g-v>user</g-v><g-pd>.</g-pd><g-f>name</g-f><g-ps>}</g-ps><g-s>)</g-s>
+<g-v>name</g-v> <g-o>=</g-o> <g-s>:crystal</g-s>
+<g-v>numbers</g-v> <g-o>=</g-o> <g-pb>{</g-pb><g-n>0x2a_u8</g-n><g-pd>,</g-pd> <g-n>0b1010_i32</g-n><g-pd>,</g-pd> <g-n>0o755</g-n><g-pd>,</g-pd> <g-n>1_000_i64</g-n><g-pd>,</g-pd> <g-n>1.0_f32</g-n><g-pb>}</g-pb>
+<g-v>pattern</g-v> <g-o>=</g-o> <g-s>/a[bc]+</g-s><g-ps>#{</g-ps><g-v>suffix</g-v><g-ps>}</g-ps><g-s>/i</g-s>
+<g-v>ratio</g-v> <g-o>=</g-o> <g-v>total</g-v> <g-o>/</g-o> <g-n>2</g-n>
+<g-v>half</g-v> <g-o>=</g-o> <g-v>total</g-v> <g-o>//</g-o> <g-n>2</g-n>
+
+<g-v>sql</g-v> <g-o>=</g-o> <g-o>&lt;&lt;-</g-o><g-l>SQL</g-l>
+<g-s>  SELECT * FROM users WHERE name = '</g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>'
+</g-s><g-l>  SQL</g-l>
+<g-f>puts</g-f> <g-v>sql</g-v>

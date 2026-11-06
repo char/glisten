@@ -1,0 +1,33 @@
+<g-k>annotation</g-k> <g-t>Route</g-t>
+<g-k>end</g-k>
+
+<g-k>macro</g-k> <g-f>endpoint</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>path</g-v><g-pb>)</g-pb>
+  <g-ps>@[</g-ps><g-at>Route</g-at><g-pb>(</g-pb><g-ps>{{</g-ps><g-v>path</g-v><g-ps>}}</g-ps><g-pb>)</g-pb><g-ps>]</g-ps>
+  <g-k>def</g-k> <g-ps>{{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>id</g-f><g-ps>}}</g-ps><g-pb>(</g-pb><g-v>request</g-v> <g-pd>:</g-pd> <g-t>HTTP</g-t><g-o>::</g-o><g-t>Request</g-t><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>String</g-t>
+    <g-ps>{%</g-ps> <g-k>if</g-k> <g-f>flag?</g-f><g-pb>(</g-pb><g-s>:debug</g-s><g-pb>)</g-pb> <g-ps>%}</g-ps>
+      <g-f>puts</g-f> <g-s>"debug: </g-s><g-ps>#{</g-ps><g-v>request</g-v><g-pd>.</g-pd><g-f>path</g-f><g-ps>}</g-ps><g-s> (</g-s><g-ps>{{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>id</g-f><g-ps>}}</g-ps><g-s>)"</g-s>
+    <g-ps>{%</g-ps> <g-k>end</g-k> <g-ps>%}</g-ps>
+    <g-ps>{{</g-ps><g-v>path</g-v><g-ps>}}</g-ps> <g-o>+</g-o> <g-v>request</g-v><g-pd>.</g-pd><g-f>path</g-f>
+  <g-k>end</g-k>
+<g-k>end</g-k>
+
+<g-k>lib</g-k> <g-t>LibC</g-t>
+  <g-k>fun</g-k> <g-f>puts</g-f><g-pb>(</g-pb><g-v>message</g-v> <g-pd>:</g-pd> <g-t>UInt8</g-t><g-o>*</g-o><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>Int32</g-t>
+<g-k>end</g-k>
+
+<g-k>struct</g-k> <g-t>Config</g-t>
+  <g-f>property</g-f> <g-v>retries</g-v> <g-pd>:</g-pd> <g-t>Int32</g-t> <g-o>=</g-o> <g-n>3</g-n>
+<g-k>end</g-k>
+
+<g-k>enum</g-k> <g-t>Status</g-t>
+  <g-t>Ready</g-t>
+  <g-t>Busy</g-t>
+<g-k>end</g-k>
+
+<g-k>private</g-k> <g-k>def</g-k> <g-f>inspect_value</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+  <g-k>if</g-k> <g-v>value</g-v><g-pd>.</g-pd><g-f>responds_to?</g-f><g-pb>(</g-pb><g-s>:to_s</g-s><g-pb>)</g-pb>
+    <g-f>typeof</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+  <g-k>else</g-k>
+    <g-f>uninitialized</g-f> <g-t>Int32</g-t>
+  <g-k>end</g-k>
+<g-k>end</g-k>
