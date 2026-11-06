@@ -1,0 +1,8 @@
+<g-k>Option</g-k> <g-k>Explicit</g-k>
+<g-k>Dim</g-k> <g-v>shell</g-v><g-pd>,</g-pd> <g-v>files</g-v><g-pd>,</g-pd> <g-v>item</g-v>
+<g-k>Set</g-k> <g-v>shell</g-v> <g-o>=</g-o> <g-f>CreateObject</g-f><g-pb>(</g-pb><g-s>"WScript.Shell"</g-s><g-pb>)</g-pb>
+<g-k>Set</g-k> <g-v>files</g-v> <g-o>=</g-o> <g-f>CreateObject</g-f><g-pb>(</g-pb><g-s>"Scripting.FileSystemObject"</g-s><g-pb>)</g-pb>
+<g-cb>WScript</g-cb><g-pd>.</g-pd><g-f>Echo</g-f> <g-s>"Current folder: "</g-s> <g-o>&amp;</g-o> <g-v>shell</g-v><g-pd>.</g-pd><g-v>CurrentDirectory</g-v>
+<g-k>For</g-k> <g-k>Each</g-k> <g-v>item</g-v> <g-k>In</g-k> <g-v>files</g-v><g-pd>.</g-pd><g-f>GetFolder</g-f><g-pb>(</g-pb><g-s>"."</g-s><g-pb>)</g-pb><g-pd>.</g-pd><g-v>Files</g-v>
+    <g-cb>WScript</g-cb><g-pd>.</g-pd><g-f>Echo</g-f> <g-v>item</g-v><g-pd>.</g-pd><g-v>Name</g-v>
+<g-k>Next</g-k>

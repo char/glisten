@@ -1,0 +1,11 @@
+<g-k>On</g-k> <g-k>Error</g-k> <g-k>Resume</g-k> <g-k>Next</g-k>
+<g-k>Dim</g-k> <g-v>answer</g-v>
+<g-v>answer</g-v> <g-o>=</g-o> <g-k>Eval</g-k><g-pb>(</g-pb><g-s>"2 + 2"</g-s><g-pb>)</g-pb>
+<g-k>Execute</g-k> <g-s>"answer = answer + 1"</g-s>
+<g-k>Select</g-k> <g-k>Case</g-k> <g-v>answer</g-v>
+    <g-k>Case</g-k> <g-n>5</g-n>
+        <g-cb>WScript</g-cb><g-pd>.</g-pd><g-f>Echo</g-f> <g-s>"It is </g-s><g-se>""</g-se><g-s>five</g-s><g-se>""</g-se><g-s>"</g-s>
+    <g-k>Case</g-k> <g-k>Else</g-k>
+        <g-c>Rem An unexpected value</g-c>
+        <g-cb>WScript</g-cb><g-pd>.</g-pd><g-f>Quit</g-f> <g-n>1</g-n>
+<g-k>End</g-k> <g-k>Select</g-k>

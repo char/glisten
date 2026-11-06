@@ -110,6 +110,7 @@ import typescript from "./web/typescript/grammar.ts";
 import typst from "./markup/typst/grammar.ts";
 import vb from "./managed/vb/grammar.ts";
 import vba from "./managed/vba/grammar.ts";
+import vbscript from "./managed/vbscript/grammar.ts";
 import verilog from "./hdl/verilog/grammar.ts";
 import vhdl from "./hdl/vhdl/grammar.ts";
 import vim from "./scripting/vim/grammar.ts";
@@ -234,6 +235,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   typst,
   vb,
   vba,
+  vbscript,
   verilog,
   vhdl,
   vim,

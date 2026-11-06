@@ -1,0 +1,14 @@
+<g-k>Option</g-k> <g-k>Explicit</g-k>
+<g-k>Class</g-k> <g-v>Greeting</g-v>
+    <g-k>Private</g-k> <g-v>mName</g-v>
+    <g-k>Public</g-k> <g-k>Property</g-k> <g-k>Let</g-k> <g-f>Name</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+        <g-v>mName</g-v> <g-o>=</g-o> <g-v>value</g-v>
+    <g-k>End</g-k> <g-k>Property</g-k>
+    <g-k>Public</g-k> <g-k>Function</g-k> <g-f>SayHello</g-f><g-pb>()</g-pb>
+        <g-v>SayHello</g-v> <g-o>=</g-o> <g-s>"Hello, "</g-s> <g-o>&amp;</g-o> <g-v>mName</g-v>
+    <g-k>End</g-k> <g-k>Function</g-k>
+<g-k>End</g-k> <g-k>Class</g-k>
+<g-k>Dim</g-k> <g-v>g</g-v>
+<g-k>Set</g-k> <g-v>g</g-v> <g-o>=</g-o> <g-k>New</g-k> <g-v>Greeting</g-v>
+<g-v>g</g-v><g-pd>.</g-pd><g-v>Name</g-v> <g-o>=</g-o> <g-s>"Ada"</g-s>
+<g-cb>WScript</g-cb><g-pd>.</g-pd><g-f>Echo</g-f> <g-v>g</g-v><g-pd>.</g-pd><g-f>SayHello</g-f><g-pb>()</g-pb>
