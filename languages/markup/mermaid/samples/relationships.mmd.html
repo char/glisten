@@ -1,0 +1,13 @@
+<g-ps>---</g-ps>
+<g-pr>title</g-pr><g-pd>:</g-pd> <g-s>Animal model</g-s>
+<g-ps>---</g-ps>
+<g-k>classDiagram</g-k>
+  <g-k>class</g-k> <g-v>Animal</g-v> <g-pb>{</g-pb>
+    <g-o>+</g-o><g-v>String</g-v> <g-v>name</g-v>
+    <g-o>-</g-o><g-v>int</g-v> <g-v>age</g-v>
+    <g-o>#</g-o><g-v>move</g-v><g-pb>()</g-pb>
+    <g-o>~</g-o><g-v>privateMethod</g-v><g-pb>()</g-pb>
+  <g-pb>}</g-pb>
+  <g-v>Animal</g-v> <g-o>&lt;|--</g-o> <g-v>Duck</g-v>
+  <g-v>Duck</g-v> <g-o>*--</g-o> <g-v>Wing</g-v>
+  <g-v>Duck</g-v> <g-o>..&gt;</g-o> <g-v>Pond</g-v>

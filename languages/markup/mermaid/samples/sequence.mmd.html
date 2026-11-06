@@ -1,0 +1,13 @@
+<g-k>sequenceDiagram</g-k>
+  <g-k>autonumber</g-k>
+  <g-k>actor</g-k> <g-v>User</g-v> <g-k>as</g-k> <g-v>Visitor</g-v>
+  <g-k>participant</g-k> <g-v>App</g-v> <g-k>as</g-k> <g-v>Service</g-v>
+  <g-v>User</g-v><g-o>-&gt;&gt;</g-o><g-v>App</g-v><g-pd>:</g-pd><g-s> Request data</g-s>
+  <g-k>activate</g-k> <g-v>App</g-v>
+  <g-k>alt</g-k> <g-v>found</g-v>
+    <g-v>App</g-v><g-o>--&gt;&gt;</g-o><g-v>User</g-v><g-pd>:</g-pd><g-s> Results</g-s>
+  <g-k>else</g-k> <g-v>unavailable</g-v>
+    <g-k>Note</g-k> <g-k>right</g-k> <g-k>of</g-k> <g-v>App</g-v><g-pd>:</g-pd><g-s> Retry later</g-s>
+    <g-v>App</g-v><g-o>-x</g-o><g-v>User</g-v><g-pd>:</g-pd><g-s> Failure</g-s>
+  <g-k>end</g-k>
+  <g-k>deactivate</g-k> <g-v>App</g-v>

@@ -1,0 +1,13 @@
+---
+title: Animal model
+---
+classDiagram
+  class Animal {
+    +String name
+    -int age
+    #move()
+    ~privateMethod()
+  }
+  Animal <|-- Duck
+  Duck *-- Wing
+  Duck ..> Pond

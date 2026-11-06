@@ -1,0 +1,14 @@
+<g-ps>%%{</g-ps><g-pr>init</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb><g-pr>'theme'</g-pr><g-pd>:</g-pd> <g-s>'dark'</g-s><g-pd>,</g-pd> <g-pr>'flowchart'</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb><g-pr>'curve'</g-pr><g-pd>:</g-pd> <g-s>'basis'</g-s><g-pb>}}</g-pb><g-ps>}%%</g-ps>
+<g-k>flowchart</g-k> <g-k>LR</g-k>
+  <g-c>%% Graph nodes and links</g-c>
+  <g-k>subgraph</g-k> <g-v>cluster</g-v><g-pb>[</g-pb><g-s>Services</g-s><g-pb>]</g-pb>
+    <g-v>A</g-v><g-pb>[</g-pb><g-s>"`**Start** here`"</g-s><g-pb>]</g-pb> <g-o>--&gt;</g-o><g-ps>|</g-ps><g-s>request</g-s><g-ps>|</g-ps> <g-v>B</g-v><g-pb>(</g-pb><g-s>Process</g-s><g-pb>)</g-pb>
+    <g-v>B</g-v> <g-o>--</g-o><g-s> yes </g-s><g-o>--&gt;</g-o> <g-v>C</g-v><g-pb>{</g-pb><g-s>Ready?</g-s><g-pb>}</g-pb>
+    <g-v>C</g-v> <g-o>-.-&gt;</g-o> <g-v>D</g-v><g-pb>((</g-pb><g-s>Done</g-s><g-pb>))</g-pb>
+    <g-v>C</g-v> <g-o>==&gt;</g-o> <g-v>E</g-v><g-pb>&gt;</g-pb><g-s>Queued</g-s><g-pb>]</g-pb>
+    <g-v>E</g-v> <g-o>--o</g-o> <g-v>F</g-v><g-pb>[(</g-pb><g-s>Database</g-s><g-pb>)]</g-pb><g-ps>:::</g-ps><g-t>storage</g-t>
+  <g-k>end</g-k>
+  <g-k>classDef</g-k> <g-v>storage</g-v> <g-v>fill</g-v><g-pd>:</g-pd><g-o>#</g-o><g-v>eef</g-v><g-pd>,</g-pd><g-v>stroke</g-v><g-pd>:</g-pd><g-o>#</g-o><g-n>333</g-n>
+  <g-k>class</g-k> <g-v>F</g-v> <g-v>storage</g-v>
+  <g-k>style</g-k> <g-v>C</g-v> <g-v>fill</g-v><g-pd>:</g-pd><g-o>#</g-o><g-v>afa</g-v>
+  <g-k>click</g-k> <g-v>B</g-v> <g-s>"https://example.com"</g-s>

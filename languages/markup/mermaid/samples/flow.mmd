@@ -1,0 +1,14 @@
+%%{init: {'theme': 'dark', 'flowchart': {'curve': 'basis'}}}%%
+flowchart LR
+  %% Graph nodes and links
+  subgraph cluster[Services]
+    A["`**Start** here`"] -->|request| B(Process)
+    B -- yes --> C{Ready?}
+    C -.-> D((Done))
+    C ==> E>Queued]
+    E --o F[(Database)]:::storage
+  end
+  classDef storage fill:#eef,stroke:#333
+  class F storage
+  style C fill:#afa
+  click B "https://example.com"

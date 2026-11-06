@@ -1,0 +1,13 @@
+sequenceDiagram
+  autonumber
+  actor User as Visitor
+  participant App as Service
+  User->>App: Request data
+  activate App
+  alt found
+    App-->>User: Results
+  else unavailable
+    Note right of App: Retry later
+    App-xUser: Failure
+  end
+  deactivate App

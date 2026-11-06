@@ -66,6 +66,7 @@ import lua from "./scripting/lua/grammar.ts";
 import make from "./build/make/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
 import matlab from "./datasci/matlab/grammar.ts";
+import mermaid from "./markup/mermaid/grammar.ts";
 import meson from "./build/meson/grammar.ts";
 import nginx from "./config/nginx/grammar.ts";
 import nim from "./systems/nim/grammar.ts";
@@ -188,6 +189,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   make,
   markdown,
   matlab,
+  mermaid,
   meson,
   nginx,
   nim,
