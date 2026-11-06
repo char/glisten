@@ -1,0 +1,22 @@
+<g-k>extends</g-k> <g-t>Node</g-t>
+
+<g-k>enum</g-k> <g-t>State</g-t> <g-pb>{</g-pb> <g-cb>IDLE</g-cb><g-pd>,</g-pd> <g-cb>RUNNING</g-cb><g-pd>,</g-pd> <g-cb>DONE</g-cb> <g-pb>}</g-pb>
+<g-k>var</g-k> <g-v>state</g-v><g-pd>:</g-pd> <g-t>State</g-t> <g-o>=</g-o> <g-t>State</g-t><g-pd>.</g-pd><g-cb>IDLE</g-cb>
+
+<g-k>func</g-k> <g-f>run</g-f><g-pb>(</g-pb><g-v>values</g-v><g-pd>:</g-pd> <g-t>Array</g-t><g-pb>[</g-pb><g-t>int</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>void</g-t><g-pd>:</g-pd>
+	<g-k>var</g-k> <g-v>twice</g-v> <g-o>=</g-o> <g-k>func</g-k><g-pb>(</g-pb><g-v>x</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>int</g-t><g-pd>:</g-pd> <g-k>return</g-k> <g-v>x</g-v> <g-o>*</g-o> <g-n>2</g-n>
+	<g-k>for</g-k> <g-v>value</g-v> <g-k>in</g-k> <g-v>values</g-v><g-pd>:</g-pd>
+		<g-k>match</g-k> <g-v>value</g-v><g-pd>:</g-pd>
+			<g-n>0</g-n><g-pd>:</g-pd>
+				<g-k>continue</g-k>
+			<g-k>var</g-k> <g-v>n</g-v> <g-k>when</g-k> <g-v>n</g-v> <g-o>&gt;</g-o> <g-n>10</g-n><g-pd>:</g-pd>
+				<g-k>break</g-k>
+			<g-v>_</g-v><g-pd>:</g-pd>
+				<g-f>print</g-f><g-pb>(</g-pb><g-v>twice</g-v><g-pd>.</g-pd><g-f>call</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>))</g-pb>
+	<g-k>while</g-k> <g-v>state</g-v> <g-o>!=</g-o> <g-t>State</g-t><g-pd>.</g-pd><g-cb>DONE</g-cb><g-pd>:</g-pd>
+		<g-k>await</g-k> <g-f>get_tree</g-f><g-pb>()</g-pb><g-pd>.</g-pd><g-pr>process_frame</g-pr>
+		<g-v>state</g-v> <g-o>=</g-o> <g-t>State</g-t><g-pd>.</g-pd><g-cb>DONE</g-cb>
+	<g-k>if</g-k> <g-v>self</g-v> <g-k>is</g-k> <g-t>Node</g-t> <g-k>and</g-k> <g-k>not</g-k> <g-cb>false</g-cb><g-pd>:</g-pd>
+		<g-k>super</g-k><g-pd>.</g-pd><g-f>queue_free</g-f><g-pb>()</g-pb>
+	<g-k>else</g-k><g-pd>:</g-pd>
+		<g-k>pass</g-k>

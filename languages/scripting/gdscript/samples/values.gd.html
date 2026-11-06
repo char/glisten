@@ -1,0 +1,17 @@
+<g-k>extends</g-k> <g-t>Node</g-t>
+
+<g-k>const</g-k> <g-cb>MASK</g-cb> <g-o>:=</g-o> <g-n>0b1010_0110</g-n>
+<g-k>const</g-k> <g-cb>COLOR</g-cb> <g-o>:=</g-o> <g-n>0xFF_88_33</g-n>
+<g-k>const</g-k> <g-cb>TITLE</g-cb> <g-o>:=</g-o> <g-s>"A </g-s><g-se>\"</g-se><g-s>quoted</g-s><g-se>\"</g-se><g-s> value"</g-s>
+<g-k>const</g-k> <g-cb>REGEX</g-cb> <g-o>:=</g-o> <g-s>r"\d+\.\d+"</g-s>
+<g-k>const</g-k> <g-cb>LABEL</g-cb> <g-o>:=</g-o> <g-s>&amp;"player"</g-s>
+<g-k>const</g-k> <g-cb>TARGET</g-cb> <g-o>:=</g-o> <g-s>^"World/Player"</g-s>
+<g-k>const</g-k> <g-cb>DETAILS</g-cb> <g-o>:=</g-o> <g-s>"""First line
+Second line with # not a comment
+"""</g-s>
+<g-k>var</g-k> <g-v>scores</g-v><g-pd>:</g-pd> <g-t>Array</g-t><g-pb>[</g-pb><g-t>int</g-t><g-pb>]</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1_000</g-n><g-pd>,</g-pd> <g-n>1e3</g-n><g-pd>,</g-pd> <g-n>2.5</g-n><g-pb>]</g-pb>
+
+<g-k>func</g-k> <g-f>describe</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-t>String</g-t><g-pd>:</g-pd>
+	<g-c>## This is a documentation comment.</g-c>
+	<g-k>return</g-k> <g-cb>TITLE</g-cb> <g-o>+</g-o> <g-o>\</g-o>
+		<g-f>str</g-f><g-pb>(</g-pb><g-v>scores</g-v><g-pd>.</g-pd><g-f>size</g-f><g-pb>())</g-pb>

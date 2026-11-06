@@ -33,6 +33,7 @@ import fjson from "./config/fjson/grammar.ts";
 import fortran from "./datasci/fortran/grammar.ts";
 import fortran_fixed from "./datasci/fortran-fixed/grammar.ts";
 import fsharp from "./functional/fsharp/grammar.ts";
+import gdscript from "./scripting/gdscript/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import gleam from "./functional/gleam/grammar.ts";
 import glsl from "./shaders/glsl/grammar.ts";
@@ -150,6 +151,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   fortran,
   "fortran-fixed": fortran_fixed,
   fsharp,
+  gdscript,
   gitattributes,
   gleam,
   glsl,

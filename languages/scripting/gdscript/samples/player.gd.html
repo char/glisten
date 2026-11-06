@@ -1,0 +1,18 @@
+<g-at>@tool</g-at>
+<g-k>class_name</g-k> <g-t>Player</g-t>
+<g-k>extends</g-k> <g-t>CharacterBody2D</g-t>
+
+<g-k>signal</g-k> <g-f>health_changed</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb>
+<g-at>@export_range</g-at><g-pb>(</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>100</g-n><g-pb>)</g-pb> <g-k>var</g-k> <g-v>health</g-v><g-pd>:</g-pd> <g-t>int</g-t> <g-o>=</g-o> <g-n>100</g-n>
+<g-at>@onready</g-at> <g-k>var</g-k> <g-v>sprite</g-v><g-pd>:</g-pd> <g-t>Sprite2D</g-t> <g-o>=</g-o> <g-s>$Visuals/Sprite</g-s>
+<g-at>@onready</g-at> <g-k>var</g-k> <g-v>camera</g-v><g-pd>:</g-pd> <g-t>Camera2D</g-t> <g-o>=</g-o> <g-s>%Camera</g-s>
+
+<g-k>static</g-k> <g-k>func</g-k> <g-f>direction</g-f><g-pb>(</g-pb><g-v>angle</g-v><g-pd>:</g-pd> <g-t>float</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>Vector2</g-t><g-pd>:</g-pd>
+	<g-k>return</g-k> <g-t>Vector2</g-t><g-pb>(</g-pb><g-f>cos</g-f><g-pb>(</g-pb><g-v>angle</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-f>sin</g-f><g-pb>(</g-pb><g-v>angle</g-v><g-pb>))</g-pb>
+
+<g-k>func</g-k> <g-f>_physics_process</g-f><g-pb>(</g-pb><g-v>delta</g-v><g-pd>:</g-pd> <g-t>float</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>void</g-t><g-pd>:</g-pd>
+	<g-k>if</g-k> <g-v>health</g-v> <g-o>&lt;=</g-o> <g-n>0</g-n><g-pd>:</g-pd>
+		<g-k>return</g-k>
+	<g-v>velocity</g-v> <g-o>=</g-o> <g-f>direction</g-f><g-pb>(</g-pb><g-v>rotation</g-v><g-pb>)</g-pb> <g-o>*</g-o> <g-n>100.0</g-n>
+	<g-f>move_and_slide</g-f><g-pb>()</g-pb>
+	<g-v>health_changed</g-v><g-pd>.</g-pd><g-f>emit</g-f><g-pb>(</g-pb><g-v>health</g-v><g-pb>)</g-pb>
