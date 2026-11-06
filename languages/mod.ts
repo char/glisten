@@ -1,5 +1,6 @@
 import type { Grammar } from "#/grammar/mod.ts";
 import bash from "./shell/bash/grammar.ts";
+import batch from "./shell/batch/grammar.ts";
 import c from "./systems/c/grammar.ts";
 import c_sharp from "./managed/c-sharp/grammar.ts";
 import caddy from "./config/caddy/grammar.ts";
@@ -87,6 +88,7 @@ import zig from "./systems/zig/grammar.ts";
 /** Every language, by module name (`dist/<name>.wasm`); each lives in `languages/<category>/<name>/`. */
 export const languages: Readonly<Record<string, Grammar>> = {
   bash,
+  batch,
   c,
   "c-sharp": c_sharp,
   caddy,

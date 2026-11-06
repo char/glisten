@@ -1,0 +1,11 @@
+<g-ps>@</g-ps><g-f>echo</g-f> off
+<g-f>setlocal</g-f> <g-at>EnableExtensions</g-at> <g-at>EnableDelayedExpansion</g-at>
+<g-c>rem Build each configuration from the script directory.</g-c>
+<g-f>set</g-f> <g-s>"ROOT=</g-s><g-v>%~dp0</g-v><g-s>"</g-s>
+<g-k>for</g-k> <g-v>%%i</g-v> <g-k>in</g-k> <g-pb>(</g-pb>Debug Release<g-pb>)</g-pb> <g-k>do</g-k> <g-pb>(</g-pb>
+  <g-f>echo</g-f> Building <g-v>%%i</g-v> <g-k>in</g-k> <g-v>!ROOT!</g-v>
+  <g-k>if</g-k> <g-k>not</g-k> <g-k>exist</g-k> <g-s>"</g-s><g-v>!ROOT!</g-v><g-s>build\</g-s><g-v>%%i</g-v><g-s>"</g-s> <g-f>mkdir</g-f> <g-s>"</g-s><g-v>!ROOT!</g-v><g-s>build\</g-s><g-v>%%i</g-v><g-s>"</g-s>
+  <g-f>cmake</g-f> --build <g-s>"</g-s><g-v>!ROOT!</g-v><g-s>build\</g-s><g-v>%%i</g-v><g-s>"</g-s> <g-o>&gt;</g-o> build.log <g-o>2&gt;&amp;1</g-o> <g-o>||</g-o> <g-f>exit</g-f> <g-at>/b</g-at> 1
+<g-pb>)</g-pb>
+<g-f>endlocal</g-f>
+<g-f>exit</g-f> <g-at>/b</g-at> 0

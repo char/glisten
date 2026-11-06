@@ -1,0 +1,15 @@
+<g-ps>@</g-ps><g-f>ECHO</g-f> OFF
+<g-c>:: Argument processing and a subroutine</g-c>
+<g-k>IF</g-k> <g-s>"</g-s><g-v>%~1</g-v><g-s>"</g-s><g-o>==</g-o><g-s>""</g-s> <g-f>GOTO</g-f> <g-l>:usage</g-l>
+<g-f>SET</g-f> <g-at>/P</g-at> <g-s>"NAME=Enter name: "</g-s>
+<g-f>SET</g-f> <g-at>/A</g-at> <g-v>COUNT</g-v><g-o>=</g-o><g-n>1</g-n><g-o>+</g-o><g-n>2</g-n><g-o>*</g-o><g-n>3</g-n>
+<g-f>CALL</g-f> <g-l>:show</g-l> <g-s>"</g-s><g-v>%NAME%</g-v><g-s>"</g-s> <g-v>%COUNT%</g-v>
+<g-f>GOTO</g-f> <g-l>:EOF</g-l>
+
+<g-l>:show</g-l>
+<g-f>ECHO</g-f> Hello, <g-v>%~1</g-v>! Count=<g-v>%2</g-v>
+<g-f>EXIT</g-f> <g-at>/B</g-at> 0
+
+<g-l>:usage</g-l>
+<g-f>ECHO</g-f> Usage: <g-v>%~nx0</g-v> name
+<g-f>EXIT</g-f> <g-at>/B</g-at> 1

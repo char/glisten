@@ -1,0 +1,11 @@
+<g-ps>@</g-ps><g-f>echo</g-f> off
+<g-f>setlocal</g-f> <g-at>enabledelayedexpansion</g-at>
+<g-k>for</g-k> <g-at>/f</g-at> <g-s>"tokens=1,2 delims=="</g-s> <g-v>%%A</g-v> <g-k>in</g-k> <g-pb>(</g-pb>'set PATH'<g-pb>)</g-pb> <g-k>do</g-k> <g-pb>(</g-pb>
+  <g-f>set</g-f> <g-s>"KEY=</g-s><g-v>%%A</g-v><g-s>"</g-s>
+  <g-f>set</g-f> <g-s>"VALUE=</g-s><g-v>%%B</g-v><g-s>"</g-s>
+  <g-f>echo</g-f> <g-v>!KEY!</g-v>: <g-v>!VALUE:~0,32!</g-v>
+<g-pb>)</g-pb>
+<g-f>set</g-f> <g-s>"SLUG=</g-s><g-v>%NAME: =_%</g-v><g-s>"</g-s>
+<g-k>if</g-k> <g-at>/i</g-at> <g-s>"</g-s><g-v>%SLUG%</g-v><g-s>"</g-s> <g-o>neq</g-o> <g-s>""</g-s> <g-f>echo</g-f> <g-v>%SLUG%</g-v> <g-se>^&amp;</g-se> <g-f>echo</g-f> ready
+<g-k>if</g-k> <g-k>defined</g-k> TEMP <g-f>pushd</g-f> <g-s>"</g-s><g-v>%TEMP%</g-v><g-s>"</g-s> <g-o>&amp;&amp;</g-o> <g-f>dir</g-f> <g-at>/b</g-at> <g-o>|</g-o> <g-f>findstr</g-f> <g-at>/i</g-at> <g-s>".log"</g-s> <g-o>&gt;&gt;</g-o> <g-s>"</g-s><g-v>%~dp0</g-v><g-s>logs.txt"</g-s>
+<g-f>popd</g-f>
