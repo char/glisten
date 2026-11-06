@@ -1,0 +1,41 @@
+<g-k>limited</g-k> <g-k>private</g-k> <g-k>with</g-k> <g-v>Inline</g-v><g-pd>;</g-pd>
+<g-k>package</g-k> <g-f>Context_Demo</g-f> <g-k>is</g-k>
+   <g-k>type</g-k> <g-v>Parent</g-v> <g-k>is</g-k> <g-k>tagged</g-k> <g-k>null</g-k> <g-k>record</g-k><g-pd>;</g-pd>
+   <g-k>type</g-k> <g-v>Hidden</g-v> <g-k>is</g-k> <g-k>new</g-k> <g-v>Parent</g-v> <g-k>with</g-k> <g-k>private</g-k><g-pd>;</g-pd>
+<g-k>private</g-k>
+   <g-k>type</g-k> <g-v>Hidden</g-v> <g-k>is</g-k> <g-k>new</g-k> <g-v>Parent</g-v> <g-k>with</g-k> <g-k>null</g-k> <g-k>record</g-k><g-pd>;</g-pd>
+<g-k>end</g-k> <g-v>Context_Demo</g-v><g-pd>;</g-pd>
+
+<g-k>generic</g-k>
+   <g-k>with</g-k> <g-k>procedure</g-k> <g-f>Action</g-f><g-pd>;</g-pd>
+   <g-k>with</g-k> <g-k>function</g-k> <g-f>Build</g-f> <g-k>return</g-k> <g-v>Integer</g-v><g-pd>;</g-pd>
+   <g-k>with</g-k> <g-k>package</g-k> <g-f>Boxes</g-f> <g-k>is</g-k> <g-k>new</g-k> <g-v>Container</g-v> <g-pb>(</g-pb><g-o>&lt;&gt;</g-o><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>package</g-k> <g-f>Generic_Demo</g-f> <g-k>is</g-k>
+   <g-k>procedure</g-k> <g-f>Run</g-f> <g-k>with</g-k> <g-at>No_Return</g-at><g-pd>;</g-pd>
+   <g-k>function</g-k> <g-f>Ready</g-f> <g-k>return</g-k> <g-v>Boolean</g-v> <g-k>with</g-k> <g-at>Pre</g-at> <g-o>=&gt;</g-o> <g-v>True</g-v><g-pd>,</g-pd> <g-at>Post</g-at> <g-o>=&gt;</g-o> <g-v>Ready</g-v><g-ps>'</g-ps><g-at>Result</g-at><g-pd>;</g-pd>
+<g-k>end</g-k> <g-v>Generic_Demo</g-v><g-pd>;</g-pd>
+
+<g-k>PrOcEdUrE</g-k> <g-f>Edge_Cases</g-f> <g-k>is</g-k>
+   <g-k>type</g-k> <g-v>Parent</g-v> <g-k>is</g-k> <g-k>tagged</g-k> <g-k>null</g-k> <g-k>record</g-k><g-pd>;</g-pd>
+   <g-k>type</g-k> <g-v>Child</g-v> <g-k>is</g-k> <g-k>new</g-k> <g-v>Parent</g-v> <g-k>with</g-k> <g-k>record</g-k>
+      <g-v>Count</g-v> <g-pd>:</g-pd> <g-v>Integer</g-v><g-pd>;</g-pd>
+   <g-k>end</g-k> <g-k>record</g-k><g-pd>;</g-pd>
+   <g-k>type</g-k> <g-v>Index_Type</g-v> <g-k>is</g-k> <g-k>range</g-k> <g-n>1</g-n> <g-o>..</g-o> <g-n>10</g-n> <g-k>with</g-k> <g-at>Dynamic_Predicate</g-at> <g-o>=&gt;</g-o> <g-v>Index_Type</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+   <g-v>Hex</g-v> <g-pd>:</g-pd> <g-v>Integer</g-v> <g-o>:=</g-o> <g-n>16#FF#</g-n><g-pd>;</g-pd>
+   <g-v>Bits</g-v> <g-pd>:</g-pd> <g-v>Integer</g-v> <g-o>:=</g-o> <g-n>2#1010_1010#</g-n><g-pd>;</g-pd>
+   <g-v>Real_Value</g-v> <g-pd>:</g-pd> <g-v>Float</g-v> <g-o>:=</g-o> <g-n>1_000.0E-3</g-n><g-pd>;</g-pd>
+   <g-v>Élément</g-v> <g-pd>:</g-pd> <g-v>Integer</g-v> <g-o>:=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+   <g-v>Letter</g-v> <g-pd>:</g-pd> <g-v>Character</g-v> <g-o>:=</g-o> <g-s>'a'</g-s><g-pd>;</g-pd>
+   <g-v>Quote</g-v> <g-pd>:</g-pd> <g-v>Character</g-v> <g-o>:=</g-o> <g-s>'''</g-s><g-pd>;</g-pd>
+   <g-v>Message</g-v> <g-pd>:</g-pd> <g-k>constant</g-k> <g-v>String</g-v> <g-o>:=</g-o> <g-v>Integer</g-v><g-ps>'</g-ps><g-at>Image</g-at> <g-pb>(</g-pb><g-v>Hex</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+   <g-k>function</g-k> <g-f>"+"</g-f> <g-pb>(</g-pb><g-v>Left</g-v><g-pd>,</g-pd> <g-v>Right</g-v> <g-pd>:</g-pd> <g-v>Integer</g-v><g-pb>)</g-pb> <g-k>return</g-k> <g-v>Integer</g-v> <g-k>is</g-k> <g-pb>(</g-pb><g-v>Left</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>BEGIN</g-k>
+   <g-c>-- A tick following a name is not a character literal.</g-c>
+   <g-v>Hex</g-v> <g-o>:=</g-o> <g-v>Integer</g-v><g-ps>'</g-ps><g-at>First</g-at> <g-o>+</g-o> <g-v>Élément</g-v><g-pd>;</g-pd>
+   <g-k>for</g-k> <g-v>Index</g-v> <g-k>in</g-k> <g-v>Message</g-v><g-ps>'</g-ps><g-at>Range</g-at> <g-k>loop</g-k>
+      <g-k>null</g-k><g-pd>;</g-pd>
+   <g-k>end</g-k> <g-k>loop</g-k><g-pd>;</g-pd>
+   <g-k>if</g-k> <g-pb>(</g-pb><g-v>Hex</g-v> <g-o>/=</g-o> <g-n>0</g-n> <g-k>and</g-k> <g-k>then</g-k> <g-v>Bits</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>or</g-k> <g-k>else</g-k> <g-v>False</g-v> <g-k>then</g-k>
+      <g-k>null</g-k><g-pd>;</g-pd>
+   <g-k>end</g-k> <g-k>if</g-k><g-pd>;</g-pd>
+<g-k>END</g-k> <g-v>Edge_Cases</g-v><g-pd>;</g-pd>

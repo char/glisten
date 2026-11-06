@@ -1,4 +1,5 @@
 import type { Grammar } from "#/grammar/mod.ts";
+import ada from "./systems/ada/grammar.ts";
 import awk from "./scripting/awk/grammar.ts";
 import bash from "./shell/bash/grammar.ts";
 import batch from "./shell/batch/grammar.ts";
@@ -92,6 +93,7 @@ import zig from "./systems/zig/grammar.ts";
 
 /** Every language, by module name (`dist/<name>.wasm`); each lives in `languages/<category>/<name>/`. */
 export const languages: Readonly<Record<string, Grammar>> = {
+  ada,
   awk,
   bash,
   batch,

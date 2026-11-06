@@ -1,0 +1,11 @@
+<g-k>package</g-k> <g-k>body</g-k> <g-f>Counters</g-f> <g-k>is</g-k>
+   <g-k>function</g-k> <g-f>Value</g-f> <g-pb>(</g-pb><g-v>Item</g-v> <g-pd>:</g-pd> <g-v>Counter</g-v><g-pb>)</g-pb> <g-k>return</g-k> <g-v>Natural</g-v> <g-k>is</g-k> <g-pb>(</g-pb><g-v>Item</g-v><g-pd>.</g-pd><g-v>Count</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+   <g-k>procedure</g-k> <g-f>Increment</g-f> <g-pb>(</g-pb><g-v>Item</g-v> <g-pd>:</g-pd> <g-k>in</g-k> <g-k>out</g-k> <g-v>Counter</g-v><g-pb>)</g-pb> <g-k>is</g-k>
+   <g-k>begin</g-k>
+      <g-k>if</g-k> <g-v>Item</g-v><g-pd>.</g-pd><g-v>Count</g-v> <g-o>&lt;</g-o> <g-v>Natural</g-v><g-ps>'</g-ps><g-at>Last</g-at> <g-k>then</g-k>
+         <g-v>Item</g-v><g-pd>.</g-pd><g-v>Count</g-v> <g-o>:=</g-o> <g-v>Item</g-v><g-pd>.</g-pd><g-v>Count</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+      <g-k>else</g-k>
+         <g-k>raise</g-k> <g-v>Constraint_Error</g-v> <g-k>with</g-k> <g-s>"counter </g-s><g-se>""</g-se><g-s>full</g-s><g-se>""</g-se><g-s>"</g-s><g-pd>;</g-pd>
+      <g-k>end</g-k> <g-k>if</g-k><g-pd>;</g-pd>
+   <g-k>end</g-k> <g-v>Increment</g-v><g-pd>;</g-pd>
+<g-k>end</g-k> <g-v>Counters</g-v><g-pd>;</g-pd>
