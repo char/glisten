@@ -51,6 +51,7 @@ import ron from "./config/ron/grammar.ts";
 import ruby from "./scripting/ruby/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import scheme from "./functional/scheme/grammar.ts";
+import scss from "./web/scss/grammar.ts";
 import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import swift from "./managed/swift/grammar.ts";
@@ -118,6 +119,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ruby,
   rust,
   scheme,
+  scss,
   sql,
   "ssh-config": ssh_config,
   swift,

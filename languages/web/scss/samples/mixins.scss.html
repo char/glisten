@@ -1,0 +1,15 @@
+<g-c>// Shared helpers</g-c>
+<g-k>@mixin</g-k> <g-f>button</g-f><g-pb>(</g-pb><g-v>$color</g-v><g-pd>,</g-pd> <g-v>$size</g-v><g-pd>:</g-pd> <g-n>1</g-n><g-t>rem</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pr>border</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-t>px</g-t> solid <g-v>$color</g-v><g-pd>;</g-pd>
+  <g-pr>padding</g-pr><g-pd>:</g-pd> <g-v>$size</g-v><g-pd>;</g-pd>
+  <g-k>@content</g-k><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>@function</g-k> <g-f>double</g-f><g-pb>(</g-pb><g-v>$n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>@return</g-k> <g-v>$n</g-v> <g-o>*</g-o> <g-n>2</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-tg>%interactive</g-tg> <g-pb>{</g-pb> <g-pr>cursor</g-pr><g-pd>:</g-pd> pointer<g-pd>;</g-pd> <g-pb>}</g-pb>
+
+<g-pd>.</g-pd><g-pr>button</g-pr> <g-pb>{</g-pb>
+  <g-k>@extend</g-k> <g-tg>%interactive</g-tg><g-pd>;</g-pd>
+  <g-k>@include</g-k> <g-f>button</g-f><g-pb>(</g-pb><g-co v="red">red</g-co><g-pd>,</g-pd> <g-f>double</g-f><g-pb>(</g-pb><g-n>2</g-n><g-t>px</g-t><g-pb>))</g-pb> <g-pb>{</g-pb>
+    <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>focus</g-at> <g-pb>{</g-pb> <g-pr>outline-color</g-pr><g-pd>:</g-pd> <g-co v="blue">blue</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

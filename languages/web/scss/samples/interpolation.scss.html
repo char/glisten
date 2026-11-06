@@ -1,0 +1,12 @@
+<g-k>@each</g-k> <g-v>$name</g-v><g-pd>,</g-pd> <g-v>$color</g-v> <g-k>in</g-k> <g-pb>(</g-pb><g-pr>primary</g-pr><g-pd>:</g-pd> <g-co v="red">red</g-co><g-pd>,</g-pd> <g-pr>info</g-pr><g-pd>:</g-pd> <g-co v="#0af"><g-s>#0af</g-s></g-co><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-pr>text-</g-pr><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps> <g-pb>{</g-pb>
+    <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>$color</g-v><g-pd>;</g-pd>
+    <g-pr>border-</g-pr><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps><g-pr>-color</g-pr><g-pd>:</g-pd> <g-v>$color</g-v><g-pd>;</g-pd>
+    <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"color-</g-s><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>@if</g-k> <g-v>$name</g-v> <g-o>==</g-o> primary <g-pb>{</g-pb> <g-pr>width</g-pr><g-pd>:</g-pd> <g-n>100</g-n><g-t>%</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>@else</g-k> <g-k>if</g-k> <g-v>$name</g-v> <g-o>!=</g-o> info <g-pb>{</g-pb> <g-pr>width</g-pr><g-pd>:</g-pd> <g-n>50</g-n><g-t>%</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>@else</g-k> <g-pb>{</g-pb> <g-pr>width</g-pr><g-pd>:</g-pd> <g-n>0</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>@for</g-k> <g-v>$i</g-v> <g-k>from</g-k> <g-n>1</g-n> <g-k>through</g-k> <g-n>3</g-n> <g-pb>{</g-pb> <g-pd>.</g-pd><g-pr>item-</g-pr><g-ps>#{</g-ps><g-v>$i</g-v><g-ps>}</g-ps> <g-pb>{</g-pb> <g-pr>margin</g-pr><g-pd>:</g-pd> <g-v>$i</g-v> <g-o>*</g-o> <g-n>1</g-n><g-t>px</g-t><g-pd>;</g-pd> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-k>@while</g-k> <g-v>$count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-pb>{</g-pb> <g-v>$count</g-v><g-pd>:</g-pd> <g-v>$count</g-v> <g-o>-</g-o> <g-n>1</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>

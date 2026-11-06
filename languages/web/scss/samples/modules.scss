@@ -1,0 +1,16 @@
+@use "sass:math";
+@use "theme" as t with ($base: #369);
+@forward "tokens" as ui-*;
+@import "legacy";
+
+$base: #336699 !default;
+$spacing: 8px !global;
+$theme: (primary: rebeccapurple, accent: rgb(20, 40, 60));
+
+.card {
+  color: $base;
+  padding: math.div($spacing, 2);
+  background: linear-gradient(red, #abc);
+  &-title { color: t.$accent; }
+  &:hover { color: #fff; }
+}

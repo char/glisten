@@ -1,0 +1,15 @@
+// Shared helpers
+@mixin button($color, $size: 1rem) {
+  border: 1px solid $color;
+  padding: $size;
+  @content;
+}
+@function double($n) { @return $n * 2; }
+%interactive { cursor: pointer; }
+
+.button {
+  @extend %interactive;
+  @include button(red, double(2px)) {
+    &:focus { outline-color: blue; }
+  }
+}

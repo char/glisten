@@ -1,0 +1,12 @@
+@each $name, $color in (primary: red, info: #0af) {
+  .text-#{$name} {
+    color: $color;
+    border-#{$name}-color: $color;
+    content: "color-#{$name}";
+    @if $name == primary { width: 100%; }
+    @else if $name != info { width: 50%; }
+    @else { width: 0; }
+  }
+}
+@for $i from 1 through 3 { .item-#{$i} { margin: $i * 1px; } }
+@while $count > 0 { $count: $count - 1; }

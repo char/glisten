@@ -1,0 +1,16 @@
+<g-k>@use</g-k> <g-s>"sass:math"</g-s><g-pd>;</g-pd>
+<g-k>@use</g-k> <g-s>"theme"</g-s> <g-k>as</g-k> t <g-k>with</g-k> <g-pb>(</g-pb><g-v>$base</g-v><g-pd>:</g-pd> <g-co v="#369"><g-s>#369</g-s></g-co><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>@forward</g-k> <g-s>"tokens"</g-s> <g-k>as</g-k> ui-<g-o>*</g-o><g-pd>;</g-pd>
+<g-k>@import</g-k> <g-s>"legacy"</g-s><g-pd>;</g-pd>
+
+<g-v>$base</g-v><g-pd>:</g-pd> <g-co v="#336699"><g-s>#336699</g-s></g-co> <g-k>!default</g-k><g-pd>;</g-pd>
+<g-v>$spacing</g-v><g-pd>:</g-pd> <g-n>8</g-n><g-t>px</g-t> <g-k>!global</g-k><g-pd>;</g-pd>
+<g-v>$theme</g-v><g-pd>:</g-pd> <g-pb>(</g-pb>primary<g-pd>:</g-pd> <g-co v="rebeccapurple">rebeccapurple</g-co><g-pd>,</g-pd> accent<g-pd>:</g-pd> <g-co v="rgb(20, 40, 60)"><g-f>rgb</g-f><g-pb>(</g-pb><g-n>20</g-n><g-pd>,</g-pd> <g-n>40</g-n><g-pd>,</g-pd> <g-n>60</g-n><g-pb>)</g-pb></g-co><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-pd>.</g-pd><g-pr>card</g-pr> <g-pb>{</g-pb>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>$base</g-v><g-pd>;</g-pd>
+  <g-pr>padding</g-pr><g-pd>:</g-pd> <g-f>math.div</g-f><g-pb>(</g-pb><g-v>$spacing</g-v><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>background</g-pr><g-pd>:</g-pd> <g-f>linear-gradient</g-f><g-pb>(</g-pb><g-co v="red">red</g-co><g-pd>,</g-pd> <g-co v="#abc"><g-s>#abc</g-s></g-co><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-tg>&amp;-title</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> t.<g-v>$accent</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="#fff"><g-s>#fff</g-s></g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
