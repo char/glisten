@@ -1,0 +1,39 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-v>catalog</g-v><g-pd>;</g-pd>
+
+<g-k>import</g-k> <g-v>java</g-v><g-pd>.</g-pd><g-v>util</g-v><g-pd>.</g-pd><g-t>List</g-t><g-pd>;</g-pd>
+<g-k>import</g-k> <g-v>java</g-v><g-pd>.</g-pd><g-v>util</g-v><g-pd>.</g-pd><g-t>Map</g-t><g-pd>;</g-pd>
+<g-k>import</g-k> <g-v>java</g-v><g-pd>.</g-pd><g-v>util</g-v><g-pd>.</g-pd><g-v>function</g-v><g-pd>.</g-pd><g-t>Function</g-t><g-pd>;</g-pd>
+
+<g-c>/** A small immutable catalog of named values. */</g-c>
+<g-k>public</g-k> <g-k>final</g-k> <g-k>class</g-k> <g-t>Catalog</g-t><g-o>&lt;</g-o><g-t>T</g-t> <g-k>extends</g-k> <g-t>Number</g-t><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-k>private</g-k> <g-k>final</g-k> <g-t>Map</g-t><g-o>&lt;</g-o><g-t>String</g-t><g-pd>,</g-pd> <g-t>T</g-t><g-o>&gt;</g-o> <g-v>entries</g-v><g-pd>;</g-pd>
+
+    <g-k>public</g-k> <g-f>Catalog</g-f><g-pb>(</g-pb><g-t>Map</g-t><g-o>&lt;</g-o><g-t>String</g-t><g-pd>,</g-pd> <g-t>T</g-t><g-o>&gt;</g-o> <g-v>entries</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>this</g-k><g-pd>.</g-pd><g-v>entries</g-v> <g-o>=</g-o> <g-t>Map</g-t><g-pd>.</g-pd><g-f>copyOf</g-f><g-pb>(</g-pb><g-v>entries</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-at>@Override</g-at>
+    <g-k>public</g-k> <g-t>String</g-t> <g-f>toString</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-s>"Catalog: "</g-s> <g-o>+</g-o> <g-v>entries</g-v><g-pd>.</g-pd><g-f>size</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>public</g-k> <g-t>List</g-t><g-o>&lt;</g-o><g-t>String</g-t><g-o>&gt;</g-o> <g-f>names</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-v>entries</g-v><g-pd>.</g-pd><g-f>keySet</g-f><g-pb>()</g-pb><g-pd>.</g-pd><g-f>stream</g-f><g-pb>()</g-pb>
+            <g-pd>.</g-pd><g-f>sorted</g-f><g-pb>()</g-pb>
+            <g-pd>.</g-pd><g-f>map</g-f><g-pb>(</g-pb><g-t>String</g-t><g-o>::</g-o><g-v>trim</g-v><g-pb>)</g-pb>
+            <g-pd>.</g-pd><g-f>toList</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>public</g-k> <g-o>&lt;</g-o><g-t>R</g-t><g-o>&gt;</g-o> <g-t>List</g-t><g-o>&lt;</g-o><g-t>R</g-t><g-o>&gt;</g-o> <g-f>convert</g-f><g-pb>(</g-pb><g-t>Function</g-t><g-o>&lt;</g-o><g-t>T</g-t><g-pd>,</g-pd> <g-t>R</g-t><g-o>&gt;</g-o> <g-v>function</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-v>entries</g-v><g-pd>.</g-pd><g-f>values</g-f><g-pb>()</g-pb><g-pd>.</g-pd><g-f>stream</g-f><g-pb>()</g-pb>
+            <g-pd>.</g-pd><g-f>map</g-f><g-pb>(</g-pb><g-v>value</g-v> <g-o>-&gt;</g-o> <g-v>function</g-v><g-pd>.</g-pd><g-f>apply</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>))</g-pb>
+            <g-pd>.</g-pd><g-f>toList</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>public</g-k> <g-k>static</g-k> <g-t>void</g-t> <g-f>main</g-f><g-pb>(</g-pb><g-t>String</g-t><g-pb>[]</g-pb> <g-v>args</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>var</g-k> <g-v>catalog</g-v> <g-o>=</g-o> <g-k>new</g-k> <g-t>Catalog</g-t><g-o>&lt;&gt;</g-o><g-pb>(</g-pb><g-t>Map</g-t><g-pd>.</g-pd><g-f>of</g-f><g-pb>(</g-pb><g-s>"one"</g-s><g-pd>,</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-s>"two"</g-s><g-pd>,</g-pd> <g-n>2</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+        <g-k>for</g-k> <g-pb>(</g-pb><g-t>String</g-t> <g-v>name</g-v> <g-pd>:</g-pd> <g-v>catalog</g-v><g-pd>.</g-pd><g-f>names</g-f><g-pb>())</g-pb> <g-pb>{</g-pb>
+            <g-t>System</g-t><g-pd>.</g-pd><g-v>out</g-v><g-pd>.</g-pd><g-f>println</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>

@@ -1,0 +1,35 @@
+<g-c>// Deliberately incomplete snippets; recovery after line endings matters.</g-c>
+<g-k>class</g-k> <g-t>EdgeCases</g-t> <g-pb>{</g-pb>
+    <g-t>int</g-t> <g-v>classy</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>interfaceValue</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>trueValue</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>record</g-v> <g-o>=</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>sealed</g-v> <g-o>=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>yield</g-v> <g-o>=</g-o> <g-n>5</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>var</g-v> <g-o>=</g-o> <g-n>6</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>non</g-v> <g-o>=</g-o> <g-n>7</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>$amount</g-v> <g-o>=</g-o> <g-n>8</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>café</g-v> <g-o>=</g-o> <g-n>9</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>漢字</g-v> <g-o>=</g-o> <g-n>10</g-n><g-pd>;</g-pd>
+
+    <g-t>String</g-t> <g-v>unfinished</g-v> <g-o>=</g-o> <g-s>"oops</g-s>
+    <g-t>int</g-t> <g-v>afterString</g-v> <g-o>=</g-o> <g-n>11</g-n><g-pd>;</g-pd>
+    <g-t>char</g-t> <g-v>unfinishedChar</g-v> <g-o>=</g-o> <g-s>'x</g-s>
+    <g-t>int</g-t> <g-v>afterChar</g-v> <g-o>=</g-o> <g-n>12</g-n><g-pd>;</g-pd>
+
+    <g-t>double</g-t> <g-v>values</g-v> <g-o>=</g-o> <g-n>1.0</g-n> <g-o>+</g-o> <g-n>.25</g-n> <g-o>+</g-o> <g-n>1e3</g-n> <g-o>+</g-o> <g-n>0x1p4</g-n><g-pd>;</g-pd>
+    <g-t>long</g-t> <g-v>more</g-v> <g-o>=</g-o> <g-n>42L</g-n> <g-o>+</g-o> <g-n>0b11L</g-n> <g-o>+</g-o> <g-n>0xffL</g-n><g-pd>;</g-pd>
+    <g-t>Object</g-t> <g-v>fn</g-v> <g-o>=</g-o> <g-t>String</g-t><g-o>::</g-o><g-v>valueOf</g-v><g-pd>;</g-pd>
+    <g-t>boolean</g-t> <g-v>test</g-v> <g-o>=</g-o> <g-v>more</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-o>&amp;&amp;</g-o> <g-v>values</g-v> <g-o>!=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-v>shifted</g-v> <g-o>=</g-o> <g-n>1</g-n> <g-o>&lt;&lt;</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+    <g-t>String</g-t> <g-v>escapes</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\s</g-se><g-s> </g-s><g-se>\b</g-se><g-s> </g-s><g-se>\f</g-se><g-s> </g-s><g-se>\r</g-se><g-s> </g-s><g-se>\t</g-se><g-s> </g-s><g-se>\\</g-se><g-s> </g-s><g-se>\"</g-se><g-s> </g-s><g-se>\u0041</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-c>// A comment with "quotes" and /* not a nested comment.</g-c>
+    <g-c>/* A block with // and "quotes". */</g-c>
+    <g-at>@example.api.Marker</g-at>
+    <g-t>void</g-t> <g-f>test</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-t>Runnable</g-t> <g-v>r</g-v> <g-o>=</g-o> <g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-t>System</g-t><g-pd>.</g-pd><g-v>out</g-v><g-pd>.</g-pd><g-f>println</g-f><g-pb>(</g-pb><g-s>"ok"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-v>r</g-v><g-pd>.</g-pd><g-f>run</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-c>/* unfinished comment
+</g-c>

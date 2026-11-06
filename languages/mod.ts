@@ -4,6 +4,7 @@ import c from "./systems/c/grammar.ts";
 import css from "./web/css/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import go from "./managed/go/grammar.ts";
+import java from "./managed/java/grammar.ts";
 import javascript from "./web/javascript/grammar.ts";
 import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
@@ -22,6 +23,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   css,
   fjson,
   go,
+  java,
   javascript,
   json,
   jsx,

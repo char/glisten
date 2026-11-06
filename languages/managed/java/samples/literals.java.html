@@ -1,0 +1,34 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>;</g-pd>
+
+<g-k>@interface</g-k> <g-t>Note</g-t> <g-pb>{</g-pb>
+    <g-t>String</g-t> <g-f>value</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-at>@Note</g-at><g-pb>(</g-pb><g-s>"measurement"</g-s><g-pb>)</g-pb>
+<g-k>record</g-k> <g-f>Measurement</g-f><g-pb>(</g-pb><g-t>double</g-t> <g-v>value</g-v><g-pd>,</g-pd> <g-t>String</g-t> <g-v>unit</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>long</g-t> <g-t>MASK</g-t> <g-o>=</g-o> <g-n>0xCAFE_F00DL</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>int</g-t> <g-t>BITS</g-t> <g-o>=</g-o> <g-n>0b1010_0110</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>int</g-t> <g-t>OCTAL</g-t> <g-o>=</g-o> <g-n>07_77</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>double</g-t> <g-t>HEX</g-t> <g-o>=</g-o> <g-n>0x1.fp+3</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>double</g-t> <g-t>EXP</g-t> <g-o>=</g-o> <g-n>.5e-2</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>float</g-t> <g-t>FLOAT</g-t> <g-o>=</g-o> <g-n>1_000.25f</g-n><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>char</g-t> <g-t>QUOTE</g-t> <g-o>=</g-o> <g-s>'</g-s><g-se>\'</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>char</g-t> <g-t>NEWLINE</g-t> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>char</g-t> <g-t>OCTET</g-t> <g-o>=</g-o> <g-s>'</g-s><g-se>\141</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>char</g-t> <g-t>UNICODE</g-t> <g-o>=</g-o> <g-s>'</g-s><g-se>\u0041</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>String</g-t> <g-t>MESSAGE</g-t> <g-o>=</g-o> <g-s>"tab</g-s><g-se>\t</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s> slash</g-s><g-se>\\</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>final</g-k> <g-t>String</g-t> <g-t>BLOCK</g-t> <g-o>=</g-o> <g-s>"""
+        The first line has a trailing space</g-s><g-se>\s</g-se><g-s>
+        This line continues </g-s><g-se>\
+</g-se><g-s>        here.
+        A quote: </g-s><g-se>\"</g-se><g-s> and a slash: </g-s><g-se>\\</g-se><g-s>
+        """</g-s><g-pd>;</g-pd>
+
+    <g-t>double</g-t> <g-f>scaled</g-f><g-pb>(</g-pb><g-t>double</g-t> <g-v>factor</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-v>value</g-v> <g-o>*</g-o> <g-v>factor</g-v><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-t>boolean</g-t> <g-f>valid</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-v>value</g-v> <g-o>&gt;=</g-o> <g-n>0</g-n> <g-o>&amp;&amp;</g-o> <g-v>unit</g-v> <g-o>!=</g-o> <g-cb>null</g-cb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>

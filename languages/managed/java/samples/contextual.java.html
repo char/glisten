@@ -1,0 +1,40 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-v>shapes</g-v><g-pd>;</g-pd>
+
+<g-k>sealed</g-k> <g-k>interface</g-k> <g-t>Shape</g-t> <g-k>permits</g-k> <g-t>Circle</g-t><g-pd>,</g-pd> <g-t>Rectangle</g-t> <g-pb>{</g-pb>
+    <g-t>double</g-t> <g-f>area</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>record</g-k> <g-f>Circle</g-f><g-pb>(</g-pb><g-t>double</g-t> <g-v>radius</g-v><g-pb>)</g-pb> <g-k>implements</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+    <g-k>public</g-k> <g-t>double</g-t> <g-f>area</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-t>Math</g-t><g-pd>.</g-pd><g-t>PI</g-t> <g-o>*</g-o> <g-v>radius</g-v> <g-o>*</g-o> <g-v>radius</g-v><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>non-sealed</g-k> <g-k>class</g-k> <g-t>Rectangle</g-t> <g-k>implements</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+    <g-k>final</g-k> <g-t>double</g-t> <g-v>width</g-v><g-pd>;</g-pd>
+    <g-k>final</g-k> <g-t>double</g-t> <g-v>height</g-v><g-pd>;</g-pd>
+
+    <g-f>Rectangle</g-f><g-pb>(</g-pb><g-t>double</g-t> <g-v>width</g-v><g-pd>,</g-pd> <g-t>double</g-t> <g-v>height</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>this</g-k><g-pd>.</g-pd><g-v>width</g-v> <g-o>=</g-o> <g-v>width</g-v><g-pd>;</g-pd>
+        <g-k>this</g-k><g-pd>.</g-pd><g-v>height</g-v> <g-o>=</g-o> <g-v>height</g-v><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>public</g-k> <g-t>double</g-t> <g-f>area</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+        <g-k>var</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-v>width</g-v> <g-o>*</g-o> <g-v>height</g-v><g-pd>;</g-pd>
+        <g-k>return</g-k> <g-v>result</g-v><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>static</g-k> <g-t>int</g-t> <g-f>score</g-f><g-pb>(</g-pb><g-t>int</g-t> <g-v>choice</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-k>switch</g-k> <g-pb>(</g-pb><g-v>choice</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+            <g-k>case</g-k> <g-n>1</g-n><g-pd>:</g-pd> <g-k>yield</g-k> <g-n>10</g-n><g-pd>;</g-pd>
+            <g-k>case</g-k> <g-n>2</g-n><g-pd>:</g-pd> <g-k>yield</g-k> <g-n>20</g-n><g-pd>;</g-pd>
+            <g-k>default</g-k><g-pd>:</g-pd> <g-k>yield</g-k> <g-n>0</g-n><g-pd>;</g-pd>
+        <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-t>void</g-t> <g-f>display</g-f><g-pb>(</g-pb><g-t>Iterable</g-t><g-o>&lt;</g-o><g-t>String</g-t><g-o>&gt;</g-o> <g-v>names</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>for</g-k> <g-pb>(</g-pb><g-k>var</g-k> <g-v>name</g-v> <g-pd>:</g-pd> <g-v>names</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+            <g-t>System</g-t><g-pd>.</g-pd><g-v>out</g-v><g-pd>.</g-pd><g-f>println</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
