@@ -1,0 +1,40 @@
+<g-s>"""Small objects with annotations and decorators."""</g-s>
+<g-k>from</g-k> <g-v>dataclasses</g-v> <g-k>import</g-k> <g-v>dataclass</g-v>
+<g-k>from</g-k> <g-v>typing</g-v> <g-k>import</g-k> <g-t>ClassVar</g-t><g-pd>,</g-pd> <g-t>Self</g-t>
+
+
+<g-f>@decorators.register</g-f>
+<g-f>@dataclass</g-f><g-pb>(</g-pb><g-v>frozen</g-v><g-o>=</g-o><g-cb>True</g-cb><g-pb>)</g-pb>
+<g-k>class</g-k> <g-t>Point</g-t><g-pd>:</g-pd>
+    <g-v>x</g-v><g-pd>:</g-pd> <g-v>float</g-v>
+    <g-v>y</g-v><g-pd>:</g-pd> <g-v>float</g-v>
+    <g-v>origin</g-v><g-pd>:</g-pd> <g-t>ClassVar</g-t><g-pb>[</g-pb><g-v>tuple</g-v><g-pb>[</g-pb><g-v>float</g-v><g-pd>,</g-pd> <g-v>float</g-v><g-pb>]]</g-pb> <g-o>=</g-o> <g-pb>(</g-pb><g-n>0.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pb>)</g-pb>
+
+    <g-f>@classmethod</g-f>
+    <g-k>def</g-k> <g-f>from_pair</g-f><g-pb>(</g-pb><g-v>cls</g-v><g-pd>,</g-pd> <g-v>pair</g-v><g-pd>:</g-pd> <g-t>tuple</g-t><g-pb>[</g-pb><g-t>float</g-t><g-pd>,</g-pd> <g-t>float</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>Self</g-t><g-pd>:</g-pd>
+        <g-k>return</g-k> <g-f>cls</g-f><g-pb>(</g-pb><g-o>*</g-o><g-v>pair</g-v><g-pb>)</g-pb>
+
+    <g-f>@property</g-f>
+    <g-k>def</g-k> <g-f>length</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>float</g-t><g-pd>:</g-pd>
+        <g-k>return</g-k> <g-pb>(</g-pb><g-v>self</g-v><g-pd>.</g-pd><g-pr>x</g-pr> <g-o>**</g-o> <g-n>2</g-n> <g-o>+</g-o> <g-v>self</g-v><g-pd>.</g-pd><g-pr>y</g-pr> <g-o>**</g-o> <g-n>2</g-n><g-pb>)</g-pb> <g-o>**</g-o> <g-n>0.5</g-n>
+
+    <g-k>def</g-k> <g-f>scale</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pd>,</g-pd> <g-v>factor</g-v><g-pd>:</g-pd> <g-t>float</g-t> <g-o>=</g-o> <g-n>1.0</g-n><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-s>"Point"</g-s><g-pd>:</g-pd>
+        <g-k>return</g-k> <g-f>Point</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pd>.</g-pd><g-pr>x</g-pr> <g-o>*</g-o> <g-v>factor</g-v><g-pd>,</g-pd> <g-v>self</g-v><g-pd>.</g-pd><g-pr>y</g-pr> <g-o>*</g-o> <g-v>factor</g-v><g-pb>)</g-pb>
+
+    <g-k>def</g-k> <g-f>__str__</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>str</g-t><g-pd>:</g-pd>
+        <g-k>return</g-k> <g-s>f"(</g-s><g-ps>{</g-ps><g-v>self</g-v><g-pd>.</g-pd><g-pr>x</g-pr><g-ps>}</g-ps><g-s>, </g-s><g-ps>{</g-ps><g-v>self</g-v><g-pd>.</g-pd><g-pr>y</g-pr><g-ps>}</g-ps><g-s>)"</g-s>
+
+
+<g-k>class</g-k> <g-t>Canvas</g-t><g-pd>:</g-pd>
+    <g-k>def</g-k> <g-f>__init__</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-cb>None</g-cb><g-pd>:</g-pd>
+        <g-v>self</g-v><g-pd>.</g-pd><g-pr>points</g-pr><g-pd>:</g-pd> <g-v>list</g-v><g-pb>[</g-pb><g-t>Point</g-t><g-pb>]</g-pb> <g-o>=</g-o> <g-pb>[]</g-pb>
+
+    <g-k>def</g-k> <g-f>add</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pd>,</g-pd> <g-v>point</g-v><g-pd>:</g-pd> <g-t>Point</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-cb>None</g-cb><g-pd>:</g-pd>
+        <g-v>self</g-v><g-pd>.</g-pd><g-pr>points</g-pr><g-pd>.</g-pd><g-f>append</g-f><g-pb>(</g-pb><g-v>point</g-v><g-pb>)</g-pb>
+
+    <g-k>def</g-k> <g-f>__iter__</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+        <g-k>yield</g-k> <g-k>from</g-k> <g-v>self</g-v><g-pd>.</g-pd><g-pr>points</g-pr>
+
+<g-v>canvas</g-v> <g-o>=</g-o> <g-f>Canvas</g-f><g-pb>()</g-pb>
+<g-v>canvas</g-v><g-pd>.</g-pd><g-f>add</g-f><g-pb>(</g-pb><g-t>Point</g-t><g-pd>.</g-pd><g-f>from_pair</g-f><g-pb>((</g-pb><g-n>3</g-n><g-pd>,</g-pd> <g-n>4</g-n><g-pb>)))</g-pb>
+<g-f>print</g-f><g-pb>(</g-pb><g-f>next</g-f><g-pb>(</g-pb><g-f>iter</g-f><g-pb>(</g-pb><g-v>canvas</g-v><g-pb>))</g-pb><g-pd>.</g-pd><g-pr>length</g-pr><g-pb>)</g-pb>

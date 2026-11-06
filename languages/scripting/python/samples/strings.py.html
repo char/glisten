@@ -1,0 +1,34 @@
+<g-s>"""String literals and interpolation."""</g-s>
+
+<g-v>name</g-v> <g-o>=</g-o> <g-s>"Ada"</g-s>
+<g-v>width</g-v> <g-o>=</g-o> <g-n>12</g-n>
+<g-v>precision</g-v> <g-o>=</g-o> <g-n>3</g-n>
+<g-v>value</g-v> <g-o>=</g-o> <g-n>2.71828</g-n>
+<g-v>plain</g-v> <g-o>=</g-o> <g-s>'hello</g-s><g-se>\n</g-se><g-s>world'</g-s>
+<g-v>quoted</g-v> <g-o>=</g-o> <g-s>"A </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s> and a backslash: </g-s><g-se>\\\\</g-se><g-s>"</g-s>
+<g-v>byte_data</g-v> <g-o>=</g-o> <g-s>b"</g-s><g-se>\x48\x69\012</g-se><g-s>"</g-s>
+<g-v>unicode_name</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\N{LATIN CAPITAL LETTER A}\u03bb\U0001F600</g-se><g-s>"</g-s>
+<g-v>raw_path</g-v> <g-o>=</g-o> <g-s>r"C:\new\folder\file.txt"</g-s>
+<g-v>raw_quote</g-v> <g-o>=</g-o> <g-s>r'can\'t'</g-s>
+<g-v>raw_bytes</g-v> <g-o>=</g-o> <g-s>br"\x00\n"</g-s>
+<g-v>text</g-v> <g-o>=</g-o> <g-s>u"old spelling"</g-s>
+<g-v>triple</g-v> <g-o>=</g-o> <g-s>"""Line one
+Line two with 'quotes'
+Line three"""</g-s>
+<g-v>raw_triple</g-v> <g-o>=</g-o> <g-s>r'''a\nb
+c\td'''</g-s>
+
+<g-v>simple</g-v> <g-o>=</g-o> <g-s>f"Hello, </g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>!"</g-s>
+<g-v>representation</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>!r}</g-ps><g-s> </g-s><g-ps>{</g-ps><g-v>value</g-v><g-ps>!s}</g-ps><g-s> </g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>!a}</g-ps><g-s>"</g-s>
+<g-v>debug</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-v>value</g-v> <g-o>=</g-o> <g-ps>:</g-ps><g-s>.2f</g-s><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>columns</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>:</g-ps><g-s>&gt;</g-s><g-ps>{</g-ps><g-v>width</g-v><g-ps>}}</g-ps><g-s> </g-s><g-ps>{</g-ps><g-v>value</g-v><g-ps>:{</g-ps><g-v>width</g-v><g-ps>}</g-ps><g-s>.</g-s><g-ps>{</g-ps><g-v>precision</g-v><g-ps>}</g-ps><g-s>f</g-s><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>brace_text</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-se>{{</g-se><g-s>hello</g-s><g-se>}}</g-se><g-s> = </g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>inner</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-s>f'</g-s><g-ps>{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>upper</g-f><g-pb>()</g-pb><g-ps>}</g-ps><g-s>'</g-s><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>same_quote</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps> <g-pb>{</g-pb><g-s>'x'</g-s><g-pd>:</g-pd> <g-s>'value'</g-s><g-pb>}[</g-pb><g-s>'x'</g-s><g-pb>]</g-pb> <g-ps>}</g-ps><g-s>"</g-s>
+<g-v>raw_format</g-v> <g-o>=</g-o> <g-s>rf"\n</g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>\t</g-s><g-se>{{</g-se><g-s>ok</g-s><g-se>}}</g-se><g-s>"</g-s>
+<g-v>complex_field</g-v> <g-o>=</g-o> <g-s>f"""result: </g-s><g-ps>{</g-ps>
+    <g-v>value</g-v> <g-o>+</g-o> <g-n>1</g-n>  <g-c># comments are legal in replacement fields</g-c>
+<g-ps>:</g-ps><g-s>.2f</g-s><g-ps>}</g-ps><g-s>"""</g-s>
+
+<g-k>assert</g-k> <g-f>len</g-f><g-pb>(</g-pb><g-v>simple</g-v><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>0</g-n>
+<g-k>assert</g-k> <g-v>raw_path</g-v><g-pd>.</g-pd><g-f>endswith</g-f><g-pb>(</g-pb><g-s>"txt"</g-s><g-pb>)</g-pb>

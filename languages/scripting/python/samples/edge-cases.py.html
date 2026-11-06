@@ -1,0 +1,32 @@
+<g-c># Deliberately incomplete Python for highlighting recovery.</g-c>
+<g-v>name</g-v> <g-o>=</g-o> <g-s>"café"</g-s>
+<g-v>δ</g-v> <g-o>=</g-o> <g-n>0xCA_FE</g-n>
+<g-v>near</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>matchbox</g-v><g-pd>,</g-pd> <g-v>casework</g-v><g-pd>,</g-pd> <g-v>typewriter</g-v><g-pd>,</g-pd> <g-v>selfless</g-v><g-pd>,</g-pd> <g-v>classifier</g-v><g-pb>)</g-pb>
+<g-v>prefixes</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-s>r"raw\n"</g-s><g-pd>,</g-pd> <g-s>b'bytes</g-s><g-se>\x20</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>rb"raw bytes"</g-s><g-pd>,</g-pd> <g-s>u'unicode'</g-s><g-pb>)</g-pb>
+<g-v>formatted</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>!r:</g-ps><g-s>&gt;</g-s><g-ps>{</g-ps><g-v>width</g-v><g-ps>}}</g-ps><g-s>"</g-s>
+<g-v>paired</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-se>{{</g-se><g-s>literal</g-s><g-se>}}</g-se><g-s> </g-s><g-ps>{</g-ps><g-v>δ</g-v><g-o>=</g-o><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>nested</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-s>f'</g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>'</g-s><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>same_quote</g-v> <g-o>=</g-o> <g-s>f"</g-s><g-ps>{</g-ps><g-v>mapping</g-v><g-pb>[</g-pb><g-s>"name"</g-s><g-pb>]</g-pb><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>continued</g-v> <g-o>=</g-o> <g-s>"line</g-s><g-se>\
+</g-se><g-s>continuation"</g-s>
+<g-v>multiline</g-v> <g-o>=</g-o> <g-s>'''first
+second
+third'''</g-s>
+<g-v>hexadecimal</g-v> <g-o>=</g-o> <g-n>0x_FF</g-n>
+<g-v>binary</g-v> <g-o>=</g-o> <g-n>0b_1010</g-n>
+<g-v>integer</g-v> <g-o>=</g-o> <g-n>10_000</g-n>
+<g-v>fraction</g-v> <g-o>=</g-o> <g-n>.25e-2</g-n>
+<g-v>imaginary</g-v> <g-o>=</g-o> <g-n>1.0j</g-n>
+
+<g-f>@registry.register</g-f><g-pb>(</g-pb><g-s>"entry"</g-s><g-pb>)</g-pb>
+<g-k>class</g-k> <g-t>Example</g-t><g-pd>:</g-pd>
+    <g-k>def</g-k> <g-f>method</g-f><g-pb>(</g-pb><g-v>self</g-v><g-pd>,</g-pd> <g-v>value</g-v><g-pd>:</g-pd> <g-t>list</g-t><g-pb>[</g-pb><g-t>str</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>str</g-t><g-pd>:</g-pd>
+        <g-c># Unicode identifiers are valid Python.</g-c>
+        <g-v>café</g-v> <g-o>=</g-o> <g-v>value</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb>
+        <g-k>return</g-k> <g-s>f"</g-s><g-ps>{</g-ps><g-v>café</g-v><g-ps>!s}</g-ps><g-s>"</g-s>
+
+<g-c># Each incomplete string ends at the physical line.</g-c>
+<g-v>broken</g-v> <g-o>=</g-o> <g-s>"unterminated</g-s>
+<g-v>next_name</g-v> <g-o>=</g-o> <g-n>42</g-n>
+<g-v>broken_again</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
+<g-v>still_code</g-v> <g-o>=</g-o> <g-cb>True</g-cb>

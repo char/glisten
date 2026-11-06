@@ -1,0 +1,43 @@
+<g-s>"""Control flow and structural matching."""</g-s>
+<g-k>from</g-k> <g-v>collections</g-v><g-pd>.</g-pd><g-pr>abc</g-pr> <g-k>import</g-k> <g-t>Iterable</g-t>
+
+<g-k>type</g-k> <g-t>Row</g-t> <g-o>=</g-o> <g-v>tuple</g-v><g-pb>[</g-pb><g-v>str</g-v><g-pd>,</g-pd> <g-v>int</g-v><g-pb>]</g-pb>
+<g-k>type</g-k> <g-t>Rows</g-t> <g-o>=</g-o> <g-v>list</g-v><g-pb>[</g-pb><g-t>Row</g-t><g-pb>]</g-pb>
+
+
+<g-k>def</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>object</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>str</g-t><g-pd>:</g-pd>
+    <g-k>match</g-k> <g-v>item</g-v><g-pd>:</g-pd>
+        <g-k>case</g-k> <g-cb>None</g-cb><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-s>"nothing"</g-s>
+        <g-k>case</g-k> <g-cb>True</g-cb> <g-o>|</g-o> <g-cb>False</g-cb><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-s>"boolean"</g-s>
+        <g-k>case</g-k> <g-pb>[</g-pb><g-v>first</g-v><g-pd>,</g-pd> <g-o>*</g-o><g-v>rest</g-v><g-pb>]</g-pb> <g-k>if</g-k> <g-v>first</g-v> <g-k>is</g-k> <g-k>not</g-k> <g-cb>None</g-cb><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-s>f"sequence: </g-s><g-ps>{</g-ps><g-v>first</g-v><g-ps>!r}</g-ps><g-s>, </g-s><g-ps>{</g-ps><g-f>len</g-f><g-pb>(</g-pb><g-v>rest</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s> more"</g-s>
+        <g-k>case</g-k> <g-pb>{</g-pb><g-s>"name"</g-s><g-pd>:</g-pd> <g-v>name</g-v><g-pd>,</g-pd> <g-o>**</g-o><g-v>other</g-v><g-pb>}</g-pb><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-s>f"record: </g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>, </g-s><g-ps>{</g-ps><g-v>other</g-v><g-ps>}</g-ps><g-s>"</g-s>
+        <g-k>case</g-k> <g-k>_</g-k><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-s>"unknown"</g-s>
+
+
+<g-k>def</g-k> <g-f>total</g-f><g-pb>(</g-pb><g-v>rows</g-v><g-pd>:</g-pd> <g-t>Iterable</g-t><g-pb>[</g-pb><g-t>Row</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>int</g-t><g-pd>:</g-pd>
+    <g-v>result</g-v> <g-o>=</g-o> <g-n>0</g-n>
+    <g-k>for</g-k> <g-v>name</g-v><g-pd>,</g-pd> <g-v>count</g-v> <g-k>in</g-k> <g-v>rows</g-v><g-pd>:</g-pd>
+        <g-k>if</g-k> <g-v>count</g-v> <g-o>&lt;</g-o> <g-n>0</g-n><g-pd>:</g-pd>
+            <g-k>continue</g-k>
+        <g-k>elif</g-k> <g-v>name</g-v> <g-o>==</g-o> <g-s>"stop"</g-s><g-pd>:</g-pd>
+            <g-k>break</g-k>
+        <g-k>else</g-k><g-pd>:</g-pd>
+            <g-v>result</g-v> <g-o>+=</g-o> <g-v>count</g-v>
+    <g-k>else</g-k><g-pd>:</g-pd>
+        <g-f>print</g-f><g-pb>(</g-pb><g-s>"all rows processed"</g-s><g-pb>)</g-pb>
+    <g-k>return</g-k> <g-v>result</g-v>
+
+
+<g-k>async</g-k> <g-k>def</g-k> <g-f>fetch</g-f><g-pb>(</g-pb><g-v>reader</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+    <g-k>try</g-k><g-pd>:</g-pd>
+        <g-k>async</g-k> <g-k>with</g-k> <g-v>reader</g-v><g-pd>:</g-pd>
+            <g-k>return</g-k> <g-k>await</g-k> <g-v>reader</g-v><g-pd>.</g-pd><g-f>read</g-f><g-pb>()</g-pb>
+    <g-k>except</g-k> <g-t>OSError</g-t> <g-k>as</g-k> <g-v>error</g-v><g-pd>:</g-pd>
+        <g-k>raise</g-k> <g-f>RuntimeError</g-f><g-pb>(</g-pb><g-s>"read failed"</g-s><g-pb>)</g-pb> <g-k>from</g-k> <g-v>error</g-v>
+    <g-k>finally</g-k><g-pd>:</g-pd>
+        <g-f>print</g-f><g-pb>(</g-pb><g-s>"finished"</g-s><g-pb>)</g-pb>
