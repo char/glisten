@@ -1,0 +1,34 @@
+<g-k>import</g-k> <g-o>*</g-o> <g-k>as</g-k> <g-v>UI</g-v> <g-k>from</g-k> <g-s>'./ui'</g-s><g-pd>;</g-pd>
+
+<g-k>type</g-k> <g-t>Box</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>value</g-pr><g-pd>:</g-pd> <g-t>T</g-t> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>Props</g-t> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>title</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>;</g-pd> <g-pr>values</g-pr><g-pd>:</g-pd> <g-t>number</g-t><g-pb>[]</g-pb><g-pd>;</g-pd> <g-pr>active</g-pr><g-o>?</g-o><g-pd>:</g-pd> <g-t>boolean</g-t> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>wrap</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>T</g-t><g-pd>,</g-pd><g-pb>&gt;(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>Box</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=&gt;</g-o> <g-pb>({</g-pb> <g-vm>value</g-vm> <g-pb>})</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>list</g-v><g-pd>:</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>Box</g-t><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;&gt;</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-v>wrap</g-v><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;(</g-pb><g-n>1</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-f>wrap</g-f><g-pb>(</g-pb><g-n>2</g-n><g-pb>)]</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>smaller</g-v> <g-o>=</g-o> <g-v>list</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-o>.</g-o><g-vm>value</g-vm> <g-o>&lt;</g-o> <g-v>list</g-v><g-pb>[</g-pb><g-n>1</g-n><g-pb>]</g-pb><g-o>.</g-o><g-vm>value</g-vm><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>ratio</g-v> <g-o>=</g-o> <g-n>1_000</g-n> <g-o>/</g-o> <g-n>0x10</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>matcher</g-v> <g-o>=</g-o> <g-s>/[&lt;&gt;/]+/gi</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>greeting</g-v> <g-o>=</g-o> <g-s>'Bonjour</g-s><g-se>\n\u{1F44B}</g-se><g-s>'</g-s><g-pd>;</g-pd>
+
+<g-k>export</g-k> <g-k>function</g-k> <g-f>Summary</g-f><g-pb>({</g-pb> <g-vm>title</g-vm><g-pd>,</g-pd> <g-vm>values</g-vm><g-pd>,</g-pd> <g-vm>active</g-vm> <g-o>=</g-o> <g-cb>false</g-cb> <g-pb>}</g-pb><g-pd>:</g-pd> <g-t>Props</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-v>label</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>`</g-s><g-ps>${</g-ps><g-v>title</g-v><g-ps>}</g-ps><g-s>: </g-s><g-ps>${</g-ps><g-v>values</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>n</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-s>`</g-s><g-ps>${</g-ps><g-v>n</g-v> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>`</g-s><g-pb>)</g-pb><g-o>.</g-o><g-vm>join</g-vm><g-pb>(</g-pb><g-s>', '</g-s><g-pb>)</g-pb><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-pb>(</g-pb>
+    <g-pb>&lt;&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-t>UI.Header</g-t> <g-pr>title</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>label</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>custom-panel</g-tg> <g-pr>data-state</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>active</g-v> <g-o>?</g-o> <g-s>'on'</g-s> <g-pd>:</g-pd> <g-s>'off'</g-s><g-ps>}</g-ps> <g-pr>xml:lang</g-pr><g-o>=</g-o><g-s>"fr"</g-s><g-pb>&gt;</g-pb>
+        Café &amp;amp; thé — 世界
+        <g-ps>{</g-ps><g-v>values</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>value</g-v><g-pd>,</g-pd> <g-v>index</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb>
+          <g-pb>&lt;</g-pb><g-tg>span</g-tg> <g-pr>key</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>index</g-v><g-ps>}</g-ps> <g-pr>style</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>{</g-pb> <g-vm>opacity</g-vm><g-pd>:</g-pd> <g-v>value</g-v> <g-o>/</g-o> <g-n>100</g-n> <g-pb>}</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+            <g-ps>{</g-ps><g-v>matcher</g-v><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>title</g-v><g-pb>)</g-pb> <g-o>?</g-o> <g-v>greeting</g-v> <g-pd>:</g-pd> <g-s>`</g-s><g-ps>${</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps>
+          <g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb>
+        <g-pb>))</g-pb><g-ps>}</g-ps>
+      <g-pb>&lt;/</g-pb><g-tg>custom-panel</g-tg><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-t>UI.Select</g-t><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;</g-pb> <g-pr>value</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>values</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-ps>}</g-ps> <g-pr>options</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>values</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+      <g-ps>{</g-ps><g-v>active</g-v> <g-o>&amp;&amp;</g-o> <g-pb>&lt;</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-s>`nested </g-s><g-ps>${</g-ps><g-s>`</g-s><g-ps>${</g-ps><g-v>ratio</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps>
+      <g-pb>&lt;</g-pb><g-tg>input</g-tg> <g-ps>{</g-ps><g-o>...</g-o><g-pb>{</g-pb> <g-vm>title</g-vm> <g-pb>}</g-pb><g-ps>}</g-ps> <g-pr>disabled</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-o>!</g-o><g-v>active</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+    <g-pb>&lt;/&gt;</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-v>checked</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>title</g-vm><g-pd>:</g-pd> <g-s>'ok'</g-s><g-pd>,</g-pd> <g-vm>values</g-vm><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pb>]</g-pb> <g-pb>}</g-pb> <g-k>satisfies</g-k> <g-t>Props</g-t><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>asserted</g-v> <g-o>=</g-o> <g-v>checked</g-v> <g-k>as</g-k> <g-t>Props</g-t><g-pd>;</g-pd>
+<g-k>export</g-k> <g-pb>{</g-pb> <g-v>smaller</g-v><g-pd>,</g-pd> <g-v>checked</g-v><g-pd>,</g-pd> <g-v>asserted</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>

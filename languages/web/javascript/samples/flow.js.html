@@ -1,0 +1,42 @@
+<g-c>#!/usr/bin/env node</g-c>
+<g-k>import</g-k> <g-pb>{</g-pb> <g-v>readFile</g-v> <g-k>as</g-k> <g-v>read</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'node:fs/promises'</g-s><g-pd>;</g-pd>
+
+<g-c>/** Summarize a small inventory, including names such as café. */</g-c>
+<g-k>export</g-k> <g-k>async</g-k> <g-k>function</g-k> <g-f>summarize</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pd>,</g-pd> <g-v>limit</g-v> <g-o>=</g-o> <g-n>10</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-k>await</g-k> <g-f>read</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pd>,</g-pd> <g-s>'utf8'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-v>rows</g-v> <g-o>=</g-o> <g-v>text</g-v><g-o>.</g-o><g-vm>split</g-vm><g-pb>(</g-pb><g-s>/</g-s><g-se>\r</g-se><g-s>?</g-s><g-se>\n</g-se><g-s>/</g-s><g-pb>)</g-pb><g-o>.</g-o><g-vm>filter</g-vm><g-pb>(</g-pb><g-v>Boolean</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>let</g-k> <g-v>total</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+  <g-k>for</g-k> <g-pb>(</g-pb><g-k>const</g-k> <g-v>row</g-v> <g-k>of</g-k> <g-v>rows</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>const</g-k> <g-pb>[</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>raw</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>row</g-v><g-o>.</g-o><g-vm>split</g-vm><g-pb>(</g-pb><g-s>':'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-v>amount</g-v> <g-o>=</g-o> <g-f>Number</g-f><g-pb>(</g-pb><g-v>raw</g-v> <g-o>??</g-o> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>amount</g-v> <g-o>&lt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>continue</g-k><g-pd>;</g-pd>
+    <g-v>total</g-v> <g-o>+=</g-o> <g-v>amount</g-v><g-pd>;</g-pd>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>total</g-v> <g-o>&gt;</g-o> <g-v>limit</g-v><g-pb>)</g-pb> <g-k>break</g-k><g-pd>;</g-pd>
+    <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>amount</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>return</g-k> <g-pb>{</g-pb> <g-vm>total</g-vm><g-pd>,</g-pd> <g-vm>count</g-vm><g-pd>:</g-pd> <g-v>rows</g-v><g-o>.</g-o><g-vm>length</g-vm><g-pd>,</g-pd> <g-vm>average</g-vm><g-pd>:</g-pd> <g-v>total</g-v> <g-o>/</g-o> <g-pb>(</g-pb><g-v>rows</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>||</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>class</g-k> <g-t>Inventory</g-t> <g-k>extends</g-k> <g-t>Map</g-t> <g-pb>{</g-pb>
+  <g-k>static</g-k> <g-f>empty</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-k>new</g-k> <g-t>Inventory</g-t><g-pb>()</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-k>get</g-k> <g-f>sizeLabel</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-s>`</g-s><g-ps>${</g-ps><g-cb>this</g-cb><g-o>.</g-o><g-vm>size</g-vm><g-ps>}</g-ps><g-s> items`</g-s><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-k>set</g-k> <g-f>entry</g-f><g-pb>(</g-pb><g-v>pair</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-cb>this</g-cb><g-o>.</g-o><g-vm>set</g-vm><g-pb>(</g-pb><g-o>...</g-o><g-v>pair</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-v>options</g-v> <g-o>=</g-o> <g-pb>{</g-pb>
+  <g-vm>enabled</g-vm><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd>
+  <g-vm>prefix</g-vm><g-pd>:</g-pd> <g-s>'stock'</g-s><g-pd>,</g-pd>
+  <g-k>get</g-k> <g-vm>label</g-vm><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-cb>this</g-cb><g-o>.</g-o><g-vm>prefix</g-vm><g-o>.</g-o><g-vm>toUpperCase</g-vm><g-pb>()</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>,</g-pd>
+  <g-k>async</g-k> <g-vm>load</g-vm><g-pb>(</g-pb><g-v>path</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-k>await</g-k> <g-f>summarize</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>,</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>try</g-k> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-k>await</g-k> <g-v>options</g-v><g-o>.</g-o><g-vm>load</g-vm><g-pb>(</g-pb><g-s>'./data.txt'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>switch</g-k> <g-pb>(</g-pb><g-v>result</g-v><g-o>.</g-o><g-vm>count</g-vm><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>case</g-k> <g-n>0</g-n><g-pd>:</g-pd> <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-s>'empty'</g-s><g-pb>)</g-pb><g-pd>;</g-pd> <g-k>break</g-k><g-pd>;</g-pd>
+    <g-k>default</g-k><g-pd>:</g-pd> <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>result</g-v><g-o>.</g-o><g-vm>average</g-vm><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb> <g-k>catch</g-k> <g-pb>(</g-pb><g-v>error</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>throw</g-k> <g-k>new</g-k> <g-t>Error</g-t><g-pb>(</g-pb><g-s>'inventory failed'</g-s><g-pd>,</g-pd> <g-pb>{</g-pb> <g-vm>cause</g-vm><g-pd>:</g-pd> <g-v>error</g-v> <g-pb>})</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb> <g-k>finally</g-k> <g-pb>{</g-pb>
+  <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-s>'done'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

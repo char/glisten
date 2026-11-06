@@ -1,0 +1,41 @@
+<g-k>import</g-k> <g-pb>{</g-pb> <g-v>useState</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'react'</g-s><g-pd>;</g-pd>
+
+<g-c>/** A small editable list, including Unicode labels. */</g-c>
+<g-k>export</g-k> <g-k>function</g-k> <g-f>Pantry</g-f><g-pb>({</g-pb> <g-vm>initialItems</g-vm><g-pd>,</g-pd> <g-vm>onSave</g-vm> <g-pb>})</g-pb> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-pb>[</g-pb><g-v>items</g-v><g-pd>,</g-pd> <g-v>setItems</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-f>useState</g-f><g-pb>(</g-pb><g-v>initialItems</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-pb>[</g-pb><g-v>query</g-v><g-pd>,</g-pd> <g-v>setQuery</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-f>useState</g-f><g-pb>(</g-pb><g-s>''</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-v>visible</g-v> <g-o>=</g-o> <g-v>items</g-v><g-o>.</g-o><g-vm>filter</g-vm><g-pb>((</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o>
+    <g-v>item</g-v><g-o>.</g-o><g-vm>name</g-vm><g-o>.</g-o><g-vm>toLowerCase</g-vm><g-pb>()</g-pb><g-o>.</g-o><g-vm>includes</g-vm><g-pb>(</g-pb><g-v>query</g-v><g-o>.</g-o><g-vm>toLowerCase</g-vm><g-pb>())</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-pb>(</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>section</g-tg> <g-pr>className</g-pr><g-o>=</g-o><g-s>"pantry"</g-s> <g-pr>aria-label</g-pr><g-o>=</g-o><g-s>'Épicerie'</g-s><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>Pantry &amp;amp; supplies<g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>label</g-tg><g-pb>&gt;</g-pb>
+        Filter
+        <g-pb>&lt;</g-pb><g-tg>input</g-tg> <g-pr>value</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>query</g-v><g-ps>}</g-ps> <g-pr>onChange</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>(</g-pb><g-v>event</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-f>setQuery</g-f><g-pb>(</g-pb><g-v>event</g-v><g-o>.</g-o><g-vm>target</g-vm><g-o>.</g-o><g-vm>value</g-vm><g-pb>)</g-pb><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+      <g-pb>&lt;/</g-pb><g-tg>label</g-tg><g-pb>&gt;</g-pb>
+      <g-ps>{</g-ps><g-v>visible</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>===</g-o> <g-n>0</g-n> <g-o>?</g-o> <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Nothing here yet.<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb> <g-pd>:</g-pd> <g-pb>(</g-pb>
+        <g-pb>&lt;</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+          <g-ps>{</g-ps><g-v>visible</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb>
+            <g-pb>&lt;</g-pb><g-t>Pantry.Row</g-t> <g-pr>key</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps> <g-pr>item</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>item</g-v><g-ps>}</g-ps> <g-pr>onSave</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>onSave</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+          <g-pb>))</g-pb><g-ps>}</g-ps>
+        <g-pb>&lt;/</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+      <g-pb>)</g-pb><g-ps>}</g-ps>
+      <g-ps>{</g-ps><g-c>/* JSX comments live inside expression braces. */</g-c><g-ps>}</g-ps>
+      <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-pr>disabled</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>items</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>===</g-o> <g-n>0</g-n><g-ps>}</g-ps> <g-pr>onClick</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-f>setItems</g-f><g-pb>([])</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+        Clear <g-ps>{</g-ps><g-v>items</g-v><g-o>.</g-o><g-vm>length</g-vm><g-ps>}</g-ps> items
+      <g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;/</g-pb><g-tg>section</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-v>Pantry</g-v><g-o>.</g-o><g-vm>Row</g-vm> <g-o>=</g-o> <g-k>function</g-k> <g-f>Row</g-f><g-pb>({</g-pb> <g-vm>item</g-vm><g-pd>,</g-pd> <g-vm>onSave</g-vm> <g-pb>})</g-pb> <g-pb>{</g-pb>
+  <g-k>return</g-k> <g-pb>(</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>li</g-tg> <g-pr>data-id</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps> <g-ps>{</g-ps><g-o>...</g-o><g-v>item</g-v><g-o>.</g-o><g-vm>attributes</g-vm><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>name</g-vm><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb>: <g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>quantity</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps>
+      <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-pr>onClick</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-f>onSave</g-f><g-pb>({</g-pb> <g-o>...</g-o><g-v>item</g-v><g-pd>,</g-pd> <g-vm>quantity</g-vm><g-pd>:</g-pd> <g-v>item</g-v><g-o>.</g-o><g-vm>quantity</g-vm> <g-o>+</g-o> <g-n>1</g-n> <g-pb>})</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+        Add one
+      <g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>

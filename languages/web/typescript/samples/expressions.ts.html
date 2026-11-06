@@ -1,0 +1,37 @@
+<g-k>import</g-k> <g-k>type</g-k> <g-pb>{</g-pb> <g-v>Entry</g-v><g-pd>,</g-pd> <g-v>Result</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'./types'</g-s><g-pd>;</g-pd>
+
+<g-k>export</g-k> <g-k>function</g-k> <g-f>mapResult</g-f><g-pb>&lt;</g-pb><g-t>T</g-t><g-pd>,</g-pd> <g-t>U</g-t><g-pb>&gt;(</g-pb><g-v>result</g-v><g-pd>:</g-pd> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd> <g-v>fn</g-v><g-pd>:</g-pd> <g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>U</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-t>U</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-v>result</g-v><g-o>.</g-o><g-vm>ok</g-vm><g-pb>)</g-pb> <g-k>return</g-k> <g-pb>{</g-pb> <g-vm>ok</g-vm><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd> <g-vm>value</g-vm><g-pd>:</g-pd> <g-f>fn</g-f><g-pb>(</g-pb><g-v>result</g-v><g-o>.</g-o><g-vm>value</g-vm><g-pb>)</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-v>result</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-v>identity</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>T</g-t> <g-o>=&gt;</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>names</g-v><g-pd>:</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-s>'café'</g-s><g-pd>,</g-pd> <g-s>'茶'</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>nested</g-v><g-pd>:</g-pd> <g-t>Map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;&gt;</g-pb> <g-o>=</g-o> <g-k>new</g-k> <g-t>Map</g-t><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>lengths</g-v> <g-o>=</g-o> <g-v>names</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;((</g-pb><g-v>name</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>name</g-v><g-o>.</g-o><g-vm>length</g-vm><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>comparison</g-v> <g-o>=</g-o> <g-v>lengths</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb> <g-o>&lt;</g-o> <g-v>lengths</g-v><g-pb>[</g-pb><g-n>1</g-n><g-pb>]</g-pb> <g-o>&amp;&amp;</g-o> <g-v>lengths</g-v><g-pb>[</g-pb><g-n>1</g-n><g-pb>]</g-pb> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>shifted</g-v> <g-o>=</g-o> <g-n>32</g-n> <g-o>&gt;&gt;</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>asserted</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb><g-v>names</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v><g-pd>:</g-pd> <g-t>RegExp</g-t> <g-o>=</g-o> <g-s>/[a-z</g-s><g-se>\/</g-se><g-s>]+/giu</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>quotient</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-v>lengths</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>`Names: </g-s><g-ps>${</g-ps><g-v>names</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>name</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-s>`</g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>: </g-s><g-ps>${</g-ps><g-v>name</g-v><g-o>.</g-o><g-vm>length</g-vm><g-ps>}</g-ps><g-s>`</g-s><g-pb>)</g-pb><g-o>.</g-o><g-vm>join</g-vm><g-pb>(</g-pb><g-s>', '</g-s><g-pb>)</g-pb><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>hexadecimal</g-v> <g-o>=</g-o> <g-n>0xFE_ED</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>binary</g-v> <g-o>=</g-o> <g-n>0b1010</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>octal</g-v> <g-o>=</g-o> <g-n>0o77</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>integer</g-v> <g-o>=</g-o> <g-n>12_345n</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>fraction</g-v> <g-o>=</g-o> <g-n>.5e+2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>escape</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\u0041\x42\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+
+<g-k>function</g-k> <g-f>format</g-f><g-pb>(</g-pb><g-v>entry</g-v><g-pd>:</g-pd> <g-t>Entry</g-t> <g-o>|</g-o> <g-cb>null</g-cb><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-v>quantity</g-v> <g-o>=</g-o> <g-v>entry</g-v><g-o>?.</g-o><g-vm>quantity</g-vm> <g-o>??</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-v>entry</g-v> <g-o>?</g-o> <g-s>`</g-s><g-ps>${</g-ps><g-v>entry</g-v><g-o>.</g-o><g-vm>name</g-vm><g-ps>}</g-ps><g-s>: </g-s><g-ps>${</g-ps><g-v>quantity</g-v> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>`</g-s> <g-pd>:</g-pd> <g-s>'none'</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>async</g-k> <g-k>function</g-k> <g-f>load</g-f><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;(</g-pb><g-v>request</g-v><g-pd>:</g-pd> <g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-t>Promise</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;)</g-pb><g-pd>:</g-pd> <g-t>Promise</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+  <g-k>try</g-k> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-k>await</g-k> <g-f>request</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb> <g-k>catch</g-k> <g-pb>(</g-pb><g-v>error</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>throw</g-k> <g-k>new</g-k> <g-t>Error</g-t><g-pb>(</g-pb><g-s>'load failed'</g-s><g-pd>,</g-pd> <g-pb>{</g-pb> <g-vm>cause</g-vm><g-pd>:</g-pd> <g-v>error</g-v> <g-pb>})</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>export</g-k> <g-pb>{</g-pb> <g-v>identity</g-v><g-pd>,</g-pd> <g-v>nested</g-v><g-pd>,</g-pd> <g-v>comparison</g-v><g-pd>,</g-pd> <g-v>shifted</g-v><g-pd>,</g-pd> <g-v>asserted</g-v><g-pd>,</g-pd> <g-v>regex</g-v><g-pd>,</g-pd> <g-v>quotient</g-v><g-pd>,</g-pd> <g-v>text</g-v><g-pd>,</g-pd> <g-v>hexadecimal</g-v><g-pd>,</g-pd> <g-v>binary</g-v><g-pd>,</g-pd> <g-v>octal</g-v><g-pd>,</g-pd> <g-v>integer</g-v><g-pd>,</g-pd> <g-v>fraction</g-v><g-pd>,</g-pd> <g-v>escape</g-v><g-pd>,</g-pd> <g-v>format</g-v><g-pd>,</g-pd> <g-v>load</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>

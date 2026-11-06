@@ -1,0 +1,34 @@
+<g-c>// Incomplete TypeScript, keyword prefixes, and ambiguous angle brackets.</g-c>
+<g-k>type</g-k> <g-t>Typewriter</g-t> <g-o>=</g-o> <g-t>string</g-t><g-pd>;</g-pd>
+<g-k>interface</g-k> <g-t>InterfaceLike</g-t> <g-pb>{</g-pb> <g-pr>readonlyValue</g-pr><g-pd>:</g-pd> <g-t>number</g-t> <g-pb>}</g-pb>
+<g-k>const</g-k> <g-v>typeName</g-v><g-pd>:</g-pd> <g-t>Typewriter</g-t> <g-o>=</g-o> <g-s>'type'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>interfaceName</g-v> <g-o>=</g-o> <g-s>'interface'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>satisfiesValue</g-v> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>readonlyValue</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>unknownValue</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>café</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>'naïve'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>limit</g-v> <g-o>=</g-o> <g-n>10</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>less</g-v> <g-o>=</g-o> <g-v>readonlyValue</g-v> <g-o>&lt;</g-o> <g-v>limit</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>greater</g-v> <g-o>=</g-o> <g-v>limit</g-v> <g-o>&gt;</g-o> <g-v>readonlyValue</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>generic</g-v> <g-o>=</g-o> <g-v>identity</g-v><g-pb>&lt;</g-pb><g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;&gt;([</g-pb><g-s>'a'</g-s><g-pb>])</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>genericArrow</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-pb>{</g-pb> <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>string</g-t> <g-pb>}&gt;(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=&gt;</g-o> <g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>cast</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;&gt;</g-pb><g-v>generic</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>tricky</g-v> <g-o>=</g-o> <g-v>limit</g-v> <g-o>/</g-o> <g-n>2</g-n> <g-o>/</g-o> <g-n>5</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/[</g-s><g-se>\]</g-se><g-s>/]+/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>template</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps><g-v>generic</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>badHex</g-v> <g-o>=</g-o> <g-n>0</g-n><g-v>xQ</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>badEscape</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u</g-se><g-s>12XZ'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>missingString</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
+<g-k>const</g-k> <g-v>recovered</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/[abc</g-s>
+<g-k>const</g-k> <g-v>recoveredAgain</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>PartialGeneric</g-t> <g-o>=</g-o> <g-t>Map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>number</g-t><g-pb>&gt;&gt;</g-pb><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>Conditional</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-t>T</g-t> <g-k>extends</g-k> <g-t>string</g-t> <g-o>?</g-o> <g-t>T</g-t><g-pb>[]</g-pb> <g-pd>:</g-pd> <g-t>never</g-t><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>object</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>type</g-vm><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-vm>interface</g-vm><g-pd>:</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-vm>readonly</g-vm><g-pd>:</g-pd> <g-n>3</g-n> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-v>object</g-v><g-o>.</g-o><g-vm>type</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>Named</g-t> <g-o>=</g-o> <g-pb>[</g-pb><g-v>name</g-v> <g-c>/* label */</g-c> <g-o>?</g-o><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-v>next</g-v><g-pd>:</g-pd> <g-t>number</g-t><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>ConditionalTuple</g-t> <g-o>=</g-o> <g-pb>[</g-pb><g-t>string</g-t> <g-k>extends</g-k> <g-t>number</g-t> <g-o>?</g-o> <g-t>Date</g-t> <g-pd>:</g-pd> <g-t>Error</g-t><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>type</g-k> <g-t>Callback</g-t> <g-o>=</g-o> <g-pb>(</g-pb><g-v>value</g-v> <g-c>/* parameter */</g-c> <g-o>?</g-o><g-pd>:</g-pd> <g-t>string</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>void</g-t><g-pd>;</g-pd>
+<g-k>interface</g-k> <g-t>Methods</g-t> <g-pb>{</g-pb> <g-f>run</g-f> <g-c>/* method */</g-c> <g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>void</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-c>// The trailing type is intentionally unfinished.</g-c>
+<g-k>const</g-k> <g-v>partial</g-v><g-pd>:</g-pd> <g-t>Map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd>

@@ -1,0 +1,36 @@
+<g-k>import</g-k> <g-o>*</g-o> <g-k>as</g-k> <g-cb>UI</g-cb> <g-k>from</g-k> <g-s>'./ui'</g-s><g-pd>;</g-pd>
+
+<g-k>const</g-k> <g-v>icon</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>svg</g-tg> <g-pr>viewBox</g-pr><g-o>=</g-o><g-s>"0 0 12 12"</g-s><g-pb>&gt;&lt;</g-pb><g-tg>path</g-tg> <g-pr>d</g-pr><g-o>=</g-o><g-s>"M0 0 L12 12"</g-s> <g-pb>/&gt;&lt;/</g-pb><g-tg>svg</g-tg><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>empty</g-v> <g-o>=</g-o> <g-pb>&lt;&gt;&lt;/&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>note</g-v> <g-o>=</g-o> <g-s>'line</g-s><g-se>\n\u{1F331}</g-se><g-s>'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-n>0x10</g-n> <g-o>+</g-o> <g-n>0b10</g-n> <g-o>+</g-o> <g-n>1_000</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>matcher</g-v> <g-o>=</g-o> <g-s>/[&lt;&gt;/]+/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>fraction</g-v> <g-o>=</g-o> <g-v>count</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+
+<g-k>export</g-k> <g-k>function</g-k> <g-f>Preview</g-f><g-pb>({</g-pb> <g-vm>title</g-vm><g-pd>,</g-pd> <g-vm>entries</g-vm><g-pd>,</g-pd> <g-vm>active</g-vm> <g-pb>})</g-pb> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-v>description</g-v> <g-o>=</g-o> <g-s>`Showing </g-s><g-ps>${</g-ps><g-v>entries</g-v><g-o>.</g-o><g-vm>length</g-vm><g-ps>}</g-ps><g-s> </g-s><g-ps>${</g-ps>
+    <g-v>active</g-v> <g-o>?</g-o> <g-s>`active: </g-s><g-ps>${</g-ps><g-v>title</g-v><g-ps>}</g-ps><g-s>`</g-s> <g-pd>:</g-pd> <g-s>'all'</g-s>
+  <g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-pb>(</g-pb>
+    <g-pb>&lt;&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-t>UI.Header</g-t> <g-pr>title</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>description</g-v><g-ps>}</g-ps> <g-pr>icon</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>icon</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>custom-card</g-tg> <g-pr>data-mode</g-pr><g-o>=</g-o><g-s>"full"</g-s> <g-pr>xml:lang</g-pr><g-o>=</g-o><g-s>'fr'</g-s><g-pb>&gt;</g-pb>
+        Bonjour, 世界 &amp;lt;3
+        <g-ps>{</g-ps><g-v>entries</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>entry</g-v><g-pd>,</g-pd> <g-v>index</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb>
+          <g-pb>&lt;</g-pb><g-tg>div</g-tg> <g-pr>key</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>entry</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps> <g-pr>style</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>{</g-pb> <g-vm>opacity</g-vm><g-pd>:</g-pd> <g-v>index</g-v> <g-o>/</g-o> <g-n>10</g-n> <g-pb>}</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+            <g-ps>{</g-ps><g-v>matcher</g-v><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>entry</g-v><g-o>.</g-o><g-vm>name</g-vm><g-pb>)</g-pb> <g-o>?</g-o> <g-s>'special'</g-s> <g-pd>:</g-pd> <g-v>entry</g-v><g-o>.</g-o><g-vm>name</g-vm><g-ps>}</g-ps>
+            <g-ps>{</g-ps><g-v>entry</g-v><g-o>.</g-o><g-vm>url</g-vm> <g-o>&amp;&amp;</g-o> <g-pb>&lt;</g-pb><g-tg>a</g-tg> <g-pr>href</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>entry</g-v><g-o>.</g-o><g-vm>url</g-vm><g-ps>}</g-ps><g-pb>&gt;</g-pb>Open<g-pb>&lt;/</g-pb><g-tg>a</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps>
+          <g-pb>&lt;/</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb>
+        <g-pb>))</g-pb><g-ps>}</g-ps>
+      <g-pb>&lt;/</g-pb><g-tg>custom-card</g-tg><g-pb>&gt;</g-pb>
+      <g-ps>{</g-ps><g-v>active</g-v> <g-o>&amp;&amp;</g-o> <g-pb>&lt;</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-s>`nested </g-s><g-ps>${</g-ps><g-s>`</g-s><g-ps>${</g-ps><g-v>fraction</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps>
+      <g-pb>&lt;</g-pb><g-tg>input</g-tg> <g-pr>type</g-pr><g-o>=</g-o><g-s>"text"</g-s> <g-pr>defaultValue</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>note</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>br</g-tg> <g-pb>/&gt;</g-pb>
+    <g-pb>&lt;/&gt;</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-c>// A normal expression after JSX must not remain in a tag.</g-c>
+<g-k>const</g-k> <g-v>smaller</g-v> <g-o>=</g-o> <g-v>fraction</g-v> <g-o>&lt;</g-o> <g-v>count</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>divided</g-v> <g-o>=</g-o> <g-v>count</g-v> <g-o>/</g-o> <g-v>fraction</g-v><g-pd>;</g-pd>
+<g-k>export</g-k> <g-pb>{</g-pb> <g-v>empty</g-v><g-pd>,</g-pd> <g-v>smaller</g-v><g-pd>,</g-pd> <g-v>divided</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>

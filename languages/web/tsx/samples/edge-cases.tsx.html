@@ -1,0 +1,32 @@
+<g-c>// Near misses and intentionally incomplete TSX edits.</g-c>
+<g-k>type</g-k> <g-t>Typeahead</g-t> <g-o>=</g-o> <g-t>string</g-t><g-pd>;</g-pd>
+<g-k>interface</g-k> <g-t>InterfaceExtra</g-t> <g-pb>{</g-pb> <g-pr>className</g-pr><g-pd>:</g-pd> <g-t>string</g-t> <g-pb>}</g-pb>
+<g-k>const</g-k> <g-v>typewriter</g-v><g-pd>:</g-pd> <g-t>Typeahead</g-t> <g-o>=</g-o> <g-s>'type'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>satisfiesValue</g-v> <g-o>=</g-o> <g-cb>false</g-cb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>readonlyField</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>café</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>'東京'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>arrow</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>T</g-t><g-pd>,</g-pd><g-pb>&gt;(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>T</g-t> <g-o>=&gt;</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>comparison</g-v> <g-o>=</g-o> <g-v>readonlyField</g-v> <g-o>&lt;</g-o> <g-n>10</g-n> <g-o>&amp;&amp;</g-o> <g-n>10</g-n> <g-o>&gt;</g-o> <g-v>readonlyField</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>genericCall</g-v> <g-o>=</g-o> <g-v>arrow</g-v><g-pb>&lt;</g-pb><g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;&gt;([</g-pb><g-s>'x'</g-s><g-pb>])</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>quotient</g-v> <g-o>=</g-o> <g-n>10</g-n> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/&lt;[^/]+</g-s><g-se>\/</g-se><g-s>&gt;/g</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>template</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps><g-v>quotient</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>view</g-v> <g-o>=</g-o> <g-pb>(</g-pb>
+  <g-pb>&lt;</g-pb><g-t>UI.Panel</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-pr>data-kind</g-pr><g-o>=</g-o><g-s>"x"</g-s> <g-pr>title</g-pr><g-o>=</g-o><g-s>'café'</g-s><g-pb>&gt;</g-pb>
+    Text with / and &amp;lt;.
+    <g-ps>{</g-ps><g-c>/* &lt;NotATag /&gt; */</g-c><g-ps>}</g-ps>
+    <g-ps>{</g-ps><g-v>comparison</g-v> <g-o>?</g-o> <g-pb>&lt;</g-pb><g-tg>b</g-tg><g-pb>&gt;</g-pb>yes<g-pb>&lt;/</g-pb><g-tg>b</g-tg><g-pb>&gt;</g-pb> <g-pd>:</g-pd> <g-pb>&lt;</g-pb><g-tg>i</g-tg><g-pb>&gt;</g-pb>no<g-pb>&lt;/</g-pb><g-tg>i</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps>
+    <g-ps>{</g-ps><g-pb>({</g-pb> <g-vm>nested</g-vm><g-pd>:</g-pd> <g-pb>{</g-pb> <g-vm>n</g-vm><g-pd>:</g-pd> <g-n>1</g-n> <g-pb>}</g-pb> <g-pb>})</g-pb><g-o>.</g-o><g-vm>nested</g-vm><g-o>.</g-o><g-vm>n</g-vm><g-ps>}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>custom-element</g-tg> <g-ps>{</g-ps><g-o>...</g-o><g-pb>{</g-pb> <g-vm>title</g-vm><g-pd>:</g-pd> <g-v>typewriter</g-v> <g-pb>}</g-pb><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-t>UI.Panel</g-t><g-pb>&gt;</g-pb>
+<g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>after</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-v>quotient</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>badHex</g-v> <g-o>=</g-o> <g-n>0</g-n><g-v>xZ</g-v><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>badEscape</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\x</g-se><g-s>ZZ'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>missingString</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
+<g-k>const</g-k> <g-v>recovered</g-v><g-pd>:</g-pd> <g-t>number</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>missingRegex</g-v> <g-o>=</g-o> <g-s>/[abc</g-s>
+<g-k>const</g-k> <g-v>recoveredAgain</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-c>// Unfinished JSX attribute at end of file.</g-c>
+<g-k>const</g-k> <g-v>partial</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>Widget</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-pr>title</g-pr><g-o>=</g-o><g-s>"unfinished
+</g-s>

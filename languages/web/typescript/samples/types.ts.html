@@ -1,0 +1,41 @@
+<g-c>/** Models a localized inventory entry. */</g-c>
+<g-k>export</g-k> <g-k>interface</g-k> <g-t>Entry</g-t><g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-t>string</g-t> <g-o>=</g-o> <g-t>string</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+  <g-k>readonly</g-k> <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>T</g-t><g-pd>;</g-pd>
+  <g-pr>name</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>;</g-pd>
+  <g-pr>quantity</g-pr><g-o>?</g-o><g-pd>:</g-pd> <g-t>number</g-t><g-pd>;</g-pd>
+  <g-pr>tags</g-pr><g-pd>:</g-pd> <g-t>Array</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+  <g-f>update</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>number</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>void</g-t><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>export</g-k> <g-k>type</g-k> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pd>,</g-pd> <g-t>E</g-t> <g-o>=</g-o> <g-t>Error</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o>
+  <g-o>|</g-o> <g-pb>{</g-pb> <g-pr>ok</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>;</g-pd> <g-pr>value</g-pr><g-pd>:</g-pd> <g-t>T</g-t> <g-pb>}</g-pb>
+  <g-o>|</g-o> <g-pb>{</g-pb> <g-pr>ok</g-pr><g-pd>:</g-pd> <g-cb>false</g-cb><g-pd>;</g-pd> <g-pr>error</g-pr><g-pd>:</g-pd> <g-t>E</g-t> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>type</g-k> <g-t>Keys</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-k>keyof</g-k> <g-t>T</g-t><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>type</g-k> <g-t>ReadonlyFields</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>readonly</g-k> <g-pb>[</g-pb><g-t>K</g-t> <g-k>in</g-k> <g-k>keyof</g-k> <g-t>T</g-t><g-pb>]</g-pb><g-pd>:</g-pd> <g-t>T</g-t><g-pb>[</g-pb><g-t>K</g-t><g-pb>]</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>type</g-k> <g-t>Unwrap</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-t>T</g-t> <g-k>extends</g-k> <g-t>Promise</g-t><g-pb>&lt;</g-pb><g-k>infer</g-k> <g-t>U</g-t><g-pb>&gt;</g-pb> <g-o>?</g-o> <g-t>U</g-t> <g-pd>:</g-pd> <g-t>T</g-t><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>type</g-k> <g-t>Pair</g-t> <g-o>=</g-o> <g-pb>[</g-pb><g-v>name</g-v><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-v>count</g-v><g-pd>:</g-pd> <g-t>number</g-t><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>type</g-k> <g-t>Formatter</g-t> <g-o>=</g-o> <g-pb>(</g-pb><g-v>entry</g-v><g-pd>:</g-pd> <g-t>Entry</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>string</g-t><g-pd>;</g-pd>
+
+<g-k>export</g-k> <g-k>enum</g-k> <g-t>Status</g-t> <g-pb>{</g-pb> <g-vm>New</g-vm> <g-o>=</g-o> <g-n>0</g-n><g-pd>,</g-pd> <g-vm>Ready</g-vm> <g-o>=</g-o> <g-n>1</g-n><g-pd>,</g-pd> <g-vm>Done</g-vm> <g-o>=</g-o> <g-n>2</g-n> <g-pb>}</g-pb>
+<g-k>export</g-k> <g-k>namespace</g-k> <g-t>Inventory</g-t> <g-pb>{</g-pb>
+  <g-k>export</g-k> <g-k>const</g-k> <g-v>label</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>'Épicerie'</g-s><g-pd>;</g-pd>
+  <g-k>export</g-k> <g-k>function</g-k> <g-f>identity</g-f><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>T</g-t> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>export</g-k> <g-k>class</g-k> <g-t>Store</g-t><g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-t>Entry</g-t><g-pb>&gt;</g-pb> <g-k>implements</g-k> <g-t>Iterable</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+  <g-k>private</g-k> <g-k>readonly</g-k> <g-vm>items</g-vm><g-pd>:</g-pd> <g-t>T</g-t><g-pb>[]</g-pb> <g-o>=</g-o> <g-pb>[]</g-pb><g-pd>;</g-pd>
+  <g-f>constructor</g-f><g-pb>(</g-pb><g-k>public</g-k> <g-v>name</g-v><g-pd>:</g-pd> <g-t>string</g-t><g-pb>)</g-pb> <g-pb>{}</g-pb>
+  <g-f>add</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>void</g-t> <g-pb>{</g-pb> <g-cb>this</g-cb><g-o>.</g-o><g-vm>items</g-vm><g-o>.</g-o><g-vm>push</g-vm><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-o>*</g-o><g-pb>[</g-pb><g-v>Symbol</g-v><g-o>.</g-o><g-vm>iterator</g-vm><g-pb>]()</g-pb><g-pd>:</g-pd> <g-t>Iterator</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb> <g-k>yield</g-k><g-o>*</g-o> <g-cb>this</g-cb><g-o>.</g-o><g-vm>items</g-vm><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-v>initial</g-v><g-pd>:</g-pd> <g-t>Entry</g-t><g-pb>&lt;</g-pb><g-s>'tea'</g-s><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-pb>{</g-pb>
+  <g-vm>id</g-vm><g-pd>:</g-pd> <g-s>'tea'</g-s><g-pd>,</g-pd> <g-vm>name</g-vm><g-pd>:</g-pd> <g-s>'thé'</g-s><g-pd>,</g-pd> <g-vm>tags</g-vm><g-pd>:</g-pd> <g-pb>[</g-pb><g-s>'drink'</g-s><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-vm>update</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>number</g-t><g-pb>)</g-pb> <g-pb>{</g-pb> <g-cb>this</g-cb><g-o>.</g-o><g-vm>quantity</g-vm> <g-o>=</g-o> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>,</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>store</g-v> <g-o>=</g-o> <g-k>new</g-k> <g-t>Store</g-t><g-pb>&lt;</g-pb><g-t>Entry</g-t><g-pb>&gt;()</g-pb><g-pd>;</g-pd>
+<g-v>store</g-v><g-o>.</g-o><g-vm>add</g-vm><g-pb>(</g-pb><g-v>initial</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>config</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>retries</g-vm><g-pd>:</g-pd> <g-n>3</g-n><g-pd>,</g-pd> <g-vm>enabled</g-vm><g-pd>:</g-pd> <g-cb>true</g-cb> <g-pb>}</g-pb> <g-k>satisfies</g-k> <g-t>Record</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>number</g-t> <g-o>|</g-o> <g-t>boolean</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>maybe</g-v> <g-o>=</g-o> <g-v>initial</g-v><g-o>.</g-o><g-vm>quantity</g-vm> <g-k>as</g-k> <g-t>number</g-t> <g-o>|</g-o> <g-cb>undefined</g-cb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>definite</g-v> <g-o>=</g-o> <g-v>initial</g-v><g-o>.</g-o><g-vm>quantity</g-vm><g-o>!</g-o><g-pd>;</g-pd>
+<g-k>export</g-k> <g-pb>{</g-pb> <g-v>store</g-v><g-pd>,</g-pd> <g-v>config</g-v><g-pd>,</g-pd> <g-v>maybe</g-v><g-pd>,</g-pd> <g-v>definite</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>

@@ -1,0 +1,36 @@
+<g-k>import</g-k> <g-pb>{</g-pb> <g-v>useState</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'react'</g-s><g-pd>;</g-pd>
+<g-k>import</g-k> <g-k>type</g-k> <g-pb>{</g-pb> <g-v>ReactNode</g-v> <g-pb>}</g-pb> <g-k>from</g-k> <g-s>'react'</g-s><g-pd>;</g-pd>
+
+<g-k>interface</g-k> <g-t>Item</g-t> <g-pb>{</g-pb> <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>;</g-pd> <g-pr>label</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>;</g-pd> <g-pr>count</g-pr><g-pd>:</g-pd> <g-t>number</g-t> <g-pb>}</g-pb>
+<g-k>interface</g-k> <g-t>ListProps</g-t><g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-t>Item</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+  <g-pr>items</g-pr><g-pd>:</g-pd> <g-k>readonly</g-k> <g-t>T</g-t><g-pb>[]</g-pb><g-pd>;</g-pd>
+  <g-pr>renderExtra</g-pr><g-o>?</g-o><g-pd>:</g-pd> <g-pb>(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>ReactNode</g-t><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-c>/** A list with a localized empty state. */</g-c>
+<g-k>export</g-k> <g-k>function</g-k> <g-f>ItemList</g-f><g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-t>Item</g-t><g-pb>&gt;({</g-pb> <g-vm>items</g-vm><g-pd>,</g-pd> <g-vm>renderExtra</g-vm> <g-pb>}</g-pb><g-pd>:</g-pd> <g-t>ListProps</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;)</g-pb> <g-pb>{</g-pb>
+  <g-k>const</g-k> <g-pb>[</g-pb><g-v>selected</g-v><g-pd>,</g-pd> <g-v>setSelected</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>useState</g-v><g-pb>&lt;</g-pb><g-t>string</g-t> <g-o>|</g-o> <g-cb>null</g-cb><g-pb>&gt;(</g-pb><g-cb>null</g-cb><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-pb>(</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>section</g-tg> <g-pr>aria-label</g-pr><g-o>=</g-o><g-s>"Inventaire"</g-s><g-pb>&gt;</g-pb>
+      <g-pb>&lt;</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>Items &amp;amp; supplies<g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+      <g-ps>{</g-ps><g-v>items</g-v><g-o>.</g-o><g-vm>length</g-vm> <g-o>===</g-o> <g-n>0</g-n> <g-o>?</g-o> <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Rien ici — 世界<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb> <g-pd>:</g-pd> <g-pb>(</g-pb>
+        <g-pb>&lt;</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+          <g-ps>{</g-ps><g-v>items</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb>
+            <g-pb>&lt;</g-pb><g-tg>li</g-tg> <g-pr>key</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps> <g-pr>data-selected</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>selected</g-v> <g-o>===</g-o> <g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+              <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-pr>onClick</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-f>setSelected</g-f><g-pb>(</g-pb><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-pb>)</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>label</g-vm><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+              <g-pb>&lt;</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>count</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb>
+              <g-ps>{</g-ps><g-v>renderExtra</g-v><g-o>?.</g-o><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb><g-ps>}</g-ps>
+            <g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>
+          <g-pb>))</g-pb><g-ps>}</g-ps>
+        <g-pb>&lt;/</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+      <g-pb>)</g-pb><g-ps>}</g-ps>
+      <g-ps>{</g-ps><g-c>/* A JSX comment, not visible text. */</g-c><g-ps>}</g-ps>
+      <g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-pr>disabled</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>selected</g-v> <g-o>===</g-o> <g-cb>null</g-cb><g-ps>}</g-ps> <g-pr>onClick</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-f>setSelected</g-f><g-pb>(</g-pb><g-cb>null</g-cb><g-pb>)</g-pb><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+        Clear selection
+      <g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+    <g-pb>&lt;/</g-pb><g-tg>section</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-v>sample</g-v><g-pd>:</g-pd> <g-t>Item</g-t><g-pb>[]</g-pb> <g-o>=</g-o> <g-pb>[{</g-pb> <g-vm>id</g-vm><g-pd>:</g-pd> <g-s>'tea'</g-s><g-pd>,</g-pd> <g-vm>label</g-vm><g-pd>:</g-pd> <g-s>'thé'</g-s><g-pd>,</g-pd> <g-vm>count</g-vm><g-pd>:</g-pd> <g-n>2</g-n> <g-pb>}]</g-pb><g-pd>;</g-pd>
+<g-k>export</g-k> <g-k>const</g-k> <g-v>preview</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>ItemList</g-t><g-pb>&lt;</g-pb><g-t>Item</g-t><g-pb>&gt;</g-pb> <g-pr>items</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>sample</g-v><g-ps>}</g-ps> <g-pr>renderExtra</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>&lt;</g-pb><g-tg>em</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>em</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps> <g-pb>/&gt;</g-pb><g-pd>;</g-pd>

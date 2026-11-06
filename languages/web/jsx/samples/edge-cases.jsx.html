@@ -1,0 +1,31 @@
+<g-c>// Incomplete edits and lookalikes in JSX and JavaScript.</g-c>
+<g-k>const</g-k> <g-v>returnValue</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>classNameExtra</g-v> <g-o>=</g-o> <g-s>'ok'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>asyncThing</g-v> <g-o>=</g-o> <g-cb>false</g-cb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>'not &lt;A attr="x" /&gt;'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>regex</g-v> <g-o>=</g-o> <g-s>/&lt;tag</g-s><g-se>\s</g-se><g-s>*</g-s><g-se>\/</g-se><g-s>&gt;/i</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>division</g-v> <g-o>=</g-o> <g-n>24</g-n> <g-o>/</g-o> <g-n>3</g-n> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>nested</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps><g-v>returnValue</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>attribute</g-v> <g-o>=</g-o> <g-s>'a</g-s><g-se>\n\x41</g-se><g-s>'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>card</g-v> <g-o>=</g-o> <g-pb>(</g-pb>
+  <g-pb>&lt;</g-pb><g-t>Widget</g-t> <g-pr>data-note</g-pr><g-o>=</g-o><g-s>"// not a comment"</g-s> <g-pr>title</g-pr><g-o>=</g-o><g-s>'café'</g-s><g-pb>&gt;</g-pb>
+    Text with / slashes and &amp;amp; entities.
+    <g-ps>{</g-ps><g-c>/* real comment: &lt;Fake /&gt; */</g-c><g-ps>}</g-ps>
+    <g-ps>{</g-ps><g-v>returnValue</g-v> <g-o>&lt;</g-o> <g-n>3</g-n> <g-o>?</g-o> <g-pb>&lt;</g-pb><g-tg>b</g-tg><g-pb>&gt;</g-pb>small<g-pb>&lt;/</g-pb><g-tg>b</g-tg><g-pb>&gt;</g-pb> <g-pd>:</g-pd> <g-pb>&lt;</g-pb><g-tg>i</g-tg><g-pb>&gt;</g-pb>large<g-pb>&lt;/</g-pb><g-tg>i</g-tg><g-pb>&gt;</g-pb><g-ps>}</g-ps>
+    <g-ps>{</g-ps><g-pb>({</g-pb> <g-vm>value</g-vm><g-pd>:</g-pd> <g-pb>{</g-pb> <g-vm>n</g-vm><g-pd>:</g-pd> <g-n>1</g-n> <g-pb>}</g-pb> <g-pb>})</g-pb><g-o>.</g-o><g-vm>value</g-vm><g-o>.</g-o><g-vm>n</g-vm><g-ps>}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>ns:tag</g-tg> <g-pr>data-extra</g-pr><g-o>=</g-o><g-s>"yes"</g-s> <g-pb>/&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-t>Widget</g-t><g-pb>&gt;</g-pb>
+<g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>nearby</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>span</g-tg> <g-pr>title</g-pr><g-o>=</g-o><g-s>"ok"</g-s><g-pb>&gt;</g-pb>nearby<g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>after</g-v> <g-o>=</g-o> <g-v>returnValue</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>near</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>widget-name</g-tg> <g-pr>disabled</g-pr> <g-pb>/&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>uppercase</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>UI.Part</g-t> <g-pr>value</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-s>/x/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>text</g-v><g-pb>)</g-pb><g-ps>}</g-ps> <g-pb>/&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>fragment</g-v> <g-o>=</g-o> <g-pb>&lt;&gt;</g-pb>hello <g-pb>&lt;</g-pb><g-tg>b</g-tg><g-pb>&gt;</g-pb>world<g-pb>&lt;/</g-pb><g-tg>b</g-tg><g-pb>&gt;&lt;/&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>string</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
+<g-k>const</g-k> <g-v>recovered</g-v> <g-o>=</g-o> <g-n>42</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>unfinishedRegex</g-v> <g-o>=</g-o> <g-s>/[abc</g-s>
+<g-k>const</g-k> <g-v>again</g-v> <g-o>=</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+<g-c>// Intentionally malformed closing tag, then an unfinished attribute.</g-c>
+<g-k>const</g-k> <g-v>mismatch</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-tg>a</g-tg><g-pb>&gt;&lt;</g-pb><g-tg>b</g-tg> <g-pb>/&gt;&lt;/</g-pb><g-tg>c</g-tg><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>partial</g-v> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-t>Panel</g-t> <g-pr>title</g-pr><g-o>=</g-o><g-s>"unfinished
+</g-s>
