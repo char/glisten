@@ -1,0 +1,20 @@
+<g-c>" Comment at command position</g-c>
+<g-k>let</g-k> <g-v>g:value</g-v> <g-o>=</g-o> <g-s>"string with </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s>"</g-s> <g-c>" trailing</g-c>
+<g-k>if</g-k> <g-v>g:value</g-v> <g-o>!=#</g-o> <g-s>"x"</g-s> <g-pd>|</g-pd> <g-k>echo</g-k> <g-s>"yes"</g-s> <g-s>"another"</g-s> <g-pd>|</g-pd> <g-c>" comment</g-c>
+<g-k>endif</g-k>
+<g-k>let</g-k> <g-v>s:dict</g-v> <g-o>=</g-o> <g-pb>#{</g-pb><g-v>item</g-v><g-o>:</g-o> <g-s>'value'</g-s><g-pd>,</g-pd> <g-v>fn</g-v><g-o>:</g-o> <g-pb>{</g-pb><g-v>a</g-v> <g-o>-&gt;</g-o> <g-v>a</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>}}</g-pb>
+<g-k>let</g-k> <g-v>s:lambda</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>a</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>a</g-v> <g-o>+</g-o> <g-n>1</g-n>
+<g-k>let</g-k> <g-v>s:option</g-v> <g-o>=</g-o> <g-v>&amp;l:tabstop</g-v> <g-o>+</g-o> <g-v>@a</g-v> <g-o>+</g-o> <g-v>$COUNT</g-v>
+<g-k>let</g-k> <g-v>s:lines</g-v> <g-o>=&lt;&lt;</g-o> <g-k>trim</g-k> <g-l>END</g-l>
+<g-s>  literal "text" and # signs
+</g-s><g-l>END</g-l>
+<g-k>let</g-k> <g-v>after</g-v> <g-o>=</g-o> <g-s>'done'</g-s>
+<g-k>map</g-k> &lt;F2&gt; :echo "literal mapping text"&lt;CR&gt; <g-pd>|</g-pd> <g-c>" comment</g-c>
+  <g-k>let</g-k> <g-v>indented</g-v> <g-o>=&lt;&lt;</g-o> <g-k>trim</g-k> <g-l>STOP</g-l>
+<g-s>    first line
+ STOP
+</g-s><g-l>  STOP</g-l>
+<g-k>let</g-k> <g-v>untrimmed</g-v> <g-o>=&lt;&lt;</g-o> <g-l>END</g-l>
+<g-s> END
+</g-s><g-l>END</g-l>
+<g-k>let</g-k> <g-v>after_heredocs</g-v> <g-o>=</g-o> <g-s>'done'</g-s>

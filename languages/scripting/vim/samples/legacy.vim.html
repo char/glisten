@@ -1,0 +1,27 @@
+<g-c>" A small legacy plugin</g-c>
+<g-k>fu</g-k><g-o>!</g-o> <g-v>s:Welcome</g-v><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb>
+  <g-k>let</g-k> <g-v>l:message</g-v> <g-o>=</g-o> <g-s>"Hello, "</g-s> <g-o>.</g-o> <g-v>a:name</g-v> <g-c>" trailing comment</g-c>
+  <g-k>if</g-k> <g-v>&amp;l:number</g-v> <g-o>==#</g-o> <g-n>1</g-n>
+    <g-k>echo</g-k> <g-v>l:message</g-v> <g-s>"again"</g-s>
+  <g-k>else</g-k>
+    <g-k>echo</g-k> <g-s>'It</g-s><g-se>''</g-se><g-s>s quiet'</g-s>
+  <g-k>endif</g-k>
+  <g-k>retu</g-k> <g-v>l:message</g-v>
+<g-k>endf</g-k>
+
+<g-k>let</g-k> <g-v>g:items</g-v> <g-o>=</g-o> <g-pb>[</g-pb>
+<g-c>      "\ first item</g-c>
+<g-ps>      \</g-ps> <g-s>'one'</g-s><g-pd>,</g-pd>
+<g-ps>      \</g-ps> <g-s>"two"</g-s><g-pd>,</g-pd>
+<g-ps>      \</g-ps> <g-pb>]</g-pb>
+<g-k>nnoremap</g-k> &lt;Leader&gt;w :call &lt;SID&gt;Welcome('world')&lt;CR&gt;
+<g-k>exe</g-k> <g-s>'echo "generated command"'</g-s>
+<g-k>let</g-k> <g-v>$PROJECT_HOME</g-v> <g-o>=</g-o> <g-s>'/tmp'</g-s>
+<g-k>setlocal</g-k> path=one\ two,three\"four <g-c>" option comment</g-c>
+<g-k>syntax</g-k> <g-k>keyword</g-k> <g-t>Demo</g-t> <g-k>contained</g-k> <g-s>ALPHA</g-s> <g-s>BETA</g-s>
+<g-k>syntax</g-k> <g-k>match</g-k> <g-t>Demo</g-t> <g-s>/"quoted"/</g-s> <g-k>contained</g-k>
+<g-k>syntax</g-k> <g-k>region</g-k> <g-t>Quoted</g-t> <g-k>start=</g-k><g-s>+"+</g-s> <g-k>skip=</g-k><g-s>+</g-s><g-se>\\</g-se><g-s>"+</g-s> <g-k>end=</g-k><g-s>+"+</g-s>
+<g-k>highlight</g-k> <g-k>default</g-k> <g-k>link</g-k> <g-t>Demo</g-t> <g-t>Comment</g-t> <g-c>" highlight comment</g-c>
+<g-k>normal</g-k>! i"literal | normal text
+<g-k>vim9cmd</g-k> <g-k>var</g-k> <g-v>greeting</g-v> <g-o>=</g-o> <g-s>"vim9 string"</g-s> <g-c># vim9 comment</g-c>
+<g-k>let</g-k> <g-v>g:again</g-v> <g-o>=</g-o> <g-s>"legacy string"</g-s> <g-c>" legacy comment</g-c>

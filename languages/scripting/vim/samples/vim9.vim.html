@@ -1,0 +1,27 @@
+<g-k>vim9script</g-k>
+<g-c># A Vim9 function</g-c>
+<g-k>def</g-k> <g-f>Format</g-f><g-pb>(</g-pb><g-v>name</g-v><g-o>:</g-o> <g-v>string</g-v><g-pb>)</g-pb><g-o>:</g-o> <g-v>string</g-v>
+  <g-k>var</g-k> <g-v>lines</g-v> <g-o>=</g-o> <g-pb>[</g-pb>
+<g-c>    #\ A continuation comment</g-c>
+    <g-s>'hello'</g-s><g-pd>,</g-pd>
+    <g-v>name</g-v><g-pd>,</g-pd>
+  <g-pb>]</g-pb>
+  <g-k>var</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-v>lines</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb>
+    <g-o>..</g-o> <g-s>', '</g-s>
+    <g-o>..</g-o> <g-v>lines</g-v><g-pb>[</g-pb><g-n>1</g-n><g-pb>]</g-pb>
+  <g-k>var</g-k> <g-v>kind</g-v> <g-o>=</g-o> <g-f>len</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>1</g-n>
+    <g-o>?</g-o> <g-s>'long'</g-s>
+    <g-o>:</g-o> <g-s>'short'</g-s>
+  <g-k>if</g-k> <g-f>len</g-f><g-pb>(</g-pb><g-v>text</g-v><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>1</g-n>
+    <g-k>return</g-k> <g-v>text</g-v> <g-c># a trailing comment</g-c>
+  <g-k>else</g-k>
+    <g-k>return</g-k> <g-s>'empty'</g-s>
+  <g-k>endif</g-k>
+<g-k>enddef</g-k>
+
+<g-k>var</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-n>1'000</g-n> <g-o>+</g-o> <g-n>0x10</g-n> <g-o>+</g-o> <g-n>0b10</g-n> <g-o>+</g-o> <g-n>0o7</g-n>
+<g-k>const</g-k> <g-v>Name</g-v> <g-o>=</g-o> <g-f>Format</g-f><g-pb>(</g-pb><g-s>'world'</g-s><g-pb>)</g-pb>
+<g-k>echo</g-k> <g-v>Name</g-v>
+<g-k>setlocal</g-k> path=one\ two <g-c># option comment</g-c>
+<g-k>legacy</g-k> <g-k>let</g-k> <g-v>g:old</g-v> <g-o>=</g-o> <g-s>"legacy value"</g-s> <g-c>" legacy comment</g-c>
+<g-k>var</g-k> <g-v>newer</g-v> <g-o>=</g-o> <g-s>"vim9 value"</g-s> <g-c># vim9 comment</g-c>
