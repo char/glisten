@@ -1,0 +1,18 @@
+<g-k>SET</g-k> SERVEROUTPUT <g-k>ON</g-k>
+<g-k>DECLARE</g-k>
+  <g-k>CURSOR</g-k> active_employees <g-k>IS</g-k> <g-k>SELECT</g-k> employee_id <g-k>FROM</g-k> employees <g-k>WHERE</g-k> active <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+  v_id employees<g-pd>.</g-pd>employee_id<g-t>%TYPE</g-t><g-pd>;</g-pd>
+  <g-k>PRAGMA</g-k> <g-k>AUTONOMOUS_TRANSACTION</g-k><g-pd>;</g-pd>
+<g-k>BEGIN</g-k>
+  <g-l>&lt;&lt;employee_loop&gt;&gt;</g-l>
+  <g-k>FOR</g-k> employee <g-k>IN</g-k> active_employees <g-k>LOOP</g-k>
+    v_id <g-o>:=</g-o> employee<g-pd>.</g-pd>employee_id<g-pd>;</g-pd>
+    <g-k>INSERT</g-k> <g-k>INTO</g-k> audit_log <g-k>VALUES</g-k> <g-pb>(</g-pb><g-v>:session_id</g-v><g-pd>,</g-pd> v_id<g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>END</g-k> <g-k>LOOP</g-k> employee_loop<g-pd>;</g-pd>
+  <g-k>COMMIT</g-k><g-pd>;</g-pd>
+<g-k>EXCEPTION</g-k>
+  <g-k>WHEN</g-k> OTHERS <g-k>THEN</g-k> <g-k>RAISE</g-k><g-pd>;</g-pd>
+<g-k>END</g-k><g-pd>;</g-pd>
+<g-k>/</g-k>
+<g-k>SPOOL</g-k> output<g-pd>.</g-pd>log
+<g-k>@</g-k>next_script<g-pd>.</g-pd>sql

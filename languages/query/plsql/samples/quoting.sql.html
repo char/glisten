@@ -1,0 +1,11 @@
+<g-k>DECLARE</g-k>
+  square_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>q'[This isn't the end ] until here]'</g-s><g-pd>;</g-pd>
+  brace_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>Q'{A } isn't the closing delimiter}'</g-s><g-pd>;</g-pd>
+  angle_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>q'&lt;One &gt; two&gt;'</g-s><g-pd>;</g-pd>
+  round_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>q'(a ) b)'</g-s><g-pd>;</g-pd>
+  same_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>q'!No escaping ' here!'</g-s><g-pd>;</g-pd>
+  closing_text <g-t>VARCHAR2</g-t><g-pb>(</g-pb><g-n>200</g-n><g-pb>)</g-pb> <g-o>:=</g-o> <g-s>q']A ] doesn't close until an apostrophe]'</g-s><g-pd>;</g-pd>
+<g-k>BEGIN</g-k>
+  dbms_output<g-pd>.</g-pd><g-f>put_line</g-f><g-pb>(</g-pb>square_text <g-o>||</g-o> same_text<g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>END</g-k><g-pd>;</g-pd>
+<g-k>/</g-k>

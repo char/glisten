@@ -72,6 +72,7 @@ import odin from "./systems/odin/grammar.ts";
 import pascal from "./systems/pascal/grammar.ts";
 import perl from "./scripting/perl/grammar.ts";
 import php from "./web/php/grammar.ts";
+import plsql from "./query/plsql/grammar.ts";
 import powershell from "./shell/powershell/grammar.ts";
 import prolog from "./proof/prolog/grammar.ts";
 import proto from "./data/proto/grammar.ts";
@@ -185,6 +186,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   pascal,
   perl,
   php,
+  plsql,
   powershell,
   prolog,
   proto,

@@ -1,0 +1,13 @@
+<g-k>CREATE</g-k> <g-k>OR</g-k> <g-k>REPLACE</g-k> <g-k>PACKAGE</g-k> <g-t>payroll</g-t> <g-k>AS</g-k>
+  <g-k>PROCEDURE</g-k> <g-f>raise_salary</g-f><g-pb>(</g-pb>p_id employees<g-pd>.</g-pd>employee_id<g-t>%TYPE</g-t><g-pd>,</g-pd> p_amount <g-t>NUMBER</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>END</g-k> payroll<g-pd>;</g-pd>
+<g-k>/</g-k>
+<g-k>CREATE</g-k> <g-k>OR</g-k> <g-k>REPLACE</g-k> <g-k>PACKAGE</g-k> <g-k>BODY</g-k> <g-t>payroll</g-t> <g-k>AS</g-k>
+  <g-k>PROCEDURE</g-k> <g-f>raise_salary</g-f><g-pb>(</g-pb>p_id employees<g-pd>.</g-pd>employee_id<g-t>%TYPE</g-t><g-pd>,</g-pd> p_amount <g-t>NUMBER</g-t><g-pb>)</g-pb> <g-k>IS</g-k>
+  <g-k>BEGIN</g-k>
+    <g-k>UPDATE</g-k> employees <g-k>SET</g-k> salary <g-o>=</g-o> salary <g-o>+</g-o> p_amount <g-k>WHERE</g-k> employee_id <g-o>=</g-o> p_id<g-pd>;</g-pd>
+  <g-k>EXCEPTION</g-k>
+    <g-k>WHEN</g-k> NO_DATA_FOUND <g-k>THEN</g-k> <g-k>RAISE</g-k><g-pd>;</g-pd>
+  <g-k>END</g-k> raise_salary<g-pd>;</g-pd>
+<g-k>END</g-k> payroll<g-pd>;</g-pd>
+<g-k>/</g-k>
