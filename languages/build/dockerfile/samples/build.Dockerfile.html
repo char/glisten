@@ -1,0 +1,31 @@
+<g-c># syntax=docker/dockerfile:1</g-c>
+<g-k>ARG</g-k> <g-v>GO_VERSION</g-v><g-o>=</g-o><g-s>1.23</g-s>
+<g-k>ARG</g-k> <g-v>TARGETOS</g-v>
+<g-c># escape=`</g-c>
+<g-k>FROM</g-k><g-s> </g-s><g-at>--platform</g-at><g-o>=</g-o><g-v>$BUILDPLATFORM</g-v><g-s> golang:</g-s><g-ps>${</g-ps><g-v>GO_VERSION</g-v><g-ps>}</g-ps><g-s>-alpine </g-s><g-k>AS</g-k><g-l> build</g-l>
+<g-k>WORKDIR</g-k><g-s> /src</g-s>
+<g-k>COPY</g-k><g-s> go.mod go.sum ./</g-s>
+<g-k>RUN</g-k> <g-at>--mount</g-at><g-o>=</g-o><g-s>type=cache,target=/go/pkg/mod</g-s> <g-se>\
+</g-se>    <g-f>go</g-f> mod download <g-o>&amp;&amp;</g-o> <g-se>\
+</g-se><g-c>    # This line is removed before the shell sees the command.
+    # So is this one.
+</g-c>    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"building </g-s><g-ps>${</g-ps><g-v>TARGETOS:-linux</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-k>RUN</g-k> <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"joined </g-s><g-se>\
+</g-se><g-c>    # A comment inside an open shell quote is still removed.
+</g-c><g-s>    value"</g-s>
+<g-k>COPY</g-k><g-s> . .</g-s>
+<g-k>RUN</g-k> <g-ps>&lt;&lt;</g-ps><g-l>BUILD</g-l>
+<g-cb>set</g-cb> -eu
+<g-f>go</g-f> build -o /out/app ./cmd/app
+<g-l>BUILD</g-l>
+<g-k>RUN</g-k> <g-ps>&lt;&lt;-</g-ps><g-l>SCRIPT</g-l>
+	<g-cb>echo</g-cb> <g-s>"tab-stripped terminator"</g-s>
+<g-l>	SCRIPT</g-l>
+<g-k>ONBUILD</g-k> <g-k>RUN</g-k> <g-cb>echo</g-cb> <g-s>"building a downstream image"</g-s>
+
+<g-k>FROM</g-k><g-s> alpine:3.20 </g-s><g-k>AS</g-k><g-l> runtime</g-l>
+<g-k>COPY</g-k><g-s> </g-s><g-at>--from</g-at><g-o>=</g-o><g-s>build /out/app /usr/local/bin/app</g-s>
+<g-k>ENV</g-k><g-s> </g-s><g-v>PORT</g-v><g-o>=</g-o><g-s>8080 </g-s><g-v>LOG_LEVEL</g-v><g-o>=</g-o><g-s>info</g-s>
+<g-k>EXPOSE</g-k><g-s> 8080</g-s>
+<g-k>ENTRYPOINT</g-k> <g-pb>[</g-pb><g-s>"/usr/local/bin/app"</g-s><g-pb>]</g-pb>
+<g-k>CMD</g-k> <g-pb>[</g-pb><g-s>"--serve"</g-s><g-pb>]</g-pb>

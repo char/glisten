@@ -1,0 +1,10 @@
+
+<g-c># escape=`</g-c>
+<g-k>FROM</g-k><g-s> scratch</g-s>
+<g-k>ARG</g-k> <g-v>MESSAGE</g-v><g-o>=</g-o><g-s>hello</g-s>
+<g-k>RUN</g-k> <g-cb>echo</g-cb> one <g-se>\
+</g-se>    <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> two
+<g-k>RUN</g-k> <g-se>\
+</g-se><g-c>    # Before the first shell token.
+</g-c>    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> ready
+<g-k>ONBUILD</g-k> <g-k>COPY</g-k> <g-pb>[</g-pb><g-s>"package.json"</g-s><g-pd>,</g-pd> <g-s>"/app/package.json"</g-s><g-pb>]</g-pb>
