@@ -22,7 +22,7 @@ import { checkContainer } from "./container.ts";
 import { checkFallback, checkZeroWidthOpen } from "./state.ts";
 import { checkWraps } from "./wrap.ts";
 import { checkSlots } from "./slot.ts";
-export { slot, type RunSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
+export { slot, type RunSlot, type CounterSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
 export { on, redispatch } from "./arm.ts";
 export { token, oneOf, keywordTable } from "./authoring.ts";
 import type { RecordEffect } from "./record.ts";
@@ -31,7 +31,14 @@ export { paint, markRecord, patchRecord, wrap } from "./record.ts";
 export { pushState, popState, setState, resource } from "./state.ts";
 import type { BoundaryMatcher } from "./boundary.ts";
 import type { CombinatorMatcher } from "./combinator.ts";
-export { baseState, notNext, previousNotIn, lineStart, lineEnd } from "./boundary.ts";
+export {
+  baseState,
+  notNext,
+  previousNotIn,
+  lineStart,
+  lineEnd,
+  columnAtLeast,
+} from "./boundary.ts";
 export {
   seq,
   choice,
@@ -49,6 +56,14 @@ import type { QueueEffect, QueueMatcher } from "./queue.ts";
 import type { GroupMatcher } from "./group.ts";
 export * as shell from "./shell.ts";
 import type { CaptureRun, SameRun } from "./run_slot.ts";
+import type { CounterEffect, CounterMatcher } from "./counter_slot.ts";
+export {
+  counterZero,
+  counterPositive,
+  counterReset,
+  counterIncrement,
+  counterDecrement,
+} from "./counter_slot.ts";
 import type { InjectionEffect, RangeEffect } from "./injection.ts";
 import type { CaptureColumn, ToColumn } from "./column.ts";
 import type { SpeculationEffect } from "./speculation.ts";
@@ -69,6 +84,7 @@ export type Matcher =
   | BoundaryMatcher
   | CombinatorMatcher
   | SameRun
+  | CounterMatcher
   | SeparatedRun
   | ToColumn
   | CaptureMatcher
@@ -80,6 +96,7 @@ export type Effect =
   | RecordEffect
   | StateEffect
   | CaptureRun
+  | CounterEffect
   | CaptureColumn
   | RangeEffect
   | InjectionEffect
@@ -93,7 +110,7 @@ export type Effect =
  * (the dispatch byte is not consumed implicitly); if any fails, the byte's next arm is
  * tried from the same `pos`. Consuming arms paint and fail on a zero-length match.
  * Explicit redispatch arms apply permitted zero-width effects and retry the same byte;
- * queue predicates and certain assertions on abandonment are allowed. More than
+ * queue predicates and zero-width assertions are allowed. More than
  * 16 + 4 × 128 consecutive transitions fail with a resource error.
  * A word classification is the sole effect of its arm; its selected branch must paint
  * exactly once and may perform stack effects. Classification sees only the bytes matched
@@ -152,15 +169,24 @@ export function defineGrammar<Name extends string>(grammar: Grammar<Name>): Gram
   const speculativeStates = checkSpeculativeStates(grammar);
   checkQueueSweep(grammar, names);
   const caches = new Map<string, string>();
-  const checkMatchers = (root: Matcher) =>
-    visitMatchers([root], (matcher) =>
-      checkMatcher(matcher, { names, grammar: grammar.name, caches }),
-    );
+  const checkMatchers = (root: Matcher, allowedColumn?: Matcher) =>
+    visitMatchers([root], (matcher) => {
+      if (matcher.kind === "columnAtLeast" && matcher !== allowedColumn)
+        throw new Error(
+          "columnAtLeast is only valid as the first matcher of an arm, where the physical column is current",
+        );
+      checkMatcher(matcher, { names, grammar: grammar.name, caches });
+    });
   for (const [name, state] of Object.entries<State>(grammar.states)) {
     checkContainer(state, grammar.name, name, names, checkMatchers);
     checkFallback(state, grammar.name, name, names, speculativeStates);
     for (const arm of state.arms) {
-      arm.match.forEach((matcher) => checkMatchers(matcher));
+      arm.match.forEach((matcher, index) =>
+        checkMatchers(
+          matcher,
+          index === 0 && matcher.kind === "columnAtLeast" ? matcher : undefined,
+        ),
+      );
       checkArm(arm);
       if (arm.redispatch) checkZeroWidthOpen(arm.then, grammar.name, name);
       const effects = branchEffects(arm.then);

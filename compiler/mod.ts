@@ -75,8 +75,12 @@ export function compile(
   const analysis = analyzeGrammar(grammar);
   const {
     runs: runSlots,
+    frameRuns,
+    counters: counterSlots,
+    frameCounters,
     ranges: rangeSlots,
     columns,
+    tracksColumn,
     embeds,
     injections: hasInjections,
     styles,
@@ -106,11 +110,22 @@ export function compile(
       state.arms.some((arm) => arm.redispatch === true),
   );
   const framesOffset = Math.ceil((styles.length * 2) / 4) * 4;
+  const frameRunIndices = [...frameRuns].map((name) => runSlots.get(name)!);
+  const frameRunOffset = framesOffset + 4 + columns.length * 8;
+  const frameCounterIndices = [...frameCounters].map((name) => counterSlots.get(name)!);
+  const frameCounterOffset = frameRunOffset + frameRunIndices.length * 8;
   // The extra frame word holds the opening arm position only when frame wraps are used.
-  const frameOpeningOffset = hasFrameWrap ? framesOffset + 4 + columns.length * 8 : undefined;
-  const frameBytes = 4 + columns.length * 8 + (hasFrameWrap ? 4 : 0);
+  const frameOpeningOffset = hasFrameWrap
+    ? frameCounterOffset + frameCounterIndices.length * 4
+    : undefined;
+  const frameBytes =
+    4 +
+    columns.length * 8 +
+    frameRunIndices.length * 8 +
+    frameCounterIndices.length * 4 +
+    (hasFrameWrap ? 4 : 0);
   const frameAddress =
-    columns.length || hasFrameWrap
+    columns.length || hasFrameWrap || frameRunIndices.length || frameCounterIndices.length
       ? `(i32.add (global.get $base) (i32.mul (local.get $depth) (i32.const ${frameBytes})))`
       : `(i32.add (global.get $base) (i32.shl (local.get $depth) (i32.const 2)))`;
   const hasCapture = hasQueue || usesCapture(grammar);
@@ -128,8 +143,10 @@ export function compile(
   const snapshotOffset = areaEnd;
   const spec = speculationCode({
     runs: runSlots.size,
+    counters: counterSlots.size,
     ranges: rangeSlots.size,
     columns: columns.length,
+    tracksColumn,
     injections: hasInjections,
     transitions: hasTransitions,
     containers: hasContainers,
@@ -182,7 +199,7 @@ export function compile(
   // Arms with the same sequence of stack operations share their code; targets travel in locals.
   const shapes = new Map<string, { label: string; ops: Effect[]; transition: boolean }>();
   const shapeOf = (ops: Effect[], transition = false) => {
-    const key = `${transition}:${ops.map((op) => (op.kind === "captureAppend" ? `${op.kind}:${op.skip}` : op.kind === "captureMark" ? `${op.kind}:${op.flags}` : op.kind === "queueSave" ? `${op.kind}:${op.footerIndent}` : op.kind === "captureColumn" ? `${op.kind}:${columns.indexOf(op.slot.name)}` : op.kind === "pop" && op.fallback !== undefined ? "popFallback" : op.kind)).join(",")}`;
+    const key = `${transition}:${ops.map((op) => (op.kind === "captureAppend" ? `${op.kind}:${op.skip}` : op.kind === "captureMark" ? `${op.kind}:${op.flags}` : op.kind === "queueSave" ? `${op.kind}:${op.footerIndent}` : op.kind === "captureColumn" ? `${op.kind}:${columns.indexOf(op.slot.name)}` : op.kind === "captureRun" ? `${op.kind}:${runSlots.get(op.slot.name)}` : op.kind === "counterReset" || op.kind === "counterIncrement" || op.kind === "counterDecrement" ? `${op.kind}:${counterSlots.get(op.slot.name)}` : op.kind === "pop" && op.fallback !== undefined ? "popFallback" : op.kind)).join(",")}`;
     let entry = shapes.get(key);
     if (!entry) shapes.set(key, (entry = { label: fresh("shape"), ops, transition }));
     return entry.label;
@@ -217,6 +234,7 @@ export function compile(
     names,
     hasSpeculation,
     runSlots,
+    counterSlots,
     columns,
     tabStop: grammar.tabStop ?? 4,
     frameBytes,
@@ -402,7 +420,16 @@ export function compile(
   for (const { arms } of caseList) for (const arm of arms) arm.match.forEach(countMatchers);
   // lowerings-match: a matcher sequence used by several arms is outlined.
   const usesColumn = (m: Matcher): boolean =>
-    someMatcher([m], (item) => item.kind === "baseState" || item.kind === "toColumn");
+    someMatcher(
+      [m],
+      (item) =>
+        item.kind === "baseState" ||
+        item.kind === "counterZero" ||
+        item.kind === "counterPositive" ||
+        item.kind === "toColumn" ||
+        item.kind === "columnAtLeast" ||
+        (item.kind === "run" && item.untilColumn !== undefined),
+    );
   const uses = new Map<string, readonly Matcher[]>();
   const counts = new Map<string, number>();
   for (const { arms, bytes } of caseList)
@@ -432,7 +459,11 @@ export function compile(
       (item) =>
         item.kind === "baseState" ||
         item.kind === "sameRun" ||
+        item.kind === "counterZero" ||
+        item.kind === "counterPositive" ||
         item.kind === "toColumn" ||
+        item.kind === "columnAtLeast" ||
+        (item.kind === "run" && item.untilColumn !== undefined) ||
         item.kind === "lineEnd" ||
         item.kind === "cachedPrefix",
     );
@@ -482,6 +513,12 @@ export function compile(
             frameAddress,
             frameOpeningOffset,
             columns,
+            frameRunIndices,
+            frameRunOffset,
+            frameCounterIndices,
+            frameCounterOffset,
+            counterSlots,
+            runSlots,
             hasSpeculation,
             speculationPass: spec.pass,
           }),
@@ -527,6 +564,11 @@ export function compile(
         styles,
         columns,
         runSlots,
+        frameRunIndices,
+        frameRunOffset,
+        counterSlots,
+        frameCounterIndices,
+        frameCounterOffset,
         frameBytes,
         framesOffset,
         frameAddress,
@@ -623,7 +665,7 @@ export function compile(
   ${hasCapture ? captureWat(captureOffset) : ""}
   ${states.some((state) => state.arms.some((arm) => usesGroup(arm.match)) || (state.prefix && (usesGroup(state.prefix.match) || (state.prefix.lazy && usesGroup(state.prefix.lazy.unless))))) ? groupWat : ""}
   ${hasQueue ? queueWat(captureOffset, ownerOffset, bodyOffset) : ""}
-  ${columns.length ? columnFunction(grammar.tabStop ?? 4) : ""}
+  ${tracksColumn ? columnFunction(grammar.tabStop ?? 4) : ""}
   ${scanDefs.join("\n")}
   ${[...words.functions.values()].map(({ data }) => data ?? "").join("\n")}
   ${[...runFunctions.values()].map(({ code }) => code).join("\n")}
@@ -635,8 +677,9 @@ export function compile(
     (param $out i32) (result i32)
     (local $initial i32) (local $state i32) (local $depth i32)
     (local $docStart i32) (local $limit i32) (local $pos i32) (local $p i32) (local $next i32)
-    ${columns.length ? `(local $column i64) (local $matchColumn i64) (local $matchTarget i64) ${columns.map((_, i) => `(local $columnSlot${i} i64)`).join(" ")}` : ""}
+    ${tracksColumn ? `(local $column i64) (local $matchColumn i64) (local $matchTarget i64) ${columns.map((_, i) => `(local $columnSlot${i} i64)`).join(" ")}` : ""}
     ${runSlots.size ? `(local $runAt i32) ${[...runSlots.values()].map((i) => `(local $runByte${i} i32) (local $runLength${i} i32)`).join(" ")}` : ""}
+    ${[...counterSlots.values()].map((i) => `(local $counter${i} i32)`).join(" ")}
     ${[...rangeSlots.values()].map((i) => `(local $rangeStart${i} i32) (local $rangeEnd${i} i32)`).join(" ")}
     ${hasInjections ? "(local $host i32) (local $hostDepth i32) (local $hostId i32) (local $hostLast i32) (local $hostCurrent i32) (local $parentPaint i32) (local $pendingAddress i32) (local $openAction i32) (local $openStart i32) (local $openEnd i32)" : ""}
     (local $byte i32) (local $b i32) (local $style i32) (local $pending i32) (local $pendingEnd i32)
@@ -645,7 +688,7 @@ export function compile(
     ${hasTransitions ? "(local $transitions i32)" : ""}
     ${words.functions.size ? "(local $word i32)" : ""}
     ${grammar.queueSweep ? "(local $lineStart i32) (local $joined i32) (local $recheck i32) (local $sweepIndex i32) (local $sweepBody i32) (local $sweepOwner i32) (local $sweepEntry i32) (local $sweepFlags i32) (local $sweepLen i32) (local $sweepPos i32)" : ""}
-    ${hasContainers ? `(local $containerLine i32) (local $containerNext i32) (local $containerOpen i32) (local $containerIndex i32) (local $containerDepth i32) (local $containerBaseDepth i32) (local $containerBaseState i32) (local $containerFrameState i32) (local $containerMatched i32) ${columns.map((_, i) => `(local $containerColumn${i} i64)`).join(" ")} ${[...runSlots.values()].map((i) => `(local $containerRunByte${i} i32) (local $containerRunLength${i} i32)`).join(" ")}` : ""}
+    ${hasContainers ? `(local $containerLine i32) (local $containerNext i32) (local $containerOpen i32) (local $containerIndex i32) (local $containerDepth i32) (local $containerBaseDepth i32) (local $containerBaseState i32) (local $containerFrameState i32) (local $containerMatched i32) ${columns.map((_, i) => `(local $containerColumn${i} i64)`).join(" ")} ${[...runSlots.values()].map((i) => `(local $containerRunByte${i} i32) (local $containerRunLength${i} i32)`).join(" ")} ${[...counterSlots.values()].map((i) => `(local $containerCounter${i} i32)`).join(" ")}` : ""}
     ${locals}
     ${hasSpeculation ? spec.locals : ""}
     (global.set $status (i32.const 0)) (global.set $injections (i32.const 0))
@@ -657,7 +700,7 @@ export function compile(
         ${hasSpeculation ? `(local.set $specEpoch (call $specNextEpoch (call $specTags) (i32.mul (i32.shl (i32.wrap_i64 (i64.shr_u (i64.add (i64.extend_i32_u (local.get $length)) (i64.const 7)) (i64.const 3))) (i32.const 2)) (i32.const ${speculationGroups.length})) (local.get $specEpoch))) (local.set $specFrontier (i64.const 0)) (local.set $specRewound (i64.const 0))` : ""}
         ${hasInjections ? "(if (local.get $host) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0))))" : ""}
         ${[...rangeSlots.values()].map((i) => `(local.set $rangeStart${i} (i32.const 0)) (local.set $rangeEnd${i} (i32.const 0))`).join(" ")}
-        ${columns.length ? `(local.set $column (i64.const 0)) ${columns.map((_, i) => `(local.set $columnSlot${i} (i64.const -1))`).join(" ")}` : ""}
+        ${tracksColumn ? `(local.set $column (i64.const 0)) ${columns.map((_, i) => `(local.set $columnSlot${i} (i64.const -1))`).join(" ")}` : ""}
         (local.set $state (i32.const ${initial})) (local.set $depth (i32.const 0))
         ${hasContainers ? `(local.set $containerLine (i32.const 0)) (local.set $containerNext (i32.const -1)) (local.set $containerOpen (i32.const ${states[initial]!.prefix ? 1 : 0}))` : ""}
         ${recordPatching ? "(local.set $candidate (i32.const -1))" : ""}
@@ -666,6 +709,7 @@ export function compile(
         ${hasQueue ? "(call $queueReset)" : ""}
         ${grammar.queueSweep ? "(local.set $lineStart (i32.const 1)) (local.set $joined (i32.const 0))" : ""}
         ${[...runSlots.values()].map((i) => `(local.set $runLength${i} (i32.const 0))`).join(" ")}
+        ${[...counterSlots.values()].map((i) => `(local.set $counter${i} (i32.const 0))`).join(" ")}
       (local.set $docStart (i32.load (local.get $documents)))
       (local.set $limit (i32.load offset=4 (local.get $documents)))
       (local.set $pos (local.get $docStart))
@@ -678,7 +722,7 @@ export function compile(
         ${hasWrap ? "(local.set $wrapStyle (i32.const -1))" : ""}
         ${recordPatching ? "(local.set $patch (i32.const -1)) (local.set $mark (i32.const 0))" : ""}
         ${grammar.queueSweep ? "(local.set $recheck (i32.const 0))" : ""}
-        (block $paint ${hasContainers ? `(if (local.get $containerOpen) (then ${container}) (else (local.set $containerLine (i32.const 0)) (local.set $containerNext (i32.const -1))))` : ""} ${grammar.queueSweep ? queueSweepCode(grammar.queueSweep, names, styles, ownerOffset, bodyOffset, hasInjections, hasContainers) : ""} ${body})
+        (block $paint ${hasContainers ? `(if (local.get $containerOpen) (then ${container}) (else (local.set $containerLine (i32.const 0)) (local.set $containerNext (i32.const -1))))` : ""} ${grammar.queueSweep ? queueSweepCode(grammar.queueSweep, names, styles, ownerOffset, bodyOffset, hasInjections, hasContainers, { indices: frameRunIndices, offset: frameRunOffset, counterIndices: frameCounterIndices, counterOffset: frameCounterOffset, frameBytes }) : ""} ${body})
         ${hasTransitions ? "(local.set $transitions (i32.const 0))" : ""}
         ${
           recordPatching
@@ -699,7 +743,7 @@ export function compile(
         ${outputPaint}
         ${hasContainers ? `(local.set $containerLine (i32.eq (i32.load8_u (i32.add (local.get $input) (i32.sub (local.get $next) (i32.const 1)))) (i32.const 10))) (if (local.get $containerLine) (then (local.set $containerNext (i32.const -1))))` : ""}
         ${
-          columns.length
+          tracksColumn
             ? `(local.set $column (if (result i64)
           (i32.and (i32.eq (local.get $next) (i32.add (local.get $pos) (i32.const 1)))
             (i32.le_u (i32.sub (local.get $byte) (i32.const 32)) (i32.const 95)))

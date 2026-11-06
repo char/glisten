@@ -14,6 +14,7 @@ export type LowerContext = {
   names: string[];
   hasSpeculation: boolean;
   runSlots: Map<string, number>;
+  counterSlots: Map<string, number>;
   columns: string[];
   tabStop: number;
   frameBytes: number;

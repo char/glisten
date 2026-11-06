@@ -30,7 +30,16 @@ export function checkSpeculationArm(arm: Arm): void {
     (arm.then.length !== 1 ||
       arm.match.some(
         (matcher) =>
-          !["ahead", "notAhead", "notNext", "notBehind", "lineEnd"].includes(matcher.kind),
+          ![
+            "ahead",
+            "notAhead",
+            "notNext",
+            "notBehind",
+            "lineEnd",
+            "columnAtLeast",
+            "counterZero",
+            "counterPositive",
+          ].includes(matcher.kind),
       ))
   )
     throw new Error("Abandon must be the sole effect of a zero-width arm");

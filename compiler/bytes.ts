@@ -49,6 +49,22 @@ export function lowerRun(
   const { member, fresh, save, rangesOf, runFunctions, runCounts } = context;
   const bytes = bytesOf(m.set);
   const key = bytes.join(",");
+  if (m.untilColumn !== undefined) {
+    const start = save();
+    const done = fresh("columnRun");
+    return `(local.set ${start} (local.get $p))
+      (local.set $matchColumn (call $advanceColumn (local.get $input) (local.get $pos) (local.get $p) (local.get $column)))
+      (block ${done} (loop ${done}_more
+        (br_if ${done} (i32.ge_u (local.get $p) (local.get $limit)))
+        ${m.max === undefined ? "" : `(br_if ${done} (i32.ge_u (i32.sub (local.get $p) (local.get ${start})) (i32.const ${m.max})))`}
+        (br_if ${done} (i64.ge_u (i64.and (local.get $matchColumn) (i64.const 4611686018427387903)) (i64.const ${m.untilColumn})))
+        (local.set $b (i32.load8_u (i32.add (local.get $input) (local.get $p))))
+        (br_if ${done} (i32.eqz ${member("(local.get $b)", m.set)}))
+        (local.set $matchColumn (call $advanceColumn (local.get $input) (local.get $p) (i32.add (local.get $p) (i32.const 1)) (local.get $matchColumn)))
+        (local.set $p (i32.add (local.get $p) (i32.const 1)))
+        (br ${done}_more)))
+      ${m.min ? `(br_if ${fail} (i32.lt_u (i32.sub (local.get $p) (local.get ${start})) (i32.const ${m.min})))` : ""}`;
+  }
   // An empty byte set cannot benefit from a vector scan.
   if ((m.max === undefined || m.max >= 16) && bytes.some((b) => b <= 255)) {
     const vectorKey = `simd:${key}`;

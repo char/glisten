@@ -1,11 +1,12 @@
-import { byteSet, bytesOf, type ByteSet } from "./bytes.ts";
+import { byteSet, bytesOf, checkColumn, type ByteSet } from "./bytes.ts";
 import type { Matcher } from "./mod.ts";
 
 export type BoundaryMatcher =
   | { readonly kind: "baseState"; readonly states: readonly string[] }
   | { readonly kind: "notNext"; readonly set: ByteSet }
   | { readonly kind: "notBehind"; readonly set: ByteSet }
-  | { readonly kind: "lineEnd" };
+  | { readonly kind: "lineEnd" }
+  | { readonly kind: "columnAtLeast"; readonly column: number };
 
 /** Succeeds, consuming nothing, unless the next byte in the segment is in the set. */
 export const notNext = (set: ByteSet): Matcher => {
@@ -21,6 +22,12 @@ const notNewline = byteSet({
 
 /** Succeeds at the physical beginning of a line, including document start. */
 export const lineStart = (): Matcher => previousNotIn(notNewline);
+
+/** Test the physical column at the beginning of an arm. */
+export const columnAtLeast = (column: number): Matcher => {
+  checkColumn(column);
+  return { kind: "columnAtLeast", column };
+};
 
 /** Succeeds before a newline or at the end of a document, but not at other segment ends. */
 export const lineEnd = (): Matcher => ({ kind: "lineEnd" });

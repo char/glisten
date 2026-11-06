@@ -83,9 +83,10 @@ state-change restriction as a zero-width redispatch. A state's optional
 `captureFallback` also appends fallback bytes to the shell capture.
 
 Use `redispatch(set, ...steps)` for an explicit non-painting, zero-width arm.
-It retries the same byte after its effects. Its matchers may be `shell.queueHas`;
-when the sole effect is `abandon`, it may instead have zero-width lookahead,
-negative lookahead, `notNext`, `previousNotIn`, or `lineEnd` assertions. Permitted effects are stack actions, `shell.queueSave`,
+It retries the same byte after its effects. Its matchers may be `shell.queueHas`
+or zero-width `lookahead`, `notLookahead`, `notNext`, `previousNotIn`, `lineStart`,
+or `lineEnd` assertions. Lookaheads can contain consuming matchers such as
+`indentTo` without consuming input themselves. Permitted effects are stack actions, `shell.queueSave`,
 `shell.queueOpen`, `closeInjection`, `shell.captureReset`, `shell.captureMark`,
 `openInjection`, and `abandon`; capture reset/mark requires a stack action. A
 zero-width injection open requires exactly one stack action: a push or goto
@@ -111,9 +112,13 @@ whole sequence has zero length fails.
 - `byte(set)` consumes one member of `set`; it fails at the document end or on a
   nonmember. `character()` consumes the document-bounded character described
   above, failing at the document end.
-- `bytes(set, { min, max })` greedily consumes members, up to `max` if given;
-  `min` defaults to 1. It fails if fewer than `min` bytes were consumed. Bounds
-  are integers in 0..2,147,483,647, with `max >= min`. No backtracking shortens
+- `bytes(set, { min, max, untilColumn })` greedily consumes members, up to
+  `max` if given; `untilColumn` additionally stops before a byte starting at or
+  beyond that zero-based physical column. Columns advance according to `tabStop`
+  and UTF-8 character boundaries, including across segments. `untilColumn` is an
+  integer in 0..2,147,483,647. `min` defaults to 1. It fails if fewer than `min`
+  bytes were consumed. Bounds are integers in 0..2,147,483,647, with
+  `max >= min`. No backtracking shortens
   the run to make a later matcher succeed.
 - `seq(...matchers)` makes a matcher sequence. `choice(...sequences)` tries
   each sequence from the same start and chooses the first complete success;
@@ -131,7 +136,10 @@ whole sequence has zero length fails.
   start supplies an LF sentinel.
   It is an assertion, not an indentation test, and is equivalent to
   `previousNotIn` of every byte except LF. `lineEnd()` succeeds before LF or at
-  the document end.
+  the document end. `columnAtLeast(n)` tests the zero-based physical column at
+  the arm start, without consuming; `n` is an integer in 0..2,147,483,647. It is
+  only valid as an arm's first matcher because the physical column is current at
+  that position.
 - `cachedPrefix(name, first, rest, ...suffix)` requires the first byte in
   `first`, greedily consumes a run in `rest`, and matches `suffix` there.
   `first` must be a subset of `rest`. On suffix failure it caches the run and
@@ -210,9 +218,20 @@ on("`", matchRun(fence), paint("punctuation.delimiter"), popState());
 ```
 
 - `saveRun(slot)` saves the final maximal run of equal bytes **within the
-  complete matched arm**, for `matchRun`. It is document-local, not frame-local.
+  complete matched arm**, for `matchRun`. Run slots are document-local by default.
+  Declare `slot.run(name, { scope: "frame" })` for a slot inherited on push and
+  restored on pop. Frame-scoped saves execute in order with stack effects: push
+  before saving a nested delimiter to retain the parent's value.
   A grammar's `tabStop` (4 by default, or 8) sets where a tab advances the physical column
   for `saveColumn` and `indentTo`: CommonMark uses 4, Kconfig and Python use 8.
+
+- Counter slots start at zero. `counterIncrement(slot)` saturates at 2,147,483,647;
+  `counterDecrement(slot)` does nothing at zero, and `counterReset(slot)` sets zero.
+  They are document-scoped by default; `slot.counter(name, { scope: "frame" })`
+  inherits the value on push and restores it on pop. `counterZero(slot)` and
+  `counterPositive(slot)` are zero-width assertions. Counter effects execute in
+  written order after the complete arm matches. The interpreter supports these
+  operations; compiler support is not yet available.
 
 - `saveColumn(slot)` saves the physical column at the end of the complete
   matched arm. Columns are frame-local, inherited on push, restored on pop,

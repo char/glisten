@@ -45,11 +45,17 @@ export function checkArm(arm: Arm) {
     !arm.then.some((effect) => effect.kind === "paint") &&
     (arm.match.some(
       (matcher) =>
-        matcher.kind !== "queueHas" &&
-        !(
-          arm.then.some((step) => step.kind === "abandon") &&
-          ["ahead", "notAhead", "notNext", "notBehind", "lineEnd"].includes(matcher.kind)
-        ),
+        ![
+          "queueHas",
+          "counterZero",
+          "counterPositive",
+          "ahead",
+          "notAhead",
+          "notNext",
+          "notBehind",
+          "lineEnd",
+          "columnAtLeast",
+        ].includes(matcher.kind),
     ) ||
       arm.then.length === 0 ||
       arm.then.some(

@@ -80,11 +80,14 @@ export function mayCrossLine(matchers: readonly Matcher[]): boolean {
       case "group":
         return unknown;
       case "baseState":
+      case "counterZero":
+      case "counterPositive":
       case "ahead":
       case "notAhead":
       case "notNext":
       case "notBehind":
       case "lineEnd":
+      case "columnAtLeast":
       case "queueHas":
         return empty;
     }

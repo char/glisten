@@ -3,7 +3,7 @@ import { checkBaseState } from "./boundary.ts";
 import { checkCachedPrefix } from "./combinator.ts";
 import { checkStateEffect } from "./state.ts";
 import { checkQueueOpen } from "./queue.ts";
-import { bytesOf, checkRunBounds } from "./bytes.ts";
+import { bytesOf, checkColumn, checkRunBounds } from "./bytes.ts";
 import { checkSeparatedRunMinimum } from "./separated_run.ts";
 import { indentTo } from "./column.ts";
 
@@ -43,6 +43,7 @@ const registry = {
     validate: (matcher) => {
       bytesOf(matcher.set);
       checkRunBounds(matcher.min, matcher.max);
+      if (matcher.untilColumn !== undefined) checkColumn(matcher.untilColumn);
     },
   },
   either: { role: "matcher", validate: noValidation },
@@ -66,8 +67,11 @@ const registry = {
     },
   },
   lineEnd: { role: "matcher", validate: noValidation },
+  columnAtLeast: { role: "matcher", validate: (matcher) => checkColumn(matcher.column) },
   repeat: { role: "matcher", validate: noValidation },
   sameRun: { role: "matcher", validate: noValidation },
+  counterZero: { role: "matcher", validate: noValidation },
+  counterPositive: { role: "matcher", validate: noValidation },
   separatedRun: {
     role: "matcher",
     validate: (matcher) => {
@@ -96,6 +100,9 @@ const registry = {
   goto: { role: "effect", validate: checkStateEffect },
   resource: { role: "effect", validate: noValidation },
   captureRun: { role: "effect", validate: noValidation },
+  counterReset: { role: "effect", validate: noValidation },
+  counterIncrement: { role: "effect", validate: noValidation },
+  counterDecrement: { role: "effect", validate: noValidation },
   captureColumn: { role: "effect", validate: noValidation },
   saveRange: { role: "effect", validate: noValidation },
   clearRange: { role: "effect", validate: noValidation },

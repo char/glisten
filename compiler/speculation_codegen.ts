@@ -6,8 +6,10 @@ export const speculationAreaBytes = (enabled: boolean, bytes: number): number =>
 /** Generate bounded speculative snapshots in the module area. */
 export function speculationCode(options: {
   runs: number;
+  counters: number;
   ranges: number;
   columns: number;
+  tracksColumn: boolean;
   injections: boolean;
   transitions: boolean;
   containers: boolean;
@@ -23,6 +25,7 @@ export function speculationCode(options: {
     "pending",
     "pendingEnd",
     ...Array.from({ length: options.runs }, (_, i) => [`runByte${i}`, `runLength${i}`]).flat(),
+    ...Array.from({ length: options.counters }, (_, i) => `counter${i}`),
     ...Array.from({ length: options.ranges }, (_, i) => [`rangeStart${i}`, `rangeEnd${i}`]).flat(),
     ...(options.injections
       ? [
@@ -40,7 +43,7 @@ export function speculationCode(options: {
     ...(options.transitions ? ["transitions"] : []),
     ...(options.containers ? ["containerLine", "containerNext", "containerOpen"] : []),
   ];
-  const i64 = options.columns
+  const i64 = options.tracksColumn
     ? ["column", ...Array.from({ length: options.columns }, (_, i) => `columnSlot${i}`)]
     : [];
   const fields = [

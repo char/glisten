@@ -9,6 +9,11 @@ type ContainerContext = {
   styles: string[];
   columns: string[];
   runSlots: Map<string, number>;
+  frameRunIndices: number[];
+  frameRunOffset: number;
+  counterSlots: Map<string, number>;
+  frameCounterIndices: number[];
+  frameCounterOffset: number;
   frameBytes: number;
   framesOffset: number;
   frameAddress: string;
@@ -27,6 +32,11 @@ export function containerCode(context: ContainerContext): string {
     styles,
     columns,
     runSlots,
+    frameRunIndices,
+    frameRunOffset,
+    counterSlots,
+    frameCounterIndices,
+    frameCounterOffset,
     frameBytes,
     framesOffset,
     frameAddress,
@@ -44,6 +54,9 @@ export function containerCode(context: ContainerContext): string {
       `(local.set $containerRunByte${i} (local.get $runByte${i}))`,
       `(local.set $containerRunLength${i} (local.get $runLength${i}))`,
     ]),
+    ...[...counterSlots.values()].map(
+      (i) => `(local.set $containerCounter${i} (local.get $counter${i}))`,
+    ),
   ].join(" ");
   const restore = [
     `(local.set $depth (local.get $containerDepth))`,
@@ -52,6 +65,9 @@ export function containerCode(context: ContainerContext): string {
       `(local.set $runByte${i} (local.get $containerRunByte${i}))`,
       `(local.set $runLength${i} (local.get $containerRunLength${i}))`,
     ]),
+    ...[...counterSlots.values()].map(
+      (i) => `(local.set $counter${i} (local.get $containerCounter${i}))`,
+    ),
   ].join(" ");
   const view = (index: string) =>
     [
@@ -64,13 +80,38 @@ export function containerCode(context: ContainerContext): string {
         (then (i64.load offset=${framesOffset + 4 + i * 8} ${frameAt(index)}))
         (else ${hasSpeculation ? `(if (result i64) (local.get $specOpen) (then ${spec.outerField(`columnSlot${i}`)}) (else (local.get $containerColumn${i})))` : `(local.get $containerColumn${i})`})))`,
       ),
-      ...[...runSlots.values()].flatMap((i) =>
-        hasSpeculation
-          ? [
-              `(if (local.get $specOpen) (then (local.set $runByte${i} ${spec.outerField(`runByte${i}`)}) (local.set $runLength${i} ${spec.outerField(`runLength${i}`)})))`,
-            ]
-          : [],
-      ),
+      ...[...runSlots.values()].flatMap((i) => {
+        const slot = frameRunIndices.indexOf(i);
+        const outer = hasSpeculation
+          ? `(if (local.get $specOpen) (then (local.set $runByte${i} ${spec.outerField(`runByte${i}`)}) (local.set $runLength${i} ${spec.outerField(`runLength${i}`)})))`
+          : "";
+        return slot < 0
+          ? outer
+            ? [outer]
+            : []
+          : [
+              `(if (i32.lt_u ${index} (local.get $containerBaseDepth)) (then
+            (local.set $runByte${i} (i32.load offset=${frameRunOffset + slot * 8} ${frameAt(index)}))
+            (local.set $runLength${i} (i32.load offset=${frameRunOffset + slot * 8 + 4} ${frameAt(index)})))
+            (else ${outer}))`,
+            ];
+      }),
+      ...[...counterSlots.values()].flatMap((i) => {
+        const slot = frameCounterIndices.indexOf(i);
+        const current = `(local.set $counter${i} (local.get $containerCounter${i}))`;
+        const outer = hasSpeculation
+          ? `(if (local.get $specOpen) (then (local.set $counter${i} ${spec.outerField(`counter${i}`)})) (else ${current}))`
+          : current;
+        return slot < 0 && !hasSpeculation
+          ? []
+          : slot < 0
+            ? [outer]
+            : [
+                `(if (i32.lt_u ${index} (local.get $containerBaseDepth)) (then
+              (local.set $counter${i} (i32.load offset=${frameCounterOffset + slot * 4} ${frameAt(index)})))
+              (else ${outer}))`,
+              ];
+      }),
     ].join(" ");
   const attempt = (items: readonly Matcher[], limitLine: boolean) => {
     const miss = fresh("containerMiss");
@@ -107,7 +148,9 @@ export function containerCode(context: ContainerContext): string {
         (if (local.get $containerIndex) (then
           (local.set $depth (i32.sub (local.get $containerIndex) (i32.const 1)))
           (local.set $state (i32.load offset=${framesOffset} ${frameAddress}))
-          ${columns.map((_, slot) => `(local.set $columnSlot${slot} (i64.load offset=${framesOffset + 4 + slot * 8} ${frameAddress}))`).join(" ")})
+          ${columns.map((_, slot) => `(local.set $columnSlot${slot} (i64.load offset=${framesOffset + 4 + slot * 8} ${frameAddress}))`).join(" ")}
+          ${frameRunIndices.map((slot, index) => `(local.set $runByte${slot} (i32.load offset=${frameRunOffset + index * 8} ${frameAddress})) (local.set $runLength${slot} (i32.load offset=${frameRunOffset + index * 8 + 4} ${frameAddress}))`).join(" ")}
+          ${frameCounterIndices.map((slot, index) => `(local.set $counter${slot} (i32.load offset=${frameCounterOffset + index * 4} ${frameAddress}))`).join(" ")})
           (else (local.set $state (i32.const ${names.indexOf(grammar.initial)})) (local.set $depth (i32.const 0))))
         ${hasInjections ? `(if (i32.and (local.get $host) (i32.gt_u (local.get $hostDepth) (local.get $depth))) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0)) (local.set $hostCurrent (i32.const -1))))` : ""}
         (local.set $containerOpen (call $findContainer (local.get $depth) (local.get $state)))

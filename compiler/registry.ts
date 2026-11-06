@@ -15,6 +15,13 @@ import {
 import { lowerBaseState, lowerNotNext, lowerLineEnd, lowerNotBehind } from "./boundary.ts";
 import { lowerSameRun } from "./run_slot.ts";
 import { lowerColumnMatcher } from "./column.ts";
+import {
+  lowerCounterZero,
+  lowerCounterPositive,
+  lowerCounterReset,
+  lowerCounterIncrement,
+  lowerCounterDecrement,
+} from "./counter_slot.ts";
 import type { LowerContext, MatcherLowering } from "./matcher.ts";
 import type { ShapeContext, ShapeLowering } from "./effect.ts";
 import { lowerCaptureReset, lowerCaptureAppend, lowerCaptureMark } from "./capture.ts";
@@ -22,7 +29,7 @@ import { lowerQueueAction, lowerQueueSave, lowerQueueOpen } from "./queue.ts";
 import { lowerColumnAction } from "./column.ts";
 import { lowerResource, lowerGoto, lowerPush, lowerPop } from "./state.ts";
 import { lowerSpeculationOpener, stateTarget } from "./state.ts";
-import { lowerCaptureRun } from "./run_slot.ts";
+import { captureRunCode, lowerCaptureRun } from "./run_slot.ts";
 import { lowerInjectionEffect } from "./injection.ts";
 import { lowerPaint, lowerPatch, lowerMark } from "./record.ts";
 import type { ArmEffectContext, ArmEffectLowering } from "./arm_effect.ts";
@@ -50,6 +57,8 @@ const registry = {
   either: lowerEither,
   baseState: lowerBaseState,
   sameRun: lowerSameRun,
+  counterZero: lowerCounterZero,
+  counterPositive: lowerCounterPositive,
   toColumn: lowerColumnMatcher,
   opt: lowerOpt,
   cachedPrefix: lowerCachedPrefix,
@@ -58,6 +67,8 @@ const registry = {
   repeat: lowerMany,
   notNext: lowerNotNext,
   lineEnd: lowerLineEnd,
+  columnAtLeast: (m, fail) =>
+    `(br_if ${fail} (i64.lt_u (i64.and (local.get $column) (i64.const 4611686018427387903)) (i64.const ${m.column})))`,
   notBehind: lowerNotBehind,
   captureReset: { shape: lowerCaptureReset, arm: noArm, inShape: true, target: noTarget },
   captureAppend: { shape: lowerCaptureAppend, arm: noArm, inShape: true, target: noTarget },
@@ -85,6 +96,9 @@ const registry = {
     target: noTarget,
   },
   captureRun: { shape: () => "", arm: lowerCaptureRun, inShape: false, target: noTarget },
+  counterReset: { shape: lowerCounterReset, arm: noArm, inShape: true, target: noTarget },
+  counterIncrement: { shape: lowerCounterIncrement, arm: noArm, inShape: true, target: noTarget },
+  counterDecrement: { shape: lowerCounterDecrement, arm: noArm, inShape: true, target: noTarget },
   saveRange: { shape: () => "", arm: lowerInjectionEffect, inShape: false, target: noTarget },
   clearRange: { shape: () => "", arm: lowerInjectionEffect, inShape: false, target: noTarget },
   openNamed: { shape: () => "", arm: lowerInjectionEffect, inShape: false, target: noTarget },
@@ -98,6 +112,8 @@ const registry = {
 };
 
 export function lowerShapeEffect(effect: Effect, index: number, context: ShapeContext): string {
+  if (effect.kind === "captureRun" && effect.slot.scope === "frame")
+    return captureRunCode(context.runSlots.get(effect.slot.name)!);
   // The registry key and the handler argument share the same discriminant.
   const handler = registry[effect.kind].shape as (
     effect: Effect,
@@ -124,6 +140,10 @@ export function lowerMatcher(
 }
 
 export function lowerArmEffect(effect: Effect, context: ArmEffectContext): void {
+  if (effect.kind === "captureRun" && effect.slot.scope === "frame") {
+    context.operations.push(effect);
+    return;
+  }
   const rule = registry[effect.kind];
   if (rule.inShape) context.operations.push(effect);
   // The registry key and the handler argument share the same discriminant.

@@ -149,6 +149,13 @@ export function queueSweepCode(
   bodyOffset: number,
   hasInjections: boolean,
   hasContainers: boolean,
+  frameRuns: {
+    indices: number[];
+    offset: number;
+    counterIndices: number[];
+    counterOffset: number;
+    frameBytes: number;
+  },
 ): string {
   return `(if (local.get $lineStart) (then
     (local.set $lineStart (i32.const 0))
@@ -187,6 +194,23 @@ export function queueSweepCode(
             (i32.add (local.get $sweepEntry) (i32.const 12)) (local.get $sweepLen)) (then
             (global.set $queueBodies (local.get $sweepIndex))
             (global.set $queueOwner (local.get $sweepOwner))
+            ${
+              frameRuns.indices.length || frameRuns.counterIndices.length
+                ? `(if (i32.lt_u (i32.load offset=4 (local.get $sweepBody)) (local.get $depth)) (then
+              ${frameRuns.indices
+                .map((slot, index) => {
+                  const address = `(i32.add (global.get $base) (i32.mul (i32.load offset=4 (local.get $sweepBody)) (i32.const ${frameRuns.frameBytes})))`;
+                  return `(local.set $runByte${slot} (i32.load offset=${frameRuns.offset + index * 8} ${address})) (local.set $runLength${slot} (i32.load offset=${frameRuns.offset + index * 8 + 4} ${address}))`;
+                })
+                .join(" ")}
+              ${frameRuns.counterIndices
+                .map((slot, index) => {
+                  const address = `(i32.add (global.get $base) (i32.mul (i32.load offset=4 (local.get $sweepBody)) (i32.const ${frameRuns.frameBytes})))`;
+                  return `(local.set $counter${slot} (i32.load offset=${frameRuns.counterOffset + index * 4} ${address}))`;
+                })
+                .join(" ")}))`
+                : ""
+            }
             (local.set $depth (i32.load offset=4 (local.get $sweepBody)))
             ${hasInjections ? "(if (i32.and (local.get $host) (i32.gt_u (local.get $hostDepth) (local.get $depth))) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0)) (local.set $hostCurrent (i32.const -1))))" : ""}
             (call $queueShift)

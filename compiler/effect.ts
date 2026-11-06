@@ -5,6 +5,12 @@ export type ShapeContext = {
   frameAddress: string;
   frameOpeningOffset?: number;
   columns: string[];
+  frameRunIndices: number[];
+  frameRunOffset: number;
+  frameCounterIndices: number[];
+  frameCounterOffset: number;
+  counterSlots: Map<string, number>;
+  runSlots: Map<string, number>;
   hasSpeculation: boolean;
   speculationPass: string;
 };

@@ -10,7 +10,19 @@ import {
   saveRun,
   slot,
 } from "./mod.ts";
-import { throws } from "#/testing/assert.ts";
+import { equal, throws } from "#/testing/assert.ts";
+
+test("run slot scope is opt-in and rejects unknown scopes", () => {
+  equal(slot.run("document").scope, undefined);
+  equal(slot.run("frame", { scope: "frame" }).scope, "frame");
+  throws(() => slot.run("bad", { scope: "invalid" as "frame" }), Error, /scope/);
+});
+
+test("counter slot scope is opt-in and rejects unknown scopes", () => {
+  equal(slot.counter("document").scope, undefined);
+  equal(slot.counter("frame", { scope: "frame" }).scope, "frame");
+  throws(() => slot.counter("bad", { scope: "invalid" as "frame" }), Error, /scope/);
+});
 
 test("slot handles are distinct by declaration and kind", () => {
   const first = slot.run("delimiter");

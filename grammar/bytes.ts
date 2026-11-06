@@ -7,7 +7,13 @@ export type ByteMatcher =
   | { readonly kind: "literal"; readonly text: string }
   | { readonly kind: "one"; readonly set: ByteSet }
   | { readonly kind: "character" }
-  | { readonly kind: "run"; readonly set: ByteSet; readonly min: number; readonly max?: number };
+  | {
+      readonly kind: "run";
+      readonly set: ByteSet;
+      readonly min: number;
+      readonly max?: number;
+      readonly untilColumn?: number;
+    };
 
 /** Bytes of a literal. */
 export const literal = (text: string): Matcher => ({ kind: "literal", text });
@@ -19,12 +25,27 @@ export const byte = (set: ByteSet): Matcher => {
 /** One segment-bounded UTF-8 character. */
 export const character = (): Matcher => ({ kind: "character" });
 /** A maximal run of bytes in a set, limited to `max` when supplied. */
-export const bytes = (set: ByteSet, options: { min?: number; max?: number } = {}): Matcher => {
-  const { min = 1, max } = options;
+export const bytes = (
+  set: ByteSet,
+  options: { min?: number; max?: number; untilColumn?: number } = {},
+): Matcher => {
+  const { min = 1, max, untilColumn } = options;
   bytesOf(set);
   checkRunBounds(min, max);
-  return max === undefined ? { kind: "run", set, min } : { kind: "run", set, min, max };
+  if (untilColumn !== undefined) checkColumn(untilColumn);
+  return {
+    kind: "run",
+    set,
+    min,
+    ...(max === undefined ? {} : { max }),
+    ...(untilColumn === undefined ? {} : { untilColumn }),
+  };
 };
+
+export function checkColumn(column: number): void {
+  if (!Number.isSafeInteger(column) || column < 0 || column > 0x7fffffff)
+    throw new RangeError("Column must be an integer from 0 to 2,147,483,647");
+}
 
 export function checkRunBounds(min: number, max?: number): void {
   if (

@@ -1,6 +1,6 @@
 import type { RunSlot } from "./slot.ts";
 
-/** A document-local slot holding the final run of a successful arm's match. */
+/** Save the final run of a successful arm's match in the selected slot. */
 export type CaptureRun = { readonly kind: "captureRun"; readonly slot: RunSlot };
 export type RunRelation = "atLeast" | "exact" | "prefix";
 /** Match the saved byte with the requested length relation. */
