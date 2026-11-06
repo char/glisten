@@ -1,0 +1,22 @@
+<g-k>use</g-k> <g-t>strict</g-t><g-pd>;</g-pd>
+<g-k>use</g-k> <g-t>warnings</g-t><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$name</g-v> <g-o>=</g-o> <g-s>'Ada'</g-s><g-pd>;</g-pd>
+<g-k>print</g-k> <g-o>&lt;&lt;</g-o><g-l>"ONE"</g-l><g-pd>,</g-pd> <g-o>&lt;&lt;</g-o><g-l>'TWO'</g-l><g-pd>,</g-pd> <g-o>&lt;&lt;~</g-o><g-l>THREE</g-l><g-pd>;</g-pd>
+<g-s>Hello </g-s><g-v>$name</g-v><g-s>
+</g-s><g-l>ONE</g-l>
+<g-s>No $interpolation here.
+</g-s><g-l>TWO</g-l>
+<g-s>  An indented </g-s><g-v>$name</g-v><g-s>
+</g-s><g-l>  THREE</g-l>
+<g-k>print</g-k> <g-s>"after heredocs</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+
+<g-c>=head1 DOCUMENTATION
+
+This is POD, not Perl code.
+
+=cut</g-c>
+
+<g-k>print</g-k> <g-s>"after POD</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+<g-c>__DATA__
+This is data; $not_code is not a variable.
+</g-c>

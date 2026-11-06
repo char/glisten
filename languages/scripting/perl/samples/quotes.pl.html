@@ -1,0 +1,14 @@
+<g-k>use</g-k> <g-n>v5.38</g-n><g-pd>;</g-pd>
+<g-k>use</g-k> <g-t>utf8</g-t><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$name</g-v> <g-o>=</g-o> <g-s>'Ada'</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>@items</g-v> <g-o>=</g-o> <g-s>qw(one two three)</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$literal</g-v> <g-o>=</g-o> <g-s>q{nested {braces} stay}</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$greeting</g-v> <g-o>=</g-o> <g-s>qq[Hello </g-s><g-v>$name</g-v><g-s> and </g-s><g-ps>@{</g-ps><g-pb>[</g-pb> <g-k>join</g-k> <g-s>', '</g-s><g-pd>,</g-pd> <g-v>@items</g-v> <g-pb>]</g-pb><g-ps>}</g-ps><g-s>]</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$unicode</g-v> <g-o>=</g-o> <g-s>q§Unicode delimiter§</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$letter</g-v> <g-o>=</g-o> <g-s>q</g-s> <g-s>Xletter delimiterX</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$pattern</g-v> <g-o>=</g-o> <g-s>qr{^(</g-s><g-v>$name</g-v><g-s>|[a-z]+)$}i</g-s><g-pd>;</g-pd>
+<g-v>$name</g-v> <g-o>=~</g-o> <g-s>m/ada/i</g-s><g-pd>;</g-pd>
+<g-v>$name</g-v> <g-o>=~</g-o> <g-s>s{(ad)a}[</g-s><g-ps>${</g-ps><g-n>1</g-n><g-ps>}</g-ps><g-s>o]gi</g-s><g-pd>;</g-pd>
+<g-v>$name</g-v> <g-o>=~</g-o> <g-s>tr/a-z/A-Z/</g-s><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$ratio</g-v> <g-o>=</g-o> <g-n>12</g-n> <g-o>/</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+<g-k>my</g-k> <g-v>$match</g-v> <g-o>=</g-o> <g-s>/foo</g-s><g-se>\/</g-se><g-s>[a-z]+/i</g-s><g-pd>;</g-pd>

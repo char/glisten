@@ -1,0 +1,16 @@
+<g-k>package</g-k> <g-t>Example::Widget</g-t><g-pd>;</g-pd>
+<g-k>use</g-k> <g-n>v5.38</g-n><g-pd>;</g-pd>
+<g-k>use</g-k> <g-t>strict</g-t><g-pd>;</g-pd>
+<g-k>use</g-k> <g-t>warnings</g-t><g-pd>;</g-pd>
+
+<g-k>sub</g-k> <g-f>render</g-f> <g-pb>(</g-pb><g-v>$self</g-v><g-pd>,</g-pd> <g-v>$name</g-v><g-pd>,</g-pd> <g-v>$fh</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>my</g-k> <g-v>@names</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>$name</g-v><g-pd>,</g-pd> <g-v>$_</g-v><g-pd>,</g-pd> <g-v>$0</g-v><g-pd>,</g-pd> <g-v>$@</g-v><g-pd>,</g-pd> <g-v>$!</g-v><g-pd>,</g-pd> <g-v>$/</g-v><g-pd>,</g-pd> <g-v>$&amp;</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>%options</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-s>title</g-s> <g-o>=&gt;</g-o> <g-v>$name</g-v><g-pd>,</g-pd> <g-s>count</g-s> <g-o>=&gt;</g-o> <g-n>0xFF_FF</g-n><g-pd>,</g-pd> <g-s>flags</g-s> <g-o>=&gt;</g-o> <g-n>0b1010</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>$last</g-v> <g-o>=</g-o> <g-v>$#names</g-v><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>$ref</g-v> <g-o>=</g-o> <g-v>$</g-v><g-pb>{</g-pb><g-v>$self</g-v><g-o>-&gt;</g-o><g-pb>{</g-pb><g-v>name</g-v><g-pb>}}</g-pb><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>@list</g-v> <g-o>=</g-o> <g-v>@</g-v><g-pb>{</g-pb><g-v>$self</g-v><g-o>-&gt;</g-o><g-pb>{</g-pb><g-v>items</g-v><g-pb>}}</g-pb><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>$value</g-v> <g-o>=</g-o> <g-v>$self</g-v><g-o>-&gt;</g-o><g-f>method</g-f><g-pb>(</g-pb><g-v>$name</g-v><g-pb>)</g-pb> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+    <g-k>my</g-k> <g-v>$line</g-v> <g-o>=</g-o> <g-s>&lt;$fh&gt;</g-s><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-s>"Hello, </g-s><g-v>$name</g-v><g-s>!"</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-n>1</g-n><g-pd>;</g-pd>

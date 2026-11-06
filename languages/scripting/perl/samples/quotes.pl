@@ -1,0 +1,14 @@
+use v5.38;
+use utf8;
+my $name = 'Ada';
+my @items = qw(one two three);
+my $literal = q{nested {braces} stay};
+my $greeting = qq[Hello $name and @{[ join ', ', @items ]}];
+my $unicode = q§Unicode delimiter§;
+my $letter = q Xletter delimiterX;
+my $pattern = qr{^($name|[a-z]+)$}i;
+$name =~ m/ada/i;
+$name =~ s{(ad)a}[${1}o]gi;
+$name =~ tr/a-z/A-Z/;
+my $ratio = 12 / 3;
+my $match = /foo\/[a-z]+/i;
