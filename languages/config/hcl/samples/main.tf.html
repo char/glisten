@@ -1,0 +1,20 @@
+<g-c># Infrastructure example</g-c>
+<g-k>terraform</g-k> <g-pb>{</g-pb>
+  <g-pr>required_version</g-pr> <g-o>=</g-o> <g-s>"&gt;= 1.5"</g-s>
+<g-pb>}</g-pb>
+<g-k>variable</g-k> <g-s>"environment"</g-s> <g-pb>{</g-pb> <g-pr>default</g-pr> <g-o>=</g-o> <g-s>"stage"</g-s> <g-pb>}</g-pb>
+<g-k>resource</g-k> <g-s>"example_server"</g-s> <g-s>"web"</g-s> <g-pb>{</g-pb>
+  <g-pr>name</g-pr>    <g-o>=</g-o> <g-s>"web-</g-s><g-ps>${</g-ps><g-v>var</g-v><g-pd>.</g-pd><g-vm>environment</g-vm><g-ps>}</g-ps><g-s>"</g-s>
+  <g-pr>enabled</g-pr> <g-o>=</g-o> <g-cb>true</g-cb>
+  <g-pr>size</g-pr>    <g-o>=</g-o> <g-n>2.5e2</g-n>
+  <g-pr>tags</g-pr> <g-o>=</g-o> <g-pb>{</g-pb>
+    <g-pr>env</g-pr>   <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>environment</g-vm>
+    <g-pr>owner</g-pr> <g-o>=</g-o> <g-f>upper</g-f><g-pb>(</g-pb><g-s>"team"</g-s><g-pb>)</g-pb>
+  <g-pb>}</g-pb>
+  <g-pr>ports</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-k>for</g-k> <g-v>p</g-v> <g-k>in</g-k> <g-v>var</g-v><g-pd>.</g-pd><g-vm>ports</g-vm> <g-o>:</g-o> <g-v>p</g-v> <g-o>+</g-o> <g-n>1</g-n> <g-k>if</g-k> <g-v>p</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>]</g-pb>
+  <g-pr>by_name</g-pr> <g-o>=</g-o> <g-pb>{</g-pb><g-k>for</g-k> <g-v>k</g-v><g-pd>,</g-pd> <g-v>v</g-v> <g-k>in</g-k> <g-v>var</g-v><g-pd>.</g-pd><g-vm>nodes</g-vm> <g-o>:</g-o> <g-v>k</g-v> <g-o>=&gt;</g-o> <g-v>v</g-v><g-pd>.</g-pd><g-vm>id</g-vm> <g-k>if</g-k> <g-v>v</g-v><g-pd>.</g-pd><g-vm>enabled</g-vm><g-pb>}</g-pb>
+  <g-pr>first</g-pr> <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>nodes</g-vm><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>id</g-vm>
+  <g-pr>ids</g-pr>   <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>nodes</g-vm><g-pb>[</g-pb><g-o>*</g-o><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>id</g-vm>
+  <g-pr>old</g-pr>   <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>nodes</g-vm><g-o>.*</g-o><g-pd>.</g-pd><g-vm>id</g-vm>
+  <g-pr>value</g-pr> <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>enabled</g-vm> <g-o>?</g-o> <g-n>1</g-n> <g-o>:</g-o> <g-cb>null</g-cb>
+<g-pb>}</g-pb>

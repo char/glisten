@@ -1,0 +1,25 @@
+<g-k>locals</g-k> <g-pb>{</g-pb>
+  <g-pr>greeting</g-pr> <g-o>=</g-o> <g-s>"Hello </g-s><g-ps>${</g-ps><g-f>upper</g-f><g-pb>(</g-pb><g-v>var</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-pb>)</g-pb><g-ps>}</g-ps><g-s>! </g-s><g-se>$${</g-se><g-s>literal} </g-s><g-se>%%{</g-se><g-s>literal}"</g-s>
+  <g-pr>text</g-pr> <g-o>=</g-o> <g-ps>&lt;&lt;-</g-ps><g-l>EOT</g-l><g-s>
+    </g-s><g-ps>%{~</g-ps> <g-k>if</g-k> <g-f>length</g-f><g-pb>(</g-pb><g-v>var</g-v><g-pd>.</g-pd><g-vm>values</g-vm><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>0</g-n> <g-ps>~}</g-ps><g-s>
+    Name: </g-s><g-ps>${</g-ps><g-v>var</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>
+    </g-s><g-ps>%{</g-ps> <g-k>else</g-k> <g-ps>}</g-ps><g-s>
+    disabled
+    </g-s><g-ps>%{</g-ps> <g-k>endif</g-k> <g-ps>}</g-ps><g-s>
+    </g-s><g-ps>%{</g-ps> <g-k>for</g-k> <g-v>key</g-v><g-pd>,</g-pd> <g-v>value</g-v> <g-k>in</g-k> <g-v>var</g-v><g-pd>.</g-pd><g-vm>values</g-vm> <g-ps>}</g-ps><g-s>
+    </g-s><g-ps>${</g-ps><g-v>key</g-v><g-ps>}</g-ps><g-s>=</g-s><g-ps>${</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-s>
+    </g-s><g-ps>%{</g-ps> <g-k>endfor</g-k> <g-ps>}</g-ps><g-s>
+</g-s><g-l>    EOT</g-l>
+  <g-pr>raw</g-pr> <g-o>=</g-o> <g-ps>&lt;&lt;</g-ps><g-l>END</g-l><g-s>
+backslash is literal: \n
+ENDsuffix is not a terminator
+</g-s><g-se>$${</g-se><g-s>not_an_interpolation}
+</g-s><g-l>END</g-l>
+  <g-pr>nested</g-pr> <g-o>=</g-o> <g-ps>&lt;&lt;</g-ps><g-l>OUTER</g-l><g-s>
+</g-s><g-ps>${</g-ps><g-f>join</g-f><g-pb>(</g-pb><g-s>""</g-s><g-pd>,</g-pd> <g-pb>[</g-pb><g-ps>&lt;&lt;</g-ps><g-l>INNER</g-l><g-s>
+inner </g-s><g-ps>${</g-ps><g-v>var</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>
+</g-s><g-l>INNER</g-l>
+<g-pb>])</g-pb><g-ps>}</g-ps><g-s>
+</g-s><g-l>OUTER</g-l>
+  <g-pr>after</g-pr> <g-o>=</g-o> <g-s>"ok"</g-s>
+<g-pb>}</g-pb>

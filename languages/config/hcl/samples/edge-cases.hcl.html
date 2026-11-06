@@ -1,0 +1,12 @@
+<g-c>// Expressions and escapes</g-c>
+<g-pr>foo-bar</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-o>-</g-o><g-n>2.5</g-n><g-pd>,</g-pd> <g-n>1e-3</g-n><g-pd>,</g-pd> <g-n>9E+2</g-n><g-pd>,</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd> <g-cb>false</g-cb><g-pd>,</g-pd> <g-cb>null</g-cb><g-pb>]</g-pb>
+<g-pr>text</g-pr> <g-o>=</g-o> <g-s>"escapes: </g-s><g-se>\n</g-se><g-s> </g-s><g-se>\t</g-se><g-s> </g-s><g-se>\"</g-se><g-s> </g-s><g-se>\\</g-se><g-s> </g-s><g-se>\u0041</g-se><g-s> </g-s><g-se>\U0001F600</g-se><g-s>"</g-s>
+<g-pr>values</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-k>for</g-k> <g-v>v</g-v> <g-k>in</g-k> <g-v>var</g-v><g-pd>.</g-pd><g-vm>items</g-vm> <g-o>:</g-o> <g-pb>{</g-pb> <g-pr>key</g-pr> <g-o>=</g-o> <g-v>v</g-v><g-pd>.</g-pd><g-vm>id</g-vm><g-pd>,</g-pd> <g-pr>nested</g-pr> <g-o>=</g-o> <g-s>"</g-s><g-ps>${</g-ps><g-f>join</g-f><g-pb>(</g-pb><g-s>","</g-s><g-pd>,</g-pd> <g-v>v</g-v><g-pd>.</g-pd><g-vm>tags</g-vm><g-pb>)</g-pb><g-ps>}</g-ps><g-s>"</g-s> <g-pb>}</g-pb> <g-k>if</g-k> <g-v>v</g-v><g-pd>.</g-pd><g-vm>ok</g-vm><g-pb>]</g-pb>
+<g-pr>value</g-pr> <g-o>=</g-o> <g-pb>(</g-pb><g-v>var</g-v><g-pd>.</g-pd><g-vm>a</g-vm> <g-o>!=</g-o> <g-n>0</g-n> <g-o>&amp;&amp;</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>b</g-vm> <g-o>&lt;=</g-o> <g-n>4</g-n><g-pb>)</g-pb> <g-o>?</g-o> <g-s>"yes"</g-s> <g-o>:</g-o> <g-s>"no"</g-s> <g-c># end</g-c>
+<g-c>/* multiline
+   comment */</g-c>
+<g-pr>word</g-pr> <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>for</g-vm>
+<g-pr>exists</g-pr> <g-o>=</g-o> <g-f>provider::local::direxists</g-f><g-pb>(</g-pb><g-s>"path"</g-s><g-pb>)</g-pb>
+<g-k>block</g-k> <g-s>"label"</g-s> <g-l>bare</g-l> <g-pb>{</g-pb>
+  <g-pr>path</g-pr> <g-o>=</g-o> <g-v>var</g-v><g-pd>.</g-pd><g-vm>hosts</g-vm><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>name</g-vm>
+<g-pb>}</g-pb>
