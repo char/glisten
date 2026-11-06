@@ -1,0 +1,16 @@
+<g-c># Configuration and annotations</g-c>
+<g-k>namespace</g-k> py examples.config
+
+<g-k>enum</g-k> <g-t>Mode</g-t> <g-pb>{</g-pb>
+  <g-cb>OFF</g-cb> <g-o>=</g-o> <g-n>0</g-n><g-pd>,</g-pd>
+  <g-cb>ON</g-cb> <g-o>=</g-o> <g-n>1</g-n>
+<g-pb>}</g-pb>
+
+<g-k>union</g-k> <g-t>Setting</g-t> <g-pb>{</g-pb>
+  <g-n>1</g-n><g-pd>:</g-pd> <g-t>bool</g-t> <g-vm>enabled</g-vm> <g-o>=</g-o> <g-cb>true</g-cb>
+  <g-n>2</g-n><g-pd>:</g-pd> <g-t>double</g-t> <g-vm>ratio</g-vm> <g-o>=</g-o> <g-n>-1.25e+2</g-n>
+  <g-n>3</g-n><g-pd>:</g-pd> <g-t>set</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb> <g-vm>names</g-vm> <g-o>=</g-o> <g-pb>[</g-pb><g-s>"one"</g-s><g-pd>,</g-pd> <g-s>'two'</g-s><g-pb>]</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>const</g-k> <g-t>map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pb>&gt;</g-pb> <g-cb>codes</g-cb> <g-o>=</g-o> <g-pb>{</g-pb><g-s>"ok"</g-s><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-s>"missing"</g-s><g-pd>:</g-pd> <g-n>-2</g-n><g-pb>}</g-pb>
+<g-k>typedef</g-k> <g-t>string</g-t> <g-t>Label</g-t> <g-pb>(</g-pb><g-at>example.key</g-at> <g-o>=</g-o> <g-s>"value"</g-s><g-pb>)</g-pb>

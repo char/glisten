@@ -1,0 +1,18 @@
+<g-k>typedef</g-k> <g-t>map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>other.Record</g-t><g-pb>&gt;&gt;</g-pb> <g-pb>(</g-pb><g-at>cpp.template</g-at> <g-o>=</g-o> <g-s>"Table"</g-s><g-pb>)</g-pb> <g-t>Records</g-t>
+<g-k>const</g-k> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>i64</g-t><g-pb>&gt;</g-pb> <g-cb>DEFAULT_IDS</g-cb> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>]</g-pb>
+
+<g-at>@compat.Wrapper</g-at><g-pb>{</g-pb><g-at>name</g-at> <g-o>=</g-o> <g-cb>Options</g-cb><g-pb>{</g-pb><g-at>value</g-at> <g-o>=</g-o> <g-s>"nested"</g-s><g-pb>}}</g-pb>
+<g-k>struct</g-k> <g-t>Request</g-t> <g-pb>{</g-pb>
+  <g-n>1</g-n><g-pd>:</g-pd> <g-k>required</g-k> <g-t>list</g-t> <g-k>cpp_type</g-k> <g-s>"std::vector"</g-s> <g-pb>&lt;</g-pb><g-t>other.Record</g-t><g-pb>&gt;</g-pb> <g-vm>records</g-vm> <g-pb>(</g-pb><g-at>go.name</g-at> <g-o>=</g-o> <g-s>"Items"</g-s><g-pb>)</g-pb>
+  <g-k>optional</g-k> <g-t>i32</g-t> <g-vm>count</g-vm> <g-o>=</g-o> <g-n>7</g-n>
+  <g-n>3</g-n><g-pd>:</g-pd> <g-t>string</g-t> <g-vm>string</g-vm>
+<g-pb>}</g-pb>
+
+<g-k>service</g-k> <g-t>Search</g-t> <g-k>extends</g-k> <g-t>other.Base</g-t> <g-pb>{</g-pb>
+  <g-t>Records</g-t> <g-f>find</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>Request</g-t> <g-vm>request</g-vm><g-pd>,</g-pd> <g-n>2</g-n><g-pd>:</g-pd> <g-k>optional</g-k> <g-t>i32</g-t> <g-vm>limit</g-vm> <g-o>=</g-o> <g-n>10</g-n><g-pb>)</g-pb>
+    <g-k>throws</g-k> <g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>other.Failure</g-t> <g-vm>cause</g-vm><g-pb>)</g-pb> <g-pb>(</g-pb><g-at>trace.enabled</g-at> <g-o>=</g-o> <g-s>"yes"</g-s><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>interaction</g-k> <g-t>Session</g-t> <g-pb>{</g-pb>
+  <g-t>stream</g-t><g-pb>&lt;</g-pb><g-t>other.Record</g-t><g-pb>&gt;</g-pb> <g-f>follow</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>Request</g-t> <g-vm>request</g-vm><g-pb>)</g-pb>
+<g-pb>}</g-pb>

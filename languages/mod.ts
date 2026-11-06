@@ -28,6 +28,7 @@ import ron from "./config/ron/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
+import thrift from "./data/thrift/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
@@ -65,6 +66,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   rust,
   "ssh-config": ssh_config,
   textproto,
+  thrift,
   toml,
   tsx,
   typescript,

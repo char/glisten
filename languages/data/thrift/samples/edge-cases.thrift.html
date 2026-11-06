@@ -1,0 +1,13 @@
+<g-c>// Keywords are case-sensitive and qualified identifiers are single tokens.</g-c>
+<g-k>namespace</g-k> java struct.example
+<g-k>struct</g-k> <g-c>/* comment */</g-c> <g-t>Record</g-t> <g-pb>{</g-pb>
+  <g-n>1</g-n><g-pd>:</g-pd> <g-k>optional</g-k> <g-t>string</g-t> <g-vm>text</g-vm> <g-o>=</g-o> <g-s>"quote: </g-s><g-se>\"</g-se><g-s> slash: </g-s><g-se>\\</g-se><g-s> newline: </g-s><g-se>\n</g-se><g-s>"</g-s>
+  <g-n>2</g-n><g-pd>:</g-pd> <g-t>binary</g-t> <g-vm>bytes</g-vm> <g-o>=</g-o> <g-s>'</g-s><g-se>\'</g-se><g-s>single</g-s><g-se>\'</g-se><g-s>'</g-s>
+  <g-n>3</g-n><g-pd>:</g-pd> <g-t>i64</g-t> <g-vm>mask</g-vm> <g-o>=</g-o> <g-n>+0xFF</g-n>
+  <g-n>4</g-n><g-pd>:</g-pd> <g-t>double</g-t> <g-vm>fraction</g-vm> <g-o>=</g-o> <g-n>.5</g-n>
+  <g-n>5</g-n><g-pd>:</g-pd> <g-t>double</g-t> <g-vm>exponent</g-vm> <g-o>=</g-o> <g-n>2e-3</g-n>
+  <g-n>6</g-n><g-pd>:</g-pd> <g-t>bool</g-t> <g-vm>flag</g-vm> <g-o>=</g-o> <g-cb>false</g-cb> <g-c># trailing comment</g-c>
+  <g-c>/* block
+     comment */</g-c>
+<g-pb>}</g-pb>
+<g-k>senum</g-k> <g-t>Choice</g-t> <g-pb>{</g-pb> <g-s>"red"</g-s><g-pd>,</g-pd> <g-s>"blue"</g-s> <g-pb>}</g-pb>

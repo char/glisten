@@ -1,0 +1,22 @@
+<g-k>namespace</g-k> <g-ps>*</g-ps> example.catalog
+<g-k>include</g-k> <g-s>"common.thrift"</g-s>
+<g-k>cpp_include</g-k> <g-s>"catalog_types.h"</g-s>
+
+<g-k>typedef</g-k> <g-t>i64</g-t> <g-t>ItemId</g-t>
+<g-k>const</g-k> <g-t>i32</g-t> <g-cb>LIMIT</g-cb> <g-o>=</g-o> <g-n>25</g-n>
+
+<g-c>/** Catalog operations. */</g-c>
+<g-k>struct</g-k> <g-t>Item</g-t> <g-pb>{</g-pb>
+  <g-n>1</g-n><g-pd>:</g-pd> <g-k>required</g-k> <g-t>ItemId</g-t> <g-vm>id</g-vm><g-pd>,</g-pd>
+  <g-n>2</g-n><g-pd>:</g-pd> <g-k>optional</g-k> <g-t>string</g-t> <g-vm>name</g-vm> <g-o>=</g-o> <g-s>"untitled"</g-s><g-pd>,</g-pd>
+  <g-n>3</g-n><g-pd>:</g-pd> <g-t>map</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pd>,</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>i32</g-t><g-pb>&gt;&gt;</g-pb> <g-vm>scores</g-vm>
+<g-pb>}</g-pb>
+
+<g-k>exception</g-k> <g-t>NotFound</g-t> <g-pb>{</g-pb>
+  <g-n>1</g-n><g-pd>:</g-pd> <g-t>string</g-t> <g-vm>message</g-vm>
+<g-pb>}</g-pb>
+
+<g-k>service</g-k> <g-t>Catalog</g-t> <g-k>extends</g-k> <g-t>common.Base</g-t> <g-pb>{</g-pb>
+  <g-t>Item</g-t> <g-f>get</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>ItemId</g-t> <g-vm>id</g-vm><g-pb>)</g-pb> <g-k>throws</g-k> <g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>NotFound</g-t> <g-vm>problem</g-vm><g-pb>)</g-pb><g-pd>,</g-pd>
+  <g-k>oneway</g-k> <g-t>void</g-t> <g-f>refresh</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>ItemId</g-t><g-pb>&gt;</g-pb> <g-vm>ids</g-vm><g-pb>)</g-pb>
+<g-pb>}</g-pb>
