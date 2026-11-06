@@ -1,0 +1,13 @@
+---
+const dash = "---";
+---
+<p>{(() => {
+  const object = { value: "}" };
+  const text = `nested ${object.value}`;
+  return /[}]/.test(text) ? <span title="}">literal } and {object.value}</span> : null;
+})()}</p>
+<p>{items.map((x) => <li>{x}</li>)} after</p>
+<div title={"value " + ({ a: "}" }).a}>{value}</div>
+<!-- {this is not an expression} -->
+--- not front matter
+<stylex>not a style block</stylex>

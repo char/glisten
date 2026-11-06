@@ -1,0 +1,20 @@
+<g-ps>---
+</g-ps><g-k>const</g-k> <g-v>html</g-v> <g-o>=</g-o> <g-s>"&lt;strong&gt;Hello&lt;/strong&gt;"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>color</g-v> <g-o>=</g-o> <g-s>"tomato"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>props</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>title</g-vm><g-pd>:</g-pd> <g-s>"Hi"</g-s> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-ps>---</g-ps>
+<g-pb>&lt;</g-pb><g-t>Foo.Bar</g-t> <g-at>client</g-at><g-ps>:</g-ps><g-pr>load</g-pr> <g-at>define</g-at><g-ps>:</g-ps><g-pr>vars</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-pb>{</g-pb> <g-v>color</g-v> <g-pb>}</g-pb><g-ps>}</g-ps> <g-ps>{</g-ps><g-o>...</g-o><g-v>props</g-v><g-ps>}</g-ps> <g-ps>{</g-ps><g-v>color</g-v><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>div</g-tg> <g-at>set</g-at><g-ps>:</g-ps><g-pr>html</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>html</g-v><g-ps>}</g-ps><g-pb>&gt;&lt;/</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>slot</g-tg> <g-pb>/&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-t>Foo.Bar</g-t><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"scss"</g-s><g-pb>&gt;</g-pb>
+  <g-v>$accent</g-v><g-pd>:</g-pd> <g-co v="tomato">tomato</g-co><g-pd>;</g-pd>
+  <g-pd>.</g-pd><g-pr>card</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>$accent</g-v><g-pd>;</g-pd> <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb> <g-pr>opacity</g-pr><g-pd>:</g-pd> <g-n>.8</g-n><g-pd>;</g-pd> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"less"</g-s><g-pb>&gt;</g-pb>
+  <g-v>@accent</g-v><g-pd>:</g-pd> <g-co v="#f00"><g-s>#f00</g-s></g-co><g-pd>;</g-pd>
+  <g-pd>.</g-pd><g-pr>card</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>@accent</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>is</g-at><g-ps>:</g-ps><g-pr>inline</g-pr><g-pb>&gt;</g-pb>
+  <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-s>"inline"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>

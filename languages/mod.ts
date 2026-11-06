@@ -2,6 +2,7 @@ import type { Grammar } from "#/grammar/mod.ts";
 import ada from "./systems/ada/grammar.ts";
 import agda from "./proof/agda/grammar.ts";
 import asciidoc from "./markup/asciidoc/grammar.ts";
+import astro from "./web/astro/grammar.ts";
 import awk from "./scripting/awk/grammar.ts";
 import bash from "./shell/bash/grammar.ts";
 import batch from "./shell/batch/grammar.ts";
@@ -121,6 +122,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ada,
   agda,
   asciidoc,
+  astro,
   awk,
   bash,
   batch,

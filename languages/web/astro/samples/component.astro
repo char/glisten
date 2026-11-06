@@ -1,0 +1,18 @@
+---
+import Card from "../components/Card.astro";
+interface Props { items: string[] }
+const { items } = Astro.props;
+---
+<!-- Render the cards -->
+<main>
+  <Card client:visible title={items[0]} {...Astro.props} />
+  <ul>{items.map((item) => <li data-name={item}>{item}</li>)}</ul>
+  <Fragment><slot name="footer" /></Fragment>
+</main>
+<style>
+  main { color: rebeccapurple; }
+</style>
+<script>
+  const button: HTMLButtonElement | null = document.querySelector("button");
+  button?.addEventListener("click", () => console.log("clicked"));
+</script>

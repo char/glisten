@@ -1,0 +1,18 @@
+<g-ps>---
+</g-ps><g-k>import</g-k> <g-v>Card</g-v> <g-k>from</g-k> <g-s>"../components/Card.astro"</g-s><g-pd>;</g-pd>
+<g-k>interface</g-k> <g-t>Props</g-t> <g-pb>{</g-pb> <g-pr>items</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pb>[]</g-pb> <g-pb>}</g-pb>
+<g-k>const</g-k> <g-pb>{</g-pb> <g-vm>items</g-vm> <g-pb>}</g-pb> <g-o>=</g-o> <g-v>Astro</g-v><g-o>.</g-o><g-vm>props</g-vm><g-pd>;</g-pd>
+<g-ps>---</g-ps>
+<g-c>&lt;!-- Render the cards --&gt;</g-c>
+<g-pb>&lt;</g-pb><g-tg>main</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-t>Card</g-t> <g-at>client</g-at><g-ps>:</g-ps><g-pr>visible</g-pr> <g-at>title</g-at><g-o>=</g-o><g-ps>{</g-ps><g-v>items</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-ps>}</g-ps> <g-ps>{</g-ps><g-o>...</g-o><g-v>Astro</g-v><g-o>.</g-o><g-vm>props</g-vm><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>items</g-v><g-o>.</g-o><g-vm>map</g-vm><g-pb>((</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>&lt;</g-pb><g-tg>li</g-tg> <g-pr>data-name</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>item</g-v><g-ps>}</g-ps><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;)</g-pb><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-t>Fragment</g-t><g-pb>&gt;&lt;</g-pb><g-tg>slot</g-tg> <g-at>name</g-at><g-o>=</g-o><g-s>"footer"</g-s> <g-pb>/&gt;&lt;/</g-pb><g-t>Fragment</g-t><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>main</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+  <g-tg>main</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="rebeccapurple">rebeccapurple</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-k>const</g-k> <g-v>button</g-v><g-pd>:</g-pd> <g-t>HTMLButtonElement</g-t> <g-o>|</g-o> <g-cb>null</g-cb> <g-o>=</g-o> <g-v>document</g-v><g-o>.</g-o><g-vm>querySelector</g-vm><g-pb>(</g-pb><g-s>"button"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-v>button</g-v><g-o>?.</g-o><g-vm>addEventListener</g-vm><g-pb>(</g-pb><g-s>"click"</g-s><g-pd>,</g-pd> <g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-s>"clicked"</g-s><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>

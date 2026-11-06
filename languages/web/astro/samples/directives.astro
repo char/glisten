@@ -1,0 +1,20 @@
+---
+const html = "<strong>Hello</strong>";
+const color = "tomato";
+const props = { title: "Hi" };
+---
+<Foo.Bar client:load define:vars={{ color }} {...props} {color}>
+  <div set:html={html}></div>
+  <slot />
+</Foo.Bar>
+<style lang="scss">
+  $accent: tomato;
+  .card { color: $accent; &:hover { opacity: .8; } }
+</style>
+<style lang="less">
+  @accent: #f00;
+  .card { color: @accent; }
+</style>
+<script is:inline>
+  console.log("inline");
+</script>
