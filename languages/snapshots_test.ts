@@ -1,22 +1,23 @@
 import { test } from "avril:test";
 import { exists, readFile, readTextFile, writeTextFile } from "avril:fs";
 import { env, readDir } from "avril:std";
-import { compileLanguage } from "#/compiler/language.ts";
 import { Highlighter } from "#/host/mod.ts";
-import { buildModule } from "#/tools/module.ts";
 import { languages } from "./mod.ts";
 
 // Each `languages/<category>/<name>/samples/<file>` renders to the HTML in `<file>.html`.
 // `avril task test:update` rewrites the snapshots; review them as ordinary diffs.
 const update = env.get("GLISTEN_UPDATE_SNAPSHOTS") === "1";
 
-// Every language is loaded, so samples also exercise their injections. Modules are built
-// before any test is registered, so building is not subject to per-test timeouts.
+// Every language is loaded, so samples also exercise their injections. Run
+// `avril task build` after changing grammars or the compiler; these tests use the last build.
 const highlighter = new Highlighter({ checks: true });
 for (const module of await Promise.all(
-  Object.values(languages).map(
-    async (source) => new WebAssembly.Module(await buildModule(compileLanguage(source))),
-  ),
+  Object.keys(languages).map(async (name) => {
+    const path = `dist/${name}.wasm`;
+    if (!(await exists(path)))
+      throw new Error(`${path} is missing; run \`avril task build\` before snapshot tests`);
+    return new WebAssembly.Module(await readFile(path));
+  }),
 ))
   await highlighter.add(module);
 
