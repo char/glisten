@@ -1,0 +1,34 @@
+<g-c>/* A responsive grid with nested rules. */</g-c>
+<g-k>@import</g-k> <g-f>url</g-f><g-pb>(</g-pb><g-s>"theme.css"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>@namespace</g-k> svg <g-f>url</g-f><g-pb>(</g-pb><g-s>http://www.w3.org/2000/svg</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>@font-face</g-k> <g-pb>{</g-pb>
+  <g-pr>font-family</g-pr><g-pd>:</g-pd> <g-s>"Sky Sans"</g-s><g-pd>;</g-pd>
+  <g-pr>src</g-pr><g-pd>:</g-pd> <g-f>url</g-f><g-pb>(</g-pb><g-s>../fonts/sky.woff2</g-s><g-pb>)</g-pb> <g-f>format</g-f><g-pb>(</g-pb><g-s>"woff2"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>unicode-range</g-pr><g-pd>:</g-pd> <g-n>U+0000-00FF</g-n><g-pd>,</g-pd> <g-n>U+4??</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-tg>main</g-tg><g-pd>#</g-pd><g-pr>observatory</g-pr> <g-o>&gt;</g-o> <g-pd>.</g-pd><g-pr>panel</g-pr><g-pb>[</g-pb><g-at>data-kind</g-at><g-o>^=</g-o><g-s>"star"</g-s> i<g-pb>]</g-pb><g-pd>,</g-pd>
+<g-tg>svg</g-tg><g-o>|</g-o><g-tg>circle</g-tg><g-pd>:</g-pd><g-at>first-child</g-at> <g-pb>{</g-pb>
+  <g-pr>display</g-pr><g-pd>:</g-pd> grid<g-pd>;</g-pd>
+  <g-pr>grid-template-columns</g-pr><g-pd>:</g-pd> <g-f>repeat</g-f><g-pb>(</g-pb><g-n>3</g-n><g-pd>,</g-pd> <g-f>minmax</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-t>fr</g-t><g-pb>))</g-pb><g-pd>;</g-pd>
+  <g-pr>gap</g-pr><g-pd>:</g-pd> <g-n>1.5</g-n><g-t>rem</g-t><g-pd>;</g-pd>
+  <g-pr>padding</g-pr><g-pd>:</g-pd> <g-f>calc</g-f><g-pb>(</g-pb><g-n>100</g-n><g-t>%</g-t> - <g-n>2</g-n><g-t>em</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>font-family</g-pr><g-pd>:</g-pd> <g-s>"Sky Sans"</g-s><g-pd>,</g-pd> sans-serif<g-pd>;</g-pd>
+  <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"雪 </g-s><g-se>\"</g-se><g-s>night</g-s><g-se>\"</g-se><g-s>"</g-s><g-pd>;</g-pd>
+  <g-v>--layout</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> rows<g-pd>:</g-pd> <g-n>2</g-n><g-pd>;</g-pd> columns<g-pd>:</g-pd> <g-n>3</g-n><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>hover</g-at><g-pd>,</g-pd> <g-tg>&amp;</g-tg> <g-o>&gt;</g-o> <g-tg>a</g-tg><g-pd>:</g-pd><g-at>focus-visible</g-at> <g-pb>{</g-pb>
+    <g-pr>text-decoration</g-pr><g-pd>:</g-pd> underline <g-k>!important</g-k><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>@media</g-k> screen <g-o>and</g-o> <g-pb>(</g-pb><g-pr>min-width</g-pr><g-pd>:</g-pd> <g-n>40</g-n><g-t>rem</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-pr>panel</g-pr> <g-pb>{</g-pb> <g-pr>margin</g-pr><g-pd>:</g-pd> <g-n>0</g-n> auto<g-pd>;</g-pd> <g-pr>max-width</g-pr><g-pd>:</g-pd> <g-n>80</g-n><g-t>ch</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>@container</g-k> <g-pb>(</g-pb><g-pr>width</g-pr> <g-o>&gt;</g-o> <g-n>20</g-n><g-t>rem</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-pr>panel</g-pr> <g-pb>{</g-pb> <g-pr>display</g-pr><g-pd>:</g-pd> block<g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>@keyframes</g-k> shimmer <g-pb>{</g-pb>
+  <g-k>from</g-k> <g-pb>{</g-pb> <g-pr>opacity</g-pr><g-pd>:</g-pd> <g-n>0</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-n>50</g-n><g-t>%</g-t> <g-pb>{</g-pb> <g-pr>opacity</g-pr><g-pd>:</g-pd> <g-n>.5</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-k>to</g-k> <g-pb>{</g-pb> <g-pr>opacity</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

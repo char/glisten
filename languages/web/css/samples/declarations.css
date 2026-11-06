@@ -1,0 +1,6 @@
+color: rebeccapurple;
+background: linear-gradient(red, blue);
+--spacing: 1rem;
+margin: var(--spacing) 2px;
+content: "a; { b";
+border: 1px solid #abc;

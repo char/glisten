@@ -1,0 +1,33 @@
+/* Palette for the night-sky dashboard. */
+:root {
+  --ink: #123;
+  --veil: #abcd;
+  --paper: #f5f1e8;
+  --shadow: #10203080;
+  --accent: rebeccapurple;
+  --faded: transparent;
+  --inherited: currentColor;
+  --rgb: rgb(12 34 56 / 80%);
+  --rgba: rgba(12, 34, 56, .5);
+  --hsl: hsl(240 60% 40%);
+  --hsla: hsla(240, 60%, 40%, .5);
+  --hwb: hwb(210 10% 20%);
+  --lab: lab(50% 20 -30);
+  --lch: lch(50% 40 220);
+  --oklab: oklab(.7 .1 -.1);
+  --oklch: oklch(.7 .1 220);
+  --wide: color(display-p3 1 .2 .3);
+  --mixed: color-mix(in oklab, red 30%, rgb(0 0 255));
+  --adaptive: light-dark(white, color-mix(in srgb, black, navy));
+}
+
+.card {
+  color: var(--ink);
+  background: linear-gradient(45deg, #abc, ReD, rgb(1 2 3));
+  border: 1px solid currentColor;
+  box-shadow: 0 2px 8px #0008;
+}
+
+@supports (color: oklch(.5 .2 30)) {
+  .card { color: var(--oklch); }
+}

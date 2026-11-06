@@ -1,0 +1,33 @@
+<g-c>/* Near misses and malformed declarations. */</g-c>
+<g-tg>red</g-tg> <g-pb>{</g-pb> <g-pr>red</g-pr><g-pd>:</g-pd> <g-co v="ReD">ReD</g-co><g-pd>;</g-pd> <g-pr>color</g-pr><g-pd>:</g-pd> redder<g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-tg>a</g-tg> <g-pb>{</g-pb>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="#abc"><g-s>#abc</g-s></g-co> <g-co v="#aBcD"><g-s>#aBcD</g-s></g-co> <g-co v="#aabbcc"><g-s>#aabbcc</g-s></g-co> <g-co v="#12345678"><g-s>#12345678</g-s></g-co><g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-s>#ab</g-s> <g-s>#abcde</g-s> <g-s>#abcdef</g-s>g <g-s>#abc</g-s>-foo <g-s>#abc</g-s>\x <g-s>#abcd</g-s>é<g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="transparent">transparent</g-co> <g-co v="currentColor">currentColor</g-co> <g-co v="RebeccaPurple">RebeccaPurple</g-co> red-foo<g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="color-mix(in srgb, red, rgb(0 0 255))"><g-f>color-mix</g-f><g-pb>(</g-pb>in srgb<g-pd>,</g-pd> <g-co v="red">red</g-co><g-pd>,</g-pd> <g-co v="rgb(0 0 255)"><g-f>rgb</g-f><g-pb>(</g-pb><g-n>0</g-n> <g-n>0</g-n> <g-n>255</g-n><g-pb>)</g-pb></g-co><g-pb>)</g-pb></g-co><g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="rgb(var(--channel) /* note */ (1 + 2) 3)"><g-f>rgb</g-f><g-pb>(</g-pb><g-f>var</g-f><g-pb>(</g-pb><g-v>--channel</g-v><g-pb>)</g-pb> <g-c>/* note */</g-c> <g-pb>(</g-pb><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-pb>)</g-pb> <g-n>3</g-n><g-pb>)</g-pb></g-co><g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-f>rgb</g-f><g-pb>(</g-pb><g-n>1</g-n> <g-n>2</g-n> <g-n>3</g-n><g-pd>;</g-pd> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="blue">blue</g-co><g-pd>;</g-pd>
+  <g-pr>width</g-pr><g-pd>:</g-pd> <g-n>1e+2</g-n><g-t>px</g-t><g-pd>;</g-pd>
+  <g-pr>height</g-pr><g-pd>:</g-pd> <g-n>.5</g-n><g-t>%</g-t><g-pd>;</g-pd>
+  <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"escaped </g-s><g-se>\26 </g-se><g-s> symbol"</g-s><g-pd>;</g-pd>
+  <g-pr>background</g-pr><g-pd>:</g-pd> <g-f>url</g-f><g-pb>(</g-pb><g-s>data:image/svg+xml;base64,abcd</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-c>/* Brace in a function can be confused with nested syntax. */</g-c>
+  <g-tg>content</g-tg><g-pd>:</g-pd> <g-tg>fn</g-tg><g-pb>({</g-pb> <g-tg>x</g-tg> <g-pb>}</g-pb>);
+  <g-v>--tokens</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> nested<g-pd>:</g-pd> <g-pb>{</g-pb> x<g-pd>:</g-pd> y<g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-tg>&amp;</g-tg><g-pd>::</g-pd><g-at>before</g-at> <g-pb>{</g-pb> <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>'ok'</g-s><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>@supports</g-k> <g-pb>(</g-pb><g-pr>color</g-pr><g-pd>:</g-pd> <g-f>rgb</g-f><g-pb>(</g-pb>red<g-pd>,</g-pd> <g-s>#abc</g-s><g-pb>))</g-pb> <g-pb>{</g-pb>
+  <g-tg>red</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="blue">blue</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>@media</g-k> <g-o>not</g-o> screen <g-o>and</g-o> <g-pb>(</g-pb><g-pr>width</g-pr> <g-o>&gt;=</g-o> <g-n>20</g-n><g-t>em</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-pr>café</g-pr><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="#fff"><g-s>#fff</g-s></g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-pb>[</g-pb><g-at>data-value</g-at><g-o>=</g-o><g-s>"unterminated</g-s>
+<g-pb>]</g-pb> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="green">green</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pd>.</g-pd><g-pr>broken</g-pr> <g-pb>{</g-pb> <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>'unterminated</g-s>
+  color: coral /* ; */ fn(1; 2) 'x;y'<g-pd>;</g-pd>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="green">green</g-co><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-c>/* Unterminated comment at EOF
+   .fake { color: red; }
+</g-c>

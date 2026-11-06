@@ -1,0 +1,32 @@
+/* Near misses and malformed declarations. */
+red { red: ReD; color: redder; }
+a {
+  color: #abc #aBcD #aabbcc #12345678;
+  color: #ab #abcde #abcdefg #abc-foo #abc\x #abcdé;
+  color: transparent currentColor RebeccaPurple red-foo;
+  color: color-mix(in srgb, red, rgb(0 0 255));
+  color: rgb(var(--channel) /* note */ (1 + 2) 3);
+  color: rgb(1 2 3; color: blue;
+  width: 1e+2px;
+  height: .5%;
+  content: "escaped \26  symbol";
+  background: url(data:image/svg+xml;base64,abcd);
+  /* Brace in a function can be confused with nested syntax. */
+  content: fn({ x });
+  --tokens: { nested: { x: y; }; };
+  &::before { content: 'ok'; }
+}
+@supports (color: rgb(red, #abc)) {
+  red { color: blue; }
+}
+@media not screen and (width >= 20em) {
+  .café:hover { color: #fff; }
+}
+[data-value="unterminated
+] { color: green; }
+.broken { content: 'unterminated
+  color: coral /* ; */ fn(1; 2) 'x;y';
+  color: green;
+}
+/* Unterminated comment at EOF
+   .fake { color: red; }
