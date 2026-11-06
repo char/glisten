@@ -1,0 +1,16 @@
+<g-k>namespace</g-k> <g-t>App</g-t> <g-pb>{</g-pb>
+    <g-k>entity</g-k> <g-t>User</g-t><g-pd>;</g-pd>
+    <g-k>entity</g-k> <g-t>Document</g-t> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>owner</g-pr><g-pd>:</g-pd> <g-t>User</g-t><g-pd>,</g-pd> <g-pr>title</g-pr><g-pd>:</g-pd> <g-t>String</g-t> <g-pb>}</g-pb><g-pd>;</g-pd>
+
+    <g-ps>@</g-ps><g-at>doc</g-at><g-pb>(</g-pb><g-s>"Read one document"</g-s><g-pb>)</g-pb>
+    <g-k>action</g-k> <g-s>"view"</g-s> <g-k>appliesTo</g-k> <g-pb>{</g-pb>
+        <g-v>principal</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>User</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>resource</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Document</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>context</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> <g-pr>source</g-pr><g-pd>:</g-pd> <g-t>ipaddr</g-t><g-pd>,</g-pd> <g-pr>at</g-pr><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>datetime</g-t> <g-pb>}</g-pb><g-pd>,</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>action</g-k> <g-f>Edit</g-f><g-pd>,</g-pd> <g-f>Delete</g-f> <g-k>appliesTo</g-k> <g-pb>{</g-pb>
+        <g-v>principal</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>User</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>resource</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Document</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>context</g-v><g-pd>:</g-pd> <g-pb>{}</g-pb><g-pd>,</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

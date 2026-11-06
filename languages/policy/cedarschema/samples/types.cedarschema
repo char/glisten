@@ -1,0 +1,16 @@
+namespace Billing {
+    type Money = decimal;
+    type Audit = {
+        created: datetime,
+        elapsed?: duration,
+        allowed: Set<Identity::User>,
+        @doc("A note with a newline\ninside")
+        note?: String,
+    };
+    entity Invoice = { total: Money, audit: Audit } tags String;
+    action "inspect" appliesTo {
+        principal: [Identity::User],
+        resource: [Invoice],
+        context: Audit,
+    };
+}

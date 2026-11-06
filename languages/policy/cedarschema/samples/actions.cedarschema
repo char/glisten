@@ -1,0 +1,16 @@
+namespace App {
+    entity User;
+    entity Document = { owner: User, title: String };
+
+    @doc("Read one document")
+    action "view" appliesTo {
+        principal: [User],
+        resource: [Document],
+        context: { source: ipaddr, at?: datetime },
+    };
+    action Edit, Delete appliesTo {
+        principal: [User],
+        resource: [Document],
+        context: {},
+    };
+}

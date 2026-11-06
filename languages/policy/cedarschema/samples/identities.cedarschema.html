@@ -1,0 +1,13 @@
+<g-c>// Identity types shared by the application.</g-c>
+<g-k>namespace</g-k> <g-t>Example</g-t> <g-pb>{</g-pb>
+    <g-ps>@</g-ps><g-at>doc</g-at><g-pb>(</g-pb><g-s>"A person who can sign in"</g-s><g-pb>)</g-pb>
+    <g-k>entity</g-k> <g-t>User</g-t> <g-k>in</g-k> <g-pb>[</g-pb><g-t>Group</g-t><g-pb>]</g-pb> <g-o>=</g-o> <g-pb>{</g-pb>
+        <g-pr>name</g-pr><g-pd>:</g-pd> <g-t>String</g-t><g-pd>,</g-pd>
+        <g-pr>age</g-pr><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>Long</g-t><g-pd>,</g-pd>
+        <g-pr>active</g-pr><g-pd>:</g-pd> <g-t>Bool</g-t><g-pd>,</g-pd>
+        <g-pr>contacts</g-pr><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>Set</g-t><g-pb>&lt;</g-pb><g-t>String</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd>
+    <g-pb>}</g-pb> <g-k>tags</g-k> <g-t>String</g-t><g-pd>;</g-pd>
+
+    <g-k>entity</g-k> <g-t>Group</g-t><g-pd>;</g-pd>
+    <g-k>entity</g-k> <g-t>Status</g-t> <g-k>enum</g-k> <g-pb>[</g-pb><g-s>"pending"</g-s><g-pd>,</g-pd> <g-s>"active"</g-s><g-pd>,</g-pd> <g-s>"closed"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

@@ -1,0 +1,13 @@
+// Identity types shared by the application.
+namespace Example {
+    @doc("A person who can sign in")
+    entity User in [Group] = {
+        name: String,
+        age?: Long,
+        active: Bool,
+        contacts?: Set<String>,
+    } tags String;
+
+    entity Group;
+    entity Status enum ["pending", "active", "closed"];
+}

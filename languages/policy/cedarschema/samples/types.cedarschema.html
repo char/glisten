@@ -1,0 +1,16 @@
+<g-k>namespace</g-k> <g-t>Billing</g-t> <g-pb>{</g-pb>
+    <g-k>type</g-k> <g-t>Money</g-t> <g-o>=</g-o> <g-t>decimal</g-t><g-pd>;</g-pd>
+    <g-k>type</g-k> <g-t>Audit</g-t> <g-o>=</g-o> <g-pb>{</g-pb>
+        <g-pr>created</g-pr><g-pd>:</g-pd> <g-t>datetime</g-t><g-pd>,</g-pd>
+        <g-pr>elapsed</g-pr><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>duration</g-t><g-pd>,</g-pd>
+        <g-pr>allowed</g-pr><g-pd>:</g-pd> <g-t>Set</g-t><g-pb>&lt;</g-pb><g-t>Identity</g-t><g-pd>::</g-pd><g-t>User</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd>
+        <g-ps>@</g-ps><g-at>doc</g-at><g-pb>(</g-pb><g-s>"A note with a newline</g-s><g-se>\n</g-se><g-s>inside"</g-s><g-pb>)</g-pb>
+        <g-pr>note</g-pr><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>String</g-t><g-pd>,</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>entity</g-k> <g-t>Invoice</g-t> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>total</g-pr><g-pd>:</g-pd> <g-t>Money</g-t><g-pd>,</g-pd> <g-pr>audit</g-pr><g-pd>:</g-pd> <g-t>Audit</g-t> <g-pb>}</g-pb> <g-k>tags</g-k> <g-t>String</g-t><g-pd>;</g-pd>
+    <g-k>action</g-k> <g-s>"inspect"</g-s> <g-k>appliesTo</g-k> <g-pb>{</g-pb>
+        <g-v>principal</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Identity</g-t><g-pd>::</g-pd><g-t>User</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>resource</g-v><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Invoice</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+        <g-v>context</g-v><g-pd>:</g-pd> <g-t>Audit</g-t><g-pd>,</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
