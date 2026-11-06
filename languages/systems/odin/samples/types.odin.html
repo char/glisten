@@ -1,0 +1,23 @@
+<g-k>package</g-k> <g-v>examples</g-v>
+
+<g-ps>@(</g-ps><g-at>private</g-at><g-o>=</g-o><g-s>"file"</g-s><g-ps>)</g-ps>
+<g-t>Pair</g-t> <g-o>::</g-o> <g-k>struct</g-k><g-pb>(</g-pb><g-t>$T</g-t><g-o>:</g-o> <g-t>typeid</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-v>left</g-v><g-pd>,</g-pd> <g-v>right</g-v><g-o>:</g-o> <g-t>T</g-t><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+
+<g-t>Status</g-t> <g-o>::</g-o> <g-k>enum</g-k> <g-pb>{</g-pb> <g-t>Pending</g-t><g-pd>,</g-pd> <g-t>Ready</g-t><g-pd>,</g-pd> <g-t>Failed</g-t> <g-pb>}</g-pb>
+<g-t>Number</g-t> <g-o>::</g-o> <g-k>union</g-k> <g-pb>{</g-pb> <g-t>int</g-t><g-pd>,</g-pd> <g-t>f64</g-t> <g-pb>}</g-pb>
+<g-t>Flags</g-t> <g-o>::</g-o> <g-k>bit_set</g-k><g-pb>[</g-pb><g-t>Status</g-t><g-pb>]</g-pb>
+<g-t>Id</g-t> <g-o>::</g-o> <g-k>distinct</g-k> <g-t>u64</g-t>
+
+<g-ps>@(</g-ps><g-at>require_results</g-at><g-ps>)</g-ps>
+<g-f>first</g-f> <g-o>::</g-o> <g-k>proc</g-k><g-pb>(</g-pb><g-v>pair</g-v><g-o>:</g-o> <g-f>Pair</g-f><g-pb>(</g-pb><g-t>$T</g-t><g-pb>))</g-pb> <g-o>-&gt;</g-o> <g-t>T</g-t> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-v>pair</g-v><g-pd>.</g-pd><g-vm>left</g-vm>
+<g-pb>}</g-pb>
+
+<g-k>foreign</g-k> <g-k>import</g-k> <g-v>c</g-v> <g-s>"system:c"</g-s>
+<g-k>foreign</g-k> <g-v>c</g-v> <g-pb>{</g-pb>
+    <g-f>puts</g-f> <g-o>::</g-o> <g-k>proc</g-k> <g-s>"c"</g-s> <g-pb>(</g-pb><g-v>text</g-v><g-o>:</g-o> <g-t>cstring</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>i32</g-t> <g-cb>---</g-cb>
+<g-pb>}</g-pb>
+
+<g-at>#assert</g-at><g-pb>(</g-pb><g-f>size_of</g-f><g-pb>(</g-pb><g-t>i64</g-t><g-pb>)</g-pb> <g-o>==</g-o> <g-n>8</g-n><g-pb>)</g-pb>
