@@ -1,0 +1,15 @@
+<g-k>#define SCALE 2.0d0</g-k>
+<g-k>program</g-k> <g-v>portable</g-v>
+  <g-k>use</g-k><g-pd>,</g-pd> <g-k>intrinsic</g-k> <g-pd>::</g-pd> <g-v>iso_fortran_env</g-v><g-pd>,</g-pd> <g-k>only</g-k><g-pd>:</g-pd> <g-v>int32</g-v>
+  <g-k>implicit</g-k> <g-k>none</g-k>
+  <g-t>integer</g-t><g-pb>(</g-pb><g-v>int32</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-k>parameter</g-k> <g-pd>::</g-pd> <g-v>mask</g-v> <g-o>=</g-o> <g-v>int</g-v><g-pb>(</g-pb><g-n>z'FF'</g-n><g-pd>,</g-pd> <g-v>int32</g-v><g-pb>)</g-pb>
+  <g-t>real</g-t> <g-pd>::</g-pd> <g-k>value</g-k>
+  <g-t>character</g-t><g-pb>(</g-pb><g-k>len</g-k><g-o>=*</g-o><g-pb>)</g-pb><g-pd>,</g-pd> <g-k>parameter</g-k> <g-pd>::</g-pd> <g-v>message</g-v> <g-o>=</g-o> <g-s>'continued </g-s><g-ps>&amp;</g-ps>
+    <g-ps>&amp;</g-ps><g-s>text with </g-s><g-se>''</g-se><g-s>quotes</g-s><g-se>''</g-se><g-s>'</g-s>
+<g-k>#ifdef USE_SCALE</g-k>
+  <g-k>value</g-k> <g-o>=</g-o> <g-v>SCALE</g-v>
+<g-k>#else</g-k>
+  <g-k>value</g-k> <g-o>=</g-o> <g-n>.5e+1</g-n>
+<g-k>#endif</g-k>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-cb>.true.</g-cb> <g-o>.and.</g-o> <g-v>mask</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>print</g-k> <g-o>*</g-o><g-pd>,</g-pd> <g-v>message</g-v><g-pd>,</g-pd> <g-k>value</g-k>
+<g-k>end</g-k> <g-k>program</g-k> <g-v>portable</g-v>

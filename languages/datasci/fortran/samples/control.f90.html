@@ -1,0 +1,24 @@
+<g-k>program</g-k> <g-v>control</g-v>
+  <g-k>implicit</g-k> <g-k>none</g-k>
+  <g-t>integer</g-t> <g-pd>::</g-pd> <g-v>i</g-v><g-pd>,</g-pd> <g-v>n</g-v><g-pd>,</g-pd> <g-v>a</g-v><g-pb>(</g-pb><g-n>10</g-n><g-pb>)</g-pb>
+  <g-t>real</g-t> <g-pd>::</g-pd> <g-v>total</g-v>
+  <g-v>n</g-v> <g-o>=</g-o> <g-n>10</g-n><g-pd>;</g-pd> <g-v>total</g-v> <g-o>=</g-o> <g-n>0.0</g-n>
+  <g-k>do</g-k> <g-k>concurrent</g-k> <g-pb>(</g-pb><g-v>i</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>:</g-pd><g-v>n</g-v><g-pb>)</g-pb>
+    <g-v>a</g-v><g-pb>(</g-pb><g-v>i</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-v>i</g-v>
+  <g-k>end</g-k> <g-k>do</g-k>
+  <g-k>do</g-k> <g-v>i</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>,</g-pd> <g-v>n</g-v>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>mod</g-v><g-pb>(</g-pb><g-v>i</g-v><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb> <g-o>==</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>then</g-k>
+      <g-k>cycle</g-k>
+    <g-k>else</g-k> <g-k>if</g-k> <g-pb>(</g-pb><g-v>i</g-v> <g-o>==</g-o> <g-n>9</g-n><g-pb>)</g-pb> <g-k>then</g-k>
+      <g-k>exit</g-k>
+    <g-k>end</g-k> <g-k>if</g-k>
+    <g-v>total</g-v> <g-o>=</g-o> <g-v>total</g-v> <g-o>+</g-o> <g-ps>&amp;</g-ps> <g-c>! continue on the next line</g-c>
+      <g-ps>&amp;</g-ps> <g-t>real</g-t><g-pb>(</g-pb><g-v>i</g-v><g-pb>)</g-pb>
+  <g-k>end</g-k> <g-k>do</g-k>
+  <g-k>select</g-k> <g-k>case</g-k> <g-pb>(</g-pb><g-v>n</g-v><g-pb>)</g-pb>
+  <g-k>case</g-k> <g-pb>(</g-pb><g-n>1</g-n><g-pd>:</g-pd><g-n>10</g-n><g-pb>)</g-pb>
+    <g-k>print</g-k> <g-o>*</g-o><g-pd>,</g-pd> <g-s>'It</g-s><g-se>''</g-se><g-s>s in range:'</g-s><g-pd>,</g-pd> <g-v>total</g-v>
+  <g-k>case</g-k> <g-k>default</g-k>
+    <g-k>error</g-k> <g-k>stop</g-k> <g-s>"out of range"</g-s>
+  <g-k>end</g-k> <g-k>select</g-k>
+<g-k>end</g-k> <g-k>program</g-k> <g-v>control</g-v>

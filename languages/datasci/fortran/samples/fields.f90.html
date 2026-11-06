@@ -1,0 +1,16 @@
+<g-k>module</g-k> <g-v>fields</g-v>
+  <g-k>use</g-k><g-pd>,</g-pd> <g-k>intrinsic</g-k> <g-pd>::</g-pd> <g-v>iso_fortran_env</g-v><g-pd>,</g-pd> <g-k>only</g-k><g-pd>:</g-pd> <g-v>real64</g-v>
+  <g-k>implicit</g-k> <g-k>none</g-k>
+  <g-k>private</g-k>
+  <g-k>public</g-k> <g-pd>::</g-pd> <g-v>point</g-v><g-pd>,</g-pd> <g-v>distance2</g-v>
+
+  <g-k>type</g-k> <g-pd>::</g-pd> <g-v>point</g-v>
+    <g-t>real</g-t><g-pb>(</g-pb><g-v>real64</g-v><g-pb>)</g-pb> <g-pd>::</g-pd> <g-v>x</g-v> <g-o>=</g-o> <g-n>0.0_real64</g-n><g-pd>,</g-pd> <g-v>y</g-v> <g-o>=</g-o> <g-n>0.0_real64</g-n>
+  <g-k>end</g-k> <g-k>type</g-k> <g-v>point</g-v>
+<g-k>contains</g-k>
+  <g-k>pure</g-k> <g-k>function</g-k> <g-v>distance2</g-v><g-pb>(</g-pb><g-v>p</g-v><g-pd>,</g-pd> <g-v>q</g-v><g-pb>)</g-pb> <g-k>result</g-k><g-pb>(</g-pb><g-v>d</g-v><g-pb>)</g-pb>
+    <g-k>type</g-k><g-pb>(</g-pb><g-v>point</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-k>intent</g-k><g-pb>(</g-pb><g-k>in</g-k><g-pb>)</g-pb> <g-pd>::</g-pd> <g-v>p</g-v><g-pd>,</g-pd> <g-v>q</g-v>
+    <g-t>real</g-t><g-pb>(</g-pb><g-v>real64</g-v><g-pb>)</g-pb> <g-pd>::</g-pd> <g-v>d</g-v>
+    <g-v>d</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>p</g-v><g-o>%</g-o><g-v>x</g-v> <g-o>-</g-o> <g-v>q</g-v><g-o>%</g-o><g-v>x</g-v><g-pb>)</g-pb><g-o>**</g-o><g-n>2</g-n> <g-o>+</g-o> <g-pb>(</g-pb><g-v>p</g-v><g-o>%</g-o><g-v>y</g-v> <g-o>-</g-o> <g-v>q</g-v><g-o>%</g-o><g-v>y</g-v><g-pb>)</g-pb><g-o>**</g-o><g-n>2</g-n>
+  <g-k>end</g-k> <g-k>function</g-k> <g-v>distance2</g-v>
+<g-k>end</g-k> <g-k>module</g-k> <g-v>fields</g-v>
