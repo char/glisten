@@ -1,0 +1,11 @@
+<g-c>#' Summarize measurements</g-c>
+<g-c>#' </g-c><g-at>@param</g-at><g-c> x A numeric vector.</g-c>
+<g-c>#' </g-c><g-at>@return</g-at><g-c> A named summary.</g-c>
+<g-f>summarize</g-f> <g-o>&lt;-</g-o> <g-k>function</g-k><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-pr>na.rm</g-pr> <g-o>=</g-o> <g-cb>TRUE</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-v>cleaned</g-v> <g-o>&lt;-</g-o> <g-v>x</g-v><g-pb>[</g-pb><g-o>!</g-o><g-f>is.na</g-f><g-pb>(</g-pb><g-v>x</g-v><g-pb>)]</g-pb>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-f>length</g-f><g-pb>(</g-pb><g-v>cleaned</g-v><g-pb>)</g-pb> <g-o>==</g-o> <g-n>0L</g-n><g-pb>)</g-pb> <g-k>return</g-k><g-pb>(</g-pb><g-cb>NULL</g-cb><g-pb>)</g-pb>
+  <g-v>result</g-v> <g-o>&lt;-</g-o> <g-f>list</g-f><g-pb>(</g-pb><g-pr>mean</g-pr> <g-o>=</g-o> <g-f>mean</g-f><g-pb>(</g-pb><g-v>cleaned</g-v><g-pd>,</g-pd> <g-pr>na.rm</g-pr> <g-o>=</g-o> <g-v>na.rm</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pr>n</g-pr> <g-o>=</g-o> <g-f>length</g-f><g-pb>(</g-pb><g-v>cleaned</g-v><g-pb>))</g-pb>
+  <g-v>result</g-v><g-o>$</g-o><g-vm>mean</g-vm>
+<g-pb>}</g-pb>
+<g-v>values</g-v> <g-o>&lt;-</g-o> <g-f>c</g-f><g-pb>(</g-pb><g-n>1L</g-n><g-pd>,</g-pd> <g-n>2.5</g-n><g-pd>,</g-pd> <g-cb>NA_real_</g-cb><g-pd>,</g-pd> <g-n>0x1.fp3</g-n><g-pd>,</g-pd> <g-n>2i</g-n><g-pb>)</g-pb>
+<g-v>values</g-v> <g-o>|&gt;</g-o> <g-f>summarize</g-f><g-pb>()</g-pb> <g-o>|&gt;</g-o> <g-f>print</g-f><g-pb>()</g-pb>

@@ -1,0 +1,8 @@
+<g-v>plain</g-v> <g-o>&lt;-</g-o> <g-s>"escaped </g-s><g-se>\n</g-se><g-s> and </g-s><g-se>\u{263A}</g-se><g-s> and </g-s><g-se>\"</g-se><g-s>quotes</g-s><g-se>\"</g-se><g-s>"</g-s>
+<g-v>single</g-v> <g-o>&lt;-</g-o> <g-s>'backslash </g-s><g-se>\\</g-se><g-s> and </g-s><g-se>\x41</g-se><g-s>'</g-s>
+<g-v>a</g-v> <g-o>&lt;-</g-o> <g-s>r"(literal \n and )-\" is not a close)"</g-s>
+<g-v>b</g-v> <g-o>&lt;-</g-o> <g-s>R"---[embedded ]--\" and (quotes) ]---"</g-s>
+<g-v>c</g-v> <g-o>&lt;-</g-o> <g-s>r'--{literal }-\' and \\ text}--'</g-s>
+<g-v>d</g-v> <g-o>&lt;-</g-o> <g-s>r"(| not a delimiter inside parentheses)"</g-s>
+<g-v>e</g-v> <g-o>&lt;-</g-o> <g-s>R"--|pipe |-- not yet \" then |--"</g-s>
+<g-f>message</g-f><g-pb>(</g-pb><g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pd>,</g-pd> <g-v>c</g-v><g-pd>,</g-pd> <g-v>d</g-v><g-pd>,</g-pd> <g-v>e</g-v><g-pb>)</g-pb>

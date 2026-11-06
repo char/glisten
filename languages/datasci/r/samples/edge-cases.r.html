@@ -1,0 +1,8 @@
+<g-c># dot-prefixed names, backticks, namespace, and user operators</g-c>
+<g-f>.foo</g-f> <g-o>&lt;-</g-o> <g-k>\</g-k><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-pr>y</g-pr> <g-o>=</g-o> <g-n>0x1.8p+2</g-n><g-pb>)</g-pb> <g-v>x</g-v> <g-o>%custom-op%</g-o> <g-v>y</g-v>
+<g-f>`odd name`</g-f> <g-o>&lt;-</g-o> <g-k>function</g-k><g-pb>(</g-pb><g-v>x</g-v><g-pb>)</g-pb> <g-v>x</g-v><g-o>$</g-o><g-vm>column</g-vm> <g-o>+</g-o> <g-v>x</g-v><g-o>@</g-o><g-vm>slot</g-vm>
+<g-f>other</g-f> <g-o>=</g-o> <g-k>function</g-k><g-pb>(</g-pb><g-pr>z</g-pr> <g-o>=</g-o> <g-cb>NA_integer_</g-cb><g-pb>)</g-pb> <g-v>z</g-v>
+<g-v>pkg</g-v><g-o>:::</g-o><g-f>hidden</g-f><g-pb>(</g-pb><g-pr>.foo</g-pr> <g-o>=</g-o> <g-v>.foo</g-v><g-pd>,</g-pd> <g-n>.5</g-n><g-pd>,</g-pd> <g-n>1e-3i</g-n><g-pd>,</g-pd> <g-cb>NaN</g-cb><g-pd>,</g-pd> <g-cb>Inf</g-cb><g-pd>,</g-pd> <g-cb>T</g-cb><g-pd>,</g-pd> <g-cb>F</g-cb><g-pb>)</g-pb>
+<g-v>formula</g-v> <g-o>&lt;-</g-o> <g-v>y</g-v> <g-o>~</g-o> <g-v>x</g-v> <g-o>+</g-o> <g-f>I</g-f><g-pb>(</g-pb><g-v>x</g-v><g-o>^</g-o><g-n>2</g-n><g-pb>)</g-pb>
+<g-v>result</g-v> <g-o>&lt;-</g-o> <g-v>data.table</g-v><g-o>::</g-o><g-f>copy</g-f><g-pb>(</g-pb><g-v>tbl</g-v><g-pb>)[</g-pb><g-pd>,</g-pd> <g-f>.</g-f><g-pb>(</g-pb><g-pr>a</g-pr> <g-o>=</g-o> <g-n>1L</g-n><g-pb>)]</g-pb>
+<g-k>if</g-k> <g-pb>(</g-pb><g-cb>TRUE</g-cb> <g-o>&amp;&amp;</g-o> <g-cb>FALSE</g-cb> <g-o>||</g-o> <g-o>!</g-o><g-f>is.null</g-f><g-pb>(</g-pb><g-cb>NULL</g-cb><g-pb>))</g-pb> <g-pb>{</g-pb> <g-k>next</g-k> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-k>break</g-k> <g-pb>}</g-pb>

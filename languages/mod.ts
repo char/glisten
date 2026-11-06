@@ -38,6 +38,7 @@ import php from "./web/php/grammar.ts";
 import powershell from "./shell/powershell/grammar.ts";
 import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
+import r from "./datasci/r/grammar.ts";
 import ron from "./config/ron/grammar.ts";
 import ruby from "./scripting/ruby/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
@@ -96,6 +97,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   powershell,
   proto,
   python,
+  r,
   ron,
   ruby,
   rust,
