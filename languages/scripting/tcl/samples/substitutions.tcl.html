@@ -1,0 +1,8 @@
+<g-k>set</g-k> values <g-pb>{</g-pb><g-s>one two </g-s><g-pb>{</g-pb><g-s>three four</g-s><g-pb>}</g-pb><g-s> $not_a_variable</g-s><g-pb>}</g-pb>
+<g-k>set</g-k> prefix world
+<g-k>set</g-k> message <g-s>"Hello </g-s><g-v>${prefix}</g-v><g-s>: </g-s><g-pb>[</g-pb><g-f>join</g-f> <g-v>$values</g-v> ,<g-pb>]</g-pb><g-s>"</g-s>
+<g-k>set</g-k> table(<g-v>$prefix</g-v>) <g-pb>[</g-pb><g-f>string</g-f> toupper <g-v>$message</g-v><g-pb>]</g-pb>
+<g-f>puts</g-f> <g-v>$table($prefix)</g-v>
+<g-f>puts</g-f> <g-o>{*}</g-o><g-v>$values</g-v>
+<g-f>puts</g-f> one<g-pd>;</g-pd> <g-c># a comment after a command separator</g-c>
+<g-f>puts</g-f> #this_is_an_argument

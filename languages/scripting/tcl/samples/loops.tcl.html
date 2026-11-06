@@ -1,0 +1,13 @@
+<g-k>namespace</g-k> <g-k>eval</g-k> demo <g-pb>{</g-pb>
+    <g-k>proc</g-k> <g-v>countdown</g-v> <g-pb>{</g-pb><g-v>n</g-v><g-pb>}</g-pb> <g-pb>{</g-pb>
+        <g-f>for</g-f> <g-pb>{</g-pb><g-k>set</g-k> i <g-v>$n</g-v><g-pb>}</g-pb> <g-pb>{</g-pb><g-s>$i &gt; 0</g-s><g-pb>}</g-pb> <g-pb>{</g-pb><g-f>incr</g-f> i -1<g-pb>}</g-pb> <g-pb>{</g-pb>
+            <g-f>puts</g-f> <g-s>"count: </g-s><g-v>$i</g-v><g-s>"</g-s>
+        <g-pb>}</g-pb>
+        <g-k>while</g-k> <g-pb>{</g-pb><g-s>$n &gt; 0</g-s><g-pb>}</g-pb> <g-pb>{</g-pb>
+            <g-f>incr</g-f> n -1
+        <g-pb>}</g-pb>
+        <g-k>catch</g-k> <g-pb>{</g-pb><g-f>puts</g-f> <g-s>"done"</g-s><g-pb>}</g-pb> result
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>set</g-k> message first<g-se>\
+    </g-se>second

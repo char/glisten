@@ -1,0 +1,11 @@
+<g-c># A small Tcl procedure</g-c>
+<g-k>proc</g-k> <g-v>greet</g-v> <g-pb>{</g-pb><g-v>name</g-v><g-pb>}</g-pb> <g-pb>{</g-pb>
+    <g-k>if</g-k> <g-pb>{</g-pb><g-s>$name eq ""</g-s><g-pb>}</g-pb> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-s>"Hello, stranger"</g-s>
+    <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb>
+        <g-k>return</g-k> <g-s>"Hello, </g-s><g-v>$name</g-v><g-s>"</g-s>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>foreach</g-k> person <g-pb>{</g-pb><g-s>Ada Grace Linus</g-s><g-pb>}</g-pb> <g-pb>{</g-pb><g-s>
+    puts [greet $person]
+</g-s><g-pb>}</g-pb>

@@ -100,6 +100,7 @@ import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import svelte from "./web/svelte/grammar.ts";
 import swift from "./managed/swift/grammar.ts";
+import tcl from "./scripting/tcl/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
 import tlaplus from "./proof/tlaplus/grammar.ts";
@@ -226,6 +227,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   "ssh-config": ssh_config,
   svelte,
   swift,
+  tcl,
   textproto,
   thrift,
   tlaplus,
