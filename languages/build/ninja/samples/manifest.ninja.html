@@ -1,0 +1,21 @@
+<g-c># A small C build</g-c>
+<g-pr>ninja_required_version</g-pr> <g-o>=</g-o><g-s> 1.11</g-s>
+<g-pr>builddir</g-pr> <g-o>=</g-o><g-s> out</g-s>
+<g-pr>cc</g-pr> <g-o>=</g-o><g-s> clang</g-s>
+
+<g-k>pool</g-k> <g-t>link_pool</g-t>
+  <g-pr>depth</g-pr> <g-o>=</g-o><g-s> 2</g-s>
+<g-k>rule</g-k> <g-f>compile</g-f>
+  <g-pr>command</g-pr> <g-o>=</g-o><g-s> </g-s><g-v>$cc</g-v><g-s> -MMD -MF </g-s><g-v>$out</g-v><g-s>.d -c </g-s><g-v>$in</g-v><g-s> -o </g-s><g-v>$out</g-v>
+  <g-pr>depfile</g-pr> <g-o>=</g-o><g-s> </g-s><g-v>$out</g-v><g-s>.d</g-s>
+  <g-pr>deps</g-pr> <g-o>=</g-o><g-s> gcc</g-s>
+<g-k>rule</g-k> <g-f>link</g-f>
+  <g-pr>command</g-pr> <g-o>=</g-o><g-s> </g-s><g-v>$cc</g-v><g-s> </g-s><g-v>$in</g-v><g-s> -o </g-s><g-v>$out</g-v>
+  <g-pr>pool</g-pr> <g-o>=</g-o><g-s> link_pool</g-s>
+
+<g-k>build</g-k> <g-v>$builddir</g-v><g-s>/main.o</g-s> <g-o>|</g-o> <g-v>$builddir</g-v><g-s>/main.d</g-s><g-pd>:</g-pd> <g-f>compile</g-f> <g-s>src/main.c</g-s> <g-o>|</g-o> <g-s>include/main.h</g-s> <g-o>||</g-o> <g-s>generated/header.h</g-s> <g-o>|@</g-o> <g-s>checked</g-s>
+  <g-pr>cc</g-pr> <g-o>=</g-o><g-s> clang-18</g-s>
+<g-k>build</g-k> <g-v>$builddir</g-v><g-s>/app</g-s><g-pd>:</g-pd> <g-f>link</g-f> <g-v>$builddir</g-v><g-s>/main.o</g-s>
+<g-k>default</g-k> <g-v>$builddir</g-v><g-s>/app</g-s>
+<g-k>include</g-k> <g-s>common.ninja</g-s>
+<g-k>subninja</g-k> <g-s>lib/build.ninja</g-s>

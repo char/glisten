@@ -1,0 +1,9 @@
+# Escaped spaces, dollars, colons and physical line continuation
+root = a$$b $: ${long.name} $short $ 
+build out$ file: phony in$:file $
+  next
+rulex = not a rule
+  command = echo # not a comment in a value
+# Deliberately malformed and unfinished
+build missing-colon
+broken = ${unterminated $ $é

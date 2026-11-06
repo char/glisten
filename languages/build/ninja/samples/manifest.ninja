@@ -1,0 +1,21 @@
+# A small C build
+ninja_required_version = 1.11
+builddir = out
+cc = clang
+
+pool link_pool
+  depth = 2
+rule compile
+  command = $cc -MMD -MF $out.d -c $in -o $out
+  depfile = $out.d
+  deps = gcc
+rule link
+  command = $cc $in -o $out
+  pool = link_pool
+
+build $builddir/main.o | $builddir/main.d: compile src/main.c | include/main.h || generated/header.h |@ checked
+  cc = clang-18
+build $builddir/app: link $builddir/main.o
+default $builddir/app
+include common.ninja
+subninja lib/build.ninja

@@ -15,6 +15,7 @@ import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
 import kdl from "./config/kdl/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
+import ninja from "./build/ninja/grammar.ts";
 import nix from "./build/nix/grammar.ts";
 import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
@@ -45,6 +46,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   jsx,
   kdl,
   markdown,
+  ninja,
   nix,
   proto,
   python,

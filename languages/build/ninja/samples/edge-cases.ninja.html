@@ -1,0 +1,9 @@
+<g-c># Escaped spaces, dollars, colons and physical line continuation</g-c>
+<g-pr>root</g-pr> <g-o>=</g-o><g-s> a</g-s><g-se>$$</g-se><g-s>b </g-s><g-se>$:</g-se><g-s> </g-s><g-v>${long.name}</g-v><g-s> </g-s><g-v>$short</g-v><g-s> </g-s><g-se>$ </g-se>
+<g-k>build</g-k> <g-s>out</g-s><g-se>$ </g-se><g-s>file</g-s><g-pd>:</g-pd> <g-f>phony</g-f> <g-s>in</g-s><g-se>$:</g-se><g-s>file</g-s> <g-se>$
+</g-se>  <g-s>next</g-s>
+<g-pr>rulex</g-pr> <g-o>=</g-o><g-s> not a rule</g-s>
+  <g-pr>command</g-pr> <g-o>=</g-o><g-s> echo # not a comment in a value</g-s>
+<g-c># Deliberately malformed and unfinished</g-c>
+<g-k>build</g-k> <g-s>missing-colon</g-s>
+<g-pr>broken</g-pr> <g-o>=</g-o><g-s> ${unterminated </g-s><g-se>$ </g-se><g-s>$é</g-s>
