@@ -1,0 +1,20 @@
+#version 460 core
+#pragma optimize(on)
+
+layout(local_size_x = 64) in;
+layout(std430, binding = 0) buffer Particles {
+    vec4 positions[];
+};
+layout(rgba32f, binding = 1) uniform writeonly image2D outputImage;
+shared uint completed;
+
+void main() {
+    uint index = gl_GlobalInvocationID.x;
+    if (index == 0u) completed = 0u;
+    barrier();
+    vec4 p = positions[index];
+    p.xyz += vec3(0.01f, 0.0, 0.0);
+    positions[index] = p;
+    imageStore(outputImage, ivec2(index, 0), p);
+    atomicAdd(completed, 1u);
+}

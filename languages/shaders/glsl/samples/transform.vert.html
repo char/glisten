@@ -1,0 +1,16 @@
+<g-k>#version</g-k> <g-n>460</g-n> <g-v>core</g-v>
+
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>in</g-k> <g-t>vec3</g-t> <g-v>position</g-v><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-k>in</g-k> <g-t>vec3</g-t> <g-v>normal</g-v><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>out</g-k> <g-t>vec3</g-t> <g-v>worldNormal</g-v><g-pd>;</g-pd>
+
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>std140</g-v><g-pd>,</g-pd> <g-v>binding</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>uniform</g-k> <g-t>Camera</g-t> <g-pb>{</g-pb>
+    <g-t>mat4</g-t> <g-vm>viewProjection</g-vm><g-pd>;</g-pd>
+    <g-t>mat4</g-t> <g-vm>model</g-vm><g-pd>;</g-pd>
+<g-pb>}</g-pb> <g-v>camera</g-v><g-pd>;</g-pd>
+
+<g-t>void</g-t> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-t>vec4</g-t> <g-v>worldPosition</g-v> <g-o>=</g-o> <g-v>camera</g-v><g-o>.</g-o><g-vm>model</g-vm> <g-o>*</g-o> <g-t>vec4</g-t><g-pb>(</g-pb><g-v>position</g-v><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-v>worldNormal</g-v> <g-o>=</g-o> <g-t>mat3</g-t><g-pb>(</g-pb><g-v>camera</g-v><g-o>.</g-o><g-vm>model</g-vm><g-pb>)</g-pb> <g-o>*</g-o> <g-v>normal</g-v><g-pd>;</g-pd>
+    <g-v>gl_Position</g-v> <g-o>=</g-o> <g-v>camera</g-v><g-o>.</g-o><g-vm>viewProjection</g-vm> <g-o>*</g-o> <g-v>worldPosition</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>

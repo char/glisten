@@ -25,6 +25,7 @@ import fjson from "./config/fjson/grammar.ts";
 import fsharp from "./functional/fsharp/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import gleam from "./functional/gleam/grammar.ts";
+import glsl from "./shaders/glsl/grammar.ts";
 import go from "./managed/go/grammar.ts";
 import graphql from "./query/graphql/grammar.ts";
 import groovy from "./managed/groovy/grammar.ts";
@@ -113,6 +114,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   fsharp,
   gitattributes,
   gleam,
+  glsl,
   go,
   graphql,
   groovy,

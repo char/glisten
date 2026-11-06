@@ -1,0 +1,17 @@
+<g-k>#version</g-k> <g-n>320</g-n> <g-v>es</g-v>
+<g-k>#extension</g-k> <g-v>GL_EXT_shader_texture_lod</g-v> <g-o>:</g-o> <g-v>enable</g-v>
+<g-k>precision</g-k> <g-k>highp</g-k> <g-t>float</g-t><g-pd>;</g-pd>
+
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>in</g-k> <g-t>vec2</g-t> <g-v>texCoord</g-v><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-k>flat</g-k> <g-k>in</g-k> <g-t>vec3</g-t> <g-v>normal</g-v><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>location</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>out</g-k> <g-t>vec4</g-t> <g-v>color</g-v><g-pd>;</g-pd>
+<g-k>uniform</g-k> <g-t>sampler2D</g-t> <g-v>albedo</g-v><g-pd>;</g-pd>
+<g-k>uniform</g-k> <g-t>vec3</g-t> <g-v>lightDirection</g-v><g-pd>;</g-pd>
+
+<g-t>void</g-t> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-t>vec3</g-t> <g-v>surface</g-v> <g-o>=</g-o> <g-f>texture</g-f><g-pb>(</g-pb><g-v>albedo</g-v><g-pd>,</g-pd> <g-v>texCoord</g-v><g-pb>)</g-pb><g-o>.</g-o><g-vm>rgb</g-vm><g-pd>;</g-pd>
+    <g-t>float</g-t> <g-v>diffuse</g-v> <g-o>=</g-o> <g-f>max</g-f><g-pb>(</g-pb><g-f>dot</g-f><g-pb>(</g-pb><g-f>normalize</g-f><g-pb>(</g-pb><g-v>normal</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-f>normalize</g-f><g-pb>(</g-pb><g-v>lightDirection</g-v><g-pb>))</g-pb><g-pd>,</g-pd> <g-n>0.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-t>vec3</g-t> <g-v>lit</g-v> <g-o>=</g-o> <g-f>mix</g-f><g-pb>(</g-pb><g-v>surface</g-v> <g-o>*</g-o> <g-n>0.1</g-n><g-pd>,</g-pd> <g-v>surface</g-v><g-pd>,</g-pd> <g-f>clamp</g-f><g-pb>(</g-pb><g-v>diffuse</g-v><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+    <g-v>color</g-v> <g-o>=</g-o> <g-t>vec4</g-t><g-pb>(</g-pb><g-v>lit</g-v><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>gl_FragCoord</g-v><g-o>.</g-o><g-vm>x</g-vm> <g-o>&lt;</g-o> <g-n>1.0</g-n><g-pb>)</g-pb> <g-k>discard</g-k><g-pd>;</g-pd>
+<g-pb>}</g-pb>

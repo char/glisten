@@ -1,0 +1,20 @@
+<g-k>#version</g-k> <g-n>460</g-n> <g-v>core</g-v>
+<g-k>#pragma</g-k> <g-f>optimize</g-f><g-pb>(</g-pb><g-v>on</g-v><g-pb>)</g-pb>
+
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>local_size_x</g-v> <g-o>=</g-o> <g-n>64</g-n><g-pb>)</g-pb> <g-k>in</g-k><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>std430</g-v><g-pd>,</g-pd> <g-v>binding</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-k>buffer</g-k> <g-t>Particles</g-t> <g-pb>{</g-pb>
+    <g-t>vec4</g-t> <g-vm>positions</g-vm><g-pb>[]</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>layout</g-k><g-pb>(</g-pb><g-v>rgba32f</g-v><g-pd>,</g-pd> <g-v>binding</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-k>uniform</g-k> <g-k>writeonly</g-k> <g-t>image2D</g-t> <g-v>outputImage</g-v><g-pd>;</g-pd>
+<g-k>shared</g-k> <g-t>uint</g-t> <g-v>completed</g-v><g-pd>;</g-pd>
+
+<g-t>void</g-t> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-t>uint</g-t> <g-v>index</g-v> <g-o>=</g-o> <g-v>gl_GlobalInvocationID</g-v><g-o>.</g-o><g-vm>x</g-vm><g-pd>;</g-pd>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>index</g-v> <g-o>==</g-o> <g-n>0u</g-n><g-pb>)</g-pb> <g-v>completed</g-v> <g-o>=</g-o> <g-n>0u</g-n><g-pd>;</g-pd>
+    <g-f>barrier</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-t>vec4</g-t> <g-v>p</g-v> <g-o>=</g-o> <g-v>positions</g-v><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-v>p</g-v><g-o>.</g-o><g-vm>xyz</g-vm> <g-o>+=</g-o> <g-t>vec3</g-t><g-pb>(</g-pb><g-n>0.01f</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-v>positions</g-v><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>p</g-v><g-pd>;</g-pd>
+    <g-f>imageStore</g-f><g-pb>(</g-pb><g-v>outputImage</g-v><g-pd>,</g-pd> <g-t>ivec2</g-t><g-pb>(</g-pb><g-v>index</g-v><g-pd>,</g-pd> <g-n>0</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>p</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-f>atomicAdd</g-f><g-pb>(</g-pb><g-v>completed</g-v><g-pd>,</g-pd> <g-n>1u</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
