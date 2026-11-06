@@ -1,0 +1,5 @@
+<g-c>-- PostgreSQL</g-c>
+<g-k>SELECT</g-k> payload<g-o>-&gt;&gt;</g-o><g-s>'title'</g-s><g-pd>,</g-pd> <g-v>$1</g-v><g-o>::</g-o><g-t>text</g-t><g-pd>,</g-pd> <g-s>E'line</g-s><g-se>\n</g-se><g-s>next'</g-s><g-pd>,</g-pd> <g-s>$body$it 'works'$body$</g-s>
+<g-k>FROM</g-k> events <g-k>WHERE</g-k> id <g-o>=</g-o> <g-v>:id</g-v> <g-k>AND</g-k> active <g-o>=</g-o> <g-cb>TRUE</g-cb><g-pd>;</g-pd>
+<g-c>/* MySQL and SQLite */</g-c>
+<g-k>SELECT</g-k> <g-v>`order`</g-v><g-pd>,</g-pd> <g-pb>[</g-pb><g-k>group</g-k><g-pb>]</g-pb><g-pd>,</g-pd> <g-v>"column"</g-v><g-pd>,</g-pd> <g-v>@user</g-v><g-pd>,</g-pd> <g-v>?1</g-v> <g-k>FROM</g-k> data <g-k>LIMIT</g-k> <g-n>10</g-n><g-pd>;</g-pd>

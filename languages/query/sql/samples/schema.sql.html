@@ -1,0 +1,10 @@
+<g-c>-- A small portable schema</g-c>
+<g-k>CREATE</g-k> <g-k>TABLE</g-k> orders <g-pb>(</g-pb>
+  id <g-t>INTEGER</g-t> <g-k>PRIMARY</g-k> <g-k>KEY</g-k><g-pd>,</g-pd>
+  customer <g-t>VARCHAR</g-t><g-pb>(</g-pb><g-n>120</g-n><g-pb>)</g-pb> <g-k>NOT</g-k> <g-cb>NULL</g-cb><g-pd>,</g-pd>
+  total <g-t>NUMERIC</g-t><g-pb>(</g-pb><g-n>10</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb> <g-k>DEFAULT</g-k> <g-n>0</g-n><g-pd>,</g-pd>
+  paid <g-t>BOOLEAN</g-t> <g-k>DEFAULT</g-k> <g-cb>FALSE</g-cb>
+<g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>INSERT</g-k> <g-k>INTO</g-k> orders <g-pb>(</g-pb>id<g-pd>,</g-pd> customer<g-pd>,</g-pd> total<g-pb>)</g-pb> <g-k>VALUES</g-k> <g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-s>'O</g-s><g-se>''</g-se><g-s>Brien'</g-s><g-pd>,</g-pd> <g-n>19.95</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>SELECT</g-k> customer<g-pd>,</g-pd> <g-f>sum</g-f><g-pb>(</g-pb>total<g-pb>)</g-pb> <g-k>AS</g-k> amount <g-k>FROM</g-k> orders
+<g-k>WHERE</g-k> paid <g-k>IS</g-k> <g-k>NOT</g-k> <g-cb>TRUE</g-cb> <g-k>GROUP</g-k> <g-k>BY</g-k> customer <g-k>HAVING</g-k> <g-f>sum</g-f><g-pb>(</g-pb>total<g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>10</g-n><g-pd>;</g-pd>

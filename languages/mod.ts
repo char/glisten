@@ -35,6 +35,7 @@ import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
 import ron from "./config/ron/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
+import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
@@ -82,6 +83,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   python,
   ron,
   rust,
+  sql,
   "ssh-config": ssh_config,
   textproto,
   thrift,
