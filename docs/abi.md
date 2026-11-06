@@ -184,6 +184,7 @@ source   ```bash⏎echo hi⏎```⏎        (offsets 0 3 7 8 16 19 20)
 highlight(language, source): string     // HTML spans and nested group elements; escaped text
                                         // and, for groups, escaped manifest attributes
 _process(language, source): Result      // public, not promoted: the spans themselves
+render(source, result): string          // retained successful result from this highlighter
 
 type Result =                                                              //
   | { status: "ok"; spans: Uint32Array; missing: string[] }

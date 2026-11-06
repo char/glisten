@@ -61,6 +61,17 @@ export class Highlighter {
     return this.renderer.render(context, result.spans, result.groups, result.values);
   }
 
+  /** Render a retained result produced by this highlighter. */
+  render(source: string | Uint8Array, result: Extract<Result, { status: "ok" }>): string {
+    if (this.disposed) throw new Error("Highlighter is disposed");
+    return this.renderer.render(
+      this.arena.place(source),
+      result.spans,
+      result.groups,
+      result.values,
+    );
+  }
+
   /** Lower-level byte-span result; span ends are UTF-8 byte offsets. */
   _process(language: string, source: string | Uint8Array): Result {
     if (this.disposed) throw new Error("Highlighter is disposed");

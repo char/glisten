@@ -66,6 +66,7 @@ test("renders composed tags, escaping, bare styles, and byte boundaries", async 
     "<g-o>&lt;</g-o><g-i>&amp;&gt;</g-i>x",
   );
   equal(host.highlight("root", ""), "");
+  equal(host.render(input, processed), "<g-o>&lt;</g-o><g-i>&amp;&gt;</g-i>x");
 });
 
 test("first registration sets tags, including a reserved missing style", async () => {
