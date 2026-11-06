@@ -1,0 +1,19 @@
+<g-c>/* outer /* nested */ still outer */</g-c>
+<g-k>opaque</g-k> <g-k>type</g-k> <g-t>UserId</g-t> <g-o>=</g-o> <g-t>Long</g-t>
+<g-k>object</g-k> <g-t>UserId</g-t><g-o>:</g-o>
+  <g-k>def</g-k> <g-f>apply</g-f><g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>Long</g-t><g-pb>)</g-pb><g-o>:</g-o> <g-t>UserId</g-t> <g-o>=</g-o> <g-v>value</g-v>
+  <g-k>extension</g-k> <g-pb>(</g-pb><g-v>id</g-v><g-o>:</g-o> <g-t>UserId</g-t><g-pb>)</g-pb> <g-k>def</g-k> <g-f>value</g-f><g-o>:</g-o> <g-t>Long</g-t> <g-o>=</g-o> <g-v>id</g-v>
+<g-k>end</g-k> <g-t>UserId</g-t>
+
+<g-k>open</g-k> <g-k>class</g-k> <g-t>Box</g-t><g-pb>[</g-pb><g-t>A</g-t> <g-o>&lt;:</g-o> <g-t>Product</g-t> <g-o>:</g-o> <g-t>Ordering</g-t><g-pb>](</g-pb><g-k>val</g-k> <g-v>value</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)</g-pb><g-o>:</g-o>
+  <g-k>infix</g-k> <g-k>def</g-k> <g-f>++</g-f><g-pb>(</g-pb><g-v>other</g-v><g-o>:</g-o> <g-t>Box</g-t><g-pb>[</g-pb><g-t>A</g-t><g-pb>])</g-pb><g-o>:</g-o> <g-t>Box</g-t><g-pb>[</g-pb><g-t>A</g-t><g-pb>]</g-pb> <g-o>=</g-o> <g-k>this</g-k>
+  <g-k>inline</g-k> <g-k>def</g-k> <g-f>`given`</g-f><g-pb>(</g-pb><g-v>x</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)</g-pb><g-o>:</g-o> <g-t>A</g-t> <g-o>=</g-o> <g-v>x</g-v>
+  <g-k>def</g-k> <g-f>contexts</g-f><g-pb>(</g-pb><g-k>using</g-k> <g-v>ordering</g-v><g-o>:</g-o> <g-t>Ordering</g-t><g-pb>[</g-pb><g-t>A</g-t><g-pb>])</g-pb><g-o>:</g-o> <g-t>A</g-t> <g-o>=</g-o> <g-v>value</g-v>
+
+<g-k>transparent</g-k> <g-k>inline</g-k> <g-k>def</g-k> <g-f>identity</g-f><g-pb>[</g-pb><g-t>A</g-t><g-pb>](</g-pb><g-v>a</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)</g-pb><g-o>:</g-o> <g-t>A</g-t> <g-o>=</g-o> <g-v>a</g-v>
+<g-k>export</g-k> <g-t>UserId</g-t><g-pd>.</g-pd><g-vm>apply</g-vm>
+<g-k>val</g-k> <g-v>extract</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>x</g-v><g-o>:</g-o> <g-t>Int</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>x</g-v> <g-o>+</g-o> <g-n>1</g-n>
+<g-k>val</g-k> <g-v>program</g-v><g-o>:</g-o> <g-t>Context</g-t> <g-o>?=&gt;</g-o> <g-t>String</g-t> <g-o>=</g-o> <g-f>summon</g-f><g-pb>[</g-pb><g-t>Context</g-t><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>toString</g-vm>
+<g-k>val</g-k> <g-v>existing</g-v> <g-o>=</g-o> <g-t>Map</g-t><g-pb>(</g-pb><g-s>"a"</g-s> <g-o>-&gt;</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>.</g-pd><g-f>get</g-f><g-pb>(</g-pb><g-s>"a"</g-s><g-pb>)</g-pb>
+<g-c>// Scala 2 XML literals are intentionally not parsed as XML:</g-c>
+<g-k>val</g-k> <g-v>xml</g-v> <g-o>=</g-o> <g-o>&lt;</g-o><g-v>entry</g-v> <g-v>id</g-v><g-o>=</g-o><g-s>"x"</g-s><g-o>&gt;</g-o><g-v>hello</g-v><g-o>&lt;/</g-o><g-v>entry</g-v><g-o>&gt;</g-o>

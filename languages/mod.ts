@@ -52,6 +52,7 @@ import r from "./datasci/r/grammar.ts";
 import ron from "./config/ron/grammar.ts";
 import ruby from "./scripting/ruby/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
+import scala from "./managed/scala/grammar.ts";
 import scheme from "./functional/scheme/grammar.ts";
 import scss from "./web/scss/grammar.ts";
 import sql from "./query/sql/grammar.ts";
@@ -122,6 +123,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ron,
   ruby,
   rust,
+  scala,
   scheme,
   scss,
   sql,

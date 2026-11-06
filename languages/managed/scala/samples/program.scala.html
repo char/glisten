@@ -1,0 +1,25 @@
+<g-k>package</g-k> <g-v>demo</g-v>
+
+<g-k>import</g-k> <g-v>scala</g-v><g-pd>.</g-pd><g-vm>annotation</g-vm><g-pd>.</g-pd><g-vm>tailrec</g-vm>
+
+<g-c>/** A small Scala 3 service. */</g-c>
+<g-k>trait</g-k> <g-t>Show</g-t><g-pb>[</g-pb><g-t>A</g-t><g-pb>]</g-pb><g-o>:</g-o>
+  <g-k>def</g-k> <g-f>show</g-f><g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)</g-pb><g-o>:</g-o> <g-t>String</g-t>
+
+<g-k>given</g-k> <g-v>intShow</g-v><g-o>:</g-o> <g-t>Show</g-t><g-pb>[</g-pb><g-t>Int</g-t><g-pb>]</g-pb> <g-k>with</g-k>
+  <g-k>def</g-k> <g-f>show</g-f><g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>Int</g-t><g-pb>)</g-pb><g-o>:</g-o> <g-t>String</g-t> <g-o>=</g-o> <g-f>s</g-f><g-s>"number: </g-s><g-v>$value</g-v><g-s>"</g-s>
+
+<g-k>extension</g-k> <g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>Int</g-t><g-pb>)</g-pb>
+  <g-k>def</g-k> <g-f>twice</g-f><g-o>:</g-o> <g-t>Int</g-t> <g-o>=</g-o> <g-v>value</g-v> <g-o>*</g-o> <g-n>2</g-n>
+
+<g-k>enum</g-k> <g-t>Result</g-t><g-pb>[</g-pb><g-o>+</g-o><g-t>A</g-t><g-pb>]</g-pb> <g-k>derives</g-k> <g-t>CanEqual</g-t><g-o>:</g-o>
+  <g-k>case</g-k> <g-t>Ok</g-t><g-pb>(</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)</g-pb>
+  <g-k>case</g-k> <g-t>Failed</g-t><g-pb>(</g-pb><g-v>message</g-v><g-o>:</g-o> <g-t>String</g-t><g-pb>)</g-pb>
+
+<g-k>object</g-k> <g-t>Main</g-t><g-o>:</g-o>
+  <g-at>@tailrec</g-at>
+  <g-k>def</g-k> <g-f>sum</g-f><g-pb>(</g-pb><g-v>n</g-v><g-o>:</g-o> <g-t>Int</g-t><g-pd>,</g-pd> <g-v>acc</g-v><g-o>:</g-o> <g-t>Int</g-t> <g-o>=</g-o> <g-n>0</g-n><g-pb>)</g-pb><g-o>:</g-o> <g-t>Int</g-t> <g-o>=</g-o>
+    <g-k>if</g-k> <g-v>n</g-v> <g-o>&lt;=</g-o> <g-n>0</g-n> <g-k>then</g-k> <g-v>acc</g-v> <g-k>else</g-k> <g-f>sum</g-f><g-pb>(</g-pb><g-v>n</g-v> <g-o>-</g-o> <g-n>1</g-n><g-pd>,</g-pd> <g-v>acc</g-v> <g-o>+</g-o> <g-v>n</g-v><g-pb>)</g-pb>
+  <g-k>def</g-k> <g-f>render</g-f><g-pb>[</g-pb><g-t>A</g-t><g-pb>](</g-pb><g-v>value</g-v><g-o>:</g-o> <g-t>A</g-t><g-pb>)(</g-pb><g-k>using</g-k> <g-v>show</g-v><g-o>:</g-o> <g-t>Show</g-t><g-pb>[</g-pb><g-t>A</g-t><g-pb>])</g-pb><g-o>:</g-o> <g-t>String</g-t> <g-o>=</g-o>
+    <g-v>show</g-v><g-pd>.</g-pd><g-f>show</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+<g-k>end</g-k> <g-t>Main</g-t>

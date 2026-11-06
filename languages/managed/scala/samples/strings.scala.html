@@ -1,0 +1,15 @@
+<g-k>object</g-k> <g-t>Strings</g-t> <g-pb>{</g-pb>
+  <g-k>val</g-k> <g-v>plain</g-v> <g-o>=</g-o> <g-s>"hello</g-s><g-se>\n</g-se><g-s>world </g-s><g-se>\u263A</g-se><g-s>"</g-s>
+  <g-k>val</g-k> <g-v>triple</g-v> <g-o>=</g-o> <g-s>"""no \n escape
+  or $interpolation"""</g-s>
+  <g-k>val</g-k> <g-v>name</g-v> <g-o>=</g-o> <g-s>"Scala"</g-s>
+  <g-k>val</g-k> <g-v>greeting</g-v> <g-o>=</g-o> <g-f>s</g-f><g-s>"Hello </g-s><g-v>$name</g-v><g-s>, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-vm>toUpperCase</g-vm><g-ps>}</g-ps><g-s>! </g-s><g-se>$$</g-se><g-s>5"</g-s>
+  <g-k>val</g-k> <g-v>formatted</g-v> <g-o>=</g-o> <g-f>f</g-f><g-s>"</g-s><g-ps>${</g-ps><g-n>3.14159</g-n><g-ps>}</g-ps><g-s>%.2f"</g-s>
+  <g-k>val</g-k> <g-v>literal</g-v> <g-o>=</g-o> <g-f>raw</g-f><g-s>"\n is literal, but </g-s><g-v>$name</g-v><g-s> still interpolates"</g-s>
+  <g-k>val</g-k> <g-v>custom</g-v> <g-o>=</g-o> <g-f>sql</g-f><g-s>"select * from </g-s><g-v>$table</g-v><g-s> where id = </g-s><g-ps>${</g-ps><g-v>id</g-v> <g-o>+</g-o> <g-n>1</g-n><g-ps>}</g-ps><g-s>"</g-s>
+  <g-k>val</g-k> <g-v>multi</g-v> <g-o>=</g-o> <g-f>s</g-f><g-s>"""before </g-s><g-ps>${</g-ps><g-t>Map</g-t><g-pb>(</g-pb><g-s>"key"</g-s> <g-o>-&gt;</g-o> <g-pb>{</g-pb> <g-k>val</g-k> <g-v>n</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd> <g-v>n</g-v> <g-o>+</g-o> <g-n>1</g-n> <g-pb>})</g-pb><g-ps>}</g-ps><g-s>
+after </g-s><g-se>$$</g-se><g-s>"""</g-s>
+  <g-k>val</g-k> <g-v>chars</g-v> <g-o>=</g-o> <g-t>List</g-t><g-pb>(</g-pb><g-s>'x'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\u263A</g-se><g-s>'</g-s><g-pb>)</g-pb>
+  <g-k>val</g-k> <g-v>symbol</g-v> <g-o>=</g-o> <g-cb>'legacySymbol</g-cb>
+  <g-k>val</g-k> <g-v>numbers</g-v> <g-o>=</g-o> <g-t>List</g-t><g-pb>(</g-pb><g-n>0xffL</g-n><g-pd>,</g-pd> <g-n>0b1010</g-n><g-pd>,</g-pd> <g-n>1_000</g-n><g-pd>,</g-pd> <g-n>3.25e-2f</g-n><g-pd>,</g-pd> <g-n>42d</g-n><g-pb>)</g-pb>
+<g-pb>}</g-pb>
