@@ -1,0 +1,10 @@
+<g-c># Desktop entry and unit-style assignments</g-c>
+<g-pb>[</g-pb><g-t>Desktop Entry</g-t><g-pb>]</g-pb>
+<g-pr>Type</g-pr><g-o>=</g-o>Application
+<g-pr>Name</g-pr><g-o>=</g-o>Night Sky
+<g-pr>Name[fr_FR]</g-pr><g-o>=</g-o>Ciel nocturne
+<g-pr>Exec</g-pr><g-o>=</g-o>stargazer --window
+
+<g-pb>[</g-pb><g-t>Service</g-t><g-pb>]</g-pb>
+<g-pr>ExecStart</g-pr><g-o>=</g-o>/usr/bin/stargazer --daemon
+<g-pr>Environment</g-pr><g-o>=</g-o><g-s>"DISPLAY=:0"</g-s>

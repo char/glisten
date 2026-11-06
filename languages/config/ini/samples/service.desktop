@@ -1,0 +1,10 @@
+# Desktop entry and unit-style assignments
+[Desktop Entry]
+Type=Application
+Name=Night Sky
+Name[fr_FR]=Ciel nocturne
+Exec=stargazer --window
+
+[Service]
+ExecStart=/usr/bin/stargazer --daemon
+Environment="DISPLAY=:0"
