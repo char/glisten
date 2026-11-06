@@ -1,0 +1,16 @@
+<g-c>;;; signal-report.el --- Count and report values -*- lexical-binding: t; -*-</g-c>
+
+<g-pb>(</g-pb><g-k>defgroup</g-k> <g-v>signal-report</g-v> <g-cb>nil</g-cb> <g-s>"A tiny example."</g-s> <g-cb>:group</g-cb> <g-ps>'</g-ps><g-v>tools</g-v><g-pb>)</g-pb>
+<g-pb>(</g-pb><g-k>defcustom</g-k> <g-v>signal-report-prefix</g-v> <g-s>"Total"</g-s> <g-s>"Text used in reports."</g-s> <g-cb>:type</g-cb> <g-ps>'</g-ps><g-v>string</g-v><g-pb>)</g-pb>
+
+<g-c>;;;###autoload</g-c>
+<g-pb>(</g-pb><g-k>defun</g-k> <g-f>signal-report</g-f> <g-pb>(</g-pb><g-f>values</g-f><g-pb>)</g-pb>
+  <g-s>"Display the sum of VALUES in the echo area."</g-s>
+  <g-pb>(</g-pb><g-k>interactive</g-k><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-k>let</g-k> <g-pb>((</g-pb><g-f>total</g-f> <g-n>0</g-n><g-pb>))</g-pb>
+    <g-pb>(</g-pb><g-k>dolist</g-k> <g-pb>(</g-pb><g-f>value</g-f> <g-v>values</g-v><g-pb>)</g-pb>
+      <g-pb>(</g-pb><g-k>setq</g-k> <g-v>total</g-v> <g-pb>(</g-pb><g-f>+</g-f> <g-v>total</g-v> <g-v>value</g-v><g-pb>)))</g-pb>
+    <g-pb>(</g-pb><g-f>message</g-f> <g-s>"%s: %d"</g-s> <g-v>signal-report-prefix</g-v> <g-v>total</g-v><g-pb>)))</g-pb>
+
+<g-pb>(</g-pb><g-k>provide</g-k> <g-ps>'</g-ps><g-v>signal-report</g-v><g-pb>)</g-pb>
+<g-c>;;; signal-report.el ends here</g-c>

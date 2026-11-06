@@ -1,0 +1,13 @@
+<g-c>;;;###autoload</g-c>
+<g-pb>(</g-pb><g-k>cl-defun</g-k> <g-f>escaped-name</g-f> <g-pb>(</g-pb><g-f>&amp;key</g-f> <g-v>x</g-v><g-pb>)</g-pb>
+  <g-s>"Escapes: </g-s><g-se>\C-x</g-se><g-s>, </g-s><g-se>\M-\C-a</g-se><g-s>, </g-s><g-se>\^A</g-se><g-s>, </g-s><g-se>\N{LATIN CAPITAL LETTER A}</g-se><g-s>, </g-s><g-se>\u0041</g-se><g-s>."</g-s>
+  <g-pb>(</g-pb><g-f>list</g-f> <g-ps>'</g-ps><g-v>symbol\ with\ spaces</g-v> <g-cb>:keyword</g-cb> <g-cb>nil</g-cb> <g-cb>t</g-cb> <g-v>x</g-v><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>defun</g-k> <g-f>marker-tests</g-f> <g-pb>()</g-pb>
+  <g-c>;; The following marker is shown; byte-counted payload skipping is not modeled.</g-c>
+  <g-ps>#@4</g-ps><g-v>abcd</g-v> <g-pb>(</g-pb><g-f>list</g-f> <g-n>#2r1</g-n> <g-n>#36rZ</g-n> <g-v>#b102</g-v> <g-v>123abc</g-v><g-pb>))</g-pb>
+<g-pb>[</g-pb><g-n>?\[</g-n> <g-n>?\]</g-n> <g-n>?\s</g-n> <g-n>?\^A</g-n> <g-s>"text </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s>"</g-s> <g-c>; vector comment</g-c>
+ <g-pb>(</g-pb><g-k>when</g-k> <g-cb>t</g-cb> <g-pb>(</g-pb><g-f>message</g-f> <g-s>"done"</g-s><g-pb>))]</g-pb>
+<g-pb>(</g-pb><g-k>defun</g-k> <g-f>escaped\ name</g-f> <g-pb>()</g-pb> <g-cb>:key\ name</g-cb><g-pb>)</g-pb>
+<g-c>#@00
+ignored (until end of file)
+</g-c>

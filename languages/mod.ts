@@ -13,6 +13,7 @@ import devicetree from "./data/devicetree/grammar.ts";
 import diff from "./data/diff/grammar.ts";
 import dockerfile from "./build/dockerfile/grammar.ts";
 import dot from "./data/dot/grammar.ts";
+import elisp from "./functional/elisp/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import go from "./managed/go/grammar.ts";
@@ -73,6 +74,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   diff,
   dockerfile,
   dot,
+  elisp,
   fjson,
   gitattributes,
   go,
