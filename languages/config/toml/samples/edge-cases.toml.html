@@ -1,0 +1,35 @@
+<g-c># Deliberately invalid and incomplete examples.</g-c>
+<g-pr>truth</g-pr> <g-o>=</g-o> trueish
+<g-pr>falsehood</g-pr> <g-o>=</g-o> false2
+<g-pr>infinity</g-pr> <g-o>=</g-o> infinity
+<g-pr>notnumber</g-pr> <g-o>=</g-o> nanosecond
+<g-pr>leading</g-pr> <g-o>=</g-o> <g-n>01</g-n>
+<g-pr>broken_float</g-pr> <g-o>=</g-o> <g-n>1</g-n>.
+<g-pr>broken_exponent</g-pr> <g-o>=</g-o> <g-n>1</g-n>e+
+<g-pr>invalid_hex</g-pr> <g-o>=</g-o> <g-n>0</g-n>xGG
+<g-pr>invalid_escape</g-pr> <g-o>=</g-o> <g-s>"\q \u12xz \u12_4 \x41 \e \uD800 \U00110000"</g-s>
+<g-pr>valid_escape</g-pr> <g-o>=</g-o> <g-s>"</g-s><g-se>\b</g-se><g-s> </g-s><g-se>\t</g-se><g-s> </g-s><g-se>\n</g-se><g-s> </g-s><g-se>\f</g-se><g-s> </g-s><g-se>\r</g-se><g-s> </g-s><g-se>\"</g-se><g-s> </g-s><g-se>\\</g-se><g-s> </g-s><g-se>\u1234</g-se><g-s> </g-s><g-se>\U0001F600</g-se><g-s> </g-s><g-se>\uD7FF</g-se><g-s> </g-s><g-se>\uE000</g-se><g-s> </g-s><g-se>\U0010FFFF</g-se><g-s>"</g-s>
+<g-pr>unterminated</g-pr> <g-o>=</g-o> <g-s>"a single-line string</g-s>
+<g-pr>recovered</g-pr> <g-o>=</g-o> <g-s>"next line"</g-s>
+<g-pr>'unclosed key = 1</g-pr>
+<g-pr>next-key</g-pr> <g-o>=</g-o> <g-n>2</g-n>
+<g-pb>[</g-pb><g-pr>unfinished</g-pr><g-pd>.</g-pd><g-pr>header</g-pr>
+<g-pr>normal</g-pr> <g-o>=</g-o> <g-n>3</g-n>
+<g-pb>[[</g-pb><g-pr>unfinished</g-pr><g-pd>.</g-pd><g-pr>array</g-pr>
+<g-pr>another</g-pr> <g-o>=</g-o> <g-n>4</g-n>
+<g-pr>array</g-pr> <g-o>=</g-o> <g-pb>[</g-pb>
+  <g-n>1</g-n><g-pd>,</g-pd>
+  <g-c># nested comments</g-c>
+  <g-pb>{</g-pb> <g-pr>x</g-pr> <g-o>=</g-o> <g-n>2</g-n><g-pd>,</g-pd> <g-pr>y</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-n>3</g-n><g-pd>,</g-pd> <g-n>4</g-n><g-pb>]</g-pb> <g-pb>}</g-pb><g-pd>,</g-pd>
+  <g-n>5</g-n><g-pd>,</g-pd>
+<g-pb>]</g-pb>
+<g-pr>"dot.key"</g-pr><g-pd>.</g-pd><g-pr>part</g-pr> <g-o>=</g-o> <g-s>'value'</g-s>
+<g-pr>quoted</g-pr> <g-o>=</g-o> <g-s>"# not a comment"</g-s>
+<g-pr>regex</g-pr> <g-o>=</g-o> <g-s>'\n is literal'</g-s>
+<g-pr>date</g-pr> <g-o>=</g-o> <g-n>2024-02-31T99:99:99Z</g-n>
+<g-pr>time</g-pr> <g-o>=</g-o> <g-n>12:34:56.7</g-n>
+<g-c># The last multiline literal deliberately never closes.</g-c>
+<g-pr>tail</g-pr> <g-o>=</g-o> <g-s>'''
+  """ and # are text here
+  another = 123
+</g-s>

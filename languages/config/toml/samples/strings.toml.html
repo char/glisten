@@ -1,0 +1,33 @@
+<g-c># Basic and literal strings have different escape rules.</g-c>
+<g-pr>basic</g-pr> <g-o>=</g-o> <g-s>"A </g-s><g-se>\"</g-se><g-s>bright</g-s><g-se>\"</g-se><g-s> night</g-s><g-se>\\</g-se><g-s>morning"</g-s>
+<g-pr>controls</g-pr> <g-o>=</g-o> <g-s>"</g-s><g-se>\b\t\n\f\r</g-se><g-s>"</g-s>
+<g-pr>unicode</g-pr> <g-o>=</g-o> <g-s>"</g-s><g-se>\u00E9</g-se><g-s> </g-s><g-se>\U0001F319</g-se><g-s>"</g-s>
+<g-pr>literal</g-pr> <g-o>=</g-o> <g-s>'C:\Users\zoe\sky'</g-s>
+<g-pr>regex</g-pr> <g-o>=</g-o> <g-s>'&lt;\i\c*\s*&gt;'</g-s>
+<g-pr>empty</g-pr> <g-o>=</g-o> <g-s>""</g-s>
+<g-pr>empty_literal</g-pr> <g-o>=</g-o> <g-s>''</g-s>
+<g-pr>"quoted\"key"</g-pr> <g-o>=</g-o> <g-s>"value"</g-s>
+<g-pr>'literal.key'</g-pr> <g-o>=</g-o> <g-s>"other"</g-s>
+
+<g-pr>poem</g-pr> <g-o>=</g-o> <g-s>"""
+The moon is bright,
+雪 falls quietly.
+A continued line joins </g-s><g-se>\
+</g-se><g-s>  the next line.
+"""</g-s>
+
+<g-pr>script</g-pr> <g-o>=</g-o> <g-s>'''
+echo "hello $USER"
+printf '%s\n' 'stars'
+'''</g-s>
+
+<g-pb>[</g-pb><g-pr>"station names"</g-pr><g-pd>.</g-pd><g-pr>'north.west'</g-pr><g-pb>]</g-pb>
+<g-pr>description</g-pr> <g-o>=</g-o> <g-s>"A station with a dotted name"</g-s>
+<g-pr>coordinates</g-pr> <g-o>=</g-o> <g-pb>[</g-pb>
+  <g-n>51.5</g-n><g-pd>,</g-pd> <g-c># latitude</g-c>
+  <g-n>-0.12</g-n><g-pd>,</g-pd> <g-c># longitude</g-c>
+<g-pb>]</g-pb>
+<g-pr>calibration</g-pr> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>offset</g-pr> <g-o>=</g-o> <g-n>+0.1</g-n><g-pd>,</g-pd> <g-pr>gain</g-pr> <g-o>=</g-o> <g-n>1e0</g-n> <g-pb>}</g-pb>
+<g-pr>updated</g-pr> <g-o>=</g-o> <g-n>1979-05-27T07:32:00-07:00</g-n>
+<g-pr>next</g-pr> <g-o>=</g-o> <g-n>1979-05-27t07:32:00z</g-n>
+<g-pr>special</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-n>inf</g-n><g-pd>,</g-pd> <g-n>+inf</g-n><g-pd>,</g-pd> <g-n>-inf</g-n><g-pd>,</g-pd> <g-n>nan</g-n><g-pd>,</g-pd> <g-n>+nan</g-n><g-pd>,</g-pd> <g-n>-nan</g-n><g-pb>]</g-pb>

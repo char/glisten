@@ -1,0 +1,33 @@
+# Basic and literal strings have different escape rules.
+basic = "A \"bright\" night\\morning"
+controls = "\b\t\n\f\r"
+unicode = "\u00E9 \U0001F319"
+literal = 'C:\Users\zoe\sky'
+regex = '<\i\c*\s*>'
+empty = ""
+empty_literal = ''
+"quoted\"key" = "value"
+'literal.key' = "other"
+
+poem = """
+The moon is bright,
+雪 falls quietly.
+A continued line joins \
+  the next line.
+"""
+
+script = '''
+echo "hello $USER"
+printf '%s\n' 'stars'
+'''
+
+["station names".'north.west']
+description = "A station with a dotted name"
+coordinates = [
+  51.5, # latitude
+  -0.12, # longitude
+]
+calibration = { offset = +0.1, gain = 1e0 }
+updated = 1979-05-27T07:32:00-07:00
+next = 1979-05-27t07:32:00z
+special = [inf, +inf, -inf, nan, +nan, -nan]

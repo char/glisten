@@ -1,0 +1,36 @@
+# Observatory configuration
+name = "Sky journal"
+locale = '日本語'
+enabled = true
+archived = false
+retries = 3
+interval = 1_000
+scale = -2.5e+3
+mask = 0xDEAD_BEEF
+mode = 0o755
+bits = 0b1010_0011
+start = 2024-05-17T09:30:00Z
+local-date = 2024-05-17
+local-time = 09:30:00.125
+local-datetime = 2024-05-17 09:30:00
+limits = [1, 2, 3]
+labels = ["north", "南", "west"]
+point = { x = 1.0, y = -0.25, visible = true }
+
+[server]
+host = "example.test"
+port = 8080
+"display name" = "Observatory"
+'quoted.key' = 'literal'
+
+[server.tls]
+enabled = true
+certificate = '/etc/sky/cert.pem'
+
+[[stations]]
+name = "north"
+latitude = 51.5
+
+[[stations]]
+name = "south"
+latitude = -33.86

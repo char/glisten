@@ -1,0 +1,36 @@
+<g-c># Observatory configuration</g-c>
+<g-pr>name</g-pr> <g-o>=</g-o> <g-s>"Sky journal"</g-s>
+<g-pr>locale</g-pr> <g-o>=</g-o> <g-s>'日本語'</g-s>
+<g-pr>enabled</g-pr> <g-o>=</g-o> <g-cb>true</g-cb>
+<g-pr>archived</g-pr> <g-o>=</g-o> <g-cb>false</g-cb>
+<g-pr>retries</g-pr> <g-o>=</g-o> <g-n>3</g-n>
+<g-pr>interval</g-pr> <g-o>=</g-o> <g-n>1_000</g-n>
+<g-pr>scale</g-pr> <g-o>=</g-o> <g-n>-2.5e+3</g-n>
+<g-pr>mask</g-pr> <g-o>=</g-o> <g-n>0xDEAD_BEEF</g-n>
+<g-pr>mode</g-pr> <g-o>=</g-o> <g-n>0o755</g-n>
+<g-pr>bits</g-pr> <g-o>=</g-o> <g-n>0b1010_0011</g-n>
+<g-pr>start</g-pr> <g-o>=</g-o> <g-n>2024-05-17T09:30:00Z</g-n>
+<g-pr>local-date</g-pr> <g-o>=</g-o> <g-n>2024-05-17</g-n>
+<g-pr>local-time</g-pr> <g-o>=</g-o> <g-n>09:30:00.125</g-n>
+<g-pr>local-datetime</g-pr> <g-o>=</g-o> <g-n>2024-05-17 09:30:00</g-n>
+<g-pr>limits</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>]</g-pb>
+<g-pr>labels</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-s>"north"</g-s><g-pd>,</g-pd> <g-s>"南"</g-s><g-pd>,</g-pd> <g-s>"west"</g-s><g-pb>]</g-pb>
+<g-pr>point</g-pr> <g-o>=</g-o> <g-pb>{</g-pb> <g-pr>x</g-pr> <g-o>=</g-o> <g-n>1.0</g-n><g-pd>,</g-pd> <g-pr>y</g-pr> <g-o>=</g-o> <g-n>-0.25</g-n><g-pd>,</g-pd> <g-pr>visible</g-pr> <g-o>=</g-o> <g-cb>true</g-cb> <g-pb>}</g-pb>
+
+<g-pb>[</g-pb><g-pr>server</g-pr><g-pb>]</g-pb>
+<g-pr>host</g-pr> <g-o>=</g-o> <g-s>"example.test"</g-s>
+<g-pr>port</g-pr> <g-o>=</g-o> <g-n>8080</g-n>
+<g-pr>"display name"</g-pr> <g-o>=</g-o> <g-s>"Observatory"</g-s>
+<g-pr>'quoted.key'</g-pr> <g-o>=</g-o> <g-s>'literal'</g-s>
+
+<g-pb>[</g-pb><g-pr>server</g-pr><g-pd>.</g-pd><g-pr>tls</g-pr><g-pb>]</g-pb>
+<g-pr>enabled</g-pr> <g-o>=</g-o> <g-cb>true</g-cb>
+<g-pr>certificate</g-pr> <g-o>=</g-o> <g-s>'/etc/sky/cert.pem'</g-s>
+
+<g-pb>[[</g-pb><g-pr>stations</g-pr><g-pb>]]</g-pb>
+<g-pr>name</g-pr> <g-o>=</g-o> <g-s>"north"</g-s>
+<g-pr>latitude</g-pr> <g-o>=</g-o> <g-n>51.5</g-n>
+
+<g-pb>[[</g-pb><g-pr>stations</g-pr><g-pb>]]</g-pb>
+<g-pr>name</g-pr> <g-o>=</g-o> <g-s>"south"</g-s>
+<g-pr>latitude</g-pr> <g-o>=</g-o> <g-n>-33.86</g-n>

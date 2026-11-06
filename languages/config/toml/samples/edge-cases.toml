@@ -1,0 +1,34 @@
+# Deliberately invalid and incomplete examples.
+truth = trueish
+falsehood = false2
+infinity = infinity
+notnumber = nanosecond
+leading = 01
+broken_float = 1.
+broken_exponent = 1e+
+invalid_hex = 0xGG
+invalid_escape = "\q \u12xz \u12_4 \x41 \e \uD800 \U00110000"
+valid_escape = "\b \t \n \f \r \" \\ \u1234 \U0001F600 \uD7FF \uE000 \U0010FFFF"
+unterminated = "a single-line string
+recovered = "next line"
+'unclosed key = 1
+next-key = 2
+[unfinished.header
+normal = 3
+[[unfinished.array
+another = 4
+array = [
+  1,
+  # nested comments
+  { x = 2, y = [3, 4] },
+  5,
+]
+"dot.key".part = 'value'
+quoted = "# not a comment"
+regex = '\n is literal'
+date = 2024-02-31T99:99:99Z
+time = 12:34:56.7
+# The last multiline literal deliberately never closes.
+tail = '''
+  """ and # are text here
+  another = 123
