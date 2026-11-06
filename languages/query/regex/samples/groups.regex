@@ -1,0 +1,3 @@
+^(?<word>[A-Za-z]+)(?:\s+\k<word>)+$
+(?<=\bfoo)(bar|baz)(?!quux)
+(?i:abc)(?-i:XYZ)(?ims-i:case)
