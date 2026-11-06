@@ -24,6 +24,7 @@ import {
   setState,
   token,
   union,
+  type Arm,
   type State,
 } from "#/grammar/mod.ts";
 
@@ -58,278 +59,327 @@ const directives = [
   "r",
   "load",
 ];
-const wordCases = [
-  ...declarationWords.map((text) => ({
-    text,
-    then: [paint("keyword" as const), setState("declaration")],
-  })),
-  ...keywordTable(
-    keywords.filter((word) => !declarationWords.includes(word)),
-    "keyword",
-  ),
-  ...keywordTable(types, "type"),
-  ...keywordTable(["true", "false", "nothing"], "constant.builtin"),
-];
-const suffix = optional(choice([byte("uU"), byte("sSiIlL")], [byte("sSiIlLdDfFrR%&@!#$")]));
-const number = on(
-  "&0123456789",
-  choice(
-    [literal("&"), byte("hH"), bytes(hex)],
-    [literal("&"), byte("oO"), bytes(union("01234567", "_"))],
-    [literal("&"), byte("bB"), bytes(union("01", "_"))],
-    [
-      bytes(digits),
-      optional(literal("."), byte(digit), bytes(digits, { min: 0 })),
-      optional(byte("eE"), optional(byte("+-")), bytes(digits)),
-    ],
-  ),
-  suffix,
-  paint("number"),
-);
-const comments = [
-  token("'", "comment", pushState("comment")),
-  token("’", "comment", pushState("comment")),
-];
-const date = on("#", literal("#"), bytes(except(all, "#\r\n")), literal("#"), paint("string"));
-const attribute = on(
-  "<",
-  literal("<"),
-  lookahead(bytes(" \t", { min: 0 }), ...ident, bytes(" \t", { min: 0 }), byte("(,:>")),
-  paint("punctuation.special"),
-  pushState("attribute"),
-);
-const continuation = on(
-  "_",
-  literal("_"),
-  lookahead(bytes(" \t", { min: 0 }), byte("\r\n")),
-  paint("punctuation.special"),
-  setState("continuedLine"),
-);
-const code = [
-  ...comments,
-  continuation,
-  token('$"', "string", pushState("interpolated")),
-  token('"', "string", pushState("string")),
-  date,
-  number,
-  token("[", "variable", pushState("escapedIdentifier")),
-  on(
-    start,
-    ...ident,
-    lookahead(bytes(" \t", { min: 0 }), literal("(")),
-    classify(wordCases, [paint("function")], { caseless: true }),
-  ),
-  on(start, ...ident, classify(wordCases, [paint("variable")], { caseless: true })),
-  ...[
-    "<=",
-    ">=",
-    "<>",
-    ":=",
-    "+=",
-    "-=",
-    "*=",
-    "/=",
-    "\\=",
-    "^=",
-    "&=",
-    "<<=",
-    ">>=",
-    "<<",
-    ">>",
-  ].map((op) => token(op, "operator")),
-  token(oneOf("+-*/\\^&=<>"), "operator"),
-  token(oneOf("(){}"), "punctuation.bracket"),
-  token(oneOf(".,;"), "punctuation.delimiter"),
-];
+export const basicKeywords =
+  `and as byref byval call case class const dim do each else elseif end enum erase error event exit explicit for friend function get global gosub goto if in is let lib like loop me mod new next not on option optional or paramarray preserve private property public redim rem resume return select set static step stop sub then to type until variant wend while with withevents xor`.split(
+    /\s+/,
+  );
 
-export default defineGrammar({
-  name: "vb",
-  aliases: ["vbnet", "vb.net"],
-  initial: "statementStart",
-  states: {
-    statementStart: {
-      style: "plain",
-      arms: [
-        token("\uFEFF", "plain"),
-        on(" \t", bytes(" \t"), paint("plain")),
-        on(
-          "#",
-          literal("#"),
-          choice(
-            ...directives.map((word) =>
-              [...word].map((letter) => byte(letter + letter.toUpperCase())),
+export type VbExtension = (base: {
+  all: typeof all;
+  digit: typeof digit;
+  start: typeof start;
+  rest: typeof rest;
+  ident: typeof ident;
+}) => {
+  name: string;
+  aliases?: readonly string[];
+  keywords: readonly string[];
+  types: readonly string[];
+  builtins?: readonly string[];
+  declarationWords?: readonly string[];
+  directives?: readonly string[];
+  classic?: boolean;
+  number?: Arm;
+  beforeIdentifiers?: readonly Arm[];
+  statementLeading?: readonly Arm[];
+  declarationLeading?: readonly Arm[];
+  states?: Record<string, State>;
+};
+
+export function vb(extension?: VbExtension) {
+  const ext = extension?.({ all, digit, start, rest, ident });
+  const words = ext?.keywords ?? keywords;
+  const languageTypes = ext?.types ?? types;
+  const declarations = ext?.declarationWords ?? declarationWords;
+  const wordCases = [
+    ...declarations.map((text) => ({
+      text,
+      then: [paint("keyword" as const), setState("declaration")],
+    })),
+    ...keywordTable(
+      words.filter((word) => !declarations.includes(word)),
+      "keyword",
+    ),
+    ...keywordTable(languageTypes, "type"),
+    ...keywordTable(["true", "false", "nothing", ...(ext?.builtins ?? [])], "constant.builtin"),
+  ];
+  const suffix = optional(choice([byte("uU"), byte("sSiIlL")], [byte("sSiIlLdDfFrR%&@!#$")]));
+  const number = on(
+    "&0123456789",
+    choice(
+      [literal("&"), byte("hH"), bytes(hex)],
+      [literal("&"), byte("oO"), bytes(union("01234567", "_"))],
+      [literal("&"), byte("bB"), bytes(union("01", "_"))],
+      [
+        bytes(digits),
+        optional(literal("."), byte(digit), bytes(digits, { min: 0 })),
+        optional(byte("eE"), optional(byte("+-")), bytes(digits)),
+      ],
+    ),
+    suffix,
+    paint("number"),
+  );
+  const comments = [
+    token("'", "comment", pushState("comment")),
+    token("’", "comment", pushState("comment")),
+  ];
+  const date = on("#", literal("#"), bytes(except(all, "#\r\n")), literal("#"), paint("string"));
+  const attribute = on(
+    "<",
+    literal("<"),
+    lookahead(bytes(" \t", { min: 0 }), ...ident, bytes(" \t", { min: 0 }), byte("(,:>")),
+    paint("punctuation.special"),
+    pushState("attribute"),
+  );
+  const continuation = on(
+    "_",
+    literal("_"),
+    lookahead(bytes(" \t", { min: 0 }), byte("\r\n")),
+    paint("punctuation.special"),
+    setState("continuedLine"),
+  );
+  const code = [
+    ...comments,
+    continuation,
+    ...(ext?.classic ? [] : [token('$"', "string", pushState("interpolated"))]),
+    token('"', "string", pushState("string")),
+    date,
+    ext?.number ?? number,
+    ...(ext?.classic ? [] : [token("[", "variable", pushState("escapedIdentifier"))]),
+    ...(ext?.beforeIdentifiers ?? []),
+    on(
+      start,
+      ...ident,
+      lookahead(bytes(" \t", { min: 0 }), literal("(")),
+      classify(wordCases, [paint("function")], { caseless: true }),
+    ),
+    on(start, ...ident, classify(wordCases, [paint("variable")], { caseless: true })),
+    ...(ext?.classic
+      ? ["<=", ">=", "<>", ":="]
+      : [
+          "<=",
+          ">=",
+          "<>",
+          ":=",
+          "+=",
+          "-=",
+          "*=",
+          "/=",
+          "\\=",
+          "^=",
+          "&=",
+          "<<=",
+          ">>=",
+          "<<",
+          ">>",
+        ]
+    ).map((op) => token(op, "operator")),
+    token(oneOf("+-*/\\^&=<>"), "operator"),
+    token(oneOf(ext?.classic ? "()" : "(){}"), "punctuation.bracket"),
+    token(oneOf(".,;"), "punctuation.delimiter"),
+  ];
+
+  return defineGrammar({
+    name: ext?.name ?? "vb",
+    aliases: ext ? ext.aliases : ["vbnet", "vb.net"],
+    initial: "statementStart",
+    states: {
+      statementStart: {
+        style: "plain",
+        arms: [
+          token("\uFEFF", "plain"),
+          on(" \t", bytes(" \t"), paint("plain")),
+          ...(ext?.statementLeading ?? []),
+          on(
+            "#",
+            literal("#"),
+            choice(
+              ...(ext?.directives ?? directives).map((word) =>
+                [...word].map((letter) => byte(letter + letter.toUpperCase())),
+              ),
+            ),
+            notNext(rest),
+            paint("keyword"),
+            setState("directive"),
+          ),
+          on(
+            "rR",
+            byte("rR"),
+            byte("eE"),
+            byte("mM"),
+            notNext(rest),
+            choice([lookahead(byte(" \t"))], [lineEnd()]),
+            paint("comment"),
+            pushState("comment"),
+          ),
+          ...(ext?.classic ? [] : [attribute]),
+          token("\n", "plain"),
+          token("\r", "plain"),
+        ],
+        otherwise: [setState("code")],
+      },
+      directive: {
+        style: "plain",
+        arms: [
+          token("\n", "plain", setState("statementStart")),
+          token("\r", "plain", setState("statementStart")),
+          on(
+            "rRwWeE",
+            choice(
+              ...["region", "warning", "externalsource", "externalchecksum"].map((word) =>
+                [...word].map((letter) => byte(letter + letter.toUpperCase())),
+              ),
+            ),
+            notNext(rest),
+            paint("keyword"),
+          ),
+          ...code,
+        ],
+      },
+      code: {
+        style: "plain",
+        arms: [
+          token("\n", "plain", setState("statementStart")),
+          token("\r", "plain", setState("statementStart")),
+          token(":", "punctuation.delimiter", setState("statementStart")),
+          ...code,
+        ],
+      },
+      declaration: {
+        style: "plain",
+        arms: [
+          token("\n", "plain", setState("statementStart")),
+          token("\r", "plain", setState("statementStart")),
+          token(":", "punctuation.delimiter", setState("statementStart")),
+          token("(", "punctuation.bracket", pushState("parameterStart")),
+          ...(ext?.declarationLeading ?? []),
+          ...code,
+        ],
+      },
+      parameterStart: {
+        style: "plain",
+        arms: [
+          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          ...(ext?.classic ? [] : [attribute]),
+          token(")", "punctuation.bracket", popState()),
+          on(
+            start,
+            ...ident,
+            classify(
+              [
+                ...keywordTable(
+                  ext?.classic
+                    ? ["byval", "byref", "optional", "paramarray"]
+                    : ["byval", "byref", "optional", "paramarray", "of"],
+                  "keyword",
+                ),
+                ...languageTypes.map((text) => ({
+                  text,
+                  then: [paint("type" as const), setState("parameter")],
+                })),
+              ],
+              [paint("variable"), setState("parameter")],
+              { caseless: true },
             ),
           ),
-          notNext(rest),
-          paint("keyword"),
-          setState("directive"),
-        ),
-        on(
-          "rR",
-          byte("rR"),
-          byte("eE"),
-          byte("mM"),
-          notNext(rest),
-          choice([lookahead(byte(" \t"))], [lineEnd()]),
-          paint("comment"),
-          pushState("comment"),
-        ),
-        attribute,
-        token("\n", "plain"),
-        token("\r", "plain"),
-      ],
-      otherwise: [setState("code")],
-    },
-    directive: {
-      style: "plain",
-      arms: [
-        token("\n", "plain", setState("statementStart")),
-        token("\r", "plain", setState("statementStart")),
-        on(
-          "rRwWeE",
-          choice(
-            ...["region", "warning", "externalsource", "externalchecksum"].map((word) =>
-              [...word].map((letter) => byte(letter + letter.toUpperCase())),
-            ),
-          ),
-          notNext(rest),
-          paint("keyword"),
-        ),
-        ...code,
-      ],
-    },
-    code: {
-      style: "plain",
-      arms: [
-        token("\n", "plain", setState("statementStart")),
-        token("\r", "plain", setState("statementStart")),
-        token(":", "punctuation.delimiter", setState("statementStart")),
-        ...code,
-      ],
-    },
-    declaration: {
-      style: "plain",
-      arms: [
-        token("\n", "plain", setState("statementStart")),
-        token("\r", "plain", setState("statementStart")),
-        token(":", "punctuation.delimiter", setState("statementStart")),
-        token("(", "punctuation.bracket", pushState("parameterStart")),
-        ...code,
-      ],
-    },
-    parameterStart: {
-      style: "plain",
-      arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        attribute,
-        token(")", "punctuation.bracket", popState()),
-        on(
-          start,
-          ...ident,
-          classify(
-            [
-              ...keywordTable(["byval", "byref", "optional", "paramarray", "of"], "keyword"),
-              ...types.map((text) => ({
-                text,
-                then: [paint("type" as const), setState("parameter")],
-              })),
-            ],
-            [paint("variable"), setState("parameter")],
-            { caseless: true },
-          ),
-        ),
-      ],
-      otherwise: [setState("parameter")],
-    },
-    parameter: {
-      style: "plain",
-      arms: [
-        token(",", "punctuation.delimiter", setState("parameterStart")),
-        token(")", "punctuation.bracket", popState()),
-        token("(", "punctuation.bracket", pushState("parameterNested")),
-        ...code,
-      ],
-    },
-    parameterNested: {
-      style: "plain",
-      arms: [
-        token("(", "punctuation.bracket", pushState("parameterNested")),
-        token(")", "punctuation.bracket", popState()),
-        ...code,
-      ],
-    },
-    attribute: {
-      style: "plain",
-      arms: [
-        token(">", "punctuation.special", popState()),
-        token("(", "punctuation.bracket", pushState("attributeNested")),
-        token('"', "string", pushState("string")),
-        on(start, ...ident, paint("attribute")),
-        number,
-        token(oneOf(",:."), "punctuation.delimiter"),
-        token(oneOf("=+-*/"), "operator"),
-      ],
-    },
-    attributeNested: {
-      style: "plain",
-      arms: [
-        token("(", "punctuation.bracket", pushState("attributeNested")),
-        token(")", "punctuation.bracket", popState()),
-        ...code,
-      ],
-    },
-    continuedLine: {
-      style: "plain",
-      arms: [
-        on(" \t", bytes(" \t"), paint("plain")),
-        on("\r\n", choice([literal("\r\n")], [byte("\r\n")]), paint("plain"), setState("code")),
-      ],
-      otherwise: [setState("code")],
-    },
-    interpolated: {
-      style: "string",
-      arms: [
-        token('""', "string.escape"),
-        token("{{", "string.escape"),
-        token("}}", "string.escape"),
-        token("{", "punctuation.special", pushState("interpolation")),
-        token('"', "string", popState()),
-        redispatch("\r\n", popState()),
-      ],
-    },
-    interpolation: {
-      style: "plain",
-      arms: [
-        token("}", "punctuation.special", popState()),
-        token("{", "punctuation.bracket", pushState("interpolationNested")),
-        token(":", "punctuation.delimiter", setState("format")),
-        ...code,
-      ],
-    },
-    interpolationNested: {
-      style: "plain",
-      arms: [
-        token("}", "punctuation.bracket", popState()),
-        token("{", "punctuation.bracket", pushState("interpolationNested")),
-        ...code,
-      ],
-    },
-    format: {
-      style: "string",
-      arms: [token("}", "punctuation.special", popState()), redispatch("\r\n", popState())],
-    },
-    string: {
-      style: "string",
-      arms: [
-        token('""', "string.escape"),
-        on('"', literal('"'), optional(byte("cC")), paint("string"), popState()),
-        redispatch("\r\n", popState()),
-      ],
-    },
-    escapedIdentifier: {
-      style: "variable",
-      arms: [token("]", "variable", popState()), redispatch("\r\n", popState())],
-    },
-    comment: { style: "comment", arms: [redispatch("\r\n", popState())] },
-  } satisfies Record<string, State>,
-});
+        ],
+        otherwise: [setState("parameter")],
+      },
+      parameter: {
+        style: "plain",
+        arms: [
+          token(",", "punctuation.delimiter", setState("parameterStart")),
+          token(")", "punctuation.bracket", popState()),
+          token("(", "punctuation.bracket", pushState("parameterNested")),
+          ...code,
+        ],
+      },
+      parameterNested: {
+        style: "plain",
+        arms: [
+          token("(", "punctuation.bracket", pushState("parameterNested")),
+          token(")", "punctuation.bracket", popState()),
+          ...code,
+        ],
+      },
+      attribute: {
+        style: "plain",
+        arms: [
+          token(">", "punctuation.special", popState()),
+          token("(", "punctuation.bracket", pushState("attributeNested")),
+          token('"', "string", pushState("string")),
+          on(start, ...ident, paint("attribute")),
+          number,
+          token(oneOf(",:."), "punctuation.delimiter"),
+          token(oneOf("=+-*/"), "operator"),
+        ],
+      },
+      attributeNested: {
+        style: "plain",
+        arms: [
+          token("(", "punctuation.bracket", pushState("attributeNested")),
+          token(")", "punctuation.bracket", popState()),
+          ...code,
+        ],
+      },
+      continuedLine: {
+        style: "plain",
+        arms: [
+          on(" \t", bytes(" \t"), paint("plain")),
+          on("\r\n", choice([literal("\r\n")], [byte("\r\n")]), paint("plain"), setState("code")),
+        ],
+        otherwise: [setState("code")],
+      },
+      interpolated: {
+        style: "string",
+        arms: [
+          token('""', "string.escape"),
+          token("{{", "string.escape"),
+          token("}}", "string.escape"),
+          token("{", "punctuation.special", pushState("interpolation")),
+          token('"', "string", popState()),
+          redispatch("\r\n", popState()),
+        ],
+      },
+      interpolation: {
+        style: "plain",
+        arms: [
+          token("}", "punctuation.special", popState()),
+          token("{", "punctuation.bracket", pushState("interpolationNested")),
+          token(":", "punctuation.delimiter", setState("format")),
+          ...code,
+        ],
+      },
+      interpolationNested: {
+        style: "plain",
+        arms: [
+          token("}", "punctuation.bracket", popState()),
+          token("{", "punctuation.bracket", pushState("interpolationNested")),
+          ...code,
+        ],
+      },
+      format: {
+        style: "string",
+        arms: [token("}", "punctuation.special", popState()), redispatch("\r\n", popState())],
+      },
+      string: {
+        style: "string",
+        arms: [
+          token('""', "string.escape"),
+          ...(ext?.classic
+            ? [token('"', "string", popState())]
+            : [on('"', literal('"'), optional(byte("cC")), paint("string"), popState())]),
+          redispatch("\r\n", popState()),
+        ],
+      },
+      escapedIdentifier: {
+        style: "variable",
+        arms: [token("]", "variable", popState()), redispatch("\r\n", popState())],
+      },
+      comment: { style: "comment", arms: [redispatch("\r\n", popState())] },
+      ...(ext?.states ?? {}),
+    } satisfies Record<string, State>,
+  });
+}
+
+export default vb();

@@ -1,0 +1,29 @@
+<g-v>VERSION</g-v> <g-n>5.00</g-n>
+<g-v>Begin</g-v> <g-v>VB</g-v><g-pd>.</g-pd><g-v>Form</g-v> <g-v>MainForm</g-v>
+   <g-v>Caption</g-v> <g-o>=</g-o> <g-s>"Example"</g-s>
+<g-k>End</g-k>
+<g-k>Attribute</g-k> <g-at>VB_Name</g-at> <g-o>=</g-o> <g-s>"MainForm"</g-s>
+<g-k>Option</g-k> <g-k>Compare</g-k> <g-v>Text</g-v>
+
+<g-k>Private</g-k> <g-k>Type</g-k> <g-v>Point</g-v>
+    <g-v>X</g-v> <g-k>As</g-k> <g-t>Long</g-t>
+    <g-v>Y</g-v> <g-k>As</g-k> <g-t>Long</g-t>
+<g-k>End</g-k> <g-k>Type</g-k>
+
+<g-k>Public</g-k> <g-k>Sub</g-k> <g-f>Visit</g-f><g-pb>(</g-pb><g-k>ByVal</g-k> <g-v>items</g-v> <g-k>As</g-k> <g-v>Collection</g-v><g-pb>)</g-pb>
+    <g-k>Dim</g-k> <g-v>item</g-v> <g-k>As</g-k> <g-t>Variant</g-t>
+<g-l>10</g-l>  <g-k>For</g-k> <g-k>Each</g-k> <g-v>item</g-v> <g-k>In</g-k> <g-v>items</g-v>
+        <g-k>With</g-k> <g-v>item</g-v>
+            <g-k>Select</g-k> <g-k>Case</g-k> <g-pd>.</g-pd><g-v>Value</g-v>
+                <g-k>Case</g-k> <g-n>&amp;HFF</g-n><g-pd>:</g-pd> <g-k>GoSub</g-k> <g-v>LogItem</g-v>
+                <g-k>Case</g-k> <g-n>&amp;O77</g-n><g-pd>:</g-pd> <g-v>Debug</g-v><g-pd>.</g-pd><g-v>Print</g-v> <g-s>"octal"</g-s>
+            <g-k>End</g-k> <g-k>Select</g-k>
+        <g-k>End</g-k> <g-k>With</g-k>
+    <g-k>Next</g-k> <g-v>item</g-v>
+    <g-k>Exit</g-k> <g-k>Sub</g-k>
+<g-l>LogItem</g-l><g-pd>:</g-pd>
+    <g-c>Rem Legacy subroutine</g-c>
+    <g-v>Debug</g-v><g-pd>.</g-pd><g-v>Print</g-v> <g-v>item</g-v><g-pd>.</g-pd><g-v>Value</g-v> <g-ps>_</g-ps>
+        <g-o>&amp;</g-o> <g-s>"!"</g-s>
+    <g-k>Return</g-k>
+<g-k>End</g-k> <g-k>Sub</g-k>

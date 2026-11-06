@@ -1,0 +1,16 @@
+<g-v>VERSION</g-v> <g-n>1.0</g-n> <g-v>CLASS</g-v>
+<g-k>Attribute</g-k> <g-at>VB_Name</g-at> <g-o>=</g-o> <g-s>"Customer"</g-s>
+<g-k>Option</g-k> <g-k>Explicit</g-k>
+<g-k>Private</g-k> <g-v>mName</g-v> <g-k>As</g-k> <g-t>String</g-t>
+
+<g-k>Public</g-k> <g-k>Property</g-k> <g-k>Get</g-k> <g-f>Name</g-f><g-pb>()</g-pb> <g-k>As</g-k> <g-t>String</g-t>
+    <g-v>Name</g-v> <g-o>=</g-o> <g-v>mName</g-v>
+<g-k>End</g-k> <g-k>Property</g-k>
+
+<g-k>Public</g-k> <g-k>Property</g-k> <g-k>Let</g-k> <g-f>Name</g-f><g-pb>(</g-pb><g-k>ByVal</g-k> <g-v>Value</g-v> <g-k>As</g-k> <g-t>String</g-t><g-pb>)</g-pb>
+    <g-v>mName</g-v> <g-o>=</g-o> <g-v>Value</g-v>
+<g-k>End</g-k> <g-k>Property</g-k>
+
+<g-k>Public</g-k> <g-k>Function</g-k> <g-f>DisplayName$</g-f><g-pb>()</g-pb>
+    <g-v>DisplayName</g-v> <g-o>=</g-o> <g-v>mName</g-v> <g-o>&amp;</g-o> <g-s>" since "</g-s> <g-o>&amp;</g-o> <g-s>#1/1/2020#</g-s>
+<g-k>End</g-k> <g-k>Function</g-k>

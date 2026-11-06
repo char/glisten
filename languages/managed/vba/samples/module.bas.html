@@ -1,0 +1,20 @@
+<g-k>Attribute</g-k> <g-at>VB_Name</g-at> <g-o>=</g-o> <g-s>"Utilities"</g-s>
+<g-k>Option</g-k> <g-k>Explicit</g-k>
+<g-k>Option</g-k> <g-k>Base</g-k> <g-n>1</g-n>
+
+<g-k>#If</g-k> <g-v>VBA7</g-v> <g-k>Then</g-k>
+<g-k>Private</g-k> <g-k>Declare</g-k> <g-k>PtrSafe</g-k> <g-k>Function</g-k> <g-f>GetTickCount</g-f> <g-k>Lib</g-k> <g-s>"kernel32"</g-s> <g-pb>()</g-pb> <g-k>As</g-k> <g-t>Long</g-t>
+<g-k>#Else</g-k>
+<g-k>Private</g-k> <g-k>Declare</g-k> <g-k>Function</g-k> <g-f>GetTickCount</g-f> <g-k>Lib</g-k> <g-s>"kernel32"</g-s> <g-pb>()</g-pb> <g-k>As</g-k> <g-t>Long</g-t>
+<g-k>#End</g-k> <g-k>If</g-k>
+
+<g-k>Public</g-k> <g-k>Sub</g-k> <g-f>Main</g-f><g-pb>()</g-pb>
+    <g-k>Dim</g-k> <g-f>names</g-f><g-pb>()</g-pb> <g-k>As</g-k> <g-t>String</g-t>
+    <g-k>ReDim</g-k> <g-k>Preserve</g-k> <g-f>names</g-f><g-pb>(</g-pb><g-n>10</g-n><g-pb>)</g-pb>
+    <g-k>On</g-k> <g-k>Error</g-k> <g-k>GoTo</g-k> <g-v>Failed</g-v>
+    <g-f>names</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pb>)</g-pb> <g-o>=</g-o> <g-s>"Hello </g-s><g-se>""</g-se><g-s>world</g-s><g-se>""</g-se><g-s>"</g-s>
+    <g-k>Exit</g-k> <g-k>Sub</g-k>
+<g-l>Failed</g-l><g-pd>:</g-pd>
+    <g-v>Debug</g-v><g-pd>.</g-pd><g-v>Print</g-v> <g-v>Err</g-v><g-pd>.</g-pd><g-v>Description</g-v>
+    <g-k>Resume</g-k> <g-k>Next</g-k>
+<g-k>End</g-k> <g-k>Sub</g-k>
