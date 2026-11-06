@@ -1,0 +1,29 @@
+<g-k>module</g-k> <g-t>Orchard</g-t> <g-k>exposing</g-k> <g-pb>(</g-pb><g-t>Fruit</g-t><g-pd>,</g-pd> <g-v>count</g-v><g-pd>,</g-pd> <g-v>example</g-v><g-pb>)</g-pb>
+
+<g-k>import</g-k> <g-t>List</g-t> <g-k>exposing</g-k> <g-pb>(</g-pb><g-v>map</g-v><g-pb>)</g-pb>
+<g-k>import</g-k> <g-t>String</g-t> <g-k>as</g-k> <g-t>Text</g-t>
+
+
+<g-c>{-| A simple record with named fields.
+-}</g-c>
+<g-k>type</g-k> <g-k>alias</g-k> <g-t>Fruit</g-t> <g-o>=</g-o>
+    <g-pb>{</g-pb> <g-f>name</g-f> <g-o>:</g-o> <g-t>String</g-t>
+    <g-pd>,</g-pd> <g-f>quantity</g-f> <g-o>:</g-o> <g-t>Int</g-t>
+    <g-pb>}</g-pb>
+
+
+<g-k>type</g-k> <g-t>Status</g-t>
+    <g-o>=</g-o> <g-t>Ready</g-t>
+    <g-o>|</g-o> <g-t>Empty</g-t>
+
+
+<g-f>count</g-f> <g-o>:</g-o> <g-t>List</g-t> <g-t>Fruit</g-t> <g-o>-&gt;</g-o> <g-t>Int</g-t>
+<g-v>count</g-v> <g-v>fruits</g-v> <g-o>=</g-o>
+    <g-v>fruits</g-v>
+        <g-o>|&gt;</g-o> <g-t>List</g-t><g-pd>.</g-pd><g-vm>map</g-vm> <g-pd>.</g-pd><g-vm>quantity</g-vm>
+        <g-o>|&gt;</g-o> <g-t>List</g-t><g-pd>.</g-pd><g-vm>sum</g-vm>
+
+
+<g-f>example</g-f> <g-o>:</g-o> <g-t>Fruit</g-t> <g-o>-&gt;</g-o> <g-t>Fruit</g-t>
+<g-v>example</g-v> <g-v>fruit</g-v> <g-o>=</g-o>
+    <g-pb>{</g-pb> <g-v>fruit</g-v> <g-o>|</g-o> <g-v>name</g-v> <g-o>=</g-o> <g-t>Text</g-t><g-pd>.</g-pd><g-vm>toUpper</g-vm> <g-v>fruit</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-pd>,</g-pd> <g-v>quantity</g-v> <g-o>=</g-o> <g-v>fruit</g-v><g-pd>.</g-pd><g-vm>quantity</g-vm> <g-o>+</g-o> <g-n>1</g-n> <g-pb>}</g-pb>

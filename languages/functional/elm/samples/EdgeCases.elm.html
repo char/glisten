@@ -1,0 +1,51 @@
+<g-k>module</g-k> <g-t>EdgeCases</g-t> <g-k>exposing</g-k> <g-pb>(</g-pb><g-o>..</g-o><g-pb>)</g-pb>
+
+<g-c>{-| Nested comments: {- inner {- deepest -} inner -} outer.
+Operators inside comments: |&gt; -- """ and [glsl|.
+-}</g-c>
+
+
+<g-f>text</g-f> <g-o>:</g-o> <g-t>String</g-t>
+<g-v>text</g-v> <g-o>=</g-o>
+    <g-s>"""
+A quoted "word", a backslash: </g-s><g-se>\\</g-se><g-s> and snowman: ☃
+"""</g-s>
+
+
+<g-f>unicode</g-f> <g-o>:</g-o> <g-t>String</g-t>
+<g-v>unicode</g-v> <g-o>=</g-o>
+    <g-s>"</g-s><g-se>\u{1F600}</g-se><g-s>"</g-s>
+
+
+<g-f>character</g-f> <g-o>:</g-o> <g-t>Char</g-t>
+<g-v>character</g-v> <g-o>=</g-o>
+    <g-s>'\n'</g-s>
+
+
+<g-f>numbers</g-f> <g-o>:</g-o> <g-t>List</g-t> <g-t>Float</g-t>
+<g-v>numbers</g-v> <g-o>=</g-o>
+    <g-pb>[</g-pb> <g-n>1.25e-3</g-n><g-pd>,</g-pd> <g-n>2.0</g-n><g-pd>,</g-pd> <g-n>3.5</g-n> <g-pb>]</g-pb>
+
+
+<g-f>pipeline</g-f> <g-o>:</g-o> <g-t>Int</g-t> <g-o>-&gt;</g-o> <g-t>Int</g-t>
+<g-v>pipeline</g-v> <g-o>=</g-o>
+    <g-o>\</g-o><g-v>value</g-v> <g-o>-&gt;</g-o> <g-pb>(</g-pb><g-v>value</g-v> <g-o>+</g-o> <g-n>0xFF</g-n><g-pb>)</g-pb> <g-o>//</g-o> <g-n>2</g-n>
+
+
+<g-v>add</g-v> <g-o>=</g-o>
+    <g-pb>(</g-pb><g-o>+</g-o><g-pb>)</g-pb>
+
+
+<g-v>shader</g-v> <g-o>=</g-o>
+    <g-ps>[glsl|</g-ps>
+        // Content is intentionally plain, not Elm.
+        void main() { gl_Position = vec4(0.0); }
+    <g-ps>|]</g-ps>
+
+
+<g-v>compare</g-v> <g-v>a</g-v> <g-v>b</g-v> <g-o>=</g-o>
+    <g-k>if</g-k> <g-v>a</g-v> <g-o>/=</g-o> <g-v>b</g-v> <g-k>then</g-k>
+        <g-v>a</g-v> <g-o>::</g-o> <g-pb>[</g-pb> <g-v>b</g-v> <g-pb>]</g-pb>
+
+    <g-k>else</g-k>
+        <g-pb>[]</g-pb>

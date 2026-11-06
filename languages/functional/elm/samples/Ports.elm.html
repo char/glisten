@@ -1,0 +1,25 @@
+<g-k>port</g-k> <g-k>module</g-k> <g-t>Ports</g-t> <g-k>exposing</g-k> <g-pb>(</g-pb><g-t>Message</g-t><g-pb>(</g-pb><g-o>..</g-o><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>notify</g-v><g-pd>,</g-pd> <g-v>update</g-v><g-pb>)</g-pb>
+
+<g-k>import</g-k> <g-t>Json</g-t><g-o>.</g-o><g-t>Encode</g-t> <g-k>as</g-k> <g-t>Encode</g-t>
+
+
+<g-k>port</g-k> <g-f>notify</g-f> <g-o>:</g-o> <g-t>Encode</g-t><g-o>.</g-o><g-t>Value</g-t> <g-o>-&gt;</g-o> <g-t>Cmd</g-t> <g-v>msg</g-v>
+
+
+<g-k>type</g-k> <g-t>Message</g-t>
+    <g-o>=</g-o> <g-t>Send</g-t> <g-t>String</g-t>
+    <g-o>|</g-o> <g-t>Ignore</g-t>
+
+
+<g-f>update</g-f> <g-o>:</g-o> <g-t>Message</g-t> <g-o>-&gt;</g-o> <g-t>Cmd</g-t> <g-v>msg</g-v>
+<g-v>update</g-v> <g-v>message</g-v> <g-o>=</g-o>
+    <g-k>case</g-k> <g-v>message</g-v> <g-k>of</g-k>
+        <g-t>Send</g-t> <g-v>text</g-v> <g-o>-&gt;</g-o>
+            <g-k>let</g-k>
+                <g-v>payload</g-v> <g-o>=</g-o>
+                    <g-t>Encode</g-t><g-pd>.</g-pd><g-vm>string</g-vm> <g-v>text</g-v>
+            <g-k>in</g-k>
+            <g-v>notify</g-v> <g-v>payload</g-v>
+
+        <g-t>Ignore</g-t> <g-o>-&gt;</g-o>
+            <g-t>Cmd</g-t><g-pd>.</g-pd><g-vm>none</g-vm>
