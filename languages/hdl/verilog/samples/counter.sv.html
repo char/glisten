@@ -1,0 +1,13 @@
+<g-k>`timescale</g-k> <g-n>1ns</g-n><g-o>/</g-o><g-n>1ps</g-n>
+<g-k>`define</g-k> <g-v>WIDTH</g-v> <g-n>8</g-n>
+
+<g-ps>(*</g-ps> <g-at>keep</g-at> <g-o>=</g-o> <g-s>"true"</g-s> <g-ps>*)</g-ps>
+<g-k>module</g-k> <g-t>counter</g-t> <g-o>#</g-o><g-pb>(</g-pb><g-k>parameter</g-k> <g-t>int</g-t> <g-v>WIDTH</g-v> <g-o>=</g-o> <g-f>`WIDTH</g-f><g-pb>)</g-pb> <g-pb>(</g-pb>
+  <g-k>input</g-k> <g-t>logic</g-t> <g-v>clk</g-v><g-pd>,</g-pd> <g-v>reset_n</g-v><g-pd>,</g-pd>
+  <g-k>output</g-k> <g-t>logic</g-t> <g-pb>[</g-pb><g-v>WIDTH</g-v><g-o>-</g-o><g-n>1</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-v>count</g-v>
+<g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>always_ff</g-k> <g-o>@</g-o><g-pb>(</g-pb><g-k>posedge</g-k> <g-v>clk</g-v> <g-k>or</g-k> <g-k>negedge</g-k> <g-v>reset_n</g-v><g-pb>)</g-pb> <g-k>begin</g-k>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-o>!</g-o><g-v>reset_n</g-v><g-pb>)</g-pb> <g-v>count</g-v> <g-o>&lt;=</g-o> <g-n>'0</g-n><g-pd>;</g-pd>
+    <g-k>else</g-k> <g-v>count</g-v> <g-o>&lt;=</g-o> <g-v>count</g-v> <g-o>+</g-o> <g-n>1'b1</g-n><g-pd>;</g-pd>
+  <g-k>end</g-k>
+<g-k>endmodule</g-k>

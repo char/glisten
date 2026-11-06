@@ -1,0 +1,12 @@
+<g-k>`include</g-k> <g-s>"config.vh"</g-s>
+<g-k>`ifdef</g-k> <g-v>ENABLE</g-v>
+<g-k>module</g-k> <g-t>top</g-t><g-pb>(</g-pb><g-k>input</g-k> <g-k>wire</g-k> <g-v>clk</g-v><g-pd>,</g-pd> <g-k>output</g-k> <g-k>wire</g-k> <g-v>done</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>wire</g-k> <g-v>\escaped+name</g-v> <g-pd>;</g-pd>
+  <g-t>reg</g-t> <g-pb>[</g-pb><g-n>7</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-v>data</g-v> <g-o>=</g-o> <g-n>8'hFF</g-n><g-pd>;</g-pd>
+  <g-v>child</g-v> <g-f>u_child</g-f> <g-pb>(</g-pb><g-pd>.</g-pd><g-vm>clk</g-vm><g-pb>(</g-pb><g-v>clk</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pd>.</g-pd><g-vm>done</g-vm><g-pb>(</g-pb><g-v>done</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pd>.</g-pd><g-vm>data</g-vm><g-pb>(</g-pb><g-v>data</g-v><g-pb>))</g-pb><g-pd>;</g-pd>
+  <g-k>initial</g-k> <g-k>begin</g-k>
+    <g-o>#</g-o><g-n>10</g-n> <g-f>$display</g-f><g-pb>(</g-pb><g-s>"data=%h</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-v>data</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-o>#</g-o><g-n>10ns</g-n> <g-f>$finish</g-f><g-pd>;</g-pd>
+  <g-k>end</g-k>
+<g-k>endmodule</g-k>
+<g-k>`endif</g-k>

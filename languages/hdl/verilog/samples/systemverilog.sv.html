@@ -1,0 +1,22 @@
+<g-k>package</g-k> <g-t>types_pkg</g-t><g-pd>;</g-pd>
+  <g-k>typedef</g-k> <g-k>enum</g-k> <g-t>logic</g-t> <g-pb>[</g-pb><g-n>1</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-pb>{</g-pb> <g-v>IDLE</g-v><g-pd>,</g-pd> <g-v>RUN</g-v><g-pd>,</g-pd> <g-v>DONE</g-v> <g-pb>}</g-pb> <g-v>state_t</g-v><g-pd>;</g-pd>
+  <g-k>typedef</g-k> <g-k>struct</g-k> <g-k>packed</g-k> <g-pb>{</g-pb> <g-t>logic</g-t> <g-v>valid</g-v><g-pd>;</g-pd> <g-t>bit</g-t> <g-pb>[</g-pb><g-n>3</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb> <g-v>item_t</g-v><g-pd>;</g-pd>
+<g-k>endpackage</g-k>
+
+<g-k>interface</g-k> <g-t>bus_if</g-t><g-pb>(</g-pb><g-k>input</g-k> <g-t>logic</g-t> <g-v>clk</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-t>logic</g-t> <g-pb>[</g-pb><g-n>3</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-v>data</g-v><g-pd>;</g-pd>
+  <g-k>modport</g-k> <g-f>master</g-f><g-pb>(</g-pb><g-k>output</g-k> <g-v>data</g-v><g-pd>,</g-pd> <g-k>input</g-k> <g-v>clk</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>endinterface</g-k>
+
+<g-k>module</g-k> <g-t>checker_example</g-t><g-pb>(</g-pb><g-k>input</g-k> <g-t>logic</g-t> <g-v>clk</g-v><g-pd>,</g-pd> <g-v>ready</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-t>logic</g-t> <g-pb>[</g-pb><g-n>3</g-n><g-pd>:</g-pd><g-n>0</g-n><g-pb>]</g-pb> <g-v>mask</g-v> <g-o>=</g-o> <g-n>4'b10x?</g-n><g-pd>;</g-pd>
+  <g-t>int</g-t> <g-v>signed_value</g-v> <g-o>=</g-o> <g-n>32'sd5</g-n><g-pd>;</g-pd>
+  <g-t>real</g-t> <g-v>delay_value</g-v> <g-o>=</g-o> <g-n>1.5e3</g-n><g-pd>;</g-pd>
+  <g-k>default</g-k> <g-k>clocking</g-k> <g-v>cb</g-v> <g-o>@</g-o><g-pb>(</g-pb><g-k>posedge</g-k> <g-v>clk</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-k>endclocking</g-k>
+  <g-k>property</g-k> <g-v>response</g-v><g-pd>;</g-pd> <g-v>ready</g-v> <g-o>|-&gt;</g-o> <g-o>##</g-o><g-n>2</g-n> <g-v>ready</g-v><g-pd>;</g-pd> <g-k>endproperty</g-k>
+  <g-k>assert</g-k> <g-k>property</g-k> <g-pb>(</g-pb><g-v>response</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-c>// Four-state equality and shifts</g-c>
+  <g-k>always_comb</g-k> <g-k>if</g-k> <g-pb>(</g-pb><g-v>mask</g-v> <g-o>===</g-o> <g-n>4'b0000</g-n><g-pb>)</g-pb> <g-v>mask</g-v> <g-o>=</g-o> <g-v>mask</g-v> <g-o>&lt;&lt;&lt;</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+  <g-c>/* simulation control */</g-c>
+  <g-k>initial</g-k> <g-f>$display</g-f><g-pb>(</g-pb><g-s>"ready: %b"</g-s><g-pd>,</g-pd> <g-v>ready</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>endmodule</g-k>
