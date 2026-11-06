@@ -1,0 +1,57 @@
+<g-tt># Examples in several languages</g-tt>
+
+Each fenced block is highlighted in its own language.
+
+<g-pd>```</g-pd><g-l>bash</g-l>
+<g-c>#!/usr/bin/env bash</g-c>
+<g-k>for</g-k> <g-v>name</g-v> <g-k>in</g-k> <g-s>"</g-s><g-ps>${</g-ps><g-v>names[@]</g-v><g-ps>}</g-ps><g-s>"</g-s><g-o>;</g-o> <g-k>do</g-k>
+  <g-cb>printf</g-cb> <g-s>'hello %s\n'</g-s> <g-s>"</g-s><g-v>$name</g-v><g-s>"</g-s>
+<g-k>done</g-k>
+<g-pd>```</g-pd>
+
+<g-pd>```</g-pd><g-l>ts</g-l>
+<g-k>interface</g-k> <g-t>Person</g-t> <g-pb>{</g-pb> <g-pr>name</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>;</g-pd> <g-pr>visits</g-pr><g-pd>:</g-pd> <g-t>number</g-t> <g-pb>}</g-pb>
+<g-k>const</g-k> <g-v>greet</g-v> <g-o>=</g-o> <g-pb>({</g-pb> <g-vm>name</g-vm><g-pd>,</g-pd> <g-vm>visits</g-vm> <g-pb>}</g-pb><g-pd>:</g-pd> <g-t>Person</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=&gt;</g-o>
+  <g-s>`Hello, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>; visit </g-s><g-ps>${</g-ps><g-v>visits</g-v> <g-o>+</g-o> <g-n>1</g-n><g-ps>}</g-ps><g-s>`</g-s><g-pd>;</g-pd>
+<g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-f>greet</g-f><g-pb>({</g-pb> <g-vm>name</g-vm><g-pd>:</g-pd> <g-s>"Zoë"</g-s><g-pd>,</g-pd> <g-vm>visits</g-vm><g-pd>:</g-pd> <g-n>2</g-n> <g-pb>}))</g-pb><g-pd>;</g-pd>
+<g-pd>```</g-pd>
+
+<g-pd>```</g-pd><g-l>css</g-l>
+<g-pd>:</g-pd><g-at>root</g-at> <g-pb>{</g-pb> <g-v>--accent</g-v><g-pd>:</g-pd> <g-co v="#4a6"><g-s>#4a6</g-s></g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pd>.</g-pd><g-pr>card</g-pr><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-f>var</g-f><g-pb>(</g-pb><g-v>--accent</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>margin</g-pr><g-pd>:</g-pd> <g-n>1.5</g-n><g-t>rem</g-t> <g-n>0</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-pd>```</g-pd>
+
+<g-pd>```</g-pd><g-l>json</g-l>
+<g-pb>{</g-pb>
+  <g-pr>"title"</g-pr><g-pd>:</g-pd> <g-s>"Café"</g-s><g-pd>,</g-pd>
+  <g-pr>"enabled"</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd>
+  <g-pr>"counts"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-cb>null</g-cb><g-pb>]</g-pb>
+<g-pb>}</g-pb>
+<g-pd>```</g-pd>
+
+<g-pd>```</g-pd><g-l>rust</g-l>
+<g-k>fn</g-k> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-k>let</g-k> <g-v>names</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-s>"Ada"</g-s><g-pd>,</g-pd> <g-s>"雪"</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-k>for</g-k> <g-v>name</g-v> <g-k>in</g-k> <g-v>names</g-v> <g-pb>{</g-pb>
+        <g-f>println</g-f><g-o>!</g-o><g-pb>(</g-pb><g-s>"Hello, {name}!"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-pd>```</g-pd>
+
+<g-ps>&gt; </g-ps>A quoted fence:
+<g-ps>&gt; </g-ps><g-pd>~~~</g-pd><g-l>bash</g-l>
+<g-ps>&gt; </g-ps><g-cb>echo</g-cb> <g-s>"quoted </g-s><g-v>$HOME</g-v><g-s>"</g-s>
+<g-ps>&gt; </g-ps><g-pd>~~~</g-pd>
+
+<g-ps>- </g-ps>A list containing code:
+
+<g-ps>  </g-ps><g-pd>```</g-pd><g-l>ts</g-l>
+<g-ps>  </g-ps><g-k>const</g-k> <g-v>answer</g-v> <g-o>=</g-o> <g-n>42</g-n><g-pd>;</g-pd>
+<g-ps>  </g-ps><g-pd>```</g-pd>
+
+<g-pd>```</g-pd><g-l>unknown</g-l>
+This remains plain: $HOME *not emphasis*
+<g-pd>```</g-pd>

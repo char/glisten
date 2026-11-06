@@ -1,0 +1,45 @@
+<g-tt># Field guide: café &amp; tea</g-tt>
+
+A paragraph with <g-em>*emphasis*</g-em>, <g-ts>**strong**</g-ts>, <g-ts>***both***</g-ts>, <g-tx>~~old text~~</g-tx>,
+<g-tl>`inline code`</g-tl>, and an escaped <g-se>\*</g-se>asterisk<g-se>\*</g-se>. A hard break follows.  
+The next line has <g-se>&amp;amp;</g-se> and <g-se>&amp;#x263A;</g-se> entities.
+
+<g-tt>## Navigation ##</g-tt>
+
+Read <g-tr>[the manual](</g-tr><g-tu>https://example.org/guide </g-tu><g-s>"A title"</g-s><g-tu>)</g-tu> or
+<g-tr>[the local page](</g-tr><g-tu>../notes/intro.md)</g-tu>. An <g-tr>![icon](</g-tr><g-tu>images/cup.png </g-tu><g-s>"Cup"</g-s><g-tu>)</g-tu>
+may accompany <g-tr>[a reference][manual]</g-tr>, <g-tr>[a collapsed reference][]</g-tr>, or <g-tr>[manual]</g-tr>.
+Visit <g-tu>&lt;https://example.org/a?b=c&gt;</g-tu> or email <g-tu>&lt;tea@example.org&gt;</g-tu>.
+Inline <g-ps>&lt;kbd&gt;</g-ps>Ctrl<g-ps>&lt;/kbd&gt;</g-ps> and <g-c>&lt;!-- a note --&gt;</g-c> are HTML.
+
+<g-tr>[manual]: </g-tr><g-tu>https://example.org/manual</g-tu><g-tr> </g-tr><g-s>"Manual"</g-s>
+<g-tr>[a collapsed reference]: </g-tr><g-tu>&lt;../reference.md&gt;</g-tu><g-tr> </g-tr><g-s>'Reference'</g-s>
+
+<g-tt>A setext heading
+----------------</g-tt>
+
+<g-ps>&gt; </g-ps>A quotation with <g-ts>**important**</g-ts> text.
+<g-ps>&gt; - </g-ps>First item
+<g-ps>&gt;   - </g-ps>Nested item with <g-tl>`code`</g-tl>
+<g-ps>&gt;   - </g-ps>Another item
+<g-ps>&gt;     </g-ps>
+<g-ps>&gt;     </g-ps>A second paragraph in the item.
+<g-ps>&gt; - </g-ps>Second item
+<g-ps>&gt;</g-ps>
+<g-ps>&gt; 1. </g-ps>Numbered inside the quote
+<g-ps>&gt; 2. </g-ps>Another numbered item
+
+<g-ps>- [x]</g-ps> Steep the leaves
+<g-ps>- [ ]</g-ps> Pour into a cup
+<g-ps>- [ ]</g-ps> Serve with milk
+
+<g-pd>---</g-pd>
+
+<g-tl>    Indented code is not *emphasis*.
+    Its second line contains &lt;tags&gt;.
+
+</g-tl><g-ps>&lt;div class="notice"&gt;
+&lt;p&gt;HTML block with &lt;strong&gt;content&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;</g-ps>
+
+Back to ordinary prose, with Unicode: 雪 and ☕.

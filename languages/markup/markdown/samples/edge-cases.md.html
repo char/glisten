@@ -1,0 +1,56 @@
+<g-tt># Lexical edge cases</g-tt>
+
+Not a heading: #inside or ####### too many markers.
+An unmatched *asterisk, **strong opener, and `code opener.
+An unmatched <g-tr>[link]</g-tr>(destination and <g-tr>![image]</g-tr>(missing-title.
+
+The underscores in snake_case_are_words stay literal.
+But <g-em>*a </g-em><g-ts>**nested**</g-ts><g-em> word*</g-em> and <g-tx>~~removed </g-tx><g-tl>`code`</g-tl><g-tx>~~</g-tx> are formatted.
+Single <g-tx>~strike~</g-tx>; <g-tx>~~double strike~~</g-tx>; ~~~not strike~~~.
+Escapes: <g-se>\[</g-se>brackets<g-se>\]</g-se>, <g-se>\`</g-se>ticks<g-se>\`</g-se>, <g-se>\\</g-se> and <g-se>\!</g-se>; Unicode: naïve 雪.
+A code span can contain a tick: <g-tl>`` `inside` ``</g-tl> and <g-tl>` a  b `</g-tl>.
+An unmatched `` opener should not swallow `a later span`.
+
+A paragraph
+with a lazy continuation in a quote follows:
+
+<g-ps>&gt; </g-ps>quoted <g-em>*text
+continued here*</g-em> and <g-tr>[a link](</g-tr><g-tu>https://example.org/a(b)c)</g-tu>.
+<g-ps>&gt; - </g-ps>nested list
+<g-ps>&gt;   &gt; </g-ps>nested quotation
+<g-ps>&gt;   &gt; </g-ps>continued
+
+<g-tt>A </g-tt><g-pd>|</g-pd><g-tt> B
+</g-tt><g-pd>--- | --- | ---</g-pd>
+extra <g-pd>|</g-pd> delimiter <g-pd>|</g-pd> column
+
+<g-tt>Title </g-tt><g-pd>|</g-pd><g-tt> not necessarily a table
+===</g-tt>
+
+<g-tr>[split definition]:</g-tr>
+  <g-tu>/destination</g-tu><g-tr> </g-tr><g-s>"title on the next line"</g-s>
+
+<g-tr>[three-line definition]:</g-tr>
+  <g-tu>/another-destination</g-tu>
+  <g-s>"title on a separate line"</g-s>
+
+<g-ps>&lt;div
+class="multiline"&gt;
+*HTML or markdown?*
+&lt;/div&gt;</g-ps>
+
+<g-c>&lt;!-- An HTML comment
+     with *literal* content --&gt;</g-c>
+
+A fence longer than the apparent closer:
+
+<g-pd>````</g-pd><g-l>bash</g-l>
+<g-cb>echo</g-cb> <g-s>"three ticks don't close this"</g-s>
+<g-ps>```</g-ps>
+<g-cb>echo</g-cb> <g-s>"still inside"</g-s>
+<g-pd>````</g-pd>
+
+A final unterminated fence:
+
+<g-pd>~~~</g-pd><g-l>json</g-l>
+<g-pb>{</g-pb><g-pr>"unfinished"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd>
