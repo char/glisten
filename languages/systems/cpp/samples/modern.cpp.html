@@ -1,0 +1,23 @@
+<g-k>#include</g-k> <g-s>&lt;concepts&gt;</g-s>
+<g-k>#include</g-k> <g-s>&lt;vector&gt;</g-s>
+
+<g-k>namespace</g-k> <g-v>shapes</g-v> <g-pb>{</g-pb>
+<g-k>template</g-k> <g-o>&lt;</g-o><g-k>typename</g-k> <g-t>T</g-t><g-o>&gt;</g-o>
+<g-k>concept</g-k> <g-t>Number</g-t> <g-o>=</g-o> <g-v>std</g-v><g-o>::</g-o><g-t>integral</g-t><g-o>&lt;</g-o><g-cb>T</g-cb><g-o>&gt;</g-o> <g-o>||</g-o> <g-v>std</g-v><g-o>::</g-o><g-t>floating_point</g-t><g-o>&lt;</g-o><g-cb>T</g-cb><g-o>&gt;</g-o><g-pd>;</g-pd>
+
+<g-k>class</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+<g-k>public</g-k><g-o>:</g-o>
+    <g-k>virtual</g-k> <g-o>~</g-o><g-f>Shape</g-f><g-pb>()</g-pb> <g-o>=</g-o> <g-k>default</g-k><g-pd>;</g-pd>
+    <g-ps>[[</g-ps><g-at>nodiscard</g-at><g-ps>]]</g-ps> <g-k>virtual</g-k> <g-t>double</g-t> <g-f>area</g-f><g-pb>()</g-pb> <g-k>const</g-k> <g-k>noexcept</g-k> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>class</g-k> <g-t>Square</g-t> <g-k>final</g-k> <g-o>:</g-o> <g-k>public</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+    <g-t>double</g-t> <g-v>side_</g-v><g-pd>;</g-pd>
+<g-k>public</g-k><g-o>:</g-o>
+    <g-k>explicit</g-k> <g-k>constexpr</g-k> <g-f>Square</g-f><g-pb>(</g-pb><g-t>double</g-t> <g-v>side</g-v><g-pb>)</g-pb> <g-o>:</g-o> <g-f>side_</g-f><g-pb>(</g-pb><g-v>side</g-v><g-pb>)</g-pb> <g-pb>{}</g-pb>
+    <g-ps>[[</g-ps><g-at>nodiscard</g-at><g-ps>]]</g-ps> <g-t>double</g-t> <g-f>area</g-f><g-pb>()</g-pb> <g-k>const</g-k> <g-k>noexcept</g-k> <g-k>override</g-k> <g-pb>{</g-pb> <g-k>return</g-k> <g-t>side_</g-t> <g-o>*</g-o> <g-v>side_</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>template</g-k> <g-o>&lt;</g-o><g-t>Number</g-t> <g-cb>T</g-cb><g-o>&gt;</g-o>
+<g-k>constexpr</g-k> <g-t>auto</g-t> <g-f>twice</g-f><g-pb>(</g-pb><g-t>T</g-t> <g-v>value</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>T</g-t> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v> <g-o>+</g-o> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

@@ -1,0 +1,18 @@
+<g-k>export</g-k> <g-k>module</g-k> <g-v>demo</g-v><g-o>.</g-o><g-vm>geometry</g-vm><g-pd>;</g-pd>
+<g-k>import</g-k> <g-o>&lt;</g-o><g-v>vector</g-v><g-o>&gt;</g-o><g-pd>;</g-pd>
+<g-k>import</g-k> <g-v>math</g-v><g-o>.</g-o><g-vm>core</g-vm><g-pd>;</g-pd>
+
+<g-k>export</g-k> <g-k>namespace</g-k> <g-v>demo</g-v> <g-pb>{</g-pb>
+<g-ps>[[</g-ps><g-at>deprecated</g-at><g-pb>(</g-pb><g-s>"use transform"</g-s><g-pb>)</g-pb><g-ps>]]</g-ps>
+<g-t>int</g-t> <g-f>old_count</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-v>std</g-v><g-o>::</g-o><g-t>vector</g-t><g-o>&lt;</g-o><g-t>int</g-t><g-o>&gt;&amp;</g-o> <g-v>values</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>auto</g-t> <g-v>larger</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-o>&amp;</g-o><g-pb>](</g-pb><g-t>auto</g-t> <g-v>x</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>bool</g-t> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>x</g-v> <g-o>&gt;</g-o> <g-n>10</g-n><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-k>static_cast</g-k><g-o>&lt;</g-o><g-t>int</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-v>std</g-v><g-o>::</g-o><g-f>count_if</g-f><g-pb>(</g-pb><g-v>values</g-v><g-o>.</g-o><g-f>begin</g-f><g-pb>()</g-pb><g-pd>,</g-pd> <g-v>values</g-v><g-o>.</g-o><g-f>end</g-f><g-pb>()</g-pb><g-pd>,</g-pd> <g-v>larger</g-v><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>template</g-k> <g-o>&lt;</g-o><g-k>typename</g-k> <g-t>T</g-t><g-o>&gt;</g-o> <g-k>requires</g-k> <g-k>requires</g-k><g-pb>(</g-pb><g-t>T</g-t> <g-v>value</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>value</g-v><g-o>.</g-o><g-f>size</g-f><g-pb>()</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-t>auto</g-t> <g-f>size_of</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-cb>T</g-cb><g-o>&amp;</g-o> <g-v>value</g-v><g-pb>)</g-pb> <g-k>noexcept</g-k> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v><g-o>.</g-o><g-f>size</g-f><g-pb>()</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+
+<g-k>struct</g-k> <g-t>Generator</g-t> <g-pb>{</g-pb>
+    <g-t>auto</g-t> <g-f>next</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>co_yield</g-k> <g-n>42</g-n><g-pd>;</g-pd> <g-k>co_return</g-k><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

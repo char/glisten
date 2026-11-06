@@ -1,0 +1,13 @@
+<g-k>#include</g-k> <g-s>&lt;string&gt;</g-s>
+<g-k>using</g-k> <g-k>namespace</g-k> <g-v>std</g-v><g-o>::</g-o><g-v>string_literals</g-v><g-pd>;</g-pd>
+
+<g-k>constexpr</g-k> <g-t>long</g-t> <g-t>double</g-t> <g-k>operator</g-k><g-o>""</g-o><g-f>_km</g-f><g-pb>(</g-pb><g-t>long</g-t> <g-t>double</g-t> <g-v>value</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v> <g-o>*</g-o> <g-n>1'000.0L</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>distance</g-v> <g-o>=</g-o> <g-n>12.5_km</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>binary</g-v> <g-o>=</g-o> <g-n>0b1010'0011u</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>text</g-v> <g-o>=</g-o> <g-s>u8"hello</g-s><g-se>\n</g-se><g-s>world"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>symbol</g-v> <g-o>=</g-o> <g-s>U'</g-s><g-se>\u03bb</g-se><g-s>'</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>message</g-v> <g-o>=</g-o> <g-s>"ready"s</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>sql</g-v> <g-o>=</g-o> <g-s>R"sql(select ")wrong\"" /* not a comment */
+where x &lt; 3)sql"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>long_tag</g-v> <g-o>=</g-o> <g-s>LR"abcdefghijklmnop(one )abcdefghijklmnox" two)abcdefghijklmnop"</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-t>auto</g-t> <g-v>empty</g-v> <g-o>=</g-o> <g-s>R"(plain \n text)"</g-s><g-pd>;</g-pd>
