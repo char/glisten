@@ -1,0 +1,8 @@
+<g-k>PREFIX</g-k> <g-cb>ex:</g-cb> <g-tu>&lt;https://example.test/ns#&gt;</g-tu>
+<g-k>PREFIX</g-k> <g-cb>xsd:</g-cb> <g-tu>&lt;http://www.w3.org/2001/XMLSchema#&gt;</g-tu>
+<g-k>SELECT</g-k> <g-k>DISTINCT</g-k> <g-v>?person</g-v> <g-pb>(</g-pb><g-f>STR</g-f><g-pb>(</g-pb><g-v>?name</g-v><g-pb>)</g-pb> <g-k>AS</g-k> <g-v>?label</g-v><g-pb>)</g-pb> <g-k>WHERE</g-k> <g-pb>{</g-pb>
+  <g-v>?person</g-v> <g-k>a</g-k> <g-cb>ex:Person</g-cb> <g-pd>;</g-pd> <g-cb>ex:name</g-cb> <g-v>?name</g-v> <g-pd>.</g-pd>
+  <g-k>OPTIONAL</g-k> <g-pb>{</g-pb> <g-v>?person</g-v> <g-cb>ex:knows</g-cb><g-o>+/</g-o><g-cb>ex:name</g-cb> <g-v>?friend</g-v> <g-pb>}</g-pb>
+  <g-k>FILTER</g-k><g-pb>(</g-pb><g-f>LANGMATCHES</g-f><g-pb>(</g-pb><g-f>LANG</g-f><g-pb>(</g-pb><g-v>?name</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-s>"en"</g-s><g-pb>))</g-pb>
+  <g-k>BIND</g-k><g-pb>(</g-pb><g-f>COUNT</g-f><g-pb>(</g-pb><g-v>?friend</g-v><g-pb>)</g-pb> <g-k>AS</g-k> <g-v>?count</g-v><g-pb>)</g-pb>
+<g-pb>}</g-pb> <g-k>GROUP</g-k> <g-k>BY</g-k> <g-v>?person</g-v> <g-v>?name</g-v> <g-k>ORDER</g-k> <g-k>BY</g-k> <g-k>DESC</g-k><g-pb>(</g-pb><g-v>?count</g-v><g-pb>)</g-pb> <g-k>LIMIT</g-k> <g-n>20</g-n>

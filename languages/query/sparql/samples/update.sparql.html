@@ -1,0 +1,5 @@
+<g-k>BASE</g-k> <g-tu>&lt;https://example.test/&gt;</g-tu>
+<g-k>PREFIX</g-k> <g-cb>ex:</g-cb> <g-tu>&lt;https://example.test/vocab/&gt;</g-tu>
+<g-k>INSERT</g-k> <g-k>DATA</g-k> <g-pb>{</g-pb> <g-k>GRAPH</g-k> <g-tu>&lt;catalog&gt;</g-tu> <g-pb>{</g-pb> <g-cb>_:item</g-cb> <g-cb>ex:title</g-cb> <g-s>"New title"</g-s><g-at>@en</g-at> <g-pd>;</g-pd> <g-cb>ex:rank</g-cb> <g-n>1.5e+2</g-n> <g-pb>}</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>DELETE</g-k> <g-k>WHERE</g-k> <g-pb>{</g-pb> <g-k>GRAPH</g-k> <g-v>?g</g-v> <g-pb>{</g-pb> <g-v>?s</g-v> <g-cb>ex:retired</g-cb> <g-cb>true</g-cb> <g-pb>}</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>LOAD</g-k> <g-k>SILENT</g-k> <g-tu>&lt;source.ttl&gt;</g-tu> <g-k>INTO</g-k> <g-k>GRAPH</g-k> <g-tu>&lt;catalog&gt;</g-tu><g-pd>;</g-pd>

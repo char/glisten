@@ -1,0 +1,5 @@
+BASE <https://example.test/>
+PREFIX ex: <https://example.test/vocab/>
+INSERT DATA { GRAPH <catalog> { _:item ex:title "New title"@en ; ex:rank 1.5e+2 } };
+DELETE WHERE { GRAPH ?g { ?s ex:retired true } };
+LOAD SILENT <source.ttl> INTO GRAPH <catalog>;

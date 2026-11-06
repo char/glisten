@@ -1,0 +1,13 @@
+<g-c># Hashes inside IRIs and escaped prefixed names are not comments.</g-c>
+<g-k>PREFIX</g-k> <g-cb>:</g-cb> <g-tu>&lt;https://example.test/#fragment&gt;</g-tu>
+<g-k>PREFIX</g-k> <g-cb>ex:</g-cb> <g-tu>&lt;https://example.test/&gt;</g-tu>
+<g-k>SeLeCt</g-k> <g-v>?x</g-v> <g-v>$value</g-v> <g-k>WHERE</g-k> <g-pb>{</g-pb>
+  <g-v>?x</g-v> <g-cb>ex:a%20b</g-cb> <g-cb>ex:escaped\~name</g-cb><g-pd>,</g-pd> <g-cb>:local.with.dots</g-cb> <g-pd>.</g-pd>
+  <g-v>?x</g-v> <g-cb>ex:path</g-cb><g-o>/</g-o><g-pb>(</g-pb><g-o>^</g-o><g-cb>ex:parent</g-cb><g-o>|</g-o><g-cb>ex:knows</g-cb><g-pb>)</g-pb><g-o>*</g-o> <g-v>?value</g-v> <g-pd>.</g-pd>
+  <g-v>?x</g-v> <g-cb>ex:text</g-cb> <g-s>"""first line
+second with "quotes" and an escaped </g-s><g-se>\"</g-se><g-s> mark"""</g-s><g-at>@en-US</g-at> <g-pd>.</g-pd>
+  <g-v>?x</g-v> <g-cb>ex:typed</g-cb> <g-s>'42'</g-s><g-o>^^</g-o><g-cb>ex:integer</g-cb> <g-pd>;</g-pd> <g-cb>ex:blank</g-cb> <g-pb>[]</g-pb> <g-pd>.</g-pd>
+  <g-k>FILTER</g-k><g-pb>(</g-pb><g-v>?value</g-v> <g-o>&lt;</g-o> <g-n>10</g-n> <g-o>&amp;&amp;</g-o> <g-v>?value</g-v> <g-o>&gt;=</g-o> <g-n>-1.25e-3</g-n><g-pb>)</g-pb>
+  <g-k>BIND</g-k><g-pb>(</g-pb><g-f>ex:custom</g-f><g-pb>(</g-pb><g-v>?x</g-v><g-pb>)</g-pb> <g-k>AS</g-k> <g-v>?result</g-v><g-pb>)</g-pb>
+  <g-k>BIND</g-k><g-pb>(</g-pb><g-f>&lt;https://example.test/convert&gt;</g-f><g-pb>(</g-pb><g-v>?value</g-v><g-pb>)</g-pb> <g-k>AS</g-k> <g-v>?converted</g-v><g-pb>)</g-pb>
+<g-pb>}</g-pb>

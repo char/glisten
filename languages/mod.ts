@@ -81,6 +81,7 @@ import scala from "./managed/scala/grammar.ts";
 import scheme from "./functional/scheme/grammar.ts";
 import scss from "./web/scss/grammar.ts";
 import solidity from "./contracts/solidity/grammar.ts";
+import sparql from "./query/sparql/grammar.ts";
 import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import svelte from "./web/svelte/grammar.ts";
@@ -186,6 +187,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   scheme,
   scss,
   solidity,
+  sparql,
   sql,
   "ssh-config": ssh_config,
   svelte,

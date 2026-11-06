@@ -1,0 +1,8 @@
+PREFIX ex: <https://example.test/ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT DISTINCT ?person (STR(?name) AS ?label) WHERE {
+  ?person a ex:Person ; ex:name ?name .
+  OPTIONAL { ?person ex:knows+/ex:name ?friend }
+  FILTER(LANGMATCHES(LANG(?name), "en"))
+  BIND(COUNT(?friend) AS ?count)
+} GROUP BY ?person ?name ORDER BY DESC(?count) LIMIT 20

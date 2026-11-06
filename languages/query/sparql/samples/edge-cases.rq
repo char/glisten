@@ -1,0 +1,13 @@
+# Hashes inside IRIs and escaped prefixed names are not comments.
+PREFIX : <https://example.test/#fragment>
+PREFIX ex: <https://example.test/>
+SeLeCt ?x $value WHERE {
+  ?x ex:a%20b ex:escaped\~name, :local.with.dots .
+  ?x ex:path/(^ex:parent|ex:knows)* ?value .
+  ?x ex:text """first line
+second with "quotes" and an escaped \" mark"""@en-US .
+  ?x ex:typed '42'^^ex:integer ; ex:blank [] .
+  FILTER(?value < 10 && ?value >= -1.25e-3)
+  BIND(ex:custom(?x) AS ?result)
+  BIND(<https://example.test/convert>(?value) AS ?converted)
+}
