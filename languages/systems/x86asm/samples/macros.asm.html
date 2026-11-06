@@ -1,0 +1,12 @@
+<g-k>%define</g-k> <g-v>COUNT</g-v> <g-n>8</g-n>
+<g-k>%macro</g-k> <g-v>LOOP_BODY</g-v> <g-n>1</g-n>
+<g-l>%%again</g-l><g-pd>:</g-pd>
+    <g-f>vmovdqu64</g-f> <g-cb>zmm31</g-cb><g-pd>,</g-pd> <g-pb>[</g-pb><g-cb>r8</g-cb> <g-o>+</g-o> <g-cb>r9</g-cb><g-o>*</g-o><g-n>8</g-n><g-pb>]</g-pb>
+    <g-f>kmovq</g-f> <g-cb>k7</g-cb><g-pd>,</g-pd> <g-cb>rax</g-cb>
+    <g-f>dec</g-f> <g-v>%1</g-v>
+    <g-f>jnz</g-f> <g-l>%%again</g-l>
+<g-k>%endmacro</g-k>
+<g-k>%if</g-k> <g-v>COUNT</g-v> <g-o>&gt;</g-o> <g-n>1</g-n>
+    <g-k>times</g-k> <g-v>COUNT</g-v> <g-k>db</g-k> <g-n>0q17</g-n><g-pd>,</g-pd> <g-cb>$$</g-cb> <g-o>-</g-o> <g-cb>$</g-cb>
+<g-k>%endif</g-k>
+<g-c>/* shared block comment */</g-c>

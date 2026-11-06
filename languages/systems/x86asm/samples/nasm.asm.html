@@ -1,0 +1,10 @@
+<g-k>bits</g-k> <g-n>64</g-n>
+<g-k>global</g-k> <g-v>sum</g-v>
+<g-k>section</g-k> <g-v>.text</g-v>
+<g-l>sum</g-l><g-pd>:</g-pd>
+    <g-f>mov</g-f> <g-cb>rax</g-cb><g-pd>,</g-pd> <g-t>qword</g-t> <g-pb>[</g-pb><g-cb>rbx</g-cb><g-o>+</g-o><g-cb>rcx</g-cb><g-o>*</g-o><g-n>8</g-n><g-o>+</g-o><g-n>16</g-n><g-pb>]</g-pb> <g-c>; indexed load</g-c>
+    <g-f>add</g-f> <g-cb>rax</g-cb><g-pd>,</g-pd> <g-n>0ffh</g-n>
+    <g-f>ret</g-f>
+<g-k>section</g-k> <g-v>.data</g-v>
+<g-l>message</g-l> <g-k>db</g-k> <g-s>'hello'</g-s><g-pd>,</g-pd> <g-n>10</g-n><g-pd>,</g-pd> <g-n>0</g-n>
+<g-l>value</g-l> <g-k>dq</g-k> <g-n>0x1234</g-n>

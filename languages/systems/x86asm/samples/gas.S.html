@@ -1,0 +1,10 @@
+<g-k>#include</g-k> <g-s>"config.h"</g-s>
+<g-k>.section</g-k> <g-v>.text</g-v>
+<g-k>.globl</g-k> <g-v>add_value</g-v>
+<g-l>add_value</g-l><g-pd>:</g-pd>
+    <g-f>movq</g-f> <g-n>16</g-n><g-pb>(</g-pb><g-cb>%rbx</g-cb><g-pd>,</g-pd><g-cb>%rcx</g-cb><g-pd>,</g-pd><g-n>8</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-cb>%rax</g-cb> <g-c># indexed load</g-c>
+<g-l>.Lagain</g-l><g-pd>:</g-pd>
+    <g-f>addq</g-f> <g-o>$</g-o><g-n>5</g-n><g-pd>,</g-pd> <g-cb>%rax</g-cb>
+    <g-f>cmpq</g-f> <g-o>$</g-o><g-n>0b101</g-n><g-pd>,</g-pd> <g-cb>%rax</g-cb>
+    <g-f>jne</g-f> <g-v>.Lagain</g-v>
+    <g-f>ret</g-f>
