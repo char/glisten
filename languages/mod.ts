@@ -85,6 +85,7 @@ import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
 import typst from "./markup/typst/grammar.ts";
+import vb from "./managed/vb/grammar.ts";
 import verilog from "./hdl/verilog/grammar.ts";
 import vhdl from "./hdl/vhdl/grammar.ts";
 import vue from "./web/vue/grammar.ts";
@@ -181,6 +182,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   tsx,
   typescript,
   typst,
+  vb,
   verilog,
   vhdl,
   vue,

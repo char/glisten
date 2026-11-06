@@ -1,0 +1,15 @@
+<g-k>Imports</g-k> <g-v>System</g-v><g-pd>.</g-pd><g-v>Threading</g-v><g-pd>.</g-pd><g-v>Tasks</g-v>
+
+<g-k>Module</g-k> <g-v>App</g-v>
+    <g-k>Async</g-k> <g-k>Function</g-k> <g-f>DescribeAsync</g-f><g-pb>(</g-pb><g-v>name</g-v> <g-k>As</g-k> <g-t>String</g-t><g-pb>)</g-pb> <g-k>As</g-k> <g-f>Task</g-f><g-pb>(</g-pb><g-k>Of</g-k> <g-t>String</g-t><g-pb>)</g-pb>
+        <g-k>Await</g-k> <g-v>Task</g-v><g-pd>.</g-pd><g-f>Delay</g-f><g-pb>(</g-pb><g-n>10</g-n><g-pb>)</g-pb>
+        <g-k>Dim</g-k> <g-v>value</g-v> <g-o>=</g-o> <g-n>&amp;HFFUI</g-n> <g-o>+</g-o> <g-n>&amp;B10</g-n> <g-o>+</g-o> <g-n>12_345D</g-n>
+        <g-k>Dim</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-s>$"Hello, </g-s><g-ps>{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>ToUpper</g-f><g-pb>()</g-pb><g-ps>}</g-ps><g-s>! Value: </g-s><g-ps>{</g-ps><g-v>value</g-v><g-pd>:</g-pd><g-s>N2</g-s><g-ps>}</g-ps><g-s>"</g-s>
+        <g-k>Dim</g-k> <g-v>quote</g-v> <g-o>=</g-o> <g-s>"a </g-s><g-se>""</g-se><g-s>quoted</g-s><g-se>""</g-se><g-s> value"</g-s>
+        <g-k>Dim</g-k> <g-v>letter</g-v> <g-k>As</g-k> <g-t>Char</g-t> <g-o>=</g-o> <g-s>"x"c</g-s>
+        <g-c>' Apostrophe comment</g-c>
+        <g-c>’ Smart apostrophe comment</g-c>
+        <g-c>REM Another comment</g-c>
+        <g-k>Return</g-k> <g-v>message</g-v>
+    <g-k>End</g-k> <g-k>Function</g-k>
+<g-k>End</g-k> <g-k>Module</g-k>

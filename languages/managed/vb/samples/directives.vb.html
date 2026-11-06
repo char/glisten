@@ -1,0 +1,13 @@
+<g-k>#Const</g-k> <g-v>DEBUG</g-v> <g-o>=</g-o> <g-cb>True</g-cb>
+<g-k>#If</g-k> <g-v>DEBUG</g-v> <g-k>Then</g-k>
+<g-k>#Region</g-k> <g-s>"Dates and attributes"</g-s>
+<g-ps>&lt;</g-ps><g-at>Assembly</g-at><g-pd>:</g-pd> <g-at>CLSCompliant</g-at><g-pb>(</g-pb><g-cb>True</g-cb><g-pb>)</g-pb><g-ps>&gt;</g-ps>
+<g-k>Public</g-k> <g-k>Module</g-k> <g-v>Dates</g-v>
+    <g-k>Public</g-k> <g-k>Function</g-k> <g-f>IsRecent</g-f><g-pb>(</g-pb><g-v>value</g-v> <g-k>As</g-k> <g-t>Date</g-t><g-pb>)</g-pb> <g-k>As</g-k> <g-t>Boolean</g-t>
+        <g-k>Dim</g-k> <g-v>cutoff</g-v> <g-k>As</g-k> <g-t>Date</g-t> <g-o>=</g-o> <g-s>#1/1/2024#</g-s>
+        <g-k>Return</g-k> <g-v>value</g-v> <g-o>&gt;=</g-o> <g-v>cutoff</g-v> <g-k>AndAlso</g-k> <g-ps>_</g-ps>
+            <g-v>value</g-v> <g-o>&lt;</g-o> <g-s>#12/31/2030#</g-s>
+    <g-k>End</g-k> <g-k>Function</g-k>
+<g-k>End</g-k> <g-k>Module</g-k>
+<g-k>#End</g-k> <g-k>Region</g-k>
+<g-k>#End</g-k> <g-k>If</g-k>

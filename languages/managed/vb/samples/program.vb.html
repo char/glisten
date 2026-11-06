@@ -1,0 +1,19 @@
+<g-k>Option</g-k> <g-v>Strict</g-v> <g-k>On</g-k>
+<g-k>Imports</g-k> <g-v>System</g-v>
+
+<g-ps>&lt;</g-ps><g-at>Serializable</g-at><g-ps>&gt;</g-ps>
+<g-k>Public</g-k> <g-k>Class</g-k> <g-v>Counter</g-v>
+    <g-k>Private</g-k> <g-v>_count</g-v> <g-k>As</g-k> <g-t>Integer</g-t> <g-o>=</g-o> <g-n>0</g-n>
+
+    <g-k>Public</g-k> <g-k>Sub</g-k> <g-f>Increment</g-f><g-pb>(</g-pb><g-ps>&lt;</g-ps><g-at>Obsolete</g-at><g-ps>&gt;</g-ps> <g-k>ByVal</g-k> <g-v>amount</g-v> <g-k>As</g-k> <g-t>Integer</g-t><g-pb>)</g-pb>
+        <g-k>If</g-k> <g-v>amount</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-k>Then</g-k>
+            <g-v>_count</g-v> <g-o>+=</g-o> <g-v>amount</g-v>
+        <g-k>End</g-k> <g-k>If</g-k>
+    <g-k>End</g-k> <g-k>Sub</g-k>
+
+    <g-k>Public</g-k> <g-k>ReadOnly</g-k> <g-k>Property</g-k> <g-v>Value</g-v> <g-k>As</g-k> <g-t>Integer</g-t>
+        <g-k>Get</g-k>
+            <g-k>Return</g-k> <g-v>_count</g-v>
+        <g-k>End</g-k> <g-k>Get</g-k>
+    <g-k>End</g-k> <g-k>Property</g-k>
+<g-k>End</g-k> <g-k>Class</g-k>
