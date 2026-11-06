@@ -1,0 +1,17 @@
+<g-k>module</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-v>comments</g-v><g-pd>;</g-pd>
+
+<g-c>/** Documentation block, not nested. */</g-c>
+<g-t>int</g-t> <g-f>parse</g-f><g-pb>(</g-pb><g-t>string</g-t> <g-v>input</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-c>/++ Documentation with a /+ nested comment +/ inside. +/</g-c>
+<g-t>int</g-t> <g-f>nested</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+
+<g-c>/+ outer
+   /+ inner +/
+   still outer
++/</g-c>
+<g-k>auto</g-k> <g-v>hexFloat</g-v> <g-o>=</g-o> <g-n>0x1.fp+3L</g-n><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>binary</g-v> <g-o>=</g-o> <g-n>0b1010_0101u</g-n><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>complexValue</g-v> <g-o>=</g-o> <g-n>3.5fi</g-n><g-pd>;</g-pd>
+<g-c>// Ordinary comment with /+ not nested +/</g-c>
+<g-k>alias</g-k> <g-t>Callback</g-t> <g-o>=</g-o> <g-t>void</g-t> <g-k>function</g-k><g-pb>(</g-pb><g-t>int</g-t><g-pb>)</g-pb><g-pd>;</g-pd>

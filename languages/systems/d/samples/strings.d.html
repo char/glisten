@@ -1,0 +1,17 @@
+<g-k>module</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-v>strings</g-v><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>normal</g-v> <g-o>=</g-o> <g-s>"newline</g-s><g-se>\n</g-se><g-s> and entity </g-s><g-se>\&amp;amp;</g-se><g-s>"w</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>r"backslashes \ are literal"</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>ticks</g-v> <g-o>=</g-o> <g-s>`raw \ text`d</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>bytes</g-v> <g-o>=</g-o> <g-s>x"DE AD be ef"</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>paired</g-v> <g-o>=</g-o> <g-s>q"(outer (inner) end)"</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>brackets</g-v> <g-o>=</g-o> <g-s>q"[alpha [beta] gamma]"c</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>arbitrary</g-v> <g-o>=</g-o> <g-s>q"/slashes and text/"</g-s><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>heredoc</g-v> <g-o>=</g-o> <g-s>q"</g-s><g-l>EOS</g-l><g-s>
+line one
+EOS_more is not a footer
+</g-s><g-l>EOS"w</g-l><g-pd>;</g-pd>
+<g-k>auto</g-k> <g-v>tokens</g-v> <g-o>=</g-o> <g-s>q{</g-s>
+    <g-t>int</g-t> <g-f>square</g-f><g-pb>(</g-pb><g-t>int</g-t> <g-v>x</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>x</g-v> <g-o>*</g-o> <g-v>x</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>auto</g-k> <g-v>inner</g-v> <g-o>=</g-o> <g-s>q{</g-s> <g-k>if</g-k> <g-pb>(</g-pb><g-cb>true</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-n>42</g-n><g-pd>;</g-pd> <g-pb>}</g-pb> <g-s>}</g-s><g-pd>;</g-pd>
+<g-s>}</g-s><g-pd>;</g-pd>
+<g-t>dchar</g-t> <g-v>letter</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u03BB</g-se><g-s>'</g-s><g-pd>;</g-pd>

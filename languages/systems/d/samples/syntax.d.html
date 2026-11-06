@@ -1,0 +1,23 @@
+<g-k>module</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-v>widget</g-v><g-pd>;</g-pd>
+<g-k>import</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-v>stdio</g-v> <g-pd>:</g-pd> <g-v>writeln</g-v><g-pd>;</g-pd>
+<g-k>static</g-k> <g-k>import</g-k> <g-v>std</g-v><g-pd>.</g-pd><g-v>algorithm</g-v><g-pd>;</g-pd>
+
+<g-c>/// An example of D declarations and attributes.</g-c>
+<g-k>@safe</g-k> <g-k>@nogc</g-k> <g-k>struct</g-k> <g-t>Widget</g-t><g-pb>(</g-pb><g-t>T</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>T</g-t> <g-v>value</g-v><g-pd>;</g-pd>
+    <g-k>@property</g-k> <g-k>ref</g-k> <g-t>T</g-t> <g-f>get</g-f><g-pb>()</g-pb> <g-k>pure</g-k> <g-k>nothrow</g-k> <g-pb>{</g-pb> <g-k>return</g-k> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>struct</g-k> <g-t>Custom</g-t> <g-pb>{</g-pb> <g-t>string</g-t> <g-v>name</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-at>@Custom</g-at><g-pb>(</g-pb><g-s>"example"</g-s><g-pb>)</g-pb> <g-k>template</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-t>T</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>static</g-k> <g-k>if</g-k> <g-pb>(</g-pb><g-k>is</g-k><g-pb>(</g-pb><g-t>T</g-t> <g-o>==</g-o> <g-t>int</g-t><g-pb>))</g-pb> <g-k>enum</g-k> <g-v>describe</g-v> <g-o>=</g-o> <g-s>"integer"</g-s><g-pd>;</g-pd>
+    <g-k>else</g-k> <g-k>enum</g-k> <g-v>describe</g-v> <g-o>=</g-o> <g-k>typeof</g-k><g-pb>(</g-pb><g-t>T</g-t><g-pb>)</g-pb><g-pd>.</g-pd><g-v>stringof</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>unittest</g-k> <g-pb>{</g-pb>
+    <g-k>auto</g-k> <g-v>widget</g-v> <g-o>=</g-o> <g-t>Widget</g-t><g-o>!</g-o><g-t>int</g-t><g-pb>(</g-pb><g-n>42</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>scope</g-k><g-pb>(</g-pb><g-k>exit</g-k><g-pb>)</g-pb> <g-f>writeln</g-f><g-pb>(</g-pb><g-s>"done"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>foreach_reverse</g-k> <g-pb>(</g-pb><g-v>i</g-v><g-pd>;</g-pd> <g-n>0</g-n> <g-o>..</g-o> <g-n>3</g-n><g-pb>)</g-pb> <g-f>writeln</g-f><g-pb>(</g-pb><g-v>widget</g-v><g-pd>.</g-pd><g-v>get</g-v><g-pd>,</g-pd> <g-v>i</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>static</g-k> <g-k>foreach</g-k> <g-pb>(</g-pb><g-v>n</g-v><g-pd>;</g-pd> <g-n>0</g-n> <g-o>..</g-o> <g-n>2</g-n><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>assert</g-k><g-pb>(</g-pb><g-v>n</g-v> <g-o>&gt;=</g-o> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>auto</g-k> <g-v>flag</g-v> <g-o>=</g-o> <g-k>__traits</g-k><g-pb>(</g-pb><g-v>compiles</g-v><g-pd>,</g-pd> <g-k>cast</g-k><g-pb>(</g-pb><g-t>int</g-t><g-pb>)</g-pb> <g-v>widget</g-v><g-pd>.</g-pd><g-v>value</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
