@@ -1,0 +1,20 @@
+<g-k>import</g-k> <g-s>'dart:async'</g-s> <g-k>show</g-k> <g-t>Future</g-t><g-pd>;</g-pd>
+
+<g-c>/// A small counter with a named parameter.</g-c>
+<g-k>sealed</g-k> <g-k>class</g-k> <g-t>Counter</g-t> <g-pb>{</g-pb>
+  <g-k>late</g-k> <g-t>int</g-t> <g-v>value</g-v><g-pd>;</g-pd>
+  <g-t>Counter</g-t><g-pb>({</g-pb><g-k>required</g-k> <g-k>this</g-k><g-pd>.</g-pd><g-vm>value</g-vm><g-pb>})</g-pb><g-pd>;</g-pd>
+  <g-t>int</g-t> <g-k>get</g-k> <g-f>current</g-f> <g-o>=&gt;</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+  <g-k>set</g-k> <g-f>current</g-f><g-pb>(</g-pb><g-t>int</g-t> <g-v>next</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>value</g-v> <g-o>=</g-o> <g-v>next</g-v><g-pd>;</g-pd>
+
+  <g-at>@override</g-at>
+  <g-t>String</g-t> <g-f>toString</g-f><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-s>'Counter(</g-s><g-v>$value</g-v><g-s>)'</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-t>Future</g-t><g-o>&lt;</g-o><g-t>int</g-t><g-o>&gt;</g-o> <g-f>increment</g-f><g-pb>(</g-pb><g-t>Counter</g-t> <g-v>counter</g-v><g-pb>)</g-pb> <g-k>async</g-k> <g-pb>{</g-pb>
+  <g-k>final</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-k>await</g-k> <g-t>Future</g-t><g-pd>.</g-pd><g-f>value</g-f><g-pb>(</g-pb><g-v>counter</g-v><g-pd>.</g-pd><g-vm>current</g-vm> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-v>counter</g-v>
+    <g-o>..</g-o><g-vm>current</g-vm> <g-o>=</g-o> <g-v>result</g-v>
+    <g-o>..</g-o><g-f>toString</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-v>result</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>

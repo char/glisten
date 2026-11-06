@@ -1,0 +1,25 @@
+<g-c>/* outer /* nested */ still outer */</g-c>
+<g-c>/** A shape can expose an area. */</g-c>
+<g-k>abstract</g-k> <g-k>interface</g-k> <g-k>class</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+  <g-t>double</g-t> <g-k>get</g-k> <g-f>area</g-f><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>base</g-k> <g-k>mixin</g-k> <g-t>Named</g-t> <g-k>on</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+  <g-t>String</g-t> <g-k>get</g-k> <g-f>name</g-f><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>extension</g-k> <g-t>Describe</g-t> <g-k>on</g-k> <g-t>Shape</g-t> <g-pb>{</g-pb>
+  <g-t>String</g-t> <g-f>describe</g-f><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-k>switch</g-k> <g-pb>(</g-pb><g-k>this</g-k><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>Circle</g-t><g-pb>(</g-pb><g-v>radius</g-v><g-pd>:</g-pd> <g-k>var</g-k> <g-v>r</g-v><g-pb>)</g-pb> <g-k>when</g-k> <g-v>r</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-o>=&gt;</g-o> <g-s>'circle </g-s><g-v>$r</g-v><g-s>'</g-s><g-pd>,</g-pd>
+    <g-v>_</g-v> <g-o>=&gt;</g-o> <g-s>'other'</g-s><g-pd>,</g-pd>
+  <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-pb>(</g-pb><g-t>int</g-t><g-pd>,</g-pd> <g-pb>{</g-pb><g-t>String</g-t> <g-v>label</g-v><g-pb>})</g-pb> <g-f>record</g-f><g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-v>label</g-v><g-pd>:</g-pd> <g-s>'one'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-t>Iterable</g-t><g-o>&lt;</g-o><g-t>int</g-t><g-o>&gt;</g-o> <g-f>count</g-f><g-pb>()</g-pb> <g-k>sync*</g-k> <g-pb>{</g-pb>
+  <g-k>yield</g-k> <g-n>1</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-t>Stream</g-t><g-o>&lt;</g-o><g-t>int</g-t><g-o>&gt;</g-o> <g-f>more</g-f><g-pb>()</g-pb> <g-k>async*</g-k> <g-pb>{</g-pb>
+  <g-k>yield</g-k><g-o>*</g-o> <g-t>Stream</g-t><g-pd>.</g-pd><g-f>value</g-f><g-pb>(</g-pb><g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>class</g-k> <g-t>_Point</g-t> <g-pb>{}</g-pb>
+<g-k>final</g-k> <g-t>_Point</g-t> <g-v>point</g-v> <g-o>=</g-o> <g-t>_Point</g-t><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>picked</g-v> <g-o>=</g-o> <g-v>value</g-v><g-o>?.</g-o><g-vm>item</g-vm> <g-o>??</g-o> <g-v>fallback</g-v><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>next</g-v> <g-o>=</g-o> <g-v>object</g-v><g-o>?..</g-o><g-f>reset</g-f><g-pb>()</g-pb><g-o>..</g-o><g-f>add</g-f><g-pb>(</g-pb><g-n>3</g-n><g-pb>)</g-pb><g-pd>;</g-pd>

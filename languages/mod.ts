@@ -7,6 +7,7 @@ import capnp from "./data/capnp/grammar.ts";
 import clojure from "./functional/clojure/grammar.ts";
 import cmake from "./build/cmake/grammar.ts";
 import css from "./web/css/grammar.ts";
+import dart from "./managed/dart/grammar.ts";
 import devicetree from "./data/devicetree/grammar.ts";
 import diff from "./data/diff/grammar.ts";
 import dockerfile from "./build/dockerfile/grammar.ts";
@@ -62,6 +63,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   clojure,
   cmake,
   css,
+  dart,
   devicetree,
   diff,
   dockerfile,

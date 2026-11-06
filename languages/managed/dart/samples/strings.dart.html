@@ -1,0 +1,10 @@
+<g-c>// Raw strings do not interpolate or interpret escapes.</g-c>
+<g-k>final</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>r'hello $name \n'</g-s><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>rawLong</g-v> <g-o>=</g-o> <g-s>r'''literal ${notCode}
+and \u{1f600}'''</g-s><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>'Hello </g-s><g-v>$name</g-v><g-s>: </g-s><g-ps>${</g-ps><g-f>format</g-f><g-pb>({</g-pb><g-s>'key'</g-s><g-pd>:</g-pd> <g-n>2</g-n><g-pb>})</g-pb><g-ps>}</g-ps><g-s>!</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>escaped</g-v> <g-o>=</g-o> <g-s>"Smile </g-s><g-se>\u{1f600}</g-se><g-s> </g-s><g-se>\u263A</g-se><g-s> </g-s><g-se>\x21</g-se><g-s>, dollar </g-s><g-se>\$</g-se><g-s>"</g-s><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>long</g-v> <g-o>=</g-o> <g-s>"""line one
+</g-s><g-ps>${</g-ps><g-v>items</g-v><g-pd>.</g-pd><g-f>map</g-f><g-pb>((</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-s>'</g-s><g-v>$item</g-v><g-s>'</g-s><g-pb>)</g-pb><g-pd>.</g-pd><g-f>join</g-f><g-pb>(</g-pb><g-s>', '</g-s><g-pb>)</g-pb><g-ps>}</g-ps><g-s>
+line three"""</g-s><g-pd>;</g-pd>
+<g-k>final</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0xff</g-n><g-pd>,</g-pd> <g-n>42</g-n><g-pd>,</g-pd> <g-n>1_234</g-n><g-pd>,</g-pd> <g-n>1.5e-2</g-n><g-pd>,</g-pd> <g-n>1e9</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
