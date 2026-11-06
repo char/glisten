@@ -1,0 +1,24 @@
+<g-k>import</g-k> <g-v>gleam</g-v><g-o>/</g-o><g-v>option</g-v><g-pd>.</g-pd><g-pb>{</g-pb><g-k>type</g-k> <g-t>Option</g-t><g-pd>,</g-pd> <g-v>unwrap</g-v><g-pb>}</g-pb>
+<g-k>import</g-k> <g-v>gleam</g-v><g-o>/</g-o><g-v>result</g-v>
+
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>value_or_zero</g-f><g-pb>(</g-pb><g-vm>value</g-vm><g-pd>:</g-pd> <g-t>Option</g-t><g-pb>(</g-pb><g-t>Int</g-t><g-pb>))</g-pb> <g-o>-&gt;</g-o> <g-t>Int</g-t> <g-pb>{</g-pb>
+  <g-f>unwrap</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pd>,</g-pd> <g-n>0</g-n><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+
+<g-at>@external</g-at><g-pb>(</g-pb><g-v>erlang</g-v><g-pd>,</g-pd> <g-s>"erlang"</g-s><g-pd>,</g-pd> <g-s>"monotonic_time"</g-s><g-pb>)</g-pb>
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>clock</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-t>Int</g-t>
+
+<g-at>@deprecated</g-at><g-pb>(</g-pb><g-s>"Use clock instead"</g-s><g-pb>)</g-pb>
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>old_clock</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-t>Int</g-t> <g-pb>{</g-pb>
+  <g-f>clock</g-f><g-pb>()</g-pb>
+<g-pb>}</g-pb>
+
+<g-at>@target</g-at><g-pb>(</g-pb><g-v>erlang</g-v><g-pb>)</g-pb>
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>checked</g-f><g-pb>(</g-pb><g-vm>value</g-vm><g-pd>:</g-pd> <g-t>Int</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>Result</g-t><g-pb>(</g-pb><g-t>Int</g-t><g-pd>,</g-pd> <g-t>String</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>let</g-k> <g-k>assert</g-k> <g-cb>True</g-cb> <g-o>=</g-o> <g-v>value</g-v> <g-o>&gt;=</g-o> <g-n>0</g-n>
+  <g-k>use</g-k> <g-v>number</g-v> <g-o>&lt;-</g-o> <g-v>result</g-v><g-pd>.</g-pd><g-f>try</g-f><g-pb>(</g-pb><g-t>Ok</g-t><g-pb>(</g-pb><g-v>value</g-v><g-pb>))</g-pb>
+  <g-k>case</g-k> <g-v>number</g-v> <g-pb>{</g-pb>
+    <g-n>0</g-n> <g-o>-&gt;</g-o> <g-t>Error</g-t><g-pb>(</g-pb><g-s>"zero"</g-s><g-pb>)</g-pb>
+    <g-v>_</g-v> <g-o>-&gt;</g-o> <g-t>Ok</g-t><g-pb>(</g-pb><g-v>number</g-v><g-pb>)</g-pb>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

@@ -18,6 +18,7 @@ import elixir from "./functional/elixir/grammar.ts";
 import erlang from "./functional/erlang/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
+import gleam from "./functional/gleam/grammar.ts";
 import go from "./managed/go/grammar.ts";
 import graphql from "./query/graphql/grammar.ts";
 import haskell from "./functional/haskell/grammar.ts";
@@ -83,6 +84,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   erlang,
   fjson,
   gitattributes,
+  gleam,
   go,
   graphql,
   haskell,

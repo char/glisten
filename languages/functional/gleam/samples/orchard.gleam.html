@@ -1,0 +1,27 @@
+<g-c>//// A tiny orchard inventory.</g-c>
+
+<g-k>import</g-k> <g-v>gleam</g-v><g-o>/</g-o><g-v>list</g-v>
+<g-k>import</g-k> <g-v>gleam</g-v><g-o>/</g-o><g-v>string</g-v> <g-k>as</g-k> <g-v>text</g-v>
+
+<g-c>/// A fruit and its quantity.</g-c>
+<g-k>pub</g-k> <g-k>type</g-k> <g-t>Fruit</g-t> <g-pb>{</g-pb>
+  <g-t>Fruit</g-t><g-pb>(</g-pb><g-vm>name</g-vm><g-pd>:</g-pd> <g-t>String</g-t><g-pd>,</g-pd> <g-vm>count</g-vm><g-pd>:</g-pd> <g-t>Int</g-t><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>pub</g-k> <g-k>const</g-k> <g-v>initial_count</g-v> <g-o>=</g-o> <g-n>1</g-n>
+
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>example</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-t>Fruit</g-t> <g-pb>{</g-pb>
+  <g-t>Fruit</g-t><g-pb>(</g-pb><g-vm>name</g-vm><g-pd>:</g-pd> <g-s>"Pear"</g-s><g-pd>,</g-pd> <g-vm>count</g-vm><g-pd>:</g-pd> <g-v>initial_count</g-v><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>total</g-f><g-pb>(</g-pb><g-vm>fruits</g-vm><g-pd>:</g-pd> <g-t>List</g-t><g-pb>(</g-pb><g-t>Fruit</g-t><g-pb>))</g-pb> <g-o>-&gt;</g-o> <g-t>Int</g-t> <g-pb>{</g-pb>
+  <g-v>fruits</g-v>
+  <g-o>|&gt;</g-o> <g-v>list</g-v><g-pd>.</g-pd><g-f>fold</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-k>fn</g-k><g-pb>(</g-pb><g-v>sum</g-v><g-pd>,</g-pd> <g-v>fruit</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>sum</g-v> <g-o>+</g-o> <g-v>fruit</g-v><g-pd>.</g-pd><g-v>count</g-v> <g-pb>})</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-vm>fruit</g-vm><g-pd>:</g-pd> <g-t>Fruit</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>String</g-t> <g-pb>{</g-pb>
+  <g-k>case</g-k> <g-v>fruit</g-v> <g-pb>{</g-pb>
+    <g-t>Fruit</g-t><g-pb>(</g-pb><g-vm>name</g-vm><g-pd>:,</g-pd> <g-vm>count</g-vm><g-pd>:</g-pd><g-pb>)</g-pb> <g-k>if</g-k> <g-v>count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-o>-&gt;</g-o> <g-v>text</g-v><g-pd>.</g-pd><g-f>uppercase</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb>
+    <g-v>_</g-v> <g-o>-&gt;</g-o> <g-s>"empty"</g-s>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

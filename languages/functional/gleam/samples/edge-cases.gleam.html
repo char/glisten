@@ -1,0 +1,18 @@
+<g-c>//// Lexer boundaries, not a complete application.</g-c>
+
+<g-c>/// Escapes, bit arrays, float operators, spreads, and discards.</g-c>
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>edges</g-f><g-pb>(</g-pb><g-v>_unused</g-v><g-pd>:</g-pd> <g-t>Int</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>let</g-k> <g-v>hex</g-v> <g-o>=</g-o> <g-n>0xFF_A0</g-n>
+  <g-k>let</g-k> <g-v>octal</g-v> <g-o>=</g-o> <g-n>0o77</g-n>
+  <g-k>let</g-k> <g-v>binary</g-v> <g-o>=</g-o> <g-n>0b1010_0001</g-n>
+  <g-k>let</g-k> <g-v>decimal</g-v> <g-o>=</g-o> <g-n>1.25e-3</g-n> <g-o>+.</g-o> <g-n>2.0</g-n> <g-o>*.</g-o> <g-n>3.0</g-n>
+  <g-k>let</g-k> <g-v>_within_range</g-v> <g-o>=</g-o> <g-v>decimal</g-v> <g-o>&lt;=.</g-o> <g-n>2.0</g-n>
+  <g-k>let</g-k> <g-v>bits</g-v> <g-o>=</g-o> <g-pb>&lt;&lt;</g-pb><g-vm>hex</g-vm><g-pd>:</g-pd><g-f>size</g-f><g-pb>(</g-pb><g-n>8</g-n><g-pb>)</g-pb><g-o>-</g-o><g-f>unit</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-vm>binary</g-vm><g-pd>:</g-pd><g-n>8</g-n><g-pb>&gt;&gt;</g-pb>
+  <g-k>let</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>"quote: </g-s><g-se>\"</g-se><g-s> slash: </g-s><g-se>\\</g-se><g-s> snowman: </g-s><g-se>\u{2603}</g-se><g-s> newline: </g-s><g-se>\n</g-se><g-s>"</g-s>
+  <g-k>let</g-k> <g-v>list</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-v>octal</g-v><g-pd>,</g-pd> <g-o>..</g-o><g-pb>[</g-pb><g-v>binary</g-v><g-pb>]]</g-pb>
+  <g-c>// This is not a string: " or a comment opener.</g-c>
+  <g-k>case</g-k> <g-v>list</g-v> <g-pb>{</g-pb>
+    <g-pb>[</g-pb><g-v>first</g-v><g-pd>,</g-pd> <g-o>..</g-o><g-v>rest</g-v><g-pb>]</g-pb> <g-k>if</g-k> <g-v>first</g-v> <g-o>&lt;=</g-o> <g-n>10</g-n> <g-o>-&gt;</g-o> <g-pd>#</g-pd><g-pb>(</g-pb><g-v>text</g-v> <g-o>&lt;&gt;</g-o> <g-s>"!"</g-s><g-pd>,</g-pd> <g-v>bits</g-v><g-pd>,</g-pd> <g-v>rest</g-v><g-pb>)</g-pb>
+    <g-v>_</g-v> <g-o>-&gt;</g-o> <g-k>panic</g-k> <g-k>as</g-k> <g-s>"no values"</g-s>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
