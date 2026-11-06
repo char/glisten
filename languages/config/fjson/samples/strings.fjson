@@ -1,0 +1,31 @@
+{
+  // Both quote styles and ordinary JSON escapes.
+  title: 'A traveler\'s notebook',
+  caption: "A \"bright\" night",
+  path: 'C:\\sky\\images',
+  url: "https:\/\/example.test\/sky",
+  controls: '\b\f\n\r\t',
+  letters: '\u00e9 \u65e5',
+  rocket: "\uD83D\uDE80",
+  empty: '',
+  "quoted\"key": 'value',
+  'quoted\'key': "value",
+  unicode: '雪と星',
+  punctuation: '{ [ : , ] }',
+  commentText: '// not a comment',
+  moreText: '/* not a comment */',
+  list: [
+    'one',
+    "two",
+    'three',
+  ],
+  /* A comment between a key and its colon. */
+  note /* annotation */ : 'ready',
+  nested: {
+    first: 'alpha',
+    second: 'βeta',
+    last: null,
+  },
+  truth: [true, false, null],
+  count: [0, -12, 1.25, 2e-3],
+}

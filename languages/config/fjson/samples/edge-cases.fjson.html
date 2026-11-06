@@ -1,0 +1,31 @@
+<g-c>/* Root key lookahead skips comments. */</g-c>
+<g-pr>true</g-pr> <g-c>/* key, not constant */</g-c> <g-pd>:</g-pd> <g-cb>false</g-cb>
+<g-pr>"quoted"</g-pr> <g-c>/* punctuation : */</g-c> <g-pd>:</g-pd> <g-s>'value'</g-s>
+<g-pr>'日本語'</g-pr> <g-c>// another key</g-c>
+<g-pd>:</g-pd> <g-s>'星'</g-s>
+<g-pr>near</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>trueish<g-pd>,</g-pd> falsehood<g-pd>,</g-pd> nullable<g-pd>,</g-pd> true<g-n>1</g-n><g-pd>,</g-pd> <g-n>1</g-n>false<g-pb>]</g-pb>
+<g-pr>number</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>00</g-n><g-pd>,</g-pd> <g-n>-01</g-n><g-pd>,</g-pd> +<g-n>1</g-n><g-pd>,</g-pd> .<g-n>5</g-n><g-pd>,</g-pd> <g-n>1</g-n>.<g-pd>,</g-pd> <g-n>1</g-n>e+<g-pd>,</g-pd> <g-n>2e-3</g-n><g-pb>]</g-pb>
+<g-pr>invalid</g-pr><g-pd>:</g-pd> <g-s>'\q \x \u12xz'</g-s>
+<g-pr>valid</g-pr><g-pd>:</g-pd> <g-s>'</g-s><g-se>\'</g-se><g-s> </g-s><g-se>\\</g-se><g-s> </g-s><g-se>\u1234</g-se><g-s>'</g-s>
+<g-pr>array</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,,</g-pd> <g-n>2</g-n><g-pd>,</g-pd><g-pb>]</g-pb>
+<g-pr>object</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb> <g-pr>$x</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-pr>_y2</g-pr><g-pd>:</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-pr>nested</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb> <g-pr>x</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-pr>missing</g-pr><g-pd>:</g-pd> <g-pd>,</g-pd>
+<g-pr>noColon</g-pr> <g-pr>'value'</g-pr>
+<g-c>// A slash in a string is not a comment.</g-c>
+<g-pr>url</g-pr><g-pd>:</g-pd> <g-s>'https://example.test/a/*b*/'</g-s>
+<g-pr>plain</g-pr><g-pd>:</g-pd> <g-s>'text'</g-s>
+<g-pr>other</g-pr><g-pd>:</g-pd> <g-s>"text"</g-s>
+<g-pr>nullish</g-pr><g-pd>:</g-pd> <g-cb>null</g-cb>
+<g-pr>falseish</g-pr><g-pd>:</g-pd> <g-cb>false</g-cb>
+<g-pr>truthy</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb>
+<g-pr>numbers</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>-0</g-n><g-pd>,</g-pd> <g-n>1.5</g-n><g-pd>,</g-pd> <g-n>3E+2</g-n><g-pb>]</g-pb>
+<g-pr>comments</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>
+  <g-n>1</g-n><g-pd>,</g-pd> <g-c>/* inline */</g-c>
+  <g-n>2</g-n><g-pd>,</g-pd> <g-c>// line</g-c>
+  <g-n>3</g-n><g-pd>,</g-pd>
+<g-pb>]</g-pb>
+<g-pr>empty</g-pr><g-pd>:</g-pd> <g-pb>{}</g-pb>
+<g-pr>list</g-pr><g-pd>:</g-pd> <g-pb>[]</g-pb>
+<g-c>/* An unfinished comment at EOF:
+   braces and quotes here: } ] " '
+</g-c>

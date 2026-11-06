@@ -1,0 +1,30 @@
+// Outer braces are optional.
+name: 'Sky journal'
+locale: "français"
+enabled: true
+archived: false
+revision: 12
+fallback: null
+paths: [
+  'images',
+  "notes",
+  'exports', // trailing comma
+]
+owner: {
+  name: 'Zoë',
+  email: 'zoe@example.test',
+  _private: false,
+  $schema: "https://example.test/schema",
+}
+/* Values can nest as in JSON. */
+locations: [
+  { name: 'north', latitude: 51.5 },
+  { name: 'south', latitude: -33.86 },
+]
+limits: {
+  minimum: -1.5e-2,
+  maximum: 2E+3,
+  retries: 0,
+}
+"quoted key": 'a value'
+'single key': "another value"

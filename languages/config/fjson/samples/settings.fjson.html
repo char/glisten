@@ -1,0 +1,30 @@
+<g-c>// Outer braces are optional.</g-c>
+<g-pr>name</g-pr><g-pd>:</g-pd> <g-s>'Sky journal'</g-s>
+<g-pr>locale</g-pr><g-pd>:</g-pd> <g-s>"français"</g-s>
+<g-pr>enabled</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb>
+<g-pr>archived</g-pr><g-pd>:</g-pd> <g-cb>false</g-cb>
+<g-pr>revision</g-pr><g-pd>:</g-pd> <g-n>12</g-n>
+<g-pr>fallback</g-pr><g-pd>:</g-pd> <g-cb>null</g-cb>
+<g-pr>paths</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>
+  <g-s>'images'</g-s><g-pd>,</g-pd>
+  <g-s>"notes"</g-s><g-pd>,</g-pd>
+  <g-s>'exports'</g-s><g-pd>,</g-pd> <g-c>// trailing comma</g-c>
+<g-pb>]</g-pb>
+<g-pr>owner</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb>
+  <g-pr>name</g-pr><g-pd>:</g-pd> <g-s>'Zoë'</g-s><g-pd>,</g-pd>
+  <g-pr>email</g-pr><g-pd>:</g-pd> <g-s>'zoe@example.test'</g-s><g-pd>,</g-pd>
+  <g-pr>_private</g-pr><g-pd>:</g-pd> <g-cb>false</g-cb><g-pd>,</g-pd>
+  <g-pr>$schema</g-pr><g-pd>:</g-pd> <g-s>"https://example.test/schema"</g-s><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+<g-c>/* Values can nest as in JSON. */</g-c>
+<g-pr>locations</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>
+  <g-pb>{</g-pb> <g-pr>name</g-pr><g-pd>:</g-pd> <g-s>'north'</g-s><g-pd>,</g-pd> <g-pr>latitude</g-pr><g-pd>:</g-pd> <g-n>51.5</g-n> <g-pb>}</g-pb><g-pd>,</g-pd>
+  <g-pb>{</g-pb> <g-pr>name</g-pr><g-pd>:</g-pd> <g-s>'south'</g-s><g-pd>,</g-pd> <g-pr>latitude</g-pr><g-pd>:</g-pd> <g-n>-33.86</g-n> <g-pb>}</g-pb><g-pd>,</g-pd>
+<g-pb>]</g-pb>
+<g-pr>limits</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb>
+  <g-pr>minimum</g-pr><g-pd>:</g-pd> <g-n>-1.5e-2</g-n><g-pd>,</g-pd>
+  <g-pr>maximum</g-pr><g-pd>:</g-pd> <g-n>2E+3</g-n><g-pd>,</g-pd>
+  <g-pr>retries</g-pr><g-pd>:</g-pd> <g-n>0</g-n><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+<g-pr>"quoted key"</g-pr><g-pd>:</g-pd> <g-s>'a value'</g-s>
+<g-pr>'single key'</g-pr><g-pd>:</g-pd> <g-s>"another value"</g-s>

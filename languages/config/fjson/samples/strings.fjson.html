@@ -1,0 +1,31 @@
+<g-pb>{</g-pb>
+  <g-c>// Both quote styles and ordinary JSON escapes.</g-c>
+  <g-pr>title</g-pr><g-pd>:</g-pd> <g-s>'A traveler</g-s><g-se>\'</g-se><g-s>s notebook'</g-s><g-pd>,</g-pd>
+  <g-pr>caption</g-pr><g-pd>:</g-pd> <g-s>"A </g-s><g-se>\"</g-se><g-s>bright</g-s><g-se>\"</g-se><g-s> night"</g-s><g-pd>,</g-pd>
+  <g-pr>path</g-pr><g-pd>:</g-pd> <g-s>'C:</g-s><g-se>\\</g-se><g-s>sky</g-s><g-se>\\</g-se><g-s>images'</g-s><g-pd>,</g-pd>
+  <g-pr>url</g-pr><g-pd>:</g-pd> <g-s>"https:</g-s><g-se>\/\/</g-se><g-s>example.test</g-s><g-se>\/</g-se><g-s>sky"</g-s><g-pd>,</g-pd>
+  <g-pr>controls</g-pr><g-pd>:</g-pd> <g-s>'</g-s><g-se>\b\f\n\r\t</g-se><g-s>'</g-s><g-pd>,</g-pd>
+  <g-pr>letters</g-pr><g-pd>:</g-pd> <g-s>'</g-s><g-se>\u00e9</g-se><g-s> </g-s><g-se>\u65e5</g-se><g-s>'</g-s><g-pd>,</g-pd>
+  <g-pr>rocket</g-pr><g-pd>:</g-pd> <g-s>"</g-s><g-se>\uD83D\uDE80</g-se><g-s>"</g-s><g-pd>,</g-pd>
+  <g-pr>empty</g-pr><g-pd>:</g-pd> <g-s>''</g-s><g-pd>,</g-pd>
+  <g-pr>"quoted</g-pr><g-se>\"</g-se><g-pr>key"</g-pr><g-pd>:</g-pd> <g-s>'value'</g-s><g-pd>,</g-pd>
+  <g-pr>'quoted</g-pr><g-se>\'</g-se><g-pr>key'</g-pr><g-pd>:</g-pd> <g-s>"value"</g-s><g-pd>,</g-pd>
+  <g-pr>unicode</g-pr><g-pd>:</g-pd> <g-s>'雪と星'</g-s><g-pd>,</g-pd>
+  <g-pr>punctuation</g-pr><g-pd>:</g-pd> <g-s>'{ [ : , ] }'</g-s><g-pd>,</g-pd>
+  <g-pr>commentText</g-pr><g-pd>:</g-pd> <g-s>'// not a comment'</g-s><g-pd>,</g-pd>
+  <g-pr>moreText</g-pr><g-pd>:</g-pd> <g-s>'/* not a comment */'</g-s><g-pd>,</g-pd>
+  <g-pr>list</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>
+    <g-s>'one'</g-s><g-pd>,</g-pd>
+    <g-s>"two"</g-s><g-pd>,</g-pd>
+    <g-s>'three'</g-s><g-pd>,</g-pd>
+  <g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-c>/* A comment between a key and its colon. */</g-c>
+  <g-pr>note</g-pr> <g-c>/* annotation */</g-c> <g-pd>:</g-pd> <g-s>'ready'</g-s><g-pd>,</g-pd>
+  <g-pr>nested</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb>
+    <g-pr>first</g-pr><g-pd>:</g-pd> <g-s>'alpha'</g-s><g-pd>,</g-pd>
+    <g-pr>second</g-pr><g-pd>:</g-pd> <g-s>'βeta'</g-s><g-pd>,</g-pd>
+    <g-pr>last</g-pr><g-pd>:</g-pd> <g-cb>null</g-cb><g-pd>,</g-pd>
+  <g-pb>}</g-pb><g-pd>,</g-pd>
+  <g-pr>truth</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-cb>true</g-cb><g-pd>,</g-pd> <g-cb>false</g-cb><g-pd>,</g-pd> <g-cb>null</g-cb><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>count</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>-12</g-n><g-pd>,</g-pd> <g-n>1.25</g-n><g-pd>,</g-pd> <g-n>2e-3</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+<g-pb>}</g-pb>

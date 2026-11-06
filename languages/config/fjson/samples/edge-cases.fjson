@@ -1,0 +1,30 @@
+/* Root key lookahead skips comments. */
+true /* key, not constant */ : false
+"quoted" /* punctuation : */ : 'value'
+'日本語' // another key
+: '星'
+near: [trueish, falsehood, nullable, true1, 1false]
+number: [00, -01, +1, .5, 1., 1e+, 2e-3]
+invalid: '\q \x \u12xz'
+valid: '\' \\ \u1234'
+array: [1,, 2,]
+object: { $x: 1, _y2: 2, nested: { x: true } }
+missing: ,
+noColon 'value'
+// A slash in a string is not a comment.
+url: 'https://example.test/a/*b*/'
+plain: 'text'
+other: "text"
+nullish: null
+falseish: false
+truthy: true
+numbers: [0, -0, 1.5, 3E+2]
+comments: [
+  1, /* inline */
+  2, // line
+  3,
+]
+empty: {}
+list: []
+/* An unfinished comment at EOF:
+   braces and quotes here: } ] " '
