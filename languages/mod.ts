@@ -15,6 +15,7 @@ import dockerfile from "./build/dockerfile/grammar.ts";
 import dot from "./data/dot/grammar.ts";
 import elisp from "./functional/elisp/grammar.ts";
 import elixir from "./functional/elixir/grammar.ts";
+import erlang from "./functional/erlang/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import go from "./managed/go/grammar.ts";
@@ -79,6 +80,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   dot,
   elisp,
   elixir,
+  erlang,
   fjson,
   gitattributes,
   go,

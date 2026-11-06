@@ -1,0 +1,9 @@
+<g-c>%% Shared records and compile-time settings.</g-c>
+<g-at>-ifndef</g-at><g-pb>(</g-pb><g-v>ORCHARD_HRL</g-v><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-at>-define</g-at><g-pb>(</g-pb><g-v>ORCHARD_HRL</g-v><g-pd>,</g-pd> <g-cb>true</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-at>-define</g-at><g-pb>(</g-pb><g-v>TAG</g-v><g-pb>(</g-pb><g-v>Value</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pb>{</g-pb><g-cb>tag</g-cb><g-pd>,</g-pd> <g-v>Value</g-v><g-pb>})</g-pb><g-pd>.</g-pd>
+<g-at>-record</g-at><g-pb>(</g-pb><g-cb>request</g-cb><g-pd>,</g-pd> <g-pb>{</g-pb><g-cb>id</g-cb> <g-o>::</g-o> <g-f>non_neg_integer</g-f><g-pb>()</g-pb><g-pd>,</g-pd> <g-cb>payload</g-cb> <g-o>=</g-o> <g-pd>#</g-pd><g-pb>{}})</g-pb><g-pd>.</g-pd>
+<g-at>-type</g-at> <g-f>status</g-f><g-pb>()</g-pb> <g-o>::</g-o> <g-cb>idle</g-cb> <g-o>|</g-o> <g-pb>{</g-pb><g-cb>running</g-cb><g-pd>,</g-pd> <g-f>pid</g-f><g-pb>()}</g-pb><g-pd>.</g-pd>
+<g-at>-spec</g-at> <g-f>encode</g-f><g-pb>(</g-pb><g-f>binary</g-f><g-pb>())</g-pb> <g-o>-&gt;</g-o> <g-f>binary</g-f><g-pb>()</g-pb><g-pd>.</g-pd>
+
+<g-at>-endif</g-at><g-pd>.</g-pd>

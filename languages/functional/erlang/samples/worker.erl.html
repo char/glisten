@@ -1,0 +1,22 @@
+<g-c>%%% A small message worker.</g-c>
+<g-at>-module</g-at><g-pb>(</g-pb><g-cb>worker</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-at>-export</g-at><g-pb>([</g-pb><g-cb>start</g-cb><g-o>/</g-o><g-n>0</g-n><g-pd>,</g-pd> <g-cb>loop</g-cb><g-o>/</g-o><g-n>1</g-n><g-pd>,</g-pd> <g-cb>sum</g-cb><g-o>/</g-o><g-n>1</g-n><g-pb>])</g-pb><g-pd>.</g-pd>
+<g-at>-define</g-at><g-pb>(</g-pb><g-v>DEFAULT_TIMEOUT</g-v><g-pd>,</g-pd> <g-n>5000</g-n><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-at>-record</g-at><g-pb>(</g-pb><g-cb>state</g-cb><g-pd>,</g-pd> <g-pb>{</g-pb><g-cb>count</g-cb> <g-o>=</g-o> <g-n>0</g-n><g-pd>,</g-pd> <g-cb>label</g-cb> <g-o>=</g-o> <g-cb>'ready now'</g-cb><g-pb>})</g-pb><g-pd>.</g-pd>
+
+<g-f>start</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o>
+    <g-f>spawn</g-f><g-pb>(</g-pb><g-k>fun</g-k><g-pb>()</g-pb> <g-o>-&gt;</g-o> <g-f>loop</g-f><g-pb>(</g-pb><g-t>#state</g-t><g-pb>{})</g-pb> <g-k>end</g-k><g-pb>)</g-pb><g-pd>.</g-pd>
+
+<g-f>loop</g-f><g-pb>(</g-pb><g-v>State</g-v> <g-o>=</g-o> <g-t>#state</g-t><g-pb>{</g-pb><g-cb>count</g-cb> <g-o>=</g-o> <g-v>Count</g-v><g-pb>})</g-pb> <g-o>-&gt;</g-o>
+    <g-k>receive</g-k>
+        <g-pb>{</g-pb><g-cb>get</g-cb><g-pd>,</g-pd> <g-v>From</g-v><g-pb>}</g-pb> <g-o>-&gt;</g-o>
+            <g-v>From</g-v> <g-o>!</g-o> <g-pb>{</g-pb><g-cb>ok</g-cb><g-pd>,</g-pd> <g-v>Count</g-v><g-pb>}</g-pb><g-pd>,</g-pd>
+            <g-f>loop</g-f><g-pb>(</g-pb><g-v>State</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-pb>{</g-pb><g-cb>add</g-cb><g-pd>,</g-pd> <g-v>N</g-v><g-pb>}</g-pb> <g-k>when</g-k> <g-f>is_integer</g-f><g-pb>(</g-pb><g-v>N</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>N</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-o>-&gt;</g-o>
+            <g-f>loop</g-f><g-pb>(</g-pb><g-v>State</g-v><g-t>#state</g-t><g-pb>{</g-pb><g-cb>count</g-cb> <g-o>=</g-o> <g-v>Count</g-v> <g-o>+</g-o> <g-v>N</g-v><g-pb>})</g-pb>
+    <g-k>after</g-k> <g-v>?DEFAULT_TIMEOUT</g-v> <g-o>-&gt;</g-o>
+        <g-cb>ok</g-cb>
+    <g-k>end</g-k><g-pd>.</g-pd>
+
+<g-f>sum</g-f><g-pb>(</g-pb><g-v>Items</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o>
+    <g-cb>lists</g-cb><g-pd>:</g-pd><g-f>sum</g-f><g-pb>([</g-pb><g-v>N</g-v> <g-o>||</g-o> <g-pb>{</g-pb><g-cb>ok</g-cb><g-pd>,</g-pd> <g-v>N</g-v><g-pb>}</g-pb> <g-o>&lt;-</g-o> <g-v>Items</g-v><g-pd>,</g-pd> <g-v>N</g-v> <g-o>rem</g-o> <g-n>2</g-n> <g-o>=:=</g-o> <g-n>0</g-n><g-pb>])</g-pb><g-pd>.</g-pd>

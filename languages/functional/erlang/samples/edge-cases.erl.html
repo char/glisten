@@ -1,0 +1,20 @@
+<g-at>-module</g-at><g-pb>(</g-pb><g-cb>edge_cases</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-at>-export</g-at><g-pb>([</g-pb><g-cb>values</g-cb><g-o>/</g-o><g-n>0</g-n><g-pb>])</g-pb><g-pd>.</g-pd>
+
+<g-f>values</g-f><g-pb>()</g-pb> <g-o>-&gt;</g-o>
+    <g-v>Base</g-v> <g-o>=</g-o> <g-n>16#FF_A0</g-n> <g-o>+</g-o> <g-n>2#1010</g-n><g-pd>,</g-pd>
+    <g-v>Char</g-v> <g-o>=</g-o> <g-pb>{</g-pb><g-n>$a</g-n><g-pd>,</g-pd> <g-n>$\n</g-n><g-pd>,</g-pd> <g-n>$\x{1F600}</g-n><g-pb>}</g-pb><g-pd>,</g-pd>
+    <g-v>Bytes</g-v> <g-o>=</g-o> <g-pb>&lt;&lt;</g-pb><g-v>Base</g-v><g-pd>:</g-pd><g-n>16</g-n><g-o>/</g-o><g-cb>integer</g-cb><g-pd>,</g-pd> <g-n>3</g-n><g-pd>:</g-pd><g-n>8</g-n><g-pb>&gt;&gt;</g-pb><g-pd>,</g-pd>
+    <g-v>Map0</g-v> <g-o>=</g-o> <g-pd>#</g-pd><g-pb>{</g-pb><g-cb>alpha</g-cb> <g-o>=&gt;</g-o> <g-s>"escaped </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s> and </g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-cb>'quoted atom'</g-cb> <g-o>=&gt;</g-o> <g-v>Char</g-v><g-pb>}</g-pb><g-pd>,</g-pd>
+    <g-v>Map</g-v> <g-o>=</g-o> <g-v>Map0</g-v><g-pd>#</g-pd><g-pb>{</g-pb><g-cb>'quoted atom'</g-cb> <g-o>:=</g-o> <g-v>Char</g-v><g-pb>}</g-pb><g-pd>,</g-pd>
+    <g-v>Text</g-v> <g-o>=</g-o> <g-s>"""""
+      Literal \\n and content """ in the middle.
+      """"
+      """""</g-s><g-pd>,</g-pd>
+    <g-v>Raw</g-v> <g-o>=</g-o> <g-s>~S|no \\n escapes here|</g-s><g-pd>,</g-pd>
+    <g-v>Binary</g-v> <g-o>=</g-o> <g-s>~b"line</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd>
+    <g-v>Vanilla</g-v> <g-o>=</g-o> <g-s>~"quote </g-s><g-se>\"</g-se><g-s> and newline</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd>
+    <g-v>Multiline</g-v> <g-o>=</g-o> <g-s>~s"""
+      escaped </g-s><g-se>\n</g-se><g-s> but "" inside
+      """</g-s><g-pd>,</g-pd>
+    <g-pb>{</g-pb><g-v>Base</g-v><g-pd>,</g-pd> <g-v>Bytes</g-v><g-pd>,</g-pd> <g-v>Map</g-v><g-pd>,</g-pd> <g-v>Text</g-v><g-pd>,</g-pd> <g-v>Raw</g-v><g-pd>,</g-pd> <g-v>Binary</g-v><g-pd>,</g-pd> <g-v>Vanilla</g-v><g-pd>,</g-pd> <g-v>Multiline</g-v><g-pd>,</g-pd> <g-v>?MODULE</g-v><g-pd>,</g-pd> <g-v>?LINE</g-v><g-pb>}</g-pb><g-pd>.</g-pd>
