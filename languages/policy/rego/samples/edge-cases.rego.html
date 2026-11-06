@@ -1,0 +1,18 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-vm>edges</g-vm>
+
+<g-k>import</g-k> <g-v>rego</g-v><g-pd>.</g-pd><g-vm>v1</g-vm>
+
+<g-pr>selected</g-pr> <g-k>contains</g-k> <g-v>name</g-v> <g-k>if</g-k> <g-pb>{</g-pb> <g-v>name</g-v> <g-o>:=</g-o> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>users</g-vm><g-pb>[</g-pb><g-cb>_</g-cb><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>name</g-vm> <g-pb>}</g-pb>
+<g-pr>message</g-pr> <g-o>:=</g-o> <g-s>$"User </g-s><g-ps>{</g-ps><g-cb>input</g-cb><g-pd>.</g-pd><g-vm>user</g-vm><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>: </g-s><g-ps>{</g-ps><g-f>sprintf</g-f><g-pb>(</g-pb><g-s>"%v"</g-s><g-pd>,</g-pd> <g-pb>[{</g-pb><g-s>"key"</g-s><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pb>]}])</g-pb><g-ps>}</g-ps><g-s>"</g-s>
+<g-pr>literal</g-pr> <g-o>:=</g-o> <g-s>$"escaped </g-s><g-se>\{</g-se><g-s>brace} and newline </g-s><g-se>\n</g-se><g-s>"</g-s>
+<g-pr>raw</g-pr> <g-o>:=</g-o> <g-s>`raw # no comment
+"still raw"`</g-s>
+<g-pr>raw_template</g-pr> <g-o>:=</g-o> <g-s>$`raw </g-s><g-se>\{</g-se><g-s>brace} </g-s><g-ps>{</g-ps><g-pb>{</g-pb><g-s>"key"</g-s><g-pd>:</g-pd> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>x</g-vm><g-pb>}</g-pb><g-ps>}</g-ps><g-s>`</g-s>
+<g-pr>decision</g-pr> <g-k>if</g-k> <g-pb>{</g-pb>
+    <g-k>every</g-k> <g-v>item</g-v> <g-k>in</g-k> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>items</g-vm> <g-pb>{</g-pb>
+        <g-v>item</g-v> <g-o>!=</g-o> <g-cb>null</g-cb>
+        <g-f>count</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>.</g-pd><g-vm>tags</g-vm><g-pb>)</g-pb> <g-o>&gt;=</g-o> <g-n>1</g-n>
+    <g-pb>}</g-pb>
+    <g-k>some</g-k> <g-v>x</g-v> <g-k>in</g-k> <g-pb>{</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>}</g-pb> <g-o>&amp;</g-o> <g-pb>{</g-pb><g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>}</g-pb>
+    <g-v>x</g-v> <g-o>&lt;=</g-o> <g-n>3</g-n>
+<g-pb>}</g-pb> <g-k>else</g-k> <g-o>:=</g-o> <g-cb>false</g-cb>

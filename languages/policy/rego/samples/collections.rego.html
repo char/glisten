@@ -1,0 +1,12 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>.</g-pd><g-vm>inventory</g-vm>
+
+<g-k>import</g-k> <g-v>rego</g-v><g-pd>.</g-pd><g-vm>v1</g-vm>
+<g-k>import</g-k> <g-v>future</g-v><g-pd>.</g-pd><g-vm>keywords</g-vm><g-pd>.</g-pd><g-vm>in</g-vm>
+
+<g-pr>names</g-pr> <g-o>:=</g-o> <g-pb>{</g-pb><g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-o>|</g-o> <g-k>some</g-k> <g-v>user</g-v> <g-k>in</g-k> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>users</g-vm><g-pb>}</g-pb>
+<g-pr>by_id</g-pr> <g-o>:=</g-o> <g-pb>{</g-pb><g-v>user</g-v><g-pd>.</g-pd><g-vm>id</g-vm><g-pd>:</g-pd> <g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-o>|</g-o> <g-k>some</g-k> <g-v>user</g-v> <g-k>in</g-k> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>users</g-vm><g-pb>}</g-pb>
+<g-pr>qualified</g-pr><g-pb>(</g-pb><g-v>x</g-v><g-pb>)</g-pb> <g-o>:=</g-o> <g-v>y</g-v> <g-k>if</g-k> <g-pb>{</g-pb>
+    <g-v>y</g-v> <g-o>:=</g-o> <g-f>startswith</g-f><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-s>"team-"</g-s><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+<g-pr>response</g-pr> <g-o>:=</g-o> <g-f>http.send</g-f><g-pb>({</g-pb><g-s>"method"</g-s><g-pd>:</g-pd> <g-s>"get"</g-s><g-pd>,</g-pd> <g-s>"url"</g-s><g-pd>:</g-pd> <g-cb>input</g-cb><g-pd>.</g-pd><g-vm>url</g-vm><g-pb>})</g-pb>
+<g-pr>timestamp</g-pr> <g-o>:=</g-o> <g-f>time.now_ns</g-f><g-pb>()</g-pb>
