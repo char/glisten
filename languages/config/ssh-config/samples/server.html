@@ -1,0 +1,7 @@
+<g-c># Server settings</g-c>
+<g-k>Port</g-k> 2222
+<g-k>PermitRootLogin</g-k> no
+<g-k>PasswordAuthentication</g-k> no
+<g-k>Match</g-k> User deploy Address 192.0.2.0/24
+    <g-k>AllowTcpForwarding</g-k> yes
+    <g-k>ForceCommand</g-k> internal-sftp

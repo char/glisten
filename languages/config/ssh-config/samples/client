@@ -1,0 +1,10 @@
+# Client defaults
+Host *
+    ServerAliveInterval 30
+    IdentityFile ~/.ssh/id_ed25519
+
+Host build-*
+    HostName %h.example.net
+    User deploy
+    ProxyCommand "ssh -W %h:%p jump.example.net"
+    IdentityAgent ${SSH_AUTH_SOCK}

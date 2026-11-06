@@ -1,0 +1,7 @@
+# Server settings
+Port 2222
+PermitRootLogin no
+PasswordAuthentication no
+Match User deploy Address 192.0.2.0/24
+    AllowTcpForwarding yes
+    ForceCommand internal-sftp

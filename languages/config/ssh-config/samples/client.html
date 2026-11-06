@@ -1,0 +1,10 @@
+<g-c># Client defaults</g-c>
+<g-k>Host</g-k> *
+    <g-k>ServerAliveInterval</g-k> 30
+    <g-k>IdentityFile</g-k> ~/.ssh/id_ed25519
+
+<g-k>Host</g-k> build-*
+    <g-k>HostName</g-k> <g-se>%h</g-se>.example.net
+    <g-k>User</g-k> deploy
+    <g-k>ProxyCommand</g-k> <g-s>"ssh -W </g-s><g-se>%h</g-se><g-s>:</g-s><g-se>%p</g-se><g-s> jump.example.net"</g-s>
+    <g-k>IdentityAgent</g-k> <g-v>${SSH_AUTH_SOCK}</g-v>

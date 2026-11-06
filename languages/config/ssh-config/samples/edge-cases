@@ -1,0 +1,8 @@
+   # indented comment
+hOsT=host.example
+User "unterminated
+Host café
+IdentityFile ${HOME}/keys/%h-%%
+UnknownOption host#suffix # token-boundary comment
+SetEnv MESSAGE='hello world' FOO=bar
+=bad
