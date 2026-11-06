@@ -1,0 +1,33 @@
+<g-k>import</g-k> <g-t>Lean</g-t>
+
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>constructor</g-f>
+  <g-o>·</g-o> <g-f>exact</g-f> <g-pb>(</g-pb><g-k>by</g-k> <g-f>trivial</g-f><g-pb>)</g-pb>
+  <g-o>·</g-o> <g-f>have</g-f> <g-v>h</g-v> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k>
+      <g-f>trivial</g-f>
+    <g-f>exact</g-f> <g-v>h</g-v>
+
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>constructor</g-f>
+  <g-k>case</g-k> <g-v>left</g-v> <g-o>=&gt;</g-o>
+    <g-f>trivial</g-f>
+  <g-k>next</g-k> <g-o>=&gt;</g-o>
+    <g-f>trivial</g-f>
+
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k> <g-f>constructor</g-f> <g-o>&lt;;&gt;</g-o> <g-f>trivial</g-f>
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k> <g-f>constructor</g-f><g-pd>;</g-pd> <g-f>trivial</g-f><g-pd>;</g-pd> <g-f>trivial</g-f>
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>:=</g-o> <g-pb>(</g-pb><g-k>by</g-k> <g-f>trivial</g-f><g-pb>)</g-pb>
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-pb>⟨</g-pb><g-k>by</g-k> <g-f>trivial</g-f><g-pd>,</g-pd> <g-k>by</g-k> <g-f>trivial</g-f><g-pb>⟩</g-pb>
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k> <g-pb>(</g-pb><g-f>trivial</g-f><g-pb>)</g-pb>
+<g-k>example</g-k> <g-pd>:</g-pd> <g-o>∃</g-o> <g-v>x</g-v> <g-v>y</g-v> <g-pd>:</g-pd> <g-t>Nat</g-t><g-pd>,</g-pd> <g-v>x</g-v> <g-o>=</g-o> <g-v>y</g-v> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>exists</g-f> <g-n>0</g-n><g-pd>,</g-pd> <g-n>0</g-n>
+  <g-f>rfl</g-f>
+
+<g-k>example</g-k> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>∧</g-o> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>constructor</g-f>
+  <g-o>.</g-o> <g-f>trivial</g-f>
+  <g-o>.</g-o> <g-f>trivial</g-f>
+
+<g-c>-- The name in an argument is not itself a tactic invocation.</g-c>
+<g-k>example</g-k> <g-pb>(</g-pb><g-v>simp</g-v> <g-pd>:</g-pd> <g-t>True</g-t><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>True</g-t> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>exact</g-f> <g-v>simp</g-v>

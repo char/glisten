@@ -1,0 +1,19 @@
+<g-k>import</g-k> <g-t>Lean</g-t>
+
+<g-k>namespace</g-k> <g-t>Demo</g-t>
+
+<g-c>/-- An identity function on any type. -/</g-c>
+<g-k>def</g-k> <g-f>identity</g-f> <g-pb>(</g-pb><g-v>α</g-v> <g-pd>:</g-pd> <g-t>Type</g-t><g-pb>)</g-pb> <g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-v>α</g-v><g-pb>)</g-pb> <g-pd>:</g-pd> <g-v>α</g-v> <g-o>:=</g-o> <g-v>x</g-v>
+
+<g-at>@[simp]</g-at> <g-k>theorem</g-k> <g-f>identity_eq</g-f> <g-pb>(</g-pb><g-v>α</g-v> <g-pd>:</g-pd> <g-t>Type</g-t><g-pb>)</g-pb> <g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-v>α</g-v><g-pb>)</g-pb> <g-pd>:</g-pd> <g-v>identity</g-v> <g-v>α</g-v> <g-v>x</g-v> <g-o>=</g-o> <g-v>x</g-v> <g-o>:=</g-o> <g-k>by</g-k>
+  <g-f>rfl</g-f>
+
+<g-k>def</g-k> <g-f>swap</g-f> <g-pb>(</g-pb><g-v>α</g-v> <g-v>β</g-v> <g-pd>:</g-pd> <g-t>Type</g-t><g-pb>)</g-pb> <g-pb>(</g-pb><g-v>p</g-v> <g-pd>:</g-pd> <g-v>α</g-v> <g-o>×</g-o> <g-v>β</g-v><g-pb>)</g-pb> <g-pd>:</g-pd> <g-v>β</g-v> <g-o>×</g-o> <g-v>α</g-v> <g-o>:=</g-o>
+  <g-pb>⟨</g-pb><g-v>p</g-v><g-ps>.</g-ps><g-n>2</g-n><g-pd>,</g-pd> <g-v>p</g-v><g-ps>.</g-ps><g-n>1</g-n><g-pb>⟩</g-pb>
+
+<g-k>inductive</g-k> <g-t>Tree</g-t> <g-pb>(</g-pb><g-v>α</g-v> <g-pd>:</g-pd> <g-t>Type</g-t><g-pb>)</g-pb> <g-k>where</g-k>
+  <g-o>|</g-o> <g-v>leaf</g-v> <g-pd>:</g-pd> <g-v>α</g-v> <g-o>→</g-o> <g-t>Tree</g-t> <g-v>α</g-v>
+  <g-o>|</g-o> <g-v>node</g-v> <g-pd>:</g-pd> <g-t>Tree</g-t> <g-v>α</g-v> <g-o>→</g-o> <g-t>Tree</g-t> <g-v>α</g-v> <g-o>→</g-o> <g-t>Tree</g-t> <g-v>α</g-v>
+  <g-k>deriving</g-k> <g-t>Repr</g-t>
+
+<g-k>end</g-k> <g-t>Demo</g-t>

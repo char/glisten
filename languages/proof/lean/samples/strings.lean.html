@@ -1,0 +1,10 @@
+<g-c>/-! Documentation with a nested block.
+  /- inner -/ outer
+-/</g-c>
+
+<g-k>def</g-k> <g-f>«a name with spaces»</g-f> <g-pd>:</g-pd> <g-t>String</g-t> <g-o>:=</g-o> <g-s>"hello</g-s><g-se>\n</g-se><g-s>world"</g-s>
+<g-k>def</g-k> <g-f>message</g-f> <g-pb>(</g-pb><g-v>x</g-v> <g-pd>:</g-pd> <g-t>Nat</g-t><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>String</g-t> <g-o>:=</g-o> <g-s>s!"value = </g-s><g-ps>{</g-ps><g-t>Nat</g-t><g-ps>.</g-ps><g-vm>succ</g-vm> <g-v>x</g-v><g-pb>}</g-pb><g-s>"</g-s>
+<g-k>def</g-k> <g-f>answer</g-f> <g-pd>:</g-pd> <g-t>Nat</g-t> <g-o>:=</g-o> <g-n>0x2A</g-n> <g-o>+</g-o> <g-n>0b10</g-n>
+<g-k>#eval</g-k> <g-v>message</g-v> <g-v>answer</g-v>
+<g-k>#check</g-k> <g-t>Nat</g-t><g-ps>.</g-ps><g-vm>succ</g-vm>
+<g-c>-- Quoted names are identifiers, and string braces can contain expressions.</g-c>
