@@ -1,0 +1,9 @@
+<g-c>000100* Customer record copybook</g-c>
+<g-c>000200</g-c> <g-n>01</g-n> <g-v>CUSTOMER-RECORD</g-v><g-pd>.</g-pd>
+<g-c>000300</g-c>    <g-n>05</g-n> <g-v>CUSTOMER-ID</g-v>       <g-k>PIC</g-k> <g-t>9(5).</g-t>
+<g-c>000400</g-c>    <g-n>05</g-n> <g-v>CUSTOMER-STATUS</g-v>   <g-k>PIC</g-k> <g-t>X.</g-t>
+<g-c>000500</g-c>       <g-n>88</g-n> <g-v>ACTIVE</g-v>         <g-k>VALUE</g-k> <g-s>'Y'</g-s><g-pd>.</g-pd>
+<g-c>000600/ Page comment</g-c>
+<g-c>000700</g-c><g-ps>D</g-ps>    <g-k>DISPLAY</g-k> <g-s>"debugging line"</g-s>
+<g-c>000800</g-c><g-ps>-</g-ps>    <g-k>MOVE</g-k> <g-cb>SPACES</g-cb> <g-k>TO</g-k> <g-v>CUSTOMER-STATUS</g-v>
+<g-c>000900</g-c>     <g-k>COPY</g-k> <g-v>CUSTOMER-EXTRA</g-v><g-pd>.</g-pd>

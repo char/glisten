@@ -12,6 +12,7 @@ import capnp from "./data/capnp/grammar.ts";
 import cedar from "./policy/cedar/grammar.ts";
 import clojure from "./functional/clojure/grammar.ts";
 import cmake from "./build/cmake/grammar.ts";
+import cobol from "./managed/cobol/grammar.ts";
 import commonlisp from "./functional/commonlisp/grammar.ts";
 import cpp from "./systems/cpp/grammar.ts";
 import css from "./web/css/grammar.ts";
@@ -112,6 +113,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   cedar,
   clojure,
   cmake,
+  cobol,
   commonlisp,
   cpp,
   css,

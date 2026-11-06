@@ -1,0 +1,15 @@
+<g-c>      </g-c> <g-k>&gt;&gt;SOURCE FORMAT FREE</g-k>
+<g-k>identification</g-k> <g-k>division</g-k><g-pd>.</g-pd>
+<g-k>program-id</g-k><g-pd>.</g-pd> <g-v>free-example</g-v><g-pd>.</g-pd>
+<g-k>data</g-k> <g-k>division</g-k><g-pd>.</g-pd>
+<g-k>working-storage</g-k> <g-k>section</g-k><g-pd>.</g-pd>
+<g-n>01</g-n> <g-v>item-count</g-v> <g-k>pic</g-k> <g-t>9(5)</g-t> <g-k>value</g-k> <g-n>0</g-n><g-pd>.</g-pd>
+<g-k>procedure</g-k> <g-k>division</g-k><g-pd>.</g-pd>
+    <g-c>*&gt; A free-format comment</g-c>
+    <g-k>perform</g-k> <g-k>until</g-k> <g-v>item-count</g-v> <g-o>&gt;=</g-o> <g-n>10</g-n>
+        <g-k>add</g-k> <g-n>1</g-n> <g-k>to</g-k> <g-v>item-count</g-v>
+        <g-k>if</g-k> <g-v>item-count</g-v> <g-o>=</g-o> <g-n>5</g-n>
+            <g-k>display</g-k> <g-s>"It's </g-s><g-se>""</g-se><g-s>five</g-s><g-se>""</g-se><g-s>"</g-s>
+        <g-k>end-if</g-k>
+    <g-k>end-perform</g-k>
+    <g-k>goback</g-k><g-pd>.</g-pd>
