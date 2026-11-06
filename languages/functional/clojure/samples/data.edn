@@ -1,0 +1,9 @@
+; A small EDN document
+{:app/name "orchard"
+ :enabled true
+ :missing nil
+ :sizes #{1 2 3}
+ :limits [1/2 0xFF 2r101 42N 1.5M -3.2e+4]
+ :date #inst "2024-01-02T00:00:00.000-00:00"
+ :id #uuid "00000000-0000-0000-0000-000000000001"
+ :chars [\a \newline \u0041]}

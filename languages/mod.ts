@@ -3,6 +3,7 @@ import bash from "./shell/bash/grammar.ts";
 import c from "./systems/c/grammar.ts";
 import caddy from "./config/caddy/grammar.ts";
 import capnp from "./data/capnp/grammar.ts";
+import clojure from "./functional/clojure/grammar.ts";
 import cmake from "./build/cmake/grammar.ts";
 import css from "./web/css/grammar.ts";
 import devicetree from "./data/devicetree/grammar.ts";
@@ -52,6 +53,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   c,
   caddy,
   capnp,
+  clojure,
   cmake,
   css,
   devicetree,

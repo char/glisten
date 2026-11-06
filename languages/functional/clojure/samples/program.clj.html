@@ -1,0 +1,11 @@
+<g-pb>(</g-pb><g-k>ns</g-k> <g-v>orchard.core</g-v>
+  <g-pb>(</g-pb><g-cb>:require</g-cb> <g-pb>[</g-pb><g-v>clojure.string</g-v> <g-cb>:as</g-cb> <g-v>str</g-v><g-pb>]))</g-pb>
+
+<g-pb>(</g-pb><g-k>defn</g-k> <g-f>greeting</g-f> <g-pb>[</g-pb><g-v>person</g-v><g-pb>]</g-pb>
+  <g-pb>(</g-pb><g-k>let</g-k> <g-pb>[</g-pb><g-v>name</g-v> <g-pb>(</g-pb><g-f>str/trim</g-f> <g-v>person</g-v><g-pb>)]</g-pb>
+    <g-pb>(</g-pb><g-k>if</g-k> <g-pb>(</g-pb><g-f>empty?</g-f> <g-v>name</g-v><g-pb>)</g-pb>
+      <g-s>"Hello, stranger!"</g-s>
+      <g-pb>(</g-pb><g-f>str</g-f> <g-s>"Hello, "</g-s> <g-v>name</g-v> <g-s>"!"</g-s><g-pb>))))</g-pb>
+
+<g-pb>(</g-pb><g-k>defn</g-k> <g-f>scale</g-f> <g-pb>[</g-pb><g-v>xs</g-v> <g-v>factor</g-v><g-pb>]</g-pb>
+  <g-pb>(</g-pb><g-f>map</g-f> <g-pb>#(</g-pb><g-f>*</g-f> <g-v>%1</g-v> <g-v>factor</g-v><g-pb>)</g-pb> <g-v>xs</g-v><g-pb>))</g-pb>

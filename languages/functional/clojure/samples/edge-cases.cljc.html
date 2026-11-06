@@ -1,0 +1,9 @@
+<g-pb>(</g-pb><g-k>defn</g-k> <g-ps>^</g-ps><g-cb>:private</g-cb> <g-f>render</g-f> <g-pb>[</g-pb><g-v>x</g-v><g-pb>]</g-pb>
+  <g-c>#_(ignored ["not ]" {:nested '(a b)}] ; a comment
+             #_gone :still-discarded)</g-c>
+  <g-pb>[</g-pb><g-ps>#?</g-ps><g-pb>(</g-pb><g-cb>:clj</g-cb> <g-cb>:jvm</g-cb> <g-cb>:cljs</g-cb> <g-cb>:js</g-cb><g-pb>)</g-pb> <g-ps>#?@</g-ps><g-pb>(</g-pb><g-cb>:clj</g-cb> <g-pb>[</g-pb><g-n>1</g-n> <g-n>2</g-n><g-pb>]</g-pb> <g-cb>:cljs</g-cb> <g-pb>[</g-pb><g-n>3</g-n><g-pb>])</g-pb>
+   <g-ps>#'</g-ps><g-v>render</g-v> <g-ps>@</g-ps><g-v>x</g-v> <g-ps>`</g-ps><g-pb>(</g-pb><g-ps>~</g-ps><g-v>x</g-v> <g-ps>~@</g-ps><g-v>x</g-v><g-pb>)</g-pb> <g-s>#"a</g-s><g-se>\\</g-se><g-s>d+</g-s><g-se>\"</g-se><g-s>b"</g-s> <g-cb>::local</g-cb> <g-cb>:ns/key</g-cb>
+   <g-c>#_ #_ :inner :outer</g-c> <g-cb>:kept</g-cb>
+   <g-c>#_^:tag [a b]</g-c> <g-cb>:after-meta</g-cb>
+   <g-c>#_#inst "2020-01-01"</g-c> <g-cb>:after-tag</g-cb>
+   <g-n>##Inf</g-n> <g-n>##-Inf</g-n> <g-n>##NaN</g-n> <g-c>#_##Inf</g-c> <g-cb>:after-symbolic</g-cb><g-pb>])</g-pb>
