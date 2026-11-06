@@ -1,0 +1,12 @@
+<g-c>// Repository readers may inspect shared documents.</g-c>
+<g-ps>@</g-ps><g-at>id</g-at><g-pb>(</g-pb><g-s>"read-shared"</g-s><g-pb>)</g-pb>
+<g-k>permit</g-k> <g-pb>(</g-pb>
+    <g-v>principal</g-v> <g-k>is</g-k> <g-t>Example</g-t><g-pd>::</g-pd><g-t>User</g-t><g-pd>,</g-pd>
+    <g-v>action</g-v> <g-k>in</g-k> <g-pb>[</g-pb><g-t>Example</g-t><g-pd>::</g-pd><g-t>Action</g-t><g-pd>::</g-pd><g-s>"read"</g-s><g-pd>,</g-pd> <g-t>Example</g-t><g-pd>::</g-pd><g-t>Action</g-t><g-pd>::</g-pd><g-s>"list"</g-s><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-v>resource</g-v> <g-k>is</g-k> <g-t>Example</g-t><g-pd>::</g-pd><g-t>Document</g-t>
+<g-pb>)</g-pb>
+<g-k>when</g-k> <g-pb>{</g-pb>
+    <g-v>resource</g-v> <g-k>has</g-k> <g-v>visibility</g-v> <g-o>&amp;&amp;</g-o>
+    <g-v>resource</g-v><g-pd>.</g-pd><g-pr>visibility</g-pr> <g-o>==</g-o> <g-s>"shared"</g-s> <g-o>&amp;&amp;</g-o>
+    <g-v>principal</g-v><g-pd>.</g-pd><g-pr>groups</g-pr><g-pd>.</g-pd><g-f>contains</g-f><g-pb>(</g-pb><g-s>"readers"</g-s><g-pb>)</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>

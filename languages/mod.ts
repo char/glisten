@@ -7,6 +7,7 @@ import c from "./systems/c/grammar.ts";
 import c_sharp from "./managed/c-sharp/grammar.ts";
 import caddy from "./config/caddy/grammar.ts";
 import capnp from "./data/capnp/grammar.ts";
+import cedar from "./policy/cedar/grammar.ts";
 import clojure from "./functional/clojure/grammar.ts";
 import cmake from "./build/cmake/grammar.ts";
 import commonlisp from "./functional/commonlisp/grammar.ts";
@@ -101,6 +102,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   "c-sharp": c_sharp,
   caddy,
   capnp,
+  cedar,
   clojure,
   cmake,
   commonlisp,

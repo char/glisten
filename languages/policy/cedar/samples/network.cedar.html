@@ -1,0 +1,13 @@
+<g-ps>@</g-ps><g-at>id</g-at><g-pb>(</g-pb><g-s>"block-external"</g-s><g-pb>)</g-pb>
+<g-k>forbid</g-k> <g-pb>(</g-pb>
+    <g-v>principal</g-v><g-pd>,</g-pd>
+    <g-v>action</g-v> <g-o>==</g-o> <g-t>App</g-t><g-pd>::</g-pd><g-t>Action</g-t><g-pd>::</g-pd><g-s>"write"</g-s><g-pd>,</g-pd>
+    <g-v>resource</g-v>
+<g-pb>)</g-pb>
+<g-k>when</g-k> <g-pb>{</g-pb>
+    <g-v>context</g-v> <g-k>has</g-k> <g-v>sourceIp</g-v> <g-o>&amp;&amp;</g-o>
+    <g-o>!</g-o><g-f>ip</g-f><g-pb>(</g-pb><g-v>context</g-v><g-pd>.</g-pd><g-pr>sourceIp</g-pr><g-pb>)</g-pb><g-pd>.</g-pd><g-f>isInRange</g-f><g-pb>(</g-pb><g-f>ip</g-f><g-pb>(</g-pb><g-s>"10.0.0.0/8"</g-s><g-pb>))</g-pb>
+<g-pb>}</g-pb>
+<g-k>unless</g-k> <g-pb>{</g-pb>
+    <g-v>context</g-v> <g-k>has</g-k> <g-v>emergency</g-v> <g-o>&amp;&amp;</g-o> <g-v>context</g-v><g-pd>.</g-pd><g-pr>emergency</g-pr> <g-o>==</g-o> <g-cb>true</g-cb>
+<g-pb>}</g-pb><g-pd>;</g-pd>

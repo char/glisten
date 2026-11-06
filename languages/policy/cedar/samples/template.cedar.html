@@ -1,0 +1,14 @@
+<g-c>// A policy template bound to a principal and a resource.</g-c>
+<g-ps>@</g-ps><g-at>id</g-at><g-pb>(</g-pb><g-s>"assigned-owner"</g-s><g-pb>)</g-pb>
+<g-k>permit</g-k> <g-pb>(</g-pb>
+    <g-v>principal</g-v> <g-o>==</g-o> <g-v>?principal</g-v><g-pd>,</g-pd>
+    <g-v>action</g-v> <g-o>==</g-o> <g-t>App</g-t><g-pd>::</g-pd><g-t>Action</g-t><g-pd>::</g-pd><g-s>"update"</g-s><g-pd>,</g-pd>
+    <g-v>resource</g-v> <g-o>==</g-o> <g-v>?resource</g-v>
+<g-pb>)</g-pb>
+<g-k>when</g-k> <g-pb>{</g-pb>
+    <g-v>resource</g-v><g-pd>.</g-pd><g-pr>name</g-pr> <g-k>like</g-k> <g-s>"report-*"</g-s> <g-o>&amp;&amp;</g-o>
+    <g-v>resource</g-v><g-pd>.</g-pd><g-pr>tags</g-pr><g-pd>.</g-pd><g-f>containsAll</g-f><g-pb>([</g-pb><g-s>"approved"</g-s><g-pd>,</g-pd> <g-s>"signed"</g-s><g-pb>])</g-pb> <g-o>&amp;&amp;</g-o>
+    <g-f>decimal</g-f><g-pb>(</g-pb><g-s>"12.50"</g-s><g-pb>)</g-pb><g-pd>.</g-pd><g-f>lessThan</g-f><g-pb>(</g-pb><g-f>decimal</g-f><g-pb>(</g-pb><g-s>"99.00"</g-s><g-pb>))</g-pb> <g-o>&amp;&amp;</g-o>
+    <g-v>context</g-v><g-pd>.</g-pd><g-pr>details</g-pr> <g-o>==</g-o> <g-pb>{</g-pb> <g-pr>label</g-pr><g-pd>:</g-pd> <g-s>"line</g-s><g-se>\n</g-se><g-s>next"</g-s><g-pd>,</g-pd> <g-pr>note</g-pr><g-pd>:</g-pd> <g-s>"first line
+second line"</g-s><g-pd>,</g-pd> <g-pr>enabled</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd> <g-pr>count</g-pr><g-pd>:</g-pd> <g-n>3</g-n> <g-pb>}</g-pb>
+<g-pb>}</g-pb><g-pd>;</g-pd>
