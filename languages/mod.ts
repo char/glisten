@@ -17,6 +17,7 @@ import html from "./web/html/grammar.ts";
 import ini from "./config/ini/grammar.ts";
 import java from "./managed/java/grammar.ts";
 import javascript from "./web/javascript/grammar.ts";
+import jq from "./query/jq/grammar.ts";
 import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
 import kconfig from "./build/kconfig/grammar.ts";
@@ -59,6 +60,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ini,
   java,
   javascript,
+  jq,
   json,
   jsx,
   kconfig,

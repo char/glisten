@@ -1,0 +1,15 @@
+<g-c># Build a summary from the input catalog.</g-c>
+<g-k>def</g-k> <g-f>summary</g-f><g-pb>(</g-pb><g-v>$title</g-v><g-pd>;</g-pd> <g-v>selector</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+  <g-o>.</g-o><g-pr>items</g-pr> <g-o>|</g-o> <g-f>map</g-f><g-pb>(</g-pb><g-f>select</g-f><g-pb>(</g-pb><g-f>selector</g-f><g-pb>))</g-pb> <g-o>|</g-o> <g-pb>{</g-pb>
+    <g-pr>title</g-pr><g-pd>:</g-pd> <g-v>$title</g-v><g-pd>,</g-pd>
+    <g-pr>count</g-pr><g-pd>:</g-pd> <g-f>length</g-f><g-pd>,</g-pd>
+    <g-pr>names</g-pr><g-pd>:</g-pd> <g-f>map</g-f><g-pb>(</g-pb><g-o>.</g-o><g-pr>name</g-pr><g-pb>)</g-pb><g-pd>,</g-pd>
+    <g-pb>(</g-pb><g-s>"by-</g-s><g-ps>\(</g-ps><g-o>.</g-o><g-pr>category</g-pr><g-ps>)</g-ps><g-s>"</g-s><g-pb>)</g-pb><g-pd>:</g-pd> <g-pb>[</g-pb><g-o>.</g-o><g-pb>[]</g-pb><g-o>.</g-o><g-pr>id</g-pr><g-pb>]</g-pb>
+  <g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-o>.</g-o><g-pr>items</g-pr><g-pb>[]</g-pb> <g-k>as</g-k> <g-v>$item</g-v>
+<g-o>|</g-o> <g-k>if</g-k> <g-v>$item</g-v><g-o>.</g-o><g-pr>enabled</g-pr> <g-k>and</g-k> <g-pb>(</g-pb><g-v>$item</g-v><g-o>.</g-o><g-pr>price</g-pr> <g-o>&gt;=</g-o> <g-n>1.5e2</g-n><g-pb>)</g-pb> <g-k>then</g-k>
+    <g-pb>{</g-pb><g-pr>name</g-pr><g-pd>:</g-pd> <g-v>$item</g-v><g-o>.</g-o><g-pr>name</g-pr><g-pd>,</g-pd> <g-s>"quoted key"</g-s><g-pd>:</g-pd> <g-v>$item</g-v><g-pb>[</g-pb><g-s>"sku"</g-s><g-pb>]</g-pb><g-pd>,</g-pd> <g-pr>fallback</g-pr><g-pd>:</g-pd> <g-pb>(</g-pb><g-o>.</g-o><g-pr>description</g-pr> <g-o>//</g-o> <g-s>"none"</g-s><g-pb>)}</g-pb>
+  <g-k>elif</g-k> <g-v>$item</g-v><g-o>.</g-o><g-pr>tags</g-pr><g-o>?</g-o> <g-k>then</g-k> <g-pb>{</g-pb><g-pr>tags</g-pr><g-pd>:</g-pd> <g-v>$item</g-v><g-o>.</g-o><g-pr>tags</g-pr><g-pb>}</g-pb>
+  <g-k>else</g-k> <g-f>empty</g-f> <g-k>end</g-k>
+<g-o>|</g-o> <g-f>summary</g-f><g-pb>(</g-pb><g-s>"Sale"</g-s><g-pd>;</g-pd> <g-o>.</g-o><g-pr>count</g-pr> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb>

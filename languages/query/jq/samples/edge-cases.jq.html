@@ -1,0 +1,10 @@
+<g-c># Unicode and escaped quotes: 雪 🦀</g-c>
+<g-c># This comment continues onto the next line \
+still a comment, not a jq filter</g-c>
+<g-c># An escaped backslash does not continue: \\</g-c>
+<g-o>.</g-o><g-pr>identity</g-pr> <g-o>|</g-o>
+<g-pb>{</g-pb><g-pr>a</g-pr><g-pd>,</g-pd> <g-pr>b</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-pb>(</g-pb><g-o>.</g-o><g-pr>k</g-pr><g-pb>)</g-pb><g-pd>:</g-pd> <g-v>$x</g-v><g-pd>,</g-pd> <g-v>$x</g-v><g-pd>,</g-pd> <g-s>"</g-s><g-ps>\(</g-ps><g-k>if</g-k> <g-o>.</g-o><g-pr>ok</g-pr> <g-k>then</g-k> <g-s>"yes"</g-s> <g-k>else</g-k> <g-s>"no"</g-s> <g-k>end</g-k><g-ps>)</g-ps><g-s>"</g-s><g-pd>:</g-pd> <g-o>.</g-o><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-o>?</g-o><g-pb>}</g-pb>
+<g-o>|</g-o> <g-s>"nested: </g-s><g-ps>\(</g-ps><g-f>map</g-f><g-pb>(</g-pb><g-s>"inner </g-s><g-ps>\(</g-ps><g-o>.</g-o><g-pr>name</g-pr><g-ps>)</g-ps><g-s>"</g-s><g-pb>)</g-pb><g-ps>)</g-ps><g-s> end"</g-s>
+<g-o>|</g-o> <g-o>.</g-o><g-s>"a-b"</g-s> <g-o>?//</g-o> <g-o>.</g-o><g-pr>fallback</g-pr> <g-o>|</g-o> <g-o>.</g-o><g-pr>items</g-pr><g-pb>[</g-pb><g-n>1</g-n><g-pd>:</g-pd><g-n>3</g-n><g-pb>]</g-pb> <g-o>|=</g-o> <g-f>map</g-f><g-pb>(</g-pb><g-o>.</g-o> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb>
+<g-o>|</g-o> <g-s>"unterminated </g-s><g-ps>\(</g-ps><g-k>try</g-k> <g-o>.</g-o><g-pr>missing</g-pr> <g-k>catch</g-k> <g-pb>{</g-pb><g-pr>message</g-pr><g-pd>:</g-pd> <g-s>"oops"</g-s><g-pb>}</g-pb><g-ps>)</g-ps><g-s>
+</g-s>

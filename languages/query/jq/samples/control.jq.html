@@ -1,0 +1,15 @@
+<g-k>module</g-k> <g-pb>{</g-pb><g-s>"name"</g-s><g-pd>:</g-pd> <g-s>"analytics"</g-s><g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>import</g-k> <g-s>"helpers"</g-s> <g-k>as</g-k> h<g-pd>;</g-pd>
+<g-k>include</g-k> <g-s>"extras"</g-s><g-pd>;</g-pd>
+
+<g-k>def</g-k> <g-f>collect</g-f><g-pb>(</g-pb><g-v>stream</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+  <g-k>reduce</g-k> <g-f>stream</g-f> <g-k>as</g-k> <g-pb>{</g-pb><g-v>$key</g-v><g-pd>,</g-pd> <g-pr>value</g-pr><g-pd>:</g-pd> <g-v>$v</g-v><g-pb>}</g-pb> <g-pb>({}</g-pb><g-pd>;</g-pd> <g-o>.</g-o><g-pb>[</g-pb><g-v>$key</g-v><g-pb>]</g-pb> <g-o>+=</g-o> <g-v>$v</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-k>def</g-k> <g-f>running</g-f><g-pd>:</g-pd>
+  <g-k>foreach</g-k> <g-o>.</g-o><g-pb>[]</g-pb> <g-k>as</g-k> <g-pb>[</g-pb><g-v>$key</g-v><g-pd>,</g-pd> <g-v>$value</g-v><g-pb>]</g-pb> <g-pb>({}</g-pb><g-pd>;</g-pd> <g-o>.</g-o><g-pb>[</g-pb><g-v>$key</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>$value</g-v><g-pd>;</g-pd> <g-pb>{</g-pb><g-pr>key</g-pr><g-pd>:</g-pd> <g-v>$key</g-v><g-pd>,</g-pd> <g-pr>state</g-pr><g-pd>:</g-pd> <g-o>.</g-o><g-pb>})</g-pb><g-pd>;</g-pd>
+
+<g-k>label</g-k> <g-l>$out</g-l> <g-o>|</g-o> <g-k>try</g-k> <g-pb>(</g-pb>
+  <g-o>..</g-o> <g-o>|</g-o> <g-f>objects</g-f> <g-o>|</g-o> <g-o>.</g-o><g-pr>payload</g-pr><g-o>?</g-o> <g-o>//</g-o> <g-k>break</g-k> <g-l>$out</g-l>
+<g-pb>)</g-pb> <g-k>catch</g-k> <g-pb>{</g-pb><g-pr>error</g-pr><g-pd>:</g-pd> <g-o>.</g-o><g-pd>,</g-pd> <g-pr>location</g-pr><g-pd>:</g-pd> <g-cb>$__loc__</g-cb><g-pb>}</g-pb>
+<g-o>|</g-o> <g-at>@base64</g-at> <g-s>"payload=</g-s><g-ps>\(</g-ps><g-o>.</g-o><g-pr>payload</g-pr> <g-o>|</g-o> <g-f>tostring</g-f><g-ps>)</g-ps><g-s>"</g-s>
+<g-o>|</g-o> <g-f>h::transform</g-f>
