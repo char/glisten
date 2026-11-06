@@ -1,0 +1,17 @@
+<g-c># Comments start only between arguments.</g-c>
+<g-k>set</g-k> <g-v>$fragment</g-v> abc#not-a-comment<g-pd>;</g-pd> <g-c># comment</g-c>
+<g-k>set</g-k> <g-v>$escaped</g-v> one<g-se>\;</g-se>two<g-se>\{</g-se>three<g-se>\ </g-se>four<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$joined</g-v> prefix<g-v>${name}</g-v>_<g-v>$other</g-v>-suffix-<g-v>$1</g-v>2<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$quotes</g-v> <g-s>"a # b </g-s><g-se>\"</g-se><g-s>quoted</g-s><g-se>\"</g-se><g-s> </g-s><g-v>$host</g-v><g-s> </g-s><g-v>${uri}</g-v><g-s> </g-s><g-se>\\</g-se><g-v>$literal</g-v><g-s>"</g-s><g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$single</g-v> <g-s>'a</g-s><g-se>\'</g-se><g-s>b </g-s><g-v>$name</g-v><g-s>'</g-s><g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$path</g-v> /v1/123<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$mixed</g-v> 123abc<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$delay</g-v> <g-n>10ms</g-n><g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$size</g-v> <g-n>5M</g-n><g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$decimal</g-v> 12.5<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$compound</g-v> 1h30m<g-pd>;</g-pd>
+<g-k>set</g-k> <g-v>$html</g-v> <g-s>"&lt;tag a=</g-s><g-se>\"</g-se><g-s>x</g-s><g-se>\"</g-se><g-s>&gt;&amp;"</g-s><g-pd>;</g-pd>
+<g-k>if</g-k> <g-pb>(</g-pb><g-v>$request_method</g-v> <g-o>=</g-o> POST<g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-n>403</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>if</g-k> <g-pb>(</g-pb><g-v>$uri</g-v> <g-o>~*</g-o> <g-s>"^/private/(.*)$"</g-s><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>return</g-k> <g-n>404</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>location</g-k> <g-o>~</g-o> <g-s>"^/files/[0-9]{2}$"</g-s> <g-pb>{</g-pb> <g-k>return</g-k> <g-n>200</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>include</g-k> /etc/nginx/conf.d/*.conf<g-pd>;</g-pd>

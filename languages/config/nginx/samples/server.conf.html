@@ -1,0 +1,19 @@
+<g-c># A small reverse proxy</g-c>
+<g-k>worker_processes</g-k> <g-n>4</g-n><g-pd>;</g-pd>
+<g-k>events</g-k> <g-pb>{</g-pb> <g-k>worker_connections</g-k> <g-n>1024</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>http</g-k> <g-pb>{</g-pb>
+    <g-k>include</g-k> mime.types<g-pd>;</g-pd>
+    <g-k>server</g-k> <g-pb>{</g-pb>
+        <g-k>listen</g-k> <g-n>8080</g-n><g-pd>;</g-pd>
+        <g-k>server_name</g-k> example.test<g-pd>;</g-pd>
+        <g-k>client_max_body_size</g-k> <g-n>10m</g-n><g-pd>;</g-pd>
+        <g-k>keepalive_timeout</g-k> <g-n>30s</g-n><g-pd>;</g-pd>
+        <g-k>location</g-k> <g-o>=</g-o> /health <g-pb>{</g-pb> <g-k>return</g-k> <g-n>200</g-n> <g-s>"ok</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd> <g-pb>}</g-pb>
+        <g-k>location</g-k> <g-o>^~</g-o> /assets/ <g-pb>{</g-pb> <g-k>root</g-k> /srv/www<g-pd>;</g-pd> <g-pb>}</g-pb>
+        <g-k>location</g-k> <g-o>~*</g-o> ^/images/.*<g-se>\.</g-se>(png|jpg)$ <g-pb>{</g-pb> <g-k>expires</g-k> <g-n>7d</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+        <g-k>location</g-k> / <g-pb>{</g-pb>
+            <g-k>proxy_set_header</g-k> Host <g-v>$host</g-v><g-pd>;</g-pd>
+            <g-k>proxy_pass</g-k> http://backend<g-pd>;</g-pd>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>

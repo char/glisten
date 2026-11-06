@@ -1,0 +1,12 @@
+<g-k>http</g-k> <g-pb>{</g-pb>
+    <g-k>server</g-k> <g-pb>{</g-pb>
+        <g-k>location</g-k> /script <g-pb>{</g-pb>
+            <g-k>content_by_lua_block</g-k> <g-pb>{</g-pb>
+                local item = { key = "}" }
+                -- A closing brace } in a line comment
+                ngx.say(item.key)
+            <g-pb>}</g-pb>
+        <g-pb>}</g-pb>
+        <g-k>location</g-k> /after <g-pb>{</g-pb> <g-k>return</g-k> <g-n>200</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
