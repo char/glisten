@@ -1,0 +1,16 @@
+% A command name must stop before a nonletter.
+\make@letter
+\def\my@command#1{Value #1}
+\make@other
+\section*{Title with {nested} text and $x$}
+\verb|literal % \end{verbatim}| and \verb*+spaces are visible+
+\begin{verbatim}
+\section{not a command} $not math$ % not a comment
+\end{verbatim}
+\begin{comment}
+\end{verbatim} stays commented.
+\end{comment}
+\begin{lstlisting}
+\notacommand % raw
+\end{lstlisting}
+Text after raw.

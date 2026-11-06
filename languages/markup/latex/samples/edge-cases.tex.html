@@ -1,0 +1,16 @@
+<g-c>% A command name must stop before a nonletter.</g-c>
+<g-k>\make@letter</g-k>
+<g-k>\def\my@command</g-k>#1<g-pb>{</g-pb>Value #1<g-pb>}</g-pb>
+<g-k>\make@other</g-k>
+<g-k>\section</g-k><g-ps>*</g-ps><g-pb>{</g-pb><g-tt>Title with </g-tt><g-pb>{</g-pb><g-tt>nested</g-tt><g-pb>}</g-pb><g-tt> text and </g-tt><g-ps>$</g-ps><g-tl>x</g-tl><g-ps>$</g-ps><g-pb>}</g-pb>
+<g-k>\verb</g-k><g-s>|literal % \end{verbatim}|</g-s> and <g-k>\verb*</g-k><g-s>+spaces are visible+</g-s>
+<g-k>\begin</g-k><g-pb>{</g-pb><g-l>verbatim</g-l><g-pb>}</g-pb><g-tl>
+\section{not a command} $not math$ % not a comment
+</g-tl><g-k>\end</g-k><g-pb>{</g-pb><g-l>verbatim</g-l><g-pb>}</g-pb>
+<g-k>\begin</g-k><g-pb>{</g-pb><g-l>comment</g-l><g-pb>}</g-pb><g-c>
+\end{verbatim} stays commented.
+</g-c><g-k>\end</g-k><g-pb>{</g-pb><g-l>comment</g-l><g-pb>}</g-pb>
+<g-k>\begin</g-k><g-pb>{</g-pb><g-l>lstlisting</g-l><g-pb>}</g-pb>
+<g-tl>\notacommand % raw
+</g-tl><g-k>\end</g-k><g-pb>{</g-pb><g-l>lstlisting</g-l><g-pb>}</g-pb>
+Text after raw.
