@@ -23,6 +23,7 @@ import gitattributes from "./config/gitattributes/grammar.ts";
 import gleam from "./functional/gleam/grammar.ts";
 import go from "./managed/go/grammar.ts";
 import graphql from "./query/graphql/grammar.ts";
+import groovy from "./managed/groovy/grammar.ts";
 import haskell from "./functional/haskell/grammar.ts";
 import hcl from "./config/hcl/grammar.ts";
 import html from "./web/html/grammar.ts";
@@ -94,6 +95,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   gleam,
   go,
   graphql,
+  groovy,
   haskell,
   hcl,
   html,

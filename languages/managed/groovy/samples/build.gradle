@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'example'
+version = "1.0-${buildNumber}"
+
+repositories { mavenCentral() }
+dependencies {
+    implementation 'org.example:library:1.2'
+    testImplementation "org.example:test:${version}"
+}
+tasks.register('greet') {
+    doLast { println "Hello, ${project.name}" }
+}

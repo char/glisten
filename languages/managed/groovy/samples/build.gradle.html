@@ -1,0 +1,16 @@
+<g-f>plugins</g-f> <g-pb>{</g-pb>
+    <g-f>id</g-f> <g-s>'java'</g-s>
+    <g-f>id</g-f> <g-s>'application'</g-s>
+<g-pb>}</g-pb>
+
+<g-v>group</g-v> <g-o>=</g-o> <g-s>'example'</g-s>
+<g-v>version</g-v> <g-o>=</g-o> <g-s>"1.0-</g-s><g-ps>${</g-ps><g-v>buildNumber</g-v><g-ps>}</g-ps><g-s>"</g-s>
+
+<g-f>repositories</g-f> <g-pb>{</g-pb> <g-f>mavenCentral</g-f><g-pb>()</g-pb> <g-pb>}</g-pb>
+<g-f>dependencies</g-f> <g-pb>{</g-pb>
+    <g-f>implementation</g-f> <g-s>'org.example:library:1.2'</g-s>
+    <g-f>testImplementation</g-f> <g-s>"org.example:test:</g-s><g-ps>${</g-ps><g-v>version</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-pb>}</g-pb>
+<g-v>tasks</g-v><g-pd>.</g-pd><g-f>register</g-f><g-pb>(</g-pb><g-s>'greet'</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-f>doLast</g-f> <g-pb>{</g-pb> <g-f>println</g-f> <g-s>"Hello, </g-s><g-ps>${</g-ps><g-v>project</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>"</g-s> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

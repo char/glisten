@@ -1,0 +1,25 @@
+<g-c>#!/usr/bin/env groovy</g-c>
+<g-c>/** A Groovydoc comment. */</g-c>
+<g-at>@groovy.transform.Immutable</g-at>
+<g-k>class</g-k> <g-t>Message</g-t> <g-pb>{</g-pb>
+  <g-t>String</g-t> <g-v>name</g-v>
+<g-pb>}</g-pb>
+
+<g-k>def</g-k> <g-v>name</g-v> <g-o>=</g-o> <g-s>'Ada'</g-s>
+<g-k>def</g-k> <g-v>greeting</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-v>$name</g-v><g-s>, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>toUpperCase</g-f><g-pb>()</g-pb><g-ps>}</g-ps><g-s>!"</g-s>
+<g-k>def</g-k> <g-v>literal</g-v> <g-o>=</g-o> <g-s>'$name ${notInterpolated}'</g-s>
+<g-k>def</g-k> <g-v>block</g-v> <g-o>=</g-o> <g-s>"""first </g-s><g-v>$name</g-v><g-s>
+</g-s><g-ps>${</g-ps><g-pb>[</g-pb><g-pr>a</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-pr>b</g-pr><g-pd>:</g-pd> <g-n>2</g-n><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>a</g-vm><g-ps>}</g-ps><g-s> last"""</g-s>
+<g-k>def</g-k> <g-v>plain</g-v> <g-o>=</g-o> <g-s>'''not $interpolated
+still literal'''</g-s>
+<g-k>def</g-k> <g-v>pattern</g-v> <g-o>=</g-o> <g-s>/\w+</g-s><g-se>\/</g-se><g-v>$name</g-v><g-s>/</g-s>
+<g-k>def</g-k> <g-v>path</g-v> <g-o>=</g-o> <g-s>$/home</g-s><g-se>$/</g-se><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-se>$/$$</g-se><g-s>file/$</g-s>
+<g-k>def</g-k> <g-v>quotient</g-v> <g-o>=</g-o> <g-n>12</g-n> <g-o>/</g-o> <g-n>3</g-n>
+<g-k>def</g-k> <g-v>matcher</g-v> <g-o>=</g-o> <g-v>name</g-v> <g-o>=~</g-o> <g-s>/A.*/</g-s>
+<g-k>def</g-k> <g-v>exactly</g-v> <g-o>=</g-o> <g-v>name</g-v> <g-o>==~</g-o> <g-s>/Ada/</g-s>
+<g-k>def</g-k> <g-v>score</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>5</g-n><g-pb>)</g-pb><g-pd>.</g-pd><g-f>collect</g-f> <g-pb>{</g-pb> <g-v>n</g-v> <g-o>-&gt;</g-o> <g-v>n</g-v> <g-o>*</g-o> <g-n>2</g-n> <g-pb>}</g-pb>
+<g-k>def</g-k> <g-v>range</g-v> <g-o>=</g-o> <g-n>0</g-n><g-o>..&lt;</g-o><g-n>10</g-n>
+<g-k>def</g-k> <g-v>comparison</g-v> <g-o>=</g-o> <g-n>1</g-n> <g-o>&lt;=&gt;</g-o> <g-n>2</g-n>
+<g-k>def</g-k> <g-v>fallback</g-v> <g-o>=</g-o> <g-v>person</g-v><g-o>?.</g-o><g-vm>name</g-vm> <g-o>?:</g-o> <g-s>'unknown'</g-s>
+<g-k>def</g-k> <g-v>all</g-v> <g-o>=</g-o> <g-v>people</g-v><g-o>*.</g-o><g-vm>name</g-vm>
+<g-f>println</g-f> <g-s>"Hi </g-s><g-ps>${</g-ps><g-v>greeting</g-v><g-ps>}</g-ps><g-s>"</g-s>

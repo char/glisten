@@ -1,0 +1,17 @@
+pipeline {
+  agent any
+  options { timestamps() }
+  environment { TARGET = "${env.BRANCH_NAME}" }
+  stages {
+    stage('Build') {
+      steps {
+        sh './gradlew build'
+        echo "Building $TARGET"
+      }
+    }
+    stage('Test') {
+      steps { script { def passed = currentBuild.result ?: 'SUCCESS' } }
+    }
+  }
+  post { always { archiveArtifacts artifacts: 'build/**' } }
+}

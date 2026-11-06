@@ -1,0 +1,17 @@
+<g-f>pipeline</g-f> <g-pb>{</g-pb>
+  <g-f>agent</g-f> <g-v>any</g-v>
+  <g-f>options</g-f> <g-pb>{</g-pb> <g-f>timestamps</g-f><g-pb>()</g-pb> <g-pb>}</g-pb>
+  <g-f>environment</g-f> <g-pb>{</g-pb> <g-t>TARGET</g-t> <g-o>=</g-o> <g-s>"</g-s><g-ps>${</g-ps><g-v>env</g-v><g-pd>.</g-pd><g-vm>BRANCH_NAME</g-vm><g-ps>}</g-ps><g-s>"</g-s> <g-pb>}</g-pb>
+  <g-f>stages</g-f> <g-pb>{</g-pb>
+    <g-f>stage</g-f><g-pb>(</g-pb><g-s>'Build'</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+      <g-f>steps</g-f> <g-pb>{</g-pb>
+        <g-f>sh</g-f> <g-s>'./gradlew build'</g-s>
+        <g-f>echo</g-f> <g-s>"Building </g-s><g-v>$TARGET</g-v><g-s>"</g-s>
+      <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+    <g-f>stage</g-f><g-pb>(</g-pb><g-s>'Test'</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+      <g-f>steps</g-f> <g-pb>{</g-pb> <g-f>script</g-f> <g-pb>{</g-pb> <g-k>def</g-k> <g-v>passed</g-v> <g-o>=</g-o> <g-v>currentBuild</g-v><g-pd>.</g-pd><g-vm>result</g-vm> <g-o>?:</g-o> <g-s>'SUCCESS'</g-s> <g-pb>}</g-pb> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+  <g-pb>}</g-pb>
+  <g-f>post</g-f> <g-pb>{</g-pb> <g-f>always</g-f> <g-pb>{</g-pb> <g-f>archiveArtifacts</g-f> <g-pr>artifacts</g-pr><g-pd>:</g-pd> <g-s>'build/**'</g-s> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
