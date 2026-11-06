@@ -1,0 +1,15 @@
+<g-k>import</g-k> <g-t>Foundation</g-t>
+
+<g-at>@MainActor</g-at>
+<g-k>final</g-k> <g-k>class</g-k> <g-t>Counter</g-t> <g-pb>{</g-pb>
+    <g-k>private</g-k><g-pb>(</g-pb><g-v>set</g-v><g-pb>)</g-pb> <g-k>var</g-k> <g-v>value</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>0</g-n>
+
+    <g-k>func</g-k> <g-f>increment</g-f><g-pb>(</g-pb><g-v>by</g-v> <g-v>amount</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-k>async</g-k> <g-k>throws</g-k> <g-o>-&gt;</g-o> <g-t>Int</g-t> <g-pb>{</g-pb>
+        <g-v>value</g-v> <g-o>+=</g-o> <g-v>amount</g-v>
+        <g-k>return</g-k> <g-v>value</g-v>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>let</g-k> <g-v>counter</g-v> <g-o>=</g-o> <g-f>Counter</g-f><g-pb>()</g-pb>
+<g-k>let</g-k> <g-v>doubled</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>]</g-pb><g-pd>.</g-pd><g-vm>map</g-vm> <g-pb>{</g-pb> <g-v>$0</g-v> <g-o>*</g-o> <g-n>2</g-n> <g-pb>}</g-pb>
+<g-t>Task</g-t> <g-pb>{</g-pb> <g-f>print</g-f><g-pb>(</g-pb><g-s>"Value: </g-s><g-ps>\(</g-ps><g-k>try</g-k> <g-k>await</g-k> <g-v>counter</g-v><g-pd>.</g-pd><g-f>increment</g-f><g-pb>()</g-pb><g-ps>)</g-ps><g-s>"</g-s><g-pb>)</g-pb> <g-pb>}</g-pb>

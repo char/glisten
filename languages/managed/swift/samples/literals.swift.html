@@ -1,0 +1,13 @@
+<g-c>/// Various Swift literals.</g-c>
+<g-k>let</g-k> <g-v>plain</g-v> <g-o>=</g-o> <g-s>"hello</g-s><g-se>\n</g-se><g-ps>\(</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>uppercased</g-f><g-pb>()</g-pb><g-ps>)</g-ps><g-s>"</g-s>
+<g-k>let</g-k> <g-v>lines</g-v> <g-o>=</g-o> <g-s>"""
+    A value: </g-s><g-ps>\(</g-ps><g-f>compute</g-f><g-pb>(</g-pb><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-ps>)</g-ps><g-s>
+    Multiple lines.
+    """</g-s>
+<g-k>let</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>##"One # and \#(notInterpolation); value </g-s><g-ps>\##(</g-ps><g-v>answer</g-v><g-ps>)</g-ps><g-s>"##</g-s>
+<g-k>let</g-k> <g-v>rawLines</g-v> <g-o>=</g-o> <g-s>#"""
+    Raw \n and </g-s><g-ps>\#(</g-ps><g-v>answer</g-v><g-ps>)</g-ps><g-s>
+    """#</g-s>
+<g-k>let</g-k> <g-v>pattern</g-v> <g-o>=</g-o> <g-s>/[a-z]+</g-s><g-se>\d</g-se><g-s>*/</g-s>
+<g-k>let</g-k> <g-v>rawPattern</g-v> <g-o>=</g-o> <g-s>#/a[</g-s><g-se>\/</g-se><g-s>]+</g-s><g-ps>\#(</g-ps><g-v>suffix</g-v><g-ps>)</g-ps><g-s>/#</g-s>
+<g-k>let</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0xff</g-n><g-pd>,</g-pd> <g-n>0b1010_0011</g-n><g-pd>,</g-pd> <g-n>0o755</g-n><g-pd>,</g-pd> <g-n>0x1.fp3</g-n><g-pd>,</g-pd> <g-n>1_000.25e-2</g-n><g-pb>]</g-pb>

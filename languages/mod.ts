@@ -41,6 +41,7 @@ import rust from "./systems/rust/grammar.ts";
 import scheme from "./functional/scheme/grammar.ts";
 import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
+import swift from "./managed/swift/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
 import toml from "./config/toml/grammar.ts";
@@ -95,6 +96,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   scheme,
   sql,
   "ssh-config": ssh_config,
+  swift,
   textproto,
   thrift,
   toml,

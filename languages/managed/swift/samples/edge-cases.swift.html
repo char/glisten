@@ -1,0 +1,26 @@
+<g-c>/* outer /* nested */ still outer */</g-c>
+<g-k>#if</g-k> <g-f>canImport</g-f><g-pb>(</g-pb><g-t>Foundation</g-t><g-pb>)</g-pb>
+<g-at>@available</g-at><g-pb>(</g-pb><g-v>macOS</g-v> <g-n>14</g-n><g-pd>,</g-pd> <g-o>*</g-o><g-pb>)</g-pb>
+<g-k>func</g-k> <g-f>describe</g-f><g-o>&lt;</g-o><g-t>T</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-k>_</g-k> <g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-o>?</g-o><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-k>some</g-k> <g-t>CustomStringConvertible</g-t> <g-pb>{</g-pb>
+    <g-k>let</g-k> <g-v>get</g-v> <g-o>=</g-o> <g-n>1</g-n>
+    <g-k>let</g-k> <g-v>any</g-v> <g-o>=</g-o> <g-v>get</g-v> <g-o>/</g-o> <g-n>2</g-n>
+    <g-k>let</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>##"wrong quote "# stays; \#(plain) and </g-s><g-ps>\##(</g-ps><g-v>get</g-v> <g-o>+</g-o> <g-n>1</g-n><g-ps>)</g-ps><g-s>"##</g-s>
+    <g-k>return</g-k> <g-v>text</g-v>
+<g-pb>}</g-pb>
+<g-k>#endif</g-k>
+
+<g-k>struct</g-k> <g-t>Sample</g-t> <g-pb>{</g-pb>
+    <g-k>var</g-k> <g-v>amount</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-pb>{</g-pb>
+        <g-k>get</g-k> <g-pb>{</g-pb> <g-v>storage</g-v> <g-pb>}</g-pb>
+        <g-k>set</g-k><g-pb>(</g-pb><g-v>newValue</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>storage</g-v> <g-o>=</g-o> <g-v>newValue</g-v> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+    <g-k>var</g-k> <g-v>storage</g-v> <g-o>=</g-o> <g-n>0</g-n> <g-pb>{</g-pb>
+        <g-k>willSet</g-k> <g-pb>{</g-pb> <g-f>print</g-f><g-pb>(</g-pb><g-v>newValue</g-v><g-pb>)</g-pb> <g-pb>}</g-pb>
+        <g-k>didSet</g-k> <g-pb>{</g-pb> <g-f>print</g-f><g-pb>(</g-pb><g-v>oldValue</g-v><g-pb>)</g-pb> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>let</g-k> <g-v>macro</g-v> <g-o>=</g-o> <g-ps>#stringify</g-ps><g-pb>(</g-pb><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-pb>)</g-pb>
+<g-k>let</g-k> <g-v>available</g-v> <g-o>=</g-o> <g-k>#available</g-k><g-pb>(</g-pb><g-v>macOS</g-v> <g-n>14</g-n><g-pd>,</g-pd> <g-o>*</g-o><g-pb>)</g-pb>
+<g-k>protocol</g-k> <g-t>Readable</g-t> <g-pb>{</g-pb> <g-k>var</g-k> <g-v>id</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-pb>{</g-pb> <g-k>get</g-k> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-k>let</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>0</g-n><g-o>..&lt;</g-o><g-n>5</g-n><g-pb>)</g-pb><g-pd>.</g-pd><g-vm>map</g-vm> <g-pb>{</g-pb> <g-v>$0</g-v> <g-pb>}</g-pb>
+<g-k>let</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-v>object</g-v><g-pd>.</g-pd><g-vm>default</g-vm>
