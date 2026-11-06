@@ -1,0 +1,11 @@
+<g-c>#!/usr/bin/env kotlin</g-c>
+<g-k>val</g-k> <g-v>who</g-v> <g-o>=</g-o> <g-s>"world"</g-s>
+<g-k>val</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-s>"Hello, </g-s><g-v>$who</g-v><g-s>: </g-s><g-ps>${</g-ps><g-k>if</g-k> <g-pb>(</g-pb><g-v>who</g-v><g-pd>.</g-pd><g-f>isNotEmpty</g-f><g-pb>())</g-pb> <g-s>"yes"</g-s> <g-k>else</g-k> <g-s>"no"</g-s><g-ps>}</g-ps><g-s>!"</g-s>
+<g-k>val</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>"""
+    raw \n, </g-s><g-ps>${</g-ps><g-f>listOf</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb><g-pd>.</g-pd><g-f>joinToString</g-f> <g-pb>{</g-pb> <g-v>n</g-v> <g-o>-&gt;</g-o> <g-s>"[</g-s><g-v>$n</g-v><g-s>]"</g-s> <g-pb>}</g-pb><g-ps>}</g-ps><g-s>
+    literal </g-s><g-ps>${</g-ps><g-s>'$'</g-s><g-ps>}</g-ps><g-s>HOME
+"""</g-s><g-pd>.</g-pd><g-f>trimIndent</g-f><g-pb>()</g-pb>
+<g-k>val</g-k> <g-v>chars</g-v> <g-o>=</g-o> <g-f>listOf</g-f><g-pb>(</g-pb><g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\u03bb</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\'</g-se><g-s>'</g-s><g-pb>)</g-pb>
+<g-k>val</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-f>listOf</g-f><g-pb>(</g-pb><g-n>0xFFu</g-n><g-pd>,</g-pd> <g-n>0b1010_0011UL</g-n><g-pd>,</g-pd> <g-n>1_000L</g-n><g-pd>,</g-pd> <g-n>2.5e-3f</g-n><g-pb>)</g-pb>
+<g-k>val</g-k> <g-v>answer</g-v> <g-o>=</g-o> <g-v>values</g-v><g-pd>.</g-pd><g-f>firstOrNull</g-f><g-pb>()</g-pb><g-o>?.</g-o><g-f>toString</g-f><g-pb>()</g-pb> <g-o>?:</g-o> <g-s>"none"</g-s>
+<g-f>println</g-f><g-pb>(</g-pb><g-v>answer</g-v><g-o>!!</g-o><g-pb>)</g-pb>

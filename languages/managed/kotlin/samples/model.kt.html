@@ -1,0 +1,18 @@
+<g-at>@file:Suppress</g-at><g-pb>(</g-pb><g-s>"unused"</g-s><g-pb>)</g-pb>
+<g-k>package</g-k> <g-v>orchard</g-v><g-pd>.</g-pd><g-v>model</g-v>
+
+<g-c>/** A box with an immutable value. */</g-c>
+<g-at>@JvmInline</g-at>
+<g-k>value</g-k> <g-k>class</g-k> <g-t>ItemId</g-t><g-pb>(</g-pb><g-k>val</g-k> <g-v>raw</g-v><g-pd>:</g-pd> <g-t>ULong</g-t><g-pb>)</g-pb>
+
+<g-k>sealed</g-k> <g-k>interface</g-k> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-k>out</g-k> <g-t>T</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb>
+    <g-k>data</g-k> <g-k>class</g-k> <g-t>Ok</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;(</g-pb><g-k>val</g-k> <g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb>
+    <g-k>data</g-k> <g-k>class</g-k> <g-t>Error</g-t><g-pb>(</g-pb><g-k>val</g-k> <g-v>message</g-v><g-pd>:</g-pd> <g-t>String</g-t><g-pb>)</g-pb> <g-pd>:</g-pd> <g-t>Result</g-t><g-pb>&lt;</g-pb><g-t>Nothing</g-t><g-pb>&gt;</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>class</g-k> <g-t>Store</g-t><g-pb>(</g-pb><g-k>private</g-k> <g-k>val</g-k> <g-v>name</g-v><g-pd>:</g-pd> <g-t>String</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>companion</g-k> <g-k>object</g-k> <g-pb>{</g-pb> <g-k>const</g-k> <g-k>val</g-k> <g-t>DEFAULT</g-t> <g-o>=</g-o> <g-s>"main"</g-s> <g-pb>}</g-pb>
+    <g-k>init</g-k> <g-pb>{</g-pb> <g-f>println</g-f><g-pb>(</g-pb><g-s>"created </g-s><g-v>$name</g-v><g-s>"</g-s><g-pb>)</g-pb> <g-pb>}</g-pb>
+    <g-k>fun</g-k> <g-t>String</g-t><g-pd>.</g-pd><g-f>describe</g-f><g-pb>(</g-pb><g-v>count</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>String</g-t> <g-o>=</g-o> <g-s>"</g-s><g-v>$this</g-v><g-s>: </g-s><g-ps>${</g-ps><g-f>uppercase</g-f><g-pb>()</g-pb><g-ps>}</g-ps><g-s> (</g-s><g-v>$count</g-v><g-s>)"</g-s>
+    <g-k>override</g-k> <g-k>fun</g-k> <g-f>toString</g-f><g-pb>()</g-pb><g-pd>:</g-pd> <g-t>String</g-t> <g-o>=</g-o> <g-v>name</g-v>
+<g-pb>}</g-pb>

@@ -1,0 +1,21 @@
+<g-c>/* Outer /* nested */ still a comment */</g-c>
+<g-k>fun</g-k> <g-pb>&lt;</g-pb><g-k>reified</g-k> <g-t>T</g-t> <g-pd>:</g-pd> <g-t>Any</g-t><g-pb>&gt;</g-pb> <g-t>List</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;</g-pb><g-pd>.</g-pd><g-f>findValue</g-f><g-pb>(</g-pb><g-v>predicate</g-v><g-pd>:</g-pd> <g-pb>(</g-pb><g-t>T</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>Boolean</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>T</g-t><g-o>?</g-o> <g-o>=</g-o>
+    <g-f>firstOrNull</g-f> <g-pb>{</g-pb> <g-v>item</g-v> <g-o>-&gt;</g-o> <g-f>predicate</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-pb>}</g-pb>
+
+<g-k>class</g-k> <g-t>Example</g-t> <g-pb>{</g-pb>
+    <g-k>var</g-k> <g-v>score</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>0</g-n>
+        <g-k>get</g-k><g-pb>()</g-pb> <g-o>=</g-o> <g-v>field</g-v>
+        <g-k>set</g-k><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>field</g-v> <g-o>=</g-o> <g-v>value</g-v> <g-pb>}</g-pb>
+    <g-k>val</g-k> <g-v>lazyValue</g-v> <g-k>by</g-k> <g-f>lazy</g-f> <g-pb>{</g-pb> <g-n>42</g-n> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>fun</g-k> <g-f>labels</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-k>val</g-k> <g-v>data</g-v> <g-o>=</g-o> <g-s>"keyword as identifier"</g-s>
+    <g-l>loop@</g-l> <g-k>for</g-k> <g-pb>(</g-pb><g-v>item</g-v> <g-k>in</g-k> <g-f>listOf</g-f><g-pb>(</g-pb><g-s>"雪"</g-s><g-pb>))</g-pb> <g-pb>{</g-pb>
+        <g-k>if</g-k> <g-pb>(</g-pb><g-v>item</g-v> <g-o>==</g-o> <g-v>data</g-v><g-pb>)</g-pb> <g-k>break@</g-k><g-l>loop</g-l>
+        <g-f>listOf</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb><g-pd>.</g-pd><g-f>forEach</g-f> <g-pb>{</g-pb> <g-k>return@</g-k><g-l>forEach</g-l> <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+    <g-k>val</g-k> <g-v>`when`</g-v> <g-o>=</g-o> <g-s>"escaped identifier"</g-s>
+    <g-k>val</g-k> <g-v>broken</g-v> <g-o>=</g-o> <g-s>"unfinished</g-s>
+    <g-f>println</g-f><g-pb>(</g-pb><g-s>"recovered"</g-s><g-pb>)</g-pb>
+<g-pb>}</g-pb>

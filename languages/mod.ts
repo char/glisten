@@ -26,6 +26,7 @@ import jsx from "./web/jsx/grammar.ts";
 import just from "./build/just/grammar.ts";
 import kconfig from "./build/kconfig/grammar.ts";
 import kdl from "./config/kdl/grammar.ts";
+import kotlin from "./managed/kotlin/grammar.ts";
 import lua from "./scripting/lua/grammar.ts";
 import make from "./build/make/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
@@ -77,6 +78,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   just,
   kconfig,
   kdl,
+  kotlin,
   lua,
   make,
   markdown,
