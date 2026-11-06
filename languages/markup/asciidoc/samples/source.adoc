@@ -1,0 +1,32 @@
+= Code and blocks
+Writer Example
+
+== A Python listing
+
+[source,python]
+----
+def greet(name):
+    return f"Hello, {name}!"
+----
+
+[source,javascript]
+-----
+const value = 42;
+----
+console.log(value);
+-----
+
+....
+Literal *not bold* and {not-substituted}.
+....
+
+////
+A comment block containing *ignored* markup.
+////
+
+++++
+<strong>Uninterpreted passthrough</strong>
+++++
+
+include::chapter.adoc[]
+image::diagram.png[Diagram]

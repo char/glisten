@@ -1,0 +1,66 @@
+= Boundary cases
+Writer Example
+
+== Formatting and links
+
+A *word* and in**tra**word, _phrase_ and a__b__c.
+These remain ordinary: foo*bar*baz and a_b_c.
+Escaped \*literal*, attribute {version}, and https://example.com/path?q=one.
+
+== Delimiters
+
+[source,unknown]
+------
+inside
+----
+still inside
+------
+After the missing language, *markup* resumes.
+
+****
+A sidebar with _emphasis_.
+****
+
+____
+A quote with `monospace`.
+____
+
+// A line comment with *no markup*.
+Line one +
+Line two.
+
+== Nested compound blocks
+
+====
+Outer example.
+=====
+Inner example with a different delimiter length.
+****
+A sidebar containing an open block:
+--
+[,ruby]
+----
+puts "hello"
+----
+--
+****
+=====
+Back in the outer example.
+====
+
+[source%linenums,python]
+----
+print("options")
+----
+
+[source]
+----
+*No language means no injection.*
+----
+
+Multiline *strong text
+remains unrecognized* for now.
+
+A later = sign is ordinary.
+= This is not a document header
+This is not an author line.

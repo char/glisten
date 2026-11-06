@@ -1,0 +1,66 @@
+<g-tt>= Boundary cases</g-tt>
+<g-l>Writer Example</g-l>
+
+<g-tt>== Formatting and links</g-tt>
+
+A <g-ts>*word*</g-ts> and in<g-ts>**tra**</g-ts>word, <g-em>_phrase_</g-em> and a<g-em>__b__</g-em>c.
+These remain ordinary: foo*bar*baz and a_b_c.
+Escaped <g-se>\*</g-se>literal*, attribute <g-v>{version}</g-v>, and <g-tu>https://example.com/path?q=one.</g-tu>
+
+<g-tt>== Delimiters</g-tt>
+
+<g-at>[source,</g-at><g-l>unknown</g-l><g-at>]</g-at>
+<g-pd>------</g-pd>
+inside
+----
+still inside
+<g-pd>------</g-pd>
+After the missing language, <g-ts>*markup*</g-ts> resumes.
+
+<g-pd>****</g-pd>
+A sidebar with <g-em>_emphasis_</g-em>.
+<g-pd>****</g-pd>
+
+<g-pd>____</g-pd>
+A quote with <g-tl>`monospace`</g-tl>.
+<g-pd>____</g-pd>
+
+<g-c>// A line comment with *no markup*.</g-c>
+Line one<g-ps> +</g-ps>
+Line two.
+
+<g-tt>== Nested compound blocks</g-tt>
+
+<g-pd>====</g-pd>
+Outer example.
+<g-pd>=====</g-pd>
+Inner example with a different delimiter length.
+<g-pd>****</g-pd>
+A sidebar containing an open block:
+<g-pd>--</g-pd>
+<g-at>[,</g-at><g-l>ruby</g-l><g-at>]</g-at>
+<g-pd>----</g-pd>
+<g-f>puts</g-f> <g-s>"hello"</g-s>
+<g-pd>----</g-pd>
+<g-pd>--</g-pd>
+<g-pd>****</g-pd>
+<g-pd>=====</g-pd>
+Back in the outer example.
+<g-pd>====</g-pd>
+
+<g-at>[source%linenums,</g-at><g-l>python</g-l><g-at>]</g-at>
+<g-pd>----</g-pd>
+<g-f>print</g-f><g-pb>(</g-pb><g-s>"options"</g-s><g-pb>)</g-pb>
+<g-pd>----</g-pd>
+
+<g-at>[source]</g-at>
+<g-pd>----</g-pd><g-tl>
+*No language means no injection.*
+</g-tl><g-pd>----</g-pd>
+
+Multiline *strong text
+remains unrecognized* for now.
+
+A later = sign is ordinary.
+= This is not a document header
+This is not an author line.

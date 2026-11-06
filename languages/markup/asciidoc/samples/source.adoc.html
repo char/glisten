@@ -1,0 +1,32 @@
+<g-tt>= Code and blocks</g-tt>
+<g-l>Writer Example</g-l>
+
+<g-tt>== A Python listing</g-tt>
+
+<g-at>[source,</g-at><g-l>python</g-l><g-at>]</g-at>
+<g-pd>----</g-pd>
+<g-k>def</g-k> <g-f>greet</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+    <g-k>return</g-k> <g-s>f"Hello, </g-s><g-ps>{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>!"</g-s>
+<g-pd>----</g-pd>
+
+<g-at>[source,</g-at><g-l>javascript</g-l><g-at>]</g-at>
+<g-pd>-----</g-pd>
+<g-k>const</g-k> <g-v>value</g-v> <g-o>=</g-o> <g-n>42</g-n><g-pd>;</g-pd>
+<g-o>----</g-o>
+<g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pd>-----</g-pd>
+
+<g-pd>....</g-pd><g-tl>
+Literal *not bold* and {not-substituted}.
+</g-tl><g-pd>....</g-pd>
+
+<g-pd>////</g-pd><g-c>
+A comment block containing *ignored* markup.
+</g-c><g-pd>////</g-pd>
+
+<g-pd>++++</g-pd><g-tl>
+&lt;strong&gt;Uninterpreted passthrough&lt;/strong&gt;
+</g-tl><g-pd>++++</g-pd>
+
+<g-f>include::chapter.adoc</g-f><g-pb>[]</g-pb>
+<g-f>image::diagram.png</g-f><g-pb>[</g-pb>Diagram<g-pb>]</g-pb>
