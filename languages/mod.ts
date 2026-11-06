@@ -19,6 +19,7 @@ import commonlisp from "./functional/commonlisp/grammar.ts";
 import cpp from "./systems/cpp/grammar.ts";
 import crystal from "./scripting/crystal/grammar.ts";
 import css from "./web/css/grammar.ts";
+import csv from "./data/csv/grammar.ts";
 import cuda from "./shaders/cuda/grammar.ts";
 import d from "./systems/d/grammar.ts";
 import dart from "./managed/dart/grammar.ts";
@@ -106,6 +107,7 @@ import thrift from "./data/thrift/grammar.ts";
 import tlaplus from "./proof/tlaplus/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsql from "./query/tsql/grammar.ts";
+import tsv from "./data/tsv/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import twig from "./web/twig/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
@@ -146,6 +148,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   cpp,
   crystal,
   css,
+  csv,
   cuda,
   d,
   dart,
@@ -233,6 +236,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   tlaplus,
   toml,
   tsql,
+  tsv,
   tsx,
   twig,
   typescript,
