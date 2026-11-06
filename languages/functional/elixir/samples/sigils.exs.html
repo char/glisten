@@ -1,0 +1,21 @@
+<g-v>name</g-v> <g-o>=</g-o> <g-s>"Ada"</g-s>
+<g-v>regex</g-v> <g-o>=</g-o> <g-s>~r/^hello</g-s><g-se>\s</g-se><g-s>+</g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>$/</g-s><g-at>iu</g-at>
+<g-v>nested</g-v> <g-o>=</g-o> <g-s>~s(one (two</g-s><g-se>\)</g-se><g-s> </g-s><g-ps>#{</g-ps><g-t>String</g-t><g-pd>.</g-pd><g-f>upcase</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s>)</g-s>
+<g-v>words</g-v> <g-o>=</g-o> <g-s>~w[red green blue]</g-s><g-at>a</g-at>
+<g-v>literal</g-v> <g-o>=</g-o> <g-s>~S"#{name} \\n"</g-s>
+<g-v>raw_quote</g-v> <g-o>=</g-o> <g-s>~S"a\"b"</g-s>
+<g-v>date</g-v> <g-o>=</g-o> <g-s>~D[2024-06-30]</g-s>
+<g-v>custom</g-v> <g-o>=</g-o> <g-s>~RAW9[#{not_interpolated}]</g-s><g-at>abc2</g-at>
+<g-v>time</g-v> <g-o>=</g-o> <g-s>~T[12:34:56]</g-s>
+<g-v>slash</g-v> <g-o>=</g-o> <g-s>~s/hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>/</g-s>
+<g-v>pipe</g-v> <g-o>=</g-o> <g-s>~s|hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>|</g-s>
+<g-v>double</g-v> <g-o>=</g-o> <g-s>~s"hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>single</g-v> <g-o>=</g-o> <g-s>~s'hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>'</g-s>
+<g-v>brace</g-v> <g-o>=</g-o> <g-s>~s{hello {world</g-s><g-se>\}</g-se><g-s> </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>}</g-s>
+<g-v>angle</g-v> <g-o>=</g-o> <g-s>~s&lt;hello &lt;world</g-s><g-se>\&gt;</g-se><g-s> </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>&gt;</g-s>
+<g-v>long</g-v> <g-o>=</g-o> <g-s>~s"""
+  Hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>
+  """</g-s>
+<g-v>raw_long</g-v> <g-o>=</g-o> <g-s>~S'''
+  #{not_interpolated}
+  '''</g-s>

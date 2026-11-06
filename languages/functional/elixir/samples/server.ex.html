@@ -1,0 +1,14 @@
+<g-k>defmodule</g-k> <g-t>Orchard</g-t><g-pd>.</g-pd><g-t>Worker</g-t> <g-k>do</g-k>
+  <g-at>@moduledoc</g-at> <g-s>"""
+  A small worker for </g-s><g-ps>#{</g-ps><g-f>inspect</g-f><g-pb>(</g-pb><g-v>__MODULE__</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s>.
+  """</g-s>
+
+  <g-k>def</g-k> <g-f>start_link</g-f><g-pb>(</g-pb><g-v>opts</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-k>do</g-k><g-pd>:</g-pd> <g-t>GenServer</g-t><g-pd>.</g-pd><g-f>start_link</g-f><g-pb>(</g-pb><g-v>__MODULE__</g-v><g-pd>,</g-pd> <g-v>opts</g-v><g-pd>,</g-pd> <g-pr>name</g-pr><g-pd>:</g-pd> <g-v>__MODULE__</g-v><g-pb>)</g-pb>
+
+  <g-k>defp</g-k> <g-f>handle_item</g-f><g-pb>({</g-pb><g-cb>:ok</g-cb><g-pd>,</g-pd> <g-v>value</g-v><g-pb>}</g-pb><g-pd>,</g-pd> <g-v>state</g-v><g-pb>)</g-pb> <g-k>when</g-k> <g-f>is_binary</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb> <g-k>do</g-k>
+    <g-v>result</g-v> <g-o>=</g-o> <g-v>value</g-v> <g-o>|&gt;</g-o> <g-t>String</g-t><g-pd>.</g-pd><g-f>trim</g-f><g-pb>()</g-pb> <g-o>&lt;&gt;</g-o> <g-s>"!"</g-s>
+    <g-pb>{</g-pb><g-cb>:reply</g-cb><g-pd>,</g-pd> <g-pb>{</g-pb><g-cb>:ok</g-cb><g-pd>,</g-pd> <g-v>result</g-v><g-pb>}</g-pb><g-pd>,</g-pd> <g-v>state</g-v><g-pb>}</g-pb>
+  <g-k>end</g-k>
+
+  <g-k>def</g-k> <g-f>handle_item</g-f><g-pb>(</g-pb><g-cb>:error</g-cb><g-pd>,</g-pd> <g-v>state</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-k>do</g-k><g-pd>:</g-pd> <g-pb>{</g-pb><g-cb>:reply</g-cb><g-pd>,</g-pd> <g-cb>:</g-cb><g-s>"not found"</g-s><g-pd>,</g-pd> <g-v>state</g-v><g-pb>}</g-pb>
+<g-k>end</g-k>

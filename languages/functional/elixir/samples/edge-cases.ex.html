@@ -1,0 +1,13 @@
+<g-c># Character, numbers, captures, and strings</g-c>
+<g-v>pair</g-v> <g-o>=</g-o> <g-pb>{</g-pb><g-n>0xFF_A0</g-n><g-pd>,</g-pd> <g-n>0o17</g-n><g-pd>,</g-pd> <g-n>0b1010</g-n><g-pd>,</g-pd> <g-n>12_345</g-n><g-pd>,</g-pd> <g-n>1.25e-3</g-n><g-pd>,</g-pd> <g-n>?a</g-n><g-pd>,</g-pd> <g-n>?\n</g-n><g-pd>,</g-pd> <g-n>?😀</g-n><g-pb>}</g-pb>
+<g-v>fun</g-v> <g-o>=</g-o> <g-o>&amp;</g-o><g-t>Enum</g-t><g-pd>.</g-pd><g-f>map</g-f><g-o>/</g-o><g-n>2</g-n>
+<g-v>first</g-v> <g-o>=</g-o> <g-o>&amp;</g-o><g-n>1</g-n>
+<g-v>bytes</g-v> <g-o>=</g-o> <g-pb>&lt;&lt;</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-o>::</g-o><g-n>16</g-n><g-pb>&gt;&gt;</g-pb>
+<g-v>term</g-v> <g-o>=</g-o> <g-s>"outer </g-s><g-ps>#{</g-ps><g-f>inspect</g-f><g-pb>(</g-pb><g-o>%</g-o><g-pb>{</g-pb><g-pr>key</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-s>"inner </g-s><g-ps>#{</g-ps><g-n>2</g-n><g-ps>}</g-ps><g-s>"</g-s><g-pb>}})</g-pb><g-ps>}</g-ps><g-s> tail"</g-s>
+<g-v>escaped</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\x41</g-se><g-s> </g-s><g-se>\u0062</g-se><g-s> </g-s><g-se>\u{1F600}</g-se><g-s>"</g-s>
+<g-v>chars</g-v> <g-o>=</g-o> <g-s>'charlist </g-s><g-ps>#{</g-ps><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>'</g-s>
+<g-v>heredoc</g-v> <g-o>=</g-o> <g-s>'''
+  interpolation: </g-s><g-ps>#{</g-ps><g-f>inspect</g-f><g-pb>(</g-pb><g-cb>:ok</g-cb><g-pb>)</g-pb><g-ps>}</g-ps><g-s>
+  '''</g-s>
+<g-v>options</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-k>do</g-k><g-pd>:</g-pd> <g-cb>:ok</g-cb><g-pd>,</g-pd> <g-pr>label</g-pr><g-pd>:</g-pd> <g-cb>:ready</g-cb><g-pd>,</g-pd> <g-pr>active</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>]</g-pb>
+<g-v>operators</g-v> <g-o>=</g-o> <g-v>left</g-v> <g-o>|&gt;</g-o> <g-f>f</g-f><g-pb>()</g-pb> <g-o>++</g-o> <g-v>right</g-v> <g-o>--</g-o> <g-v>other</g-v> <g-o>=~</g-o> <g-s>~r/x/</g-s>
