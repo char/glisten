@@ -1,0 +1,16 @@
+<g-k>enable</g-k> <g-t>f16</g-t><g-pd>;</g-pd>
+<g-k>requires</g-k> <g-v>readonly_and_readwrite_storage_textures</g-v><g-pd>;</g-pd>
+
+<g-c>/* Outer comment /* nested comment */ still a comment. */</g-c>
+<g-k>fn</g-k> <g-f>sum</g-f><g-pb>(</g-pb><g-v>values</g-v><g-pd>:</g-pd> <g-t>array</g-t><g-o>&lt;</g-o><g-t>f32</g-t><g-pd>,</g-pd> <g-n>4</g-n><g-o>&gt;</g-o><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>f32</g-t> <g-pb>{</g-pb>
+  <g-k>var</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-n>0.0f</g-n><g-pd>;</g-pd>
+  <g-k>var</g-k> <g-v>index</g-v> <g-o>=</g-o> <g-n>0u</g-n><g-pd>;</g-pd>
+  <g-k>loop</g-k> <g-pb>{</g-pb>
+    <g-v>result</g-v> <g-o>+=</g-o> <g-v>values</g-v><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-k>continuing</g-k> <g-pb>{</g-pb>
+      <g-v>index</g-v> <g-o>+=</g-o> <g-n>1u</g-n><g-pd>;</g-pd>
+      <g-k>break</g-k> <g-k>if</g-k> <g-v>index</g-v> <g-o>&gt;=</g-o> <g-n>4u</g-n><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+  <g-pb>}</g-pb>
+  <g-k>return</g-k> <g-v>result</g-v> <g-o>+</g-o> <g-t>f32</g-t><g-pb>(</g-pb><g-n>0x1p4h</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

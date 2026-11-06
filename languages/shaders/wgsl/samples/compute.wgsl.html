@@ -1,0 +1,9 @@
+<g-at>@group</g-at><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb> <g-at>@binding</g-at><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb> <g-k>var</g-k><g-o>&lt;</g-o><g-cb>storage</g-cb><g-pd>,</g-pd> <g-cb>read_write</g-cb><g-o>&gt;</g-o> <g-v>data</g-v><g-pd>:</g-pd> <g-t>array</g-t><g-o>&lt;</g-o><g-t>u32</g-t><g-o>&gt;</g-o><g-pd>;</g-pd>
+<g-k>override</g-k> <g-v>workgroup_size</g-v><g-pd>:</g-pd> <g-t>u32</g-t> <g-o>=</g-o> <g-n>64u</g-n><g-pd>;</g-pd>
+
+<g-at>@compute</g-at> <g-at>@workgroup_size</g-at><g-pb>(</g-pb><g-v>workgroup_size</g-v><g-pb>)</g-pb>
+<g-k>fn</g-k> <g-f>increment</g-f><g-pb>(</g-pb><g-at>@builtin</g-at><g-pb>(</g-pb><g-v>global_invocation_id</g-v><g-pb>)</g-pb> <g-v>id</g-v><g-pd>:</g-pd> <g-t>vec3u</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-k>if</g-k> <g-pb>(</g-pb><g-v>id</g-v><g-pd>.</g-pd><g-v>x</g-v> <g-o>&lt;</g-o> <g-f>arrayLength</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-v>data</g-v><g-pb>))</g-pb> <g-pb>{</g-pb>
+    <g-v>data</g-v><g-pb>[</g-pb><g-v>id</g-v><g-pd>.</g-pd><g-v>x</g-v><g-pb>]</g-pb> <g-o>+=</g-o> <g-n>1u</g-n><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

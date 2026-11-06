@@ -1,0 +1,15 @@
+<g-k>struct</g-k> <g-t>VertexOutput</g-t> <g-pb>{</g-pb>
+  <g-at>@builtin</g-at><g-pb>(</g-pb><g-v>position</g-v><g-pb>)</g-pb> <g-v>position</g-v><g-pd>:</g-pd> <g-t>vec4f</g-t><g-pd>,</g-pd>
+  <g-at>@location</g-at><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb> <g-v>color</g-v><g-pd>:</g-pd> <g-t>vec3f</g-t><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+
+<g-at>@vertex</g-at>
+<g-k>fn</g-k> <g-f>vertex_main</g-f><g-pb>(</g-pb><g-at>@builtin</g-at><g-pb>(</g-pb><g-v>vertex_index</g-v><g-pb>)</g-pb> <g-v>index</g-v><g-pd>:</g-pd> <g-t>u32</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-v>VertexOutput</g-v> <g-pb>{</g-pb>
+  <g-k>let</g-k> <g-v>x</g-v> <g-o>=</g-o> <g-t>f32</g-t><g-pb>(</g-pb><g-v>index</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>return</g-k> <g-v>VertexOutput</g-v><g-pb>(</g-pb><g-t>vec4f</g-t><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-t>vec3f</g-t><g-pb>(</g-pb><g-n>1.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-at>@fragment</g-at>
+<g-k>fn</g-k> <g-f>fragment_main</g-f><g-pb>(</g-pb><g-v>input</g-v><g-pd>:</g-pd> <g-v>VertexOutput</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-at>@location</g-at><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb> <g-t>vec4f</g-t> <g-pb>{</g-pb>
+  <g-k>return</g-k> <g-t>vec4f</g-t><g-pb>(</g-pb><g-v>input</g-v><g-pd>.</g-pd><g-v>color</g-v><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
