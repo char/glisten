@@ -1,0 +1,22 @@
+<g-k>module</g-k> <g-t>Measurements</g-t>
+<g-k>export</g-k> <g-v>summarize</g-v>
+
+<g-s>"""
+    summarize(xs)
+
+Compute a simple summary, ignoring missing values.
+"""</g-s>
+<g-k>function</g-k> <g-f>summarize</g-f><g-pb>(</g-pb><g-v>xs</g-v><g-o>::</g-o><g-t>Vector</g-t><g-pb>{</g-pb><g-t>Float64</g-t><g-pb>})</g-pb>
+    <g-v>total</g-v> <g-o>=</g-o> <g-n>0.0</g-n>
+    <g-k>for</g-k> <g-v>x</g-v> <g-k>in</g-k> <g-v>xs</g-v>
+        <g-v>total</g-v> <g-o>+=</g-o> <g-v>x</g-v>
+    <g-k>end</g-k>
+    <g-k>return</g-k> <g-pb>(</g-pb><g-v>total</g-v> <g-o>=</g-o> <g-v>total</g-v><g-pd>,</g-pd> <g-v>last</g-v> <g-o>=</g-o> <g-v>xs</g-v><g-pb>[</g-pb><g-cb>end</g-cb><g-pb>])</g-pb>
+<g-k>end</g-k>
+
+<g-k>struct</g-k> <g-t>Reading</g-t>
+    <g-v>value</g-v><g-o>::</g-o><g-t>Float64</g-t>
+    <g-v>name</g-v><g-o>::</g-o><g-t>String</g-t>
+<g-k>end</g-k>
+
+<g-k>end</g-k> <g-c># module</g-c>

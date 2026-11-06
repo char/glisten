@@ -1,0 +1,10 @@
+name = "world"
+x = 4
+message = "Hello $name: $(sqrt(x + (x * 2)))"
+triple = """Nested $(join(["a", "b"], ", ")) and $name."""
+regex = r"\d+\s+$name"im
+literal = raw"$name \n \"quoted\""
+bytes = b"\xff$name"
+markup = html"<span>$name</span>"
+markdown = md"Text with $name"
+command = `echo $name $(string(x + 1))`

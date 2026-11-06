@@ -1,0 +1,18 @@
+<g-c>#= Outer comment #= nested =# still outer =#</g-c>
+<g-k>function</g-k> <g-v>Base</g-v><g-ps>.</g-ps><g-f>show</g-f><g-pb>(</g-pb><g-v>io</g-v><g-o>::</g-o><g-t>IO</g-t><g-pd>,</g-pd> <g-v>x</g-v><g-o>::</g-o><g-t>Reading</g-t><g-pb>)</g-pb>
+    <g-f>print</g-f><g-pb>(</g-pb><g-v>io</g-v><g-pd>,</g-pd> <g-s>"</g-s><g-ps>$</g-ps><g-pb>(</g-pb><g-v>x</g-v><g-ps>.</g-ps><g-vm>name</g-vm><g-pb>)</g-pb><g-s>: </g-s><g-ps>$</g-ps><g-pb>(</g-pb><g-v>x</g-v><g-ps>.</g-ps><g-vm>value</g-vm><g-pb>)</g-pb><g-s>"</g-s><g-pb>)</g-pb>
+<g-k>end</g-k>
+<g-t>A</g-t> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n> <g-n>2</g-n><g-pd>;</g-pd> <g-n>3</g-n> <g-n>4</g-n><g-pb>]</g-pb>
+<g-v>lastvalue</g-v> <g-o>=</g-o> <g-t>A</g-t><g-pb>[</g-pb><g-cb>end</g-cb><g-pd>,</g-pd> <g-cb>end</g-cb><g-o>-</g-o><g-n>1</g-n><g-pb>]</g-pb>
+<g-v>transposed</g-v> <g-o>=</g-o> <g-t>A</g-t><g-o>'</g-o> <g-o>*</g-o> <g-t>A</g-t>
+<g-v>ch</g-v> <g-o>=</g-o> <g-s>'\u2200'</g-s>
+<g-v>vector</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-v>ch</g-v><g-pd>,</g-pd> <g-s>'a'</g-s><g-pd>,</g-pd> <g-s>'\n'</g-s><g-pb>]</g-pb>
+<g-v>∀</g-v> <g-o>=</g-o> <g-n>3</g-n>
+<g-v>result</g-v> <g-o>=</g-o> <g-v>α</g-v><g-o>≤</g-o><g-v>β</g-v> <g-o>?</g-o> <g-v>α</g-v><g-o>⊗</g-o><g-v>β</g-v> <g-o>:</g-o> <g-v>∀</g-v>
+<g-f>@show</g-f> <g-v>result</g-v>
+<g-v>x</g-v> <g-o>=</g-o> <g-n>0x1f</g-n> <g-o>+</g-o> <g-n>0b1010</g-n> <g-o>+</g-o> <g-n>0o77</g-n> <g-o>+</g-o> <g-n>1.25f0</g-n> <g-o>+</g-o> <g-n>2</g-n><g-v>x</g-v>
+<g-v>z</g-v> <g-o>=</g-o> <g-cb>:symbol</g-cb>
+<g-f>f</g-f><g-ps>.</g-ps><g-pb>(</g-pb><g-v>vector</g-v><g-pb>)</g-pb>
+<g-v>broadcast</g-v> <g-o>=</g-o> <g-t>A</g-t> <g-o>.+</g-o> <g-t>A</g-t>
+<g-v>indices</g-v> <g-o>=</g-o> <g-n>1</g-n><g-o>:</g-o><g-f>length</g-f><g-pb>(</g-pb><g-v>vector</g-v><g-pb>)</g-pb>
+<g-t>Base</g-t><g-ps>.</g-ps><g-f>_setindex!</g-f><g-pb>(</g-pb><g-t>A</g-t><g-pd>,</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-pb>)</g-pb>

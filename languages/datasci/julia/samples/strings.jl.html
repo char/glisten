@@ -1,0 +1,10 @@
+<g-v>name</g-v> <g-o>=</g-o> <g-s>"world"</g-s>
+<g-v>x</g-v> <g-o>=</g-o> <g-n>4</g-n>
+<g-v>message</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-ps>$</g-ps><g-v>name</g-v><g-s>: </g-s><g-ps>$</g-ps><g-pb>(</g-pb><g-f>sqrt</g-f><g-pb>(</g-pb><g-v>x</g-v> <g-o>+</g-o> <g-pb>(</g-pb><g-v>x</g-v> <g-o>*</g-o> <g-n>2</g-n><g-pb>)))</g-pb><g-s>"</g-s>
+<g-v>triple</g-v> <g-o>=</g-o> <g-s>"""Nested </g-s><g-ps>$</g-ps><g-pb>(</g-pb><g-f>join</g-f><g-pb>([</g-pb><g-s>"a"</g-s><g-pd>,</g-pd> <g-s>"b"</g-s><g-pb>]</g-pb><g-pd>,</g-pd> <g-s>", "</g-s><g-pb>))</g-pb><g-s> and </g-s><g-ps>$</g-ps><g-v>name</g-v><g-s>."""</g-s>
+<g-v>regex</g-v> <g-o>=</g-o> <g-f>r</g-f><g-s>"\d+\s+$name"im</g-s>
+<g-v>literal</g-v> <g-o>=</g-o> <g-f>raw</g-f><g-s>"$name \n \"quoted\""</g-s>
+<g-v>bytes</g-v> <g-o>=</g-o> <g-f>b</g-f><g-s>"\xff$name"</g-s>
+<g-v>markup</g-v> <g-o>=</g-o> <g-f>html</g-f><g-s>"&lt;span&gt;$name&lt;/span&gt;"</g-s>
+<g-v>markdown</g-v> <g-o>=</g-o> <g-f>md</g-f><g-s>"Text with $name"</g-s>
+<g-v>command</g-v> <g-o>=</g-o> <g-s>`echo </g-s><g-ps>$</g-ps><g-v>name</g-v><g-s> </g-s><g-ps>$</g-ps><g-pb>(</g-pb><g-f>string</g-f><g-pb>(</g-pb><g-v>x</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>))</g-pb><g-s>`</g-s>
