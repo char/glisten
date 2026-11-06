@@ -1,0 +1,14 @@
+<g-k>{-# LANGUAGE QuasiQuotes, DataKinds, TemplateHaskell, NumericUnderscores #-}</g-k>
+<g-c>-- | Comment and operator distinctions</g-c>
+<g-c>{-| Outer Haddock {- nested -} remains comment. -}</g-c>
+<g-v>x</g-v> <g-o>--&gt;</g-o> <g-v>y</g-v> <g-o>=</g-o> <g-v>x</g-v>
+<g-v>x</g-v> <g-c>--- comment</g-c>
+<g-v>x'</g-v> <g-o>=</g-o> <g-s>'a'</g-s>
+<g-v>newline</g-v> <g-o>=</g-o> <g-s>'\n'</g-s>
+<g-v>escaped</g-v> <g-o>=</g-o> <g-s>'\x41'</g-s>
+<g-v>promoted</g-v> <g-o>=</g-o> <g-ps>'</g-ps><g-t>Constructor</g-t>
+<g-v>quoted</g-v> <g-o>=</g-o> <g-ps>''</g-ps><g-t>Type</g-t>
+<g-v>text</g-v> <g-o>=</g-o> <g-s>"Hello</g-s><g-se>\n</g-se><g-s>world</g-s><g-se>\&amp;</g-se><g-s>! and </g-s><g-se>\
+       \</g-se><g-s>a string gap"</g-s>
+<g-v>number</g-v> <g-o>=</g-o> <g-n>0xff_ff</g-n> <g-o>+</g-o> <g-n>0o77</g-n> <g-o>+</g-o> <g-n>0b1010</g-n> <g-o>+</g-o> <g-n>1_000</g-n> <g-o>+</g-o> <g-n>12.5e-2</g-n>
+<g-v>markup</g-v> <g-o>=</g-o> <g-s>[html|&lt;div&gt;raw [content] -- not a comment&lt;/div&gt;|]</g-s>

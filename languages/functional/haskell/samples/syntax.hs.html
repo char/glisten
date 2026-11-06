@@ -1,0 +1,18 @@
+<g-k>{-# LANGUAGE ExplicitForAll, TypeApplications, PatternSynonyms, RecursiveDo #-}</g-k>
+<g-k>module</g-k> <g-t>Syntax</g-t> <g-k>where</g-k>
+
+<g-k>pattern</g-k> <g-t>Empty</g-t> <g-o>=</g-o> <g-pb>[]</g-pb>
+<g-k>class</g-k> <g-t>Render</g-t> <g-v>a</g-v> <g-k>where</g-k>
+  <g-f>render</g-f> <g-o>::</g-o> <g-k>forall</g-k> <g-v>b</g-v><g-o>.</g-o> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-v>b</g-v> <g-o>-&gt;</g-o> <g-t>String</g-t>
+
+<g-f>example</g-f> <g-o>::</g-o> <g-pb>(</g-pb><g-t>Ord</g-t> <g-v>a</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-pb>[</g-pb><g-v>a</g-v><g-pb>]</g-pb> <g-o>-&gt;</g-o> <g-t>Bool</g-t>
+<g-v>example</g-v> <g-v>x</g-v> <g-v>xs</g-v> <g-o>=</g-o> <g-k>if</g-k> <g-v>x</g-v> <g-ps>`</g-ps><g-f>elem</g-f><g-ps>`</g-ps> <g-v>xs</g-v> <g-k>then</g-k> <g-t>True</g-t> <g-k>else</g-k> <g-t>False</g-t>
+<g-v>apply</g-v> <g-o>=</g-o> <g-v>fmap</g-v> <g-o>@</g-o><g-t>Maybe</g-t> <g-pb>(</g-pb><g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb>
+<g-v>compose</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-o>.</g-o><g-pb>)</g-pb>
+<g-v>section</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>1</g-n> <g-o>+</g-o><g-pb>)</g-pb>
+<g-v>choose</g-v> <g-v>x</g-v> <g-o>=</g-o> <g-k>case</g-k> <g-v>x</g-v> <g-k>of</g-k>
+  <g-t>Just</g-t> <g-v>value</g-v> <g-o>-&gt;</g-o> <g-k>let</g-k> <g-v>y</g-v> <g-o>=</g-o> <g-v>value</g-v> <g-k>in</g-k> <g-v>y</g-v>
+  <g-t>Nothing</g-t> <g-o>-&gt;</g-o> <g-n>0</g-n>
+<g-v>main</g-v> <g-o>=</g-o> <g-k>mdo</g-k>
+  <g-v>value</g-v> <g-o>&lt;-</g-o> <g-v>pure</g-v> <g-n>1</g-n>
+  <g-v>pure</g-v> <g-v>value</g-v>

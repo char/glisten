@@ -1,0 +1,18 @@
+<g-k>{-# LANGUAGE GADTs, TypeFamilies, DerivingVia #-}</g-k>
+<g-c>-- | A small module.</g-c>
+<g-k>module</g-k> <g-t>Example</g-t> <g-pb>(</g-pb><g-t>Tree</g-t><g-pb>(</g-pb><g-o>..</g-o><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>size</g-v><g-pb>)</g-pb> <g-k>where</g-k>
+<g-k>import</g-k> <g-k>qualified</g-k> <g-t>Data</g-t><g-o>.</g-o><g-t>Map</g-t> <g-k>as</g-k> <g-t>M</g-t> <g-k>hiding</g-k> <g-pb>(</g-pb><g-v>map</g-v><g-pb>)</g-pb>
+
+<g-k>data</g-k> <g-t>Tree</g-t> <g-v>a</g-v> <g-o>=</g-o> <g-t>Leaf</g-t> <g-v>a</g-v> <g-o>|</g-o> <g-t>Branch</g-t> <g-pb>(</g-pb><g-t>Tree</g-t> <g-v>a</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-t>Tree</g-t> <g-v>a</g-v><g-pb>)</g-pb>
+  <g-k>deriving</g-k> <g-k>stock</g-k> <g-pb>(</g-pb><g-t>Eq</g-t><g-pd>,</g-pd> <g-t>Show</g-t><g-pb>)</g-pb>
+
+<g-k>type</g-k> <g-k>family</g-k> <g-t>Element</g-t> <g-v>a</g-v>
+<g-f>size</g-f> <g-o>::</g-o> <g-t>Tree</g-t> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-t>Int</g-t>
+<g-v>size</g-v> <g-pb>(</g-pb><g-t>Leaf</g-t> <g-v>_</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-n>1</g-n>
+<g-v>size</g-v> <g-pb>(</g-pb><g-t>Branch</g-t> <g-v>left</g-v> <g-v>right</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-v>size</g-v> <g-v>left</g-v> <g-o>+</g-o> <g-v>size</g-v> <g-v>right</g-v>
+
+<g-v>lookup'</g-v> <g-v>key</g-v> <g-o>=</g-o> <g-t>M</g-t><g-o>.</g-o><g-v>lookup</g-v> <g-v>key</g-v> <g-t>M</g-t><g-o>.</g-o><g-v>empty</g-v>
+
+<g-k>#if defined(DEBUG)</g-k>
+<g-v>traceTree</g-v> <g-o>=</g-o> <g-v>id</g-v>
+<g-k>#endif</g-k>
