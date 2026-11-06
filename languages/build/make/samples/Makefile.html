@@ -1,0 +1,36 @@
+<g-c># Variables and nested functions</g-c>
+<g-v>CC</g-v> <g-o>?=</g-o> cc
+<g-v>CFLAGS</g-v> <g-o>:=</g-o> -Wall -O2
+<g-v>sources</g-v> <g-o>::=</g-o> main.c util.c
+<g-v>objects</g-v> <g-o>=</g-o> <g-ps>$(</g-ps><g-f>patsubst</g-f><g-v> %.c,%.o,</g-v><g-ps>$(</g-ps><g-v>sources</g-v><g-ps>))</g-ps>
+<g-k>export</g-k> <g-v>VERSION</g-v> <g-o>+=</g-o> 1
+<g-k>private</g-k> <g-v>HASH</g-v> <g-o>!=</g-o> printf '<g-se>\#</g-se>'
+
+<g-k>define</g-k> <g-v>announce</g-v>
+Building <g-ps>$(</g-ps><g-v>1</g-v><g-ps>)</g-ps>
+<g-k>endef</g-k>
+
+<g-l>.PHONY</g-l><g-pd>:</g-pd> all clean
+<g-l>all</g-l><g-pd>:</g-pd> <g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps> <g-pd>|</g-pd> build
+<g-ps>	@</g-ps><g-cb>echo</g-cb> <g-s>"building </g-s><g-v>$@</g-v><g-s> from </g-s><g-v>$^</g-v><g-s>"</g-s><g-o>;</g-o> <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$$</g-v><g-s>HOME"</g-s>
+<g-ps>	+$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps> <g-ps>$(</g-ps><g-v>CFLAGS</g-v><g-ps>)</g-ps> <g-f>-o</g-f> <g-v>$@</g-v> <g-v>$^</g-v> <g-se>\
+</g-se><g-ps>	</g-ps>  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> done
+
+<g-ps>%</g-ps><g-l>.o</g-l><g-pd>:</g-pd> <g-ps>%</g-ps>.c
+<g-ps>	$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps> <g-f>-c</g-f> <g-v>$&lt;</g-v> -o <g-v>$@</g-v>
+<g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps><g-pd>:</g-pd> <g-ps>%</g-ps>.o<g-pd>:</g-pd> <g-ps>%</g-ps>.c <g-pd>;</g-pd><g-ps> @</g-ps><g-cb>echo</g-cb> <g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps> <g-v>$&lt;</g-v>
+<g-l>clean</g-l><g-pd>::</g-pd> <g-pd>;</g-pd><g-ps> -</g-ps><g-f>rm</g-f> -f <g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps>
+
+<g-k>ifeq</g-k> (<g-ps>$(</g-ps><g-v>VERSION</g-v><g-ps>)</g-ps>,1)
+<g-k>include</g-k> settings.mk
+<g-k>else</g-k>
+<g-k>-include</g-k> optional.mk
+<g-k>endif</g-k>
+
+<g-v>.RECIPEPREFIX</g-v> <g-o>=</g-o> <g-s>&gt;</g-s>
+<g-l>custom</g-l><g-pd>:</g-pd> <g-k>private</g-k> <g-v>CC</g-v> <g-o>:=</g-o> clang
+<g-l>custom</g-l><g-pd>:</g-pd> <g-pd>;</g-pd><g-ps> @</g-ps><g-cb>echo</g-cb> inline
+<g-ps>&gt;@</g-ps><g-cb>echo</g-cb> <g-s>"custom </g-s><g-v>$@</g-v><g-s>"</g-s><g-o>;</g-o> <g-cb>echo</g-cb> <g-v>$$</g-v>HOME
+<g-v>.RECIPEPREFIX</g-v> <g-o>=</g-o>
+<g-l>back</g-l><g-pd>:</g-pd>
+<g-ps>	@</g-ps><g-cb>echo</g-cb> normal

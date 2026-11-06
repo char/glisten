@@ -1,0 +1,22 @@
+<g-c># A conditional may occur between a target and its recipe.</g-c>
+<g-l>.PHONY</g-l><g-pd>:</g-pd> show
+<g-l>show</g-l><g-pd>:</g-pd> input <g-pd>|</g-pd> directory
+<g-k>ifeq</g-k> (<g-ps>$(</g-ps><g-v>MODE</g-v><g-ps>)</g-ps>,debug)
+<g-ps>	-@</g-ps><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>'</g-s><g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps><g-s>'</g-s> <g-s>"</g-s><g-ps>$(</g-ps><g-f>shell</g-f><g-v> echo nested</g-v><g-ps>)</g-ps><g-s>"</g-s> <g-v>$$</g-v>HOME <g-se>\
+</g-se><g-ps>	</g-ps>  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> <g-v>$&lt;</g-v> <g-v>$?</g-v> <g-v>$*</g-v>
+<g-k>else</g-k>
+<g-ps>	+</g-ps><g-cb>echo</g-cb> release
+<g-k>endif</g-k>
+
+<g-k>define</g-k> <g-v>outer</g-v>
+<g-k>define</g-k> <g-v>inner</g-v>
+<g-ps>$(</g-ps><g-v>1</g-v><g-ps>)</g-ps> and <g-ps>${</g-ps><g-v>other</g-v><g-ps>}</g-ps>
+<g-k>endef</g-k>
+<g-ps>$(</g-ps><g-f>call</g-f><g-v> inner,$@</g-v><g-ps>)</g-ps>
+<g-k>endef</g-k>
+
+<g-v>name</g-v> <g-o>=</g-o> escaped<g-se>\#</g-se>hash <g-c># comment</g-c>
+<g-v>name</g-v> <g-o>+=</g-o> extra
+<g-v>name</g-v> <g-o>!=</g-o> printf value
+<g-k>include</g-k> included.mk
+<g-k>sinclude</g-k> optional.mk
