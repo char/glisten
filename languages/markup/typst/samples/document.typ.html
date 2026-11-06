@@ -1,0 +1,17 @@
+<g-tt>= A small report </g-tt><g-l>&lt;intro&gt;</g-l>
+
+This is <g-ts>*strong*</g-ts>, <g-em>_emphasized_</g-em>, and <g-tl>`raw text`</g-tl>. See <g-tr>@intro</g-tr> and <g-tu>https://typst.app</g-tu>.
+<g-ps>-</g-ps> First item
+<g-ps>+</g-ps> Numbered item
+<g-ps>/</g-ps> Term<g-ps>:</g-ps> Definition
+A line break follows here <g-se>\\</g-se>
+and an escaped marker: <g-se>\#</g-se>not-code.
+
+<g-ps>#</g-ps><g-k>let</g-k> <g-v>author</g-v> <g-o>=</g-o> <g-s>"Charlotte"</g-s>
+<g-ps>#</g-ps><g-k>set</g-k> <g-f>text</g-f><g-pb>(</g-pb><g-v>size</g-v><g-pd>:</g-pd> <g-n>12pt</g-n><g-pb>)</g-pb>
+<g-ps>#</g-ps><g-k>show</g-k> <g-v>heading</g-v><g-pd>:</g-pd> <g-v>it</g-v> <g-o>=&gt;</g-o> <g-f>strong</g-f><g-pb>(</g-pb><g-v>it</g-v><g-o>.</g-o><g-vm>body</g-vm><g-pb>)</g-pb>
+<g-ps>#</g-ps><g-k>let</g-k> <g-f>greet</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-pb>[</g-pb>Hello, <g-ts>*</g-ts><g-ps>#</g-ps><g-v>name</g-v><g-ts>*</g-ts>!<g-pb>]</g-pb>
+<g-ps>#</g-ps><g-f>greet</g-f><g-pb>(</g-pb><g-v>author</g-v><g-pb>)</g-pb> after the call is markup.
+<g-ps>#</g-ps><g-k>context</g-k> <g-v>text</g-v><g-o>.</g-o><g-vm>lang</g-vm><g-pd>;</g-pd> this is markup after the semicolon.
+<g-ps>#</g-ps><g-f>box</g-f><g-pb>[</g-pb>Markup [with nested brackets], <g-ps>$</g-ps><g-v>x</g-v><g-o>_</g-o><g-n>1</g-n><g-ps>$</g-ps>, and <g-ts>*strong </g-ts><g-ps>#</g-ps><g-v>name</g-v><g-ts>*</g-ts><g-pb>]</g-pb> outside.
+Word_boundaries and foo*bar*baz stay plain; <g-ts>*strong </g-ts><g-em>_nested_</g-em><g-ts>*</g-ts> works.

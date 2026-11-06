@@ -1,0 +1,20 @@
+<g-ps>#</g-ps><g-k>import</g-k> <g-s>"utils.typ"</g-s><g-pd>:</g-pd> <g-v>render</g-v><g-pd>,</g-pd> <g-v>theme</g-v>
+<g-ps>#</g-ps><g-k>include</g-k> <g-s>"chapter.typ"</g-s>
+<g-ps>#</g-ps><g-k>let</g-k> <g-v>dimensions</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>12pt</g-n><g-pd>,</g-pd> <g-n>1em</g-n><g-pd>,</g-pd> <g-n>50%</g-n><g-pd>,</g-pd> <g-n>1fr</g-n><g-pd>,</g-pd> <g-n>45deg</g-n><g-pb>)</g-pb>
+<g-ps>#</g-ps><g-k>let</g-k> <g-v>config</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>enabled</g-v><g-pd>:</g-pd> <g-cb>true</g-cb><g-pd>,</g-pd> <g-v>color</g-v><g-pd>:</g-pd> <g-cb>none</g-cb><g-pd>,</g-pd> <g-v>margin</g-v><g-pd>:</g-pd> <g-cb>auto</g-cb><g-pb>)</g-pb>
+<g-ps>#</g-ps><g-k>let</g-k> <g-v>formula</g-v> <g-o>=</g-o> <g-ps>$</g-ps><g-v>theta</g-v><g-o>_</g-o><g-n>2</g-n> <g-o>+</g-o> <g-n>1</g-n><g-ps>$</g-ps>
+<g-ps>#</g-ps><g-k>if</g-k> <g-f>check</g-f><g-pb>((</g-pb><g-f>config</g-f><g-pb>[</g-pb>enabled<g-pb>]))</g-pb> <g-pb>{</g-pb> <g-k>let</g-k> <g-v>x</g-v> <g-o>=</g-o> <g-n>1</g-n> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>[</g-pb>Active <g-ts>*document*</g-ts><g-pb>]</g-pb><g-pd>;</g-pd> after the conditional.
+<g-ps>#</g-ps><g-k>for</g-k> <g-v>item</g-v> <g-k>in</g-k> <g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>)</g-pb> <g-pb>[</g-pb>Item <g-ps>#</g-ps><g-v>item</g-v>.<g-pb>]</g-pb><g-pd>;</g-pd> after the loop.
+<g-ps>#</g-ps><g-k>while</g-k> <g-f>test</g-f><g-pb>((</g-pb><g-f>items</g-f><g-pb>[</g-pb>ready<g-pb>]))</g-pb> <g-pb>{</g-pb> <g-f>update</g-f><g-pb>(</g-pb><g-v>items</g-v><g-pb>)</g-pb> <g-pb>}</g-pb><g-pd>;</g-pd> after the while.
+<g-ps>#</g-ps><g-k>show</g-k> <g-v>heading</g-v><g-pd>:</g-pd> <g-f>make</g-f><g-pb>(</g-pb>
+  <g-pb>[</g-pb>First <g-ts>*content*</g-ts><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pb>[</g-pb>Second <g-ps>$</g-ps><g-v>alpha</g-v><g-o>_</g-o><g-n>1</g-n><g-ps>$</g-ps><g-pb>]</g-pb><g-pd>,</g-pd>
+<g-pb>)</g-pb><g-pd>;</g-pd> after the statement.
+<g-ps>#</g-ps><g-v>lookup</g-v><g-o>.</g-o><g-f>field</g-f><g-pb>(</g-pb><g-n>1</g-n><g-pb>)[</g-pb>first<g-pb>][</g-pb>second <g-ps>#</g-ps><g-v>item</g-v><g-pb>]</g-pb><g-o>.</g-o><g-vm>result</g-vm> and markup.
+<g-ps>#</g-ps><g-v>lookup</g-v> (not a call) [not a content argument].
+<g-ps>#</g-ps><g-k>let</g-k> <g-v>body</g-v> <g-o>=</g-o> <g-pb>{</g-pb>
+  <g-c>// Nested comments are legal.</g-c>
+  <g-c>/* outer /* inner */ outer */</g-c>
+  <g-k>let</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-se>\u{1f44b}</g-se><g-s>"</g-s>
+  <g-k>if</g-k> <g-cb>true</g-cb> <g-pb>{</g-pb> <g-v>message</g-v> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>"no"</g-s> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
