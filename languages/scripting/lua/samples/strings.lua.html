@@ -1,0 +1,12 @@
+<g-c>--[==[
+Long comment with ]=] and ]] inside; only the matching closer ends it.
+]==]</g-c>
+<g-k>local</g-k> <g-v>plain</g-v> <g-o>=</g-o> <g-s>[[first line
+second line]]</g-s>
+<g-k>local</g-k> <g-v>nested</g-v> <g-o>=</g-o> <g-s>[==[one ]=] two ]] three ]==]</g-s>
+<g-k>local</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>"tab</g-s><g-se>\t</g-se><g-s> hex</g-s><g-se>\x41</g-se><g-s> decimal</g-s><g-se>\065</g-se><g-s> unicode</g-s><g-se>\u{1F642}</g-se><g-s>"</g-s>
+<g-k>local</g-k> <g-v>continued</g-v> <g-o>=</g-o> <g-s>'skip</g-s><g-se>\z   
+  </g-se><g-s>this whitespace and </g-s><g-se>\
+</g-se><g-s>continue'</g-s>
+<g-k>local</g-k> <g-v>doubled</g-v> <g-o>=</g-o> <g-n>1</g-n> <g-o>..</g-o> <g-n>2</g-n>
+<g-f>print</g-f><g-pb>(</g-pb><g-v>text</g-v><g-pd>,</g-pd> <g-v>nested</g-v><g-pd>,</g-pd> <g-n>0xff</g-n><g-pd>,</g-pd> <g-n>0x.8p-1</g-n><g-pd>,</g-pd> <g-n>.25e+2</g-n><g-pb>)</g-pb>

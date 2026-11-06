@@ -18,6 +18,7 @@ import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
 import kconfig from "./build/kconfig/grammar.ts";
 import kdl from "./config/kdl/grammar.ts";
+import lua from "./scripting/lua/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
 import nginx from "./config/nginx/grammar.ts";
 import ninja from "./build/ninja/grammar.ts";
@@ -56,6 +57,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   jsx,
   kconfig,
   kdl,
+  lua,
   markdown,
   nginx,
   ninja,

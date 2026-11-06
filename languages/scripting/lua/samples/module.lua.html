@@ -1,0 +1,24 @@
+<g-c>#!/usr/bin/env lua</g-c>
+<g-k>local</g-k> <g-v>M</g-v> <g-o>=</g-o> <g-pb>{}</g-pb>
+<g-k>local</g-k> <g-v>limit</g-v> <g-pb>&lt;</g-pb><g-at>const</g-at><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-n>0x1.fp+3</g-n>
+<g-k>local</g-k> <g-v>handle</g-v> <g-pb>&lt;</g-pb><g-at>close</g-at><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-f>assert</g-f><g-pb>(</g-pb><g-cb>io</g-cb><g-pd>.</g-pd><g-f>open</g-f><g-pb>(</g-pb><g-s>"data.txt"</g-s><g-pd>,</g-pd> <g-s>"r"</g-s><g-pb>))</g-pb>
+
+<g-k>function</g-k> <g-v>M</g-v><g-pd>:</g-pd><g-f>process</g-f><g-pb>(</g-pb><g-v>items</g-v><g-pd>,</g-pd> <g-cb>...</g-cb><g-pb>)</g-pb>
+  <g-k>local</g-k> <g-v>total</g-v> <g-o>=</g-o> <g-n>0</g-n>
+  <g-k>for</g-k> <g-v>index</g-v><g-pd>,</g-pd> <g-v>value</g-v> <g-k>in</g-k> <g-f>ipairs</g-f><g-pb>(</g-pb><g-v>items</g-v><g-pb>)</g-pb> <g-k>do</g-k>
+    <g-k>if</g-k> <g-v>value</g-v> <g-o>&gt;</g-o> <g-v>limit</g-v> <g-k>then</g-k>
+      <g-v>total</g-v> <g-o>=</g-o> <g-v>total</g-v> <g-o>+</g-o> <g-cb>math</g-cb><g-pd>.</g-pd><g-f>floor</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb>
+    <g-k>elseif</g-k> <g-v>value</g-v> <g-o>==</g-o> <g-cb>nil</g-cb> <g-k>then</g-k>
+      <g-k>goto</g-k> <g-l>finished</g-l>
+    <g-k>end</g-k>
+  <g-k>end</g-k>
+  <g-pd>::</g-pd><g-l>finished</g-l><g-pd>::</g-pd>
+  <g-v>self</g-v><g-pd>.</g-pd><g-vm>total</g-vm> <g-o>=</g-o> <g-v>total</g-v>
+  <g-f>print</g-f><g-pb>(</g-pb><g-s>"total:"</g-s><g-pd>,</g-pd> <g-v>self</g-v><g-pd>.</g-pd><g-vm>total</g-vm><g-pd>,</g-pd> <g-cb>...</g-cb><g-pb>)</g-pb>
+  <g-k>return</g-k> <g-v>total</g-v>
+<g-k>end</g-k>
+
+<g-k>local</g-k> <g-k>function</g-k> <g-f>load_config</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pb>)</g-pb>
+  <g-k>return</g-k> <g-f>require</g-f><g-pb>(</g-pb><g-v>path</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pb>{</g-pb> <g-v>enabled</g-v> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>,</g-pd> <g-v>missing</g-v> <g-o>=</g-o> <g-cb>nil</g-cb> <g-pb>}</g-pb>
+<g-k>end</g-k>
+<g-k>return</g-k> <g-v>M</g-v>

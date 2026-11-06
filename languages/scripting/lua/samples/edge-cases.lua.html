@@ -1,0 +1,10 @@
+<g-c>-- Near-matching levels must not close early.</g-c>
+<g-k>local</g-k> <g-v>text</g-v> <g-o>=</g-o> <g-s>[=[first ]] second ]==] third]=]</g-s>
+<g-c>--[=[ comment ]] still comment ]=]</g-c>
+<g-k>local</g-k> <g-v>x</g-v> <g-pb>&lt;</g-pb><g-at>const</g-at><g-pb>&gt;</g-pb> <g-o>=</g-o> <g-s>"bad\q unicode λ"</g-s>
+<g-k>local</g-k> <g-v>unclosed</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
+<g-k>local</g-k> <g-v>after</g-v> <g-o>=</g-o> <g-n>42</g-n>
+<g-k>local</g-k> <g-v>bogus</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-o>==</g-o> <g-k>not</g-k> <g-v>a</g-v> <g-v>long</g-v> <g-v>opener</g-v>
+<g-pd>::</g-pd> <g-l>label</g-l> <g-pd>::</g-pd> <g-k>goto</g-k> <g-l>label</g-l>
+<g-c>--[==[ unclosed long comment ]=]
+</g-c>
