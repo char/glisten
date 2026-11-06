@@ -1,0 +1,17 @@
+<g-k>#if</g-k> DEBUG
+<g-k>#region</g-k> Examples
+<g-k>#pragma</g-k> <g-k>warning</g-k> disable CS0168
+<g-k>#nullable</g-k> enable
+<g-pb>[</g-pb><g-at>Obsolete</g-at><g-pb>(</g-pb><g-s>"use Newer"</g-s><g-pb>)]</g-pb>
+<g-k>public</g-k> <g-k>class</g-k> <g-t>Example</g-t><g-o>&lt;</g-o><g-t>T</g-t><g-o>&gt;</g-o> <g-k>where</g-k> <g-t>T</g-t> <g-pd>:</g-pd> <g-k>class</g-k>
+<g-pb>{</g-pb>
+    <g-k>private</g-k> <g-k>readonly</g-k> <g-t>int</g-t> <g-v>mask</g-v> <g-o>=</g-o> <g-n>0xFF_00u</g-n><g-pd>;</g-pd>
+    <g-k>private</g-k> <g-t>long</g-t> <g-v>flags</g-v> <g-o>=</g-o> <g-n>0b1010_0011L</g-n><g-pd>;</g-pd>
+    <g-t>decimal</g-t> <g-v>ratio</g-v> <g-o>=</g-o> <g-n>12.5m</g-n><g-pd>;</g-pd>
+    <g-k>public</g-k> <g-t>int</g-t><g-o>?</g-o> <g-t>Value</g-t> <g-pb>{</g-pb> <g-k>get</g-k><g-pd>;</g-pd> <g-k>set</g-k><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>public</g-k> <g-t>string</g-t> <g-f>Render</g-f><g-pb>(</g-pb><g-t>T</g-t> <g-v>item</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-v>item</g-v><g-o>?.</g-o><g-f>ToString</g-f><g-pb>()</g-pb> <g-o>??</g-o> <g-s>"none"</g-s><g-pd>;</g-pd>
+    <g-k>public</g-k> <g-t>Func</g-t><g-o>&lt;</g-o><g-t>int</g-t><g-pd>,</g-pd> <g-t>int</g-t><g-o>&gt;</g-o> <g-t>Twice</g-t> <g-o>=</g-o> <g-v>n</g-v> <g-o>=&gt;</g-o> <g-v>n</g-v> <g-o>*</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+    <g-k>public</g-k> <g-t>void</g-t> <g-f>M</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>var</g-k> <g-v>@class</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd> <g-t>Console</g-t><g-pd>.</g-pd><g-f>WriteLine</g-f><g-pb>(</g-pb><g-v>@class</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>#endregion</g-k>
+<g-k>#endif</g-k>

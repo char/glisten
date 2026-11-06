@@ -1,0 +1,16 @@
+<g-k>#nullable</g-k> enable
+<g-k>using</g-k> <g-t>System</g-t><g-pd>;</g-pd>
+<g-k>using</g-k> <g-t>System</g-t><g-pd>.</g-pd><g-t>Linq</g-t><g-pd>;</g-pd>
+<g-pb>[</g-pb><g-at>assembly</g-at><g-pd>:</g-pd> <g-at>CLSCompliant</g-at><g-pb>(</g-pb><g-cb>true</g-cb><g-pb>)]</g-pb>
+
+<g-c>/// &lt;summary&gt;Example documentation remains a comment.&lt;/summary&gt;</g-c>
+<g-k>public</g-k> <g-k>record</g-k> <g-t>Person</g-t><g-pb>(</g-pb><g-t>string</g-t> <g-t>Name</g-t><g-pd>,</g-pd> <g-t>int</g-t> <g-t>Age</g-t><g-pb>)</g-pb>
+<g-pb>{</g-pb>
+    <g-k>public</g-k> <g-k>required</g-k> <g-t>string</g-t> <g-t>Id</g-t> <g-pb>{</g-pb> <g-k>get</g-k><g-pd>;</g-pd> <g-k>init</g-k><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>public</g-k> <g-k>static</g-k> <g-k>async</g-k> <g-t>Task</g-t><g-o>&lt;</g-o><g-t>string</g-t><g-o>&gt;</g-o> <g-f>Describe</g-f><g-pb>(</g-pb><g-t>Person</g-t> <g-v>person</g-v><g-pb>)</g-pb>
+    <g-pb>{</g-pb>
+        <g-k>var</g-k> <g-v>query</g-v> <g-o>=</g-o> <g-k>from</g-k> <g-v>x</g-v> <g-k>in</g-k> <g-k>new</g-k><g-pb>[]</g-pb> <g-pb>{</g-pb> <g-v>person</g-v> <g-pb>}</g-pb> <g-k>where</g-k> <g-v>x</g-v><g-pd>.</g-pd><g-t>Age</g-t> <g-o>&gt;</g-o> <g-n>18</g-n> <g-k>select</g-k> <g-v>x</g-v><g-pd>.</g-pd><g-t>Name</g-t><g-pd>;</g-pd>
+        <g-k>await</g-k> <g-t>Task</g-t><g-pd>.</g-pd><g-f>Yield</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+        <g-k>return</g-k> <g-s>$"Name: </g-s><g-ps>{</g-ps><g-v>person</g-v><g-pd>.</g-pd><g-t>Name</g-t><g-pd>,</g-pd><g-o>-</g-o><g-n>10</g-n><g-pd>:</g-pd><g-s>upper</g-s><g-ps>}</g-ps><g-s>, age </g-s><g-ps>{</g-ps><g-v>person</g-v><g-pd>.</g-pd><g-t>Age</g-t> <g-o>+</g-o> <g-n>1</g-n><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
