@@ -1,0 +1,4 @@
+option('minimal', type: 'boolean', value: false, description: 'Small build')
+option('backend', type: 'combo', choices: ['auto', 'native'], value: 'auto')
+option('workers', type: 'integer', min: 0, max: 0x20, value: 0b100)
+option('datadir', type: 'string', value: 'share' / 'starlight')

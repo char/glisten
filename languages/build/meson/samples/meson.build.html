@@ -1,0 +1,18 @@
+<g-f>project</g-f><g-pb>(</g-pb><g-s>'starlight'</g-s><g-pd>,</g-pd> <g-s>'c'</g-s><g-pd>,</g-pd> <g-pr>version</g-pr><g-pd>:</g-pd> <g-s>'1.2.0'</g-s><g-pb>)</g-pb>
+
+<g-v>cc</g-v> <g-o>=</g-o> <g-v>meson</g-v><g-pd>.</g-pd><g-f>get_compiler</g-f><g-pb>(</g-pb><g-s>'c'</g-s><g-pb>)</g-pb>
+<g-v>threads</g-v> <g-o>=</g-o> <g-f>dependency</g-f><g-pb>(</g-pb><g-s>'threads'</g-s><g-pd>,</g-pd> <g-pr>required</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>)</g-pb>
+<g-v>sources</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-s>'main.c'</g-s><g-pd>,</g-pd> <g-s>'sky.c'</g-s><g-pb>]</g-pb>
+<g-v>config</g-v> <g-o>=</g-o> <g-pb>{</g-pb><g-s>'prefix'</g-s><g-pd>:</g-pd> <g-f>get_option</g-f><g-pb>(</g-pb><g-s>'prefix'</g-s><g-pb>)</g-pb><g-pd>,</g-pd> <g-s>'debug'</g-s><g-pd>:</g-pd> <g-cb>false</g-cb><g-pb>}</g-pb>
+
+<g-k>if</g-k> <g-v>cc</g-v><g-pd>.</g-pd><g-f>has_header</g-f><g-pb>(</g-pb><g-s>'stdio.h'</g-s><g-pb>)</g-pb> <g-k>and</g-k> <g-k>not</g-k> <g-f>get_option</g-f><g-pb>(</g-pb><g-s>'minimal'</g-s><g-pb>)</g-pb>
+  <g-f>executable</g-f><g-pb>(</g-pb><g-s>'starlight'</g-s><g-pd>,</g-pd> <g-v>sources</g-v><g-pd>,</g-pd> <g-pr>dependencies</g-pr><g-pd>:</g-pd> <g-v>threads</g-v><g-pd>,</g-pd> <g-pr>install</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>)</g-pb>
+<g-k>elif</g-k> <g-v>host_machine</g-v><g-pd>.</g-pd><g-f>system</g-f><g-pb>()</g-pb> <g-o>==</g-o> <g-s>'windows'</g-s>
+  <g-f>subdir</g-f><g-pb>(</g-pb><g-s>'windows'</g-s><g-pb>)</g-pb>
+<g-k>else</g-k>
+  <g-f>message</g-f><g-pb>(</g-pb><g-s>'No executable'</g-s><g-pb>)</g-pb>
+<g-k>endif</g-k>
+
+<g-k>foreach</g-k> <g-v>name</g-v> <g-pd>:</g-pd> <g-pb>[</g-pb><g-s>'one'</g-s><g-pd>,</g-pd> <g-s>'two'</g-s><g-pb>]</g-pb>
+  <g-f>message</g-f><g-pb>(</g-pb><g-s>f'Building </g-s><g-ps>@name@</g-ps><g-s>'</g-s><g-pb>)</g-pb>
+<g-k>endforeach</g-k>

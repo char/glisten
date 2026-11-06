@@ -1,0 +1,26 @@
+<g-c># Strings, raw multiline strings, and format substitutions</g-c>
+<g-v>name</g-v> <g-o>=</g-o> <g-s>'Ada</g-s><g-se>\'</g-se><g-s>s </g-s><g-se>\n</g-se><g-s> star </g-s><g-se>\x41</g-se><g-s> </g-s><g-se>\u0042</g-se><g-s> </g-s><g-se>\101</g-se><g-s> </g-s><g-se>\\</g-se><g-s> \q'</g-s>
+<g-v>plain</g-v> <g-o>=</g-o> <g-s>'@name@'</g-s>
+<g-v>formatted</g-v> <g-o>=</g-o> <g-s>f'</g-s><g-ps>@name@</g-ps><g-s> </g-s><g-ps>@missing_2@</g-ps><g-s> @0@ @bad-name@'</g-s>
+<g-v>raw</g-v> <g-o>=</g-o> <g-s>'''first \n 'quoted'
+second # not a comment'''</g-s>
+<g-v>formatted_raw</g-v> <g-o>=</g-o> <g-s>f'''</g-s><g-ps>@name@</g-ps><g-s>
+backslash \n and </g-s><g-ps>@other@</g-ps><g-s>'''</g-s>
+
+<g-c># Calls, members, keyword arguments, and operators</g-c>
+<g-v>result</g-v> <g-o>=</g-o> <g-v>object</g-v><g-pd>.</g-pd><g-f>method</g-f> <g-pb>(</g-pb><g-pr>key</g-pr><g-pd>:</g-pd> <g-v>value</g-v><g-pd>,</g-pd> <g-pr>nested</g-pr><g-pd>:</g-pd> <g-s>f'</g-s><g-ps>@name@</g-ps><g-s>'</g-s><g-pb>)</g-pb>
+<g-v>answer</g-v> <g-o>=</g-o> <g-v>ready</g-v> <g-o>?</g-o> <g-v>yes_value</g-v> <g-pd>:</g-pd> <g-v>no_value</g-v>
+<g-v>result</g-v> <g-o>=</g-o> <g-f>choose</g-f><g-pb>(</g-pb><g-v>condition</g-v> <g-o>?</g-o> <g-v>left</g-v> <g-pd>:</g-pd> <g-v>right</g-v><g-pd>,</g-pd> <g-pr>key</g-pr><g-pd>:</g-pd> <g-v>value</g-v><g-pb>)</g-pb>
+<g-c># Invalid nested ternary: exercise recovery without losing the call frame.</g-c>
+<g-v>nested</g-v> <g-o>=</g-o> <g-f>choose</g-f><g-pb>(</g-pb><g-v>outer</g-v> <g-o>?</g-o> <g-v>inner</g-v> <g-o>?</g-o> <g-v>first</g-v> <g-pd>:</g-pd> <g-v>second</g-v> <g-pd>:</g-pd> <g-v>third</g-v><g-pd>,</g-pd> <g-pr>opt</g-pr><g-pd>:</g-pd> <g-v>other</g-v><g-pb>)</g-pb>
+<g-v>containers</g-v> <g-o>=</g-o> <g-f>choose</g-f><g-pb>(</g-pb><g-v>flag</g-v> <g-o>?</g-o> <g-pb>{</g-pb><g-s>'key'</g-s><g-pd>:</g-pd> <g-f>inner_call</g-f><g-pb>(</g-pb><g-pr>arg</g-pr><g-pd>:</g-pd> <g-v>value</g-v><g-pb>)}</g-pb> <g-pd>:</g-pd> <g-pb>{}</g-pb><g-pd>,</g-pd> <g-pr>final</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>)</g-pb>
+<g-v>paths</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-s>'share'</g-s> <g-o>/</g-o> <g-s>'data'</g-s><g-pd>,</g-pd> <g-n>0xff</g-n><g-pd>,</g-pd> <g-n>0O77</g-n><g-pd>,</g-pd> <g-n>0b101</g-n><g-pd>,</g-pd> <g-n>42</g-n><g-pb>]</g-pb>
+<g-k>foreach</g-k> <g-v>item</g-v> <g-pd>:</g-pd> <g-v>paths</g-v>
+  <g-k>if</g-k> <g-v>item</g-v> <g-k>in</g-k> <g-v>paths</g-v> <g-k>or</g-k> <g-cb>false</g-cb>
+    <g-k>continue</g-k>
+  <g-k>else</g-k>
+    <g-k>break</g-k>
+  <g-k>endif</g-k>
+<g-k>endforeach</g-k>
+<g-v>joined</g-v> <g-o>=</g-o> <g-s>'a'</g-s> <g-o>+</g-o> <g-ps>\</g-ps> <g-c># continuation comment</g-c>
+  <g-s>'b'</g-s>

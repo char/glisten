@@ -1,0 +1,26 @@
+# Strings, raw multiline strings, and format substitutions
+name = 'Ada\'s \n star \x41 \u0042 \101 \\ \q'
+plain = '@name@'
+formatted = f'@name@ @missing_2@ @0@ @bad-name@'
+raw = '''first \n 'quoted'
+second # not a comment'''
+formatted_raw = f'''@name@
+backslash \n and @other@'''
+
+# Calls, members, keyword arguments, and operators
+result = object.method (key: value, nested: f'@name@')
+answer = ready ? yes_value : no_value
+result = choose(condition ? left : right, key: value)
+# Invalid nested ternary: exercise recovery without losing the call frame.
+nested = choose(outer ? inner ? first : second : third, opt: other)
+containers = choose(flag ? {'key': inner_call(arg: value)} : {}, final: true)
+paths = ['share' / 'data', 0xff, 0O77, 0b101, 42]
+foreach item : paths
+  if item in paths or false
+    continue
+  else
+    break
+  endif
+endforeach
+joined = 'a' + \ # continuation comment
+  'b'
