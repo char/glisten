@@ -1,0 +1,20 @@
+<g-k>module</g-k> <g-v>Basics</g-v> <g-k>where</g-k>
+
+<g-k>open</g-k> <g-k>import</g-k> <g-v>Agda</g-v><g-pd>.</g-pd><g-v>Builtin</g-v><g-pd>.</g-pd><g-v>Nat</g-v> <g-k>using</g-k> <g-pb>(</g-pb><g-v>Nat</g-v><g-pd>;</g-pd> <g-v>zero</g-v><g-pd>;</g-pd> <g-v>suc</g-v><g-pb>)</g-pb>
+
+<g-f>id</g-f> <g-o>:</g-o> <g-pb>{</g-pb><g-v>A</g-v> <g-o>:</g-o> <g-t>Set</g-t><g-pb>}</g-pb> <g-o>→</g-o> <g-v>A</g-v> <g-o>→</g-o> <g-v>A</g-v>
+<g-v>id</g-v> <g-v>x</g-v> <g-o>=</g-o> <g-v>x</g-v>
+
+<g-k>infixl</g-k> <g-n>6</g-n> <g-v>_⊕_</g-v>
+<g-f>_⊕_</g-f> <g-o>:</g-o> <g-v>Nat</g-v> <g-o>→</g-o> <g-v>Nat</g-v> <g-o>→</g-o> <g-v>Nat</g-v>
+<g-v>zero</g-v>  <g-v>⊕</g-v> <g-v>y</g-v> <g-o>=</g-o> <g-v>y</g-v>
+<g-v>suc</g-v> <g-v>x</g-v> <g-v>⊕</g-v> <g-v>y</g-v> <g-o>=</g-o> <g-v>suc</g-v> <g-pb>(</g-pb><g-v>x</g-v> <g-v>⊕</g-v> <g-v>y</g-v><g-pb>)</g-pb>
+
+<g-f>x+y</g-f> <g-o>:</g-o> <g-v>Nat</g-v>
+<g-v>x+y</g-v> <g-o>=</g-o> <g-n>7</g-n>
+
+<g-f>ℕ→ℕ</g-f> <g-o>:</g-o> <g-t>Set</g-t>
+<g-v>ℕ→ℕ</g-v> <g-o>=</g-o> <g-v>Nat</g-v> <g-o>→</g-o> <g-v>Nat</g-v>
+
+<g-f>identity</g-f> <g-o>:</g-o> <g-v>ℕ→ℕ</g-v>
+<g-v>identity</g-v> <g-o>=</g-o> <g-o>λ</g-o> <g-v>x</g-v> <g-o>→</g-o> <g-v>x</g-v>

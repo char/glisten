@@ -1,0 +1,21 @@
+<g-k>module</g-k> <g-v>Structures</g-v> <g-k>where</g-k>
+
+<g-k>open</g-k> <g-k>import</g-k> <g-v>Agda</g-v><g-pd>.</g-pd><g-v>Builtin</g-v><g-pd>.</g-pd><g-v>Nat</g-v> <g-k>using</g-k> <g-pb>(</g-pb><g-v>Nat</g-v><g-pd>;</g-pd> <g-v>zero</g-v><g-pd>;</g-pd> <g-v>suc</g-v><g-pb>)</g-pb>
+
+<g-k>data</g-k> <g-v>Bool</g-v> <g-o>:</g-o> <g-t>Set</g-t> <g-k>where</g-k>
+  <g-f>false</g-f> <g-f>true</g-f> <g-o>:</g-o> <g-v>Bool</g-v>
+
+<g-k>record</g-k> <g-v>Pair</g-v> <g-pb>(</g-pb><g-v>A</g-v> <g-v>B</g-v> <g-o>:</g-o> <g-t>Set</g-t><g-pb>)</g-pb> <g-o>:</g-o> <g-t>Set</g-t> <g-k>where</g-k>
+  <g-k>constructor</g-k> <g-v>_,_</g-v>
+  <g-k>field</g-k>
+    <g-f>first</g-f> <g-o>:</g-o> <g-v>A</g-v>
+    <g-f>second</g-f> <g-o>:</g-o> <g-v>B</g-v>
+
+<g-k>open</g-k> <g-v>Pair</g-v> <g-k>public</g-k>
+
+<g-f>not</g-f> <g-o>:</g-o> <g-v>Bool</g-v> <g-o>→</g-o> <g-v>Bool</g-v>
+<g-v>not</g-v> <g-v>false</g-v> <g-o>=</g-o> <g-v>true</g-v>
+<g-v>not</g-v> <g-v>true</g-v> <g-o>=</g-o> <g-v>false</g-v>
+
+<g-f>example</g-f> <g-o>:</g-o> <g-v>Pair</g-v> <g-v>Nat</g-v> <g-v>Bool</g-v>
+<g-v>example</g-v> <g-o>=</g-o> <g-v>suc</g-v> <g-v>zero</g-v> <g-v>,</g-v> <g-v>not</g-v> <g-v>false</g-v>

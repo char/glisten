@@ -1,0 +1,23 @@
+<g-k>{-# OPTIONS --allow-unsolved-metas #-}</g-k>
+<g-k>module</g-k> <g-v>Holes</g-v> <g-k>where</g-k>
+
+<g-k>open</g-k> <g-k>import</g-k> <g-v>Agda</g-v><g-pd>.</g-pd><g-v>Builtin</g-v><g-pd>.</g-pd><g-v>Nat</g-v> <g-k>using</g-k> <g-pb>(</g-pb><g-v>Nat</g-v><g-pd>;</g-pd> <g-v>zero</g-v><g-pb>)</g-pb>
+<g-k>open</g-k> <g-k>import</g-k> <g-v>Agda</g-v><g-pd>.</g-pd><g-v>Builtin</g-v><g-pd>.</g-pd><g-v>String</g-v> <g-k>using</g-k> <g-pb>(</g-pb><g-v>String</g-v><g-pb>)</g-pb>
+<g-k>open</g-k> <g-k>import</g-k> <g-v>Agda</g-v><g-pd>.</g-pd><g-v>Builtin</g-v><g-pd>.</g-pd><g-v>Char</g-v> <g-k>using</g-k> <g-pb>(</g-pb><g-v>Char</g-v><g-pb>)</g-pb>
+
+<g-c>-- A line comment; --not-a-comment below is a single name.</g-c>
+<g-c>{- Outer comment {- nested -} back to the outer comment. -}</g-c>
+<g-f>--not-a-comment</g-f> <g-o>:</g-o> <g-v>Nat</g-v>
+<g-v>--not-a-comment</g-v> <g-o>=</g-o> <g-n>0x1F</g-n>
+
+<g-f>message</g-f> <g-o>:</g-o> <g-v>String</g-v>
+<g-v>message</g-v> <g-o>=</g-o> <g-s>"a string with a </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s>"</g-s>
+
+<g-f>letter</g-f> <g-o>:</g-o> <g-v>Char</g-v>
+<g-v>letter</g-v> <g-o>=</g-o> <g-s>'λ'</g-s>
+
+<g-f>later</g-f> <g-o>:</g-o> <g-v>Nat</g-v>
+<g-v>later</g-v> <g-o>=</g-o> <g-cb>?</g-cb>
+
+<g-f>sketch</g-f> <g-o>:</g-o> <g-v>Nat</g-v>
+<g-v>sketch</g-v> <g-o>=</g-o> <g-cb>{! zero !}</g-cb>
