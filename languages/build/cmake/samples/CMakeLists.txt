@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.25)
+project(Silver LANGUAGES CXX)
+
+function(add_tool name)
+  add_executable(${name} main.cpp)
+  target_compile_features(${name} PRIVATE cxx_std_20)
+endfunction()
+
+if(DEFINED ENV{CI} AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  message(STATUS "Building ${PROJECT_NAME}")
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/local.cmake")
+  include(local.cmake)
+else()
+  message(STATUS "Default build")
+endif()

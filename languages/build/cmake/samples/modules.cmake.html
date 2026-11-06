@@ -1,0 +1,11 @@
+<g-c># Configure optional components</g-c>
+<g-k>foreach</g-k><g-pb>(</g-pb>component IN ITEMS core tools<g-pb>)</g-pb>
+  <g-f>add_library</g-f><g-pb>(</g-pb><g-ps>${</g-ps><g-v>component</g-v><g-ps>}</g-ps> INTERFACE<g-pb>)</g-pb>
+  <g-f>target_include_directories</g-f><g-pb>(</g-pb><g-ps>${</g-ps><g-v>component</g-v><g-ps>}</g-ps> INTERFACE
+    <g-s>"</g-s><g-ps>$&lt;</g-ps>BUILD_INTERFACE<g-pd>:</g-pd><g-ps>${</g-ps><g-v>CMAKE_CURRENT_SOURCE_DIR</g-v><g-ps>}</g-ps>/include<g-ps>&gt;</g-ps><g-s>"</g-s>
+    <g-s>"</g-s><g-ps>$&lt;</g-ps>IF<g-pd>:</g-pd><g-ps>$&lt;</g-ps>CONFIG<g-pd>:</g-pd>Debug<g-ps>&gt;</g-ps><g-pd>,</g-pd>debug<g-pd>,</g-pd>release<g-ps>&gt;</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+<g-k>endforeach</g-k><g-pb>()</g-pb>
+
+<g-k>macro</g-k><g-pb>(</g-pb><g-f>show_environment</g-f> key<g-pb>)</g-pb>
+  <g-f>message</g-f><g-pb>(</g-pb>STATUS <g-s>"</g-s><g-ps>$ENV{${</g-ps><g-v>key</g-v><g-ps>}}</g-ps><g-s> / </g-s><g-ps>$CACHE{${</g-ps><g-v>key</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+<g-k>endmacro</g-k><g-pb>()</g-pb>

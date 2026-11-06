@@ -1,0 +1,15 @@
+<g-f>cmake_minimum_required</g-f><g-pb>(</g-pb>VERSION 3.25<g-pb>)</g-pb>
+<g-f>project</g-f><g-pb>(</g-pb>Silver LANGUAGES CXX<g-pb>)</g-pb>
+
+<g-k>function</g-k><g-pb>(</g-pb><g-f>add_tool</g-f> name<g-pb>)</g-pb>
+  <g-f>add_executable</g-f><g-pb>(</g-pb><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps> main.cpp<g-pb>)</g-pb>
+  <g-f>target_compile_features</g-f><g-pb>(</g-pb><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps> PRIVATE cxx_std_20<g-pb>)</g-pb>
+<g-k>endfunction</g-k><g-pb>()</g-pb>
+
+<g-k>if</g-k><g-pb>(</g-pb><g-k>DEFINED</g-k> ENV{CI} <g-k>AND</g-k> <g-k>NOT</g-k> CMAKE_BUILD_TYPE <g-k>STREQUAL</g-k> <g-s>"Debug"</g-s><g-pb>)</g-pb>
+  <g-f>message</g-f><g-pb>(</g-pb>STATUS <g-s>"Building </g-s><g-ps>${</g-ps><g-v>PROJECT_NAME</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+<g-k>elseif</g-k><g-pb>(</g-pb><g-k>EXISTS</g-k> <g-s>"</g-s><g-ps>${</g-ps><g-v>CMAKE_SOURCE_DIR</g-v><g-ps>}</g-ps><g-s>/local.cmake"</g-s><g-pb>)</g-pb>
+  <g-f>include</g-f><g-pb>(</g-pb>local.cmake<g-pb>)</g-pb>
+<g-k>else</g-k><g-pb>()</g-pb>
+  <g-f>message</g-f><g-pb>(</g-pb>STATUS <g-s>"Default build"</g-s><g-pb>)</g-pb>
+<g-k>endif</g-k><g-pb>()</g-pb>

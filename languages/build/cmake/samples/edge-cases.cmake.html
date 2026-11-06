@@ -1,0 +1,10 @@
+<g-c>#[==[ Comment with ]=] and ${no_expansion}.
+]==]</g-c>
+<g-f>set</g-f><g-pb>(</g-pb>raw <g-s>[=[Literal ]] and ]==] ${not_expanded}
+]=]</g-s><g-pb>)</g-pb>
+<g-f>set</g-f><g-pb>(</g-pb>empty <g-s>[[raw # text]]</g-s><g-pb>)</g-pb> <g-c># trailing comment</g-c>
+<g-f>set</g-f><g-pb>(</g-pb>boundaries prefix[=[not-a-bracket-argument]=] <g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps>[=[still-unquoted]=] escaped<g-se>\ </g-se>space[=[also-unquoted]=] <g-s>[=[bracket argument]=]</g-s><g-pb>)</g-pb>
+<g-f>SeT</g-f><g-pb>(</g-pb>escaped <g-s>"quote: </g-s><g-se>\"</g-se><g-s> newline: </g-s><g-se>\n</g-se><g-s>"</g-s> unquoted<g-se>\ </g-se>argument<g-pb>)</g-pb>
+<g-k>IF</g-k><g-pb>((</g-pb><g-k>DEFINED</g-k> name<g-pb>)</g-pb> <g-k>OR</g-k> name <g-k>MATCHES</g-k> <g-s>"a(b|c)"</g-s><g-pb>)</g-pb>
+  <g-f>message</g-f><g-pb>(</g-pb><g-s>"</g-s><g-ps>${</g-ps><g-v>outer_</g-v><g-ps>${</g-ps><g-v>inner</g-v><g-ps>}}</g-ps><g-s> </g-s><g-ps>$&lt;</g-ps>IF<g-pd>:</g-pd><g-ps>$&lt;</g-ps>BOOL<g-pd>:</g-pd><g-ps>${</g-ps><g-v>flag</g-v><g-ps>}&gt;</g-ps><g-pd>,</g-pd>yes<g-pd>,</g-pd>no<g-ps>&gt;</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+<g-k>ENDIF</g-k><g-pb>()</g-pb>
