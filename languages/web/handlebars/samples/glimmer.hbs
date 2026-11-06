@@ -1,0 +1,10 @@
+<MyComponent @title={{this.title}} @active={{if this.enabled true false}} ...attributes>
+  <:header>
+    {{yield to="header"}}
+  </:header>
+  {{#each @items as |item i|}}
+    <Card @item={{item}} @index={{i}} title="{{concat ../heading ' — ' item.name}}" />
+  {{else}}
+    <p>No items.</p>
+  {{/each}}
+</MyComponent>

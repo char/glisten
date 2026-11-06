@@ -1,0 +1,17 @@
+<g-c>{{~!-- Long comment }} still comment --~}}</g-c>
+<g-ps>{{#&gt;</g-ps> <g-f>layout</g-f> <g-pr>title</g-pr><g-o>=</g-o><g-pb>(</g-pb><g-f>concat</g-f> <g-s>"a }} b"</g-s> <g-v>@root.title</g-v><g-pb>)</g-pb><g-ps>}}</g-ps>
+  <g-ps>{{^</g-ps><g-v>items</g-v><g-ps>}}</g-ps>none<g-ps>{{/</g-ps><g-v>items</g-v><g-ps>}}</g-ps>
+  <g-ps>{{</g-ps><g-f>lookup</g-f> <g-v>this.items</g-v> <g-pb>(</g-pb><g-f>minus</g-f> <g-v>@index</g-v> <g-n>1</g-n><g-pb>)</g-pb><g-ps>}}</g-ps>
+  <g-ps>{{~&gt;</g-ps> <g-f>partial</g-f> <g-pr>value</g-pr><g-o>=</g-o><g-v>../parent</g-v> <g-ps>~}}</g-ps>
+  <g-ps>{{&gt;</g-ps> <g-f>footer</g-f><g-ps>}}</g-ps>
+<g-ps>{{/</g-ps><g-v>layout</g-v><g-ps>}}</g-ps>
+\{{escaped}}
+<g-ps>{{{{</g-ps><g-f>raw</g-f> <g-pr>language</g-pr><g-o>=</g-o><g-s>"}}}}"</g-s><g-ps>}}}}</g-ps><g-tl>
+  {{#if hidden}}must remain literal{{/if}}
+  {{{{/other}}}} is not the closer.
+</g-tl><g-ps>{{{{/raw}}}}</g-ps>
+<g-pb>&lt;</g-pb><g-tg>p</g-tg> <g-at>data-value</g-at><g-o>=</g-o><g-ps>{{</g-ps><g-v>value</g-v><g-ps>}}</g-ps> <g-at>disabled</g-at><g-pb>&gt;</g-pb><g-ps>{{</g-ps><g-v>this.name</g-v><g-ps>}}</g-ps><g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb><g-k>const</g-k> <g-v>title</g-v> <g-o>=</g-o> <g-s>"</g-s><g-ps>{{</g-ps><g-v>post.title</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pd>;</g-pd> <g-c>/* {{! template comment }} */</g-c><g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>type</g-at><g-o>=</g-o><g-s>"application/ld+json"</g-s><g-pb>&gt;{</g-pb><g-pr>"name"</g-pr><g-pd>:</g-pd> <g-s>"</g-s><g-ps>{{</g-ps><g-v>name</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pb>}&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>type</g-at><g-o>=</g-o><g-s>"text/x-template"</g-s><g-pb>&gt;</g-pb>&lt;b&gt;<g-ps>{{</g-ps><g-v>label</g-v><g-ps>}}</g-ps>&lt;/b&gt;<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb><g-pd>.</g-pd><g-pr>card</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-ps>{{</g-ps><g-v>theme.color</g-v><g-ps>}}</g-ps><g-pd>;</g-pd> <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"</g-s><g-ps>{{</g-ps><g-v>label</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pd>;</g-pd> <g-pb>}&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>

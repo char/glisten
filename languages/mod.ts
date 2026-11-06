@@ -41,6 +41,7 @@ import glsl from "./shaders/glsl/grammar.ts";
 import go from "./managed/go/grammar.ts";
 import graphql from "./query/graphql/grammar.ts";
 import groovy from "./managed/groovy/grammar.ts";
+import handlebars from "./web/handlebars/grammar.ts";
 import haskell from "./functional/haskell/grammar.ts";
 import hcl from "./config/hcl/grammar.ts";
 import hlsl from "./shaders/hlsl/grammar.ts";
@@ -162,6 +163,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   go,
   graphql,
   groovy,
+  handlebars,
   haskell,
   hcl,
   hlsl,

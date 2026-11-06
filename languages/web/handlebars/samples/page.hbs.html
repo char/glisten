@@ -1,0 +1,14 @@
+<g-pb>&lt;</g-pb><g-tg>main</g-tg> <g-at>class</g-at><g-o>=</g-o><g-s>"</g-s><g-ps>{{</g-ps><g-v>theme</g-v><g-ps>}}</g-ps><g-s>"</g-s> <g-at>data-title</g-at><g-o>=</g-o><g-s>"Hello, </g-s><g-ps>{{</g-ps><g-v>user.name</g-v><g-ps>}}</g-ps><g-s>!"</g-s><g-pb>&gt;</g-pb>
+  <g-c>{{! A short comment }}</g-c>
+  <g-c>{{!-- A long comment may contain }} and continue --}}</g-c>
+  <g-ps>{{#</g-ps><g-k>if</g-k> <g-v>user</g-v><g-ps>}}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>Hello, <g-ps>{{</g-ps><g-v>user.name</g-v><g-ps>}}</g-ps>!<g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+    <g-ps>{{{</g-ps><g-v>user.bio</g-v><g-ps>}}}</g-ps>
+    <g-ps>{{&gt;</g-ps> <g-f>profile</g-f> <g-v>user</g-v> <g-pr>role</g-pr><g-o>=</g-o><g-s>"member"</g-s><g-ps>}}</g-ps>
+  <g-ps>{{</g-ps><g-k>else</g-k><g-ps>}}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Welcome, guest.<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{{/</g-ps><g-k>if</g-k><g-ps>}}</g-ps>
+  <g-ps>{{#</g-ps><g-k>each</g-k> <g-v>items</g-v> <g-k>as</g-k> <g-ps>|</g-ps><g-v>item</g-v> <g-v>i</g-v><g-ps>|}}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>a</g-tg> <g-at>href</g-at><g-o>=</g-o><g-s>"</g-s><g-ps>{{</g-ps><g-v>item.url</g-v><g-ps>}}</g-ps><g-s>"</g-s><g-pb>&gt;</g-pb><g-ps>{{</g-ps><g-v>i</g-v><g-ps>}}</g-ps>: <g-ps>{{</g-ps><g-v>item.title</g-v><g-ps>}}</g-ps><g-pb>&lt;/</g-pb><g-tg>a</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{{/</g-ps><g-k>each</g-k><g-ps>}}</g-ps>
+<g-pb>&lt;/</g-pb><g-tg>main</g-tg><g-pb>&gt;</g-pb>

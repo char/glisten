@@ -1,0 +1,14 @@
+<main class="{{theme}}" data-title="Hello, {{user.name}}!">
+  {{! A short comment }}
+  {{!-- A long comment may contain }} and continue --}}
+  {{#if user}}
+    <h1>Hello, {{user.name}}!</h1>
+    {{{user.bio}}}
+    {{> profile user role="member"}}
+  {{else}}
+    <p>Welcome, guest.</p>
+  {{/if}}
+  {{#each items as |item i|}}
+    <a href="{{item.url}}">{{i}}: {{item.title}}</a>
+  {{/each}}
+</main>

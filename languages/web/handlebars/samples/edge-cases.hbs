@@ -1,0 +1,17 @@
+{{~!-- Long comment }} still comment --~}}
+{{#> layout title=(concat "a }} b" @root.title)}}
+  {{^items}}none{{/items}}
+  {{lookup this.items (minus @index 1)}}
+  {{~> partial value=../parent ~}}
+  {{> footer}}
+{{/layout}}
+\{{escaped}}
+{{{{raw language="}}}}"}}}}
+  {{#if hidden}}must remain literal{{/if}}
+  {{{{/other}}}} is not the closer.
+{{{{/raw}}}}
+<p data-value={{value}} disabled>{{this.name}}</p>
+<script>const title = "{{post.title}}"; /* {{! template comment }} */</script>
+<script type="application/ld+json">{"name": "{{name}}"}</script>
+<script type="text/x-template"><b>{{label}}</b></script>
+<style>.card { color: {{theme.color}}; content: "{{label}}"; }</style>

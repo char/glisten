@@ -1,0 +1,10 @@
+<g-pb>&lt;</g-pb><g-t>MyComponent</g-t> <g-at>@title</g-at><g-o>=</g-o><g-ps>{{</g-ps><g-v>this.title</g-v><g-ps>}}</g-ps> <g-at>@active</g-at><g-o>=</g-o><g-ps>{{</g-ps><g-k>if</g-k> <g-v>this.enabled</g-v> <g-cb>true</g-cb> <g-cb>false</g-cb><g-ps>}}</g-ps> <g-at>...attributes</g-at><g-pb>&gt;</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>:header</g-tg><g-pb>&gt;</g-pb>
+    <g-ps>{{</g-ps><g-k>yield</g-k> <g-pr>to</g-pr><g-o>=</g-o><g-s>"header"</g-s><g-ps>}}</g-ps>
+  <g-pb>&lt;/</g-pb><g-tg>:header</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{{#</g-ps><g-k>each</g-k> <g-v>@items</g-v> <g-k>as</g-k> <g-ps>|</g-ps><g-v>item</g-v> <g-v>i</g-v><g-ps>|}}</g-ps>
+    <g-pb>&lt;</g-pb><g-t>Card</g-t> <g-at>@item</g-at><g-o>=</g-o><g-ps>{{</g-ps><g-v>item</g-v><g-ps>}}</g-ps> <g-at>@index</g-at><g-o>=</g-o><g-ps>{{</g-ps><g-v>i</g-v><g-ps>}}</g-ps> <g-at>title</g-at><g-o>=</g-o><g-s>"</g-s><g-ps>{{</g-ps><g-f>concat</g-f> <g-v>../heading</g-v> <g-s>' — '</g-s> <g-v>item.name</g-v><g-ps>}}</g-ps><g-s>"</g-s> <g-pb>/&gt;</g-pb>
+  <g-ps>{{</g-ps><g-k>else</g-k><g-ps>}}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>No items.<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{{/</g-ps><g-k>each</g-k><g-ps>}}</g-ps>
+<g-pb>&lt;/</g-pb><g-t>MyComponent</g-t><g-pb>&gt;</g-pb>
