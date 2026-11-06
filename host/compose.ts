@@ -1,6 +1,6 @@
 import { checkRecords, segment } from "#/abi/mod.ts";
 import type { Callee, CallContext, CallResult } from "./engine.ts";
-import { emit, type Call } from "./emit.ts";
+import { emit, emitSingles, type Call } from "./emit.ts";
 import { extractGroups } from "./extract_groups.ts";
 import { Names } from "./names.ts";
 import { group, recordRanges, scan, Scratch, writeBatches } from "./planning.ts";
@@ -89,6 +89,7 @@ function composeChildren(
   const scratch = options.scratch ?? new Scratch();
   const mark = scratch.mark();
   const missing = new Set<string>();
+  let singleSegments = false;
 
   function plan(callee: Callee, segments: Uint32Array, rootCall = false): Call {
     const joined = rootCall
@@ -118,7 +119,9 @@ function composeChildren(
       names,
       missing,
       frame,
+      rootCall && !hasGroups,
     );
+    if (rootCall) singleSegments = scanned.singleSegments && scanned.length === result.injections;
     const grouped = group(scanned);
     const planned = writeBatches(scanned, grouped);
     const call: Call = {
@@ -148,6 +151,17 @@ function composeChildren(
     }
     refresh(tree);
     const spans = scratch.output(mark);
+    if (
+      singleSegments &&
+      tree.children.every((child) => !child.result.injections && !child.hasGroups)
+    ) {
+      emitSingles(tree, spans, missingStyle);
+      return {
+        status: "ok",
+        spans: spans.finish(options.copySpans !== false),
+        missing: [...missing],
+      };
+    }
     const groups: number[] = [];
     const values: (string | undefined)[] = [];
     emit(tree, 0, tree.words.length, 0, spans, missingStyle, groups, values);

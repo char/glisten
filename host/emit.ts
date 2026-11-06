@@ -13,6 +13,34 @@ export type Call = {
   linkRanges?: Uint32Array;
 };
 
+/** Splice single-segment, group-free leaves without recursive emission. */
+export function emitSingles(call: Call, spans: Spans, missingStyle: number): void {
+  const words = call.words;
+  let ordinal = 0;
+  for (let i = 0; i < words.length; i += 2) {
+    const word = words[i + 1]!;
+    const kind = word >>> record.kindShift;
+    if (kind === record.kind.span) {
+      const first = i;
+      while (i + 2 < words.length && words[i + 3]! >>> record.kindShift === record.kind.span)
+        i += 2;
+      spans.append(words, first, i + 2);
+    } else if (kind === record.kind.segmentCloses) {
+      const childIndex = call.linkChildren?.[ordinal] ?? -1;
+      if (childIndex < 0) spans.push(words[i]!, missingStyle);
+      else {
+        const child = call.children[childIndex]!;
+        const offset = call.linkRanges![ordinal]! * 3;
+        const start = child.ranges[offset]!;
+        const end = child.ranges[offset + 1]!;
+        if (end === start + 2) spans.push(child.words[start]!, child.words[start + 1]!);
+        else spans.append(child.words, start, end);
+      }
+      ordinal++;
+    } else if (kind === record.kind.opensNamed) i += 2;
+  }
+}
+
 /** Emit a planned record range, recursively substituting linked child ranges. */
 export function emit(
   call: Call,

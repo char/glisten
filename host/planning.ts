@@ -52,6 +52,7 @@ class Frame {
   data = new Uint32Array();
   length = 0;
   injectionCount = 0;
+  singleSegments = false;
 
   // Resolution: targets by injection, cached static targets by embed index, and named targets by name.
   targets: (Callee | null)[] = [];
@@ -120,6 +121,7 @@ export function scan(
   names: Names<Callee>,
   missing: Set<string>,
   frame = new Frame(),
+  wholeWithoutGroups = false,
 ): Frame {
   frame.ranges = grow(frame.ranges, segments.length);
   frame.counts = grow(frame.counts, count);
@@ -127,6 +129,7 @@ export function scan(
   frame.resetResolution();
   frame.length = 0;
   frame.injectionCount = count;
+  frame.singleSegments = wholeWithoutGroups;
   let data = frame.data;
   let length = 0;
   let current = 0;
@@ -146,6 +149,11 @@ export function scan(
     const end = words[i]!;
     const word = words[i + 1]!;
     const kind = word >>> record.kindShift;
+    // A whole root without groups has no intermediate input boundary to finish.
+    if (wholeWithoutGroups && kind === record.kind.span) {
+      position = end;
+      continue;
+    }
     const afterOpen = i + (kind === record.kind.opensNamed ? 4 : 2);
     const groupAfterOpen =
       (kind === record.kind.opensStatic || kind === record.kind.opensNamed) &&
@@ -153,7 +161,10 @@ export function scan(
       words[afterOpen + 1]! >>> record.kindShift === record.kind.group;
     if (kind !== record.kind.group && !groupAfterOpen && position === segments[current * 3 + 1])
       finishRange(i);
-    if (kind === record.kind.group) continue;
+    if (kind === record.kind.group) {
+      frame.singleSegments = false;
+      continue;
+    }
     const id = word & record.injectionMask;
     if (kind === record.kind.opensStatic || kind === record.kind.opensNamed) {
       frame.targets[id] = frame.resolve(kind, end, words, i, callee, context, names, missing);
@@ -161,6 +172,7 @@ export function scan(
       continue;
     }
     if (kind === record.kind.segment || kind === record.kind.segmentCloses) {
+      if (frame.counts[id] || kind !== record.kind.segmentCloses) frame.singleSegments = false;
       const offset = length * 4;
       if (offset + 4 > data.length) {
         const grown = grow(data, offset + 4);

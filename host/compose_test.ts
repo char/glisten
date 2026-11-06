@@ -114,6 +114,38 @@ test("interleaved injections are batched by target and spliced in source order",
   equal(Array.from(child.calls[0]!.source.subarray(10, 14)), [97, 98, 103, 104]);
 });
 
+test("single-segment children splice in order, merge boundaries, and retain missing names", () => {
+  const root = new Fake(manifest("root", { embeds: ["child", "absent"] }), [
+    {
+      injections: 3,
+      records: [
+        { kind: "span", end: 1, style: 0 },
+        { kind: "opens", injection: 0, embeds: 0 },
+        { kind: "segment", end: 3, injection: 0, closes: true },
+        { kind: "opens", injection: 1, embeds: 0 },
+        { kind: "segment", end: 5, injection: 1, closes: true },
+        { kind: "opens", injection: 2, embeds: 1 },
+        { kind: "segment", end: 6, injection: 2, closes: true },
+        { kind: "span", end: 8, style: 0 },
+      ],
+    },
+  ]);
+  const child = new Fake(manifest("child", { styles: [{ name: "plain" }, { name: "child" }] }), [
+    {
+      records: [
+        { kind: "span", end: 2, style: 1 },
+        { kind: "span", end: 3, style: 0 },
+        { kind: "span", end: 5, style: 1 },
+      ],
+    },
+  ]);
+  const result = composeWith([root, child], "root", new Uint8Array(8), { checks: true });
+  assert(result.status === "ok");
+  equal(Array.from(result.spans), [1, 0, 2, 1, 3, 0, 5, 1, 8, 0]);
+  equal(result.missing, ["absent"]);
+  equal(child.calls[0]!.documents, [1, 3, 3, 5]);
+});
+
 test("named missing embeds preserve spelling and empty names are not reported", () => {
   const root = new Fake(manifest("root"), [
     {
