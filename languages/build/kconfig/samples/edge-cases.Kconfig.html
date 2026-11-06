@@ -1,0 +1,22 @@
+<g-c># Tabs use eight-column stops, not four.</g-c>
+<g-k>config</g-k> <g-v>TABS</g-v>
+  <g-t>bool</g-t> <g-s>"Tabs"</g-s>
+  <g-k>help</g-k>
+<g-s>	First line starts at column eight.
+        Same indentation using spaces.
+</g-s>    <g-v>This</g-v> <g-v>line</g-v> <g-v>ends</g-v> <g-v>the</g-v> <g-v>help</g-v> <g-v>text</g-v>.
+<g-k>config</g-k> <g-v>AFTER</g-v>
+  <g-k>default</g-k> <g-v>help</g-v> <g-k>if</g-k> <g-cb>y</g-cb>
+  <g-k>help</g-k>
+<g-s>    A paragraph with # and $(NOT_EXPANDED).
+
+      More deeply indented.
+</g-s><g-k>config</g-k> <g-v>NEXT</g-v>
+  <g-t>string</g-t> <g-s>"Unicode λ and escaped </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s>"</g-s>
+  <g-k>default</g-k> <g-s>"unterminated</g-s>
+<g-k>config</g-k> <g-v>LAST</g-v>
+  <g-t>bool</g-t> <g-s>"Nested </g-s><g-ps>$(</g-ps><g-v>call,</g-v><g-ps>$(</g-ps><g-v>inner,x</g-v><g-ps>))</g-ps><g-s>"</g-s>
+  <g-k>depends</g-k> <g-k>on</g-k> <g-v>FOO</g-v> <g-o>!=</g-o> <g-cb>n</g-cb> <g-o>&amp;&amp;</g-o> <g-v>BAR</g-v> <g-o>&lt;=</g-o> <g-v>42</g-v>
+<g-c># incomplete macro and near-keywords</g-c>
+<g-k>config</g-k> <g-v>HELPERS</g-v>
+  <g-k>default</g-k> <g-ps>$(</g-ps><g-v>unterminated</g-v>

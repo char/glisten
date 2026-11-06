@@ -1,0 +1,32 @@
+mainmenu "Device configuration"
+compiler := $(shell,command -v cc) # part of the value
+
+config DEVICE
+	bool "Enable device"
+	default y if ARCH_TEST && !BROKEN
+	help
+	  Enable the example device.
+	  It handles a range of values.
+
+	  A second paragraph.
+
+config DEVICE_LIMIT
+	int "Queue limit" if DEVICE
+	range 1 128
+	default 16
+	depends on DEVICE && (ARCH_TEST || COMPILE_TEST)
+	select CRC32
+	imply DEBUG_FS if EXPERT
+
+menu "Drivers"
+	visible if DEVICE
+	source "drivers/$(ARCH)/Kconfig"
+endmenu
+choice
+	prompt "Mode"
+	default MODE_A
+config MODE_A
+	bool "A"
+config MODE_B
+	tristate "B"
+endchoice

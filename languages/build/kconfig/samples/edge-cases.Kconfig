@@ -1,0 +1,22 @@
+# Tabs use eight-column stops, not four.
+config TABS
+  bool "Tabs"
+  help
+	First line starts at column eight.
+        Same indentation using spaces.
+    This line ends the help text.
+config AFTER
+  default help if y
+  help
+    A paragraph with # and $(NOT_EXPANDED).
+
+      More deeply indented.
+config NEXT
+  string "Unicode λ and escaped \"quote\""
+  default "unterminated
+config LAST
+  bool "Nested $(call,$(inner,x))"
+  depends on FOO != n && BAR <= 42
+# incomplete macro and near-keywords
+config HELPERS
+  default $(unterminated

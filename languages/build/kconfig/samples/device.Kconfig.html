@@ -1,0 +1,32 @@
+<g-k>mainmenu</g-k> <g-s>"Device configuration"</g-s>
+<g-pr>compiler</g-pr> <g-o>:=</g-o><g-s> </g-s><g-ps>$(</g-ps><g-v>shell,command -v cc</g-v><g-ps>)</g-ps><g-s> # part of the value</g-s>
+
+<g-k>config</g-k> <g-v>DEVICE</g-v>
+	<g-t>bool</g-t> <g-s>"Enable device"</g-s>
+	<g-k>default</g-k> <g-cb>y</g-cb> <g-k>if</g-k> <g-v>ARCH_TEST</g-v> <g-o>&amp;&amp;</g-o> <g-o>!</g-o><g-v>BROKEN</g-v>
+	<g-k>help</g-k>
+<g-s>	  Enable the example device.
+	  It handles a range of values.
+
+	  A second paragraph.
+
+</g-s><g-k>config</g-k> <g-v>DEVICE_LIMIT</g-v>
+	<g-t>int</g-t> <g-s>"Queue limit"</g-s> <g-k>if</g-k> <g-v>DEVICE</g-v>
+	<g-k>range</g-k> <g-v>1</g-v> <g-v>128</g-v>
+	<g-k>default</g-k> <g-v>16</g-v>
+	<g-k>depends</g-k> <g-k>on</g-k> <g-v>DEVICE</g-v> <g-o>&amp;&amp;</g-o> <g-pb>(</g-pb><g-v>ARCH_TEST</g-v> <g-o>||</g-o> <g-v>COMPILE_TEST</g-v><g-pb>)</g-pb>
+	<g-k>select</g-k> <g-v>CRC32</g-v>
+	<g-k>imply</g-k> <g-v>DEBUG_FS</g-v> <g-k>if</g-k> <g-v>EXPERT</g-v>
+
+<g-k>menu</g-k> <g-s>"Drivers"</g-s>
+	<g-k>visible</g-k> <g-k>if</g-k> <g-v>DEVICE</g-v>
+	<g-k>source</g-k> <g-s>"drivers/</g-s><g-ps>$(</g-ps><g-v>ARCH</g-v><g-ps>)</g-ps><g-s>/Kconfig"</g-s>
+<g-k>endmenu</g-k>
+<g-k>choice</g-k>
+	<g-k>prompt</g-k> <g-s>"Mode"</g-s>
+	<g-k>default</g-k> <g-v>MODE_A</g-v>
+<g-k>config</g-k> <g-v>MODE_A</g-v>
+	<g-t>bool</g-t> <g-s>"A"</g-s>
+<g-k>config</g-k> <g-v>MODE_B</g-v>
+	<g-t>tristate</g-t> <g-s>"B"</g-s>
+<g-k>endchoice</g-k>
