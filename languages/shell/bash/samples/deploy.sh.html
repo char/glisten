@@ -1,0 +1,45 @@
+<g-c>#!/usr/bin/env bash</g-c>
+<g-c># Publish a small site; paths may contain spaces or Unicode.</g-c>
+<g-cb>set</g-cb> -euo pipefail
+
+<g-v>root=</g-v><g-ps>${</g-ps><g-v>1:-</g-v><g-s>"</g-s><g-v>$HOME</g-v><g-s>/site"</g-s><g-ps>}</g-ps>
+<g-v>target=</g-v><g-ps>${</g-ps><g-v>2:-staging</g-v><g-ps>}</g-ps>
+<g-v>log=</g-v><g-s>"</g-s><g-v>$root</g-v><g-s>/deploy.log"</g-s>
+<g-v>files=</g-v><g-pb>(</g-pb>index.html <g-s>'café.html'</g-s> assets/app.css<g-pb>)</g-pb>
+
+<g-f>announce</g-f><g-pb>(</g-pb><g-ps>)</g-ps> <g-k>{</g-k>
+  <g-cb>local</g-cb> message=<g-v>$1</g-v>
+  <g-cb>printf</g-cb> <g-s>'[%s] %s\n'</g-s> <g-s>"</g-s><g-ps>$(</g-ps><g-f>date</g-f> +%T<g-ps>)</g-ps><g-s>"</g-s> <g-s>"</g-s><g-v>$message</g-v><g-s>"</g-s> <g-o>|</g-o> <g-f>tee</g-f> -a <g-s>"</g-s><g-v>$log</g-v><g-s>"</g-s>
+<g-k>}</g-k>
+
+<g-k>case</g-k> <g-s>"</g-s><g-v>$target</g-v><g-s>"</g-s> <g-k>in</g-k>
+  staging<g-o>|</g-o>preview<g-pb>)</g-pb>
+    <g-v>destination=</g-v><g-s>"/srv/preview"</g-s>
+    <g-o>;;</g-o>
+  production<g-pb>)</g-pb>
+    <g-v>destination=</g-v><g-s>"/srv/www"</g-s>
+    <g-o>;;</g-o>
+  *<g-pb>)</g-pb>
+    <g-cb>printf</g-cb> <g-s>'unknown target: %s\n'</g-s> <g-s>"</g-s><g-v>$target</g-v><g-s>"</g-s> <g-o>&gt;&amp;</g-o>2
+    <g-cb>exit</g-cb> 2
+    <g-o>;;</g-o>
+<g-k>esac</g-k>
+
+<g-k>if</g-k> <g-k>[[</g-k> <g-o>!</g-o> -d <g-s>"</g-s><g-v>$root</g-v><g-s>"</g-s> <g-o>||</g-o> <g-ps>${</g-ps><g-v>#files[@]</g-v><g-ps>}</g-ps> -eq 0 <g-k>]]</g-k><g-o>;</g-o> <g-k>then</g-k>
+  <g-cb>echo</g-cb> <g-s>'nothing to deploy'</g-s> <g-o>&gt;&amp;</g-o>2
+  <g-cb>exit</g-cb> 1
+<g-k>fi</g-k>
+
+<g-k>for</g-k> <g-v>file</g-v> <g-k>in</g-k> <g-s>"</g-s><g-ps>${</g-ps><g-v>files[@]</g-v><g-ps>}</g-ps><g-s>"</g-s><g-o>;</g-o> <g-k>do</g-k>
+  <g-k>if</g-k> <g-k>[[</g-k> -f <g-s>"</g-s><g-v>$root</g-v><g-s>/</g-s><g-v>$file</g-v><g-s>"</g-s> <g-k>]]</g-k><g-o>;</g-o> <g-k>then</g-k>
+    <g-f>install</g-f> -D -- <g-s>"</g-s><g-v>$root</g-v><g-s>/</g-s><g-v>$file</g-v><g-s>"</g-s> <g-s>"</g-s><g-v>$destination</g-v><g-s>/</g-s><g-v>$file</g-v><g-s>"</g-s>
+  <g-k>else</g-k>
+    <g-f>announce</g-f> <g-s>"missing: </g-s><g-v>$file</g-v><g-s>"</g-s>
+  <g-k>fi</g-k>
+<g-k>done</g-k>
+
+<g-v>count=</g-v><g-ps>$((</g-ps> <g-ps>${</g-ps><g-v>#files[@]</g-v><g-ps>}</g-ps> <g-o>+</g-o> <g-n>1</g-n> <g-ps>))</g-ps>
+<g-ps>((</g-ps><g-v>count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-ps>))</g-ps> <g-o>&amp;&amp;</g-o> <g-f>announce</g-f> <g-s>"checked </g-s><g-v>$count</g-v><g-s> entries"</g-s>
+<g-k>while</g-k> <g-v>IFS=</g-v> <g-cb>read</g-cb> -r line<g-o>;</g-o> <g-k>do</g-k>
+  <g-cb>printf</g-cb> <g-s>'  %s\n'</g-s> <g-s>"</g-s><g-v>$line</g-v><g-s>"</g-s>
+<g-k>done</g-k> <g-o>&lt;</g-o> <g-ps>&lt;(</g-ps><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>files[@]</g-v><g-ps>}</g-ps><g-s>"</g-s><g-ps>)</g-ps>

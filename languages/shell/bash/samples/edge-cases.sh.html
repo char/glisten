@@ -1,0 +1,35 @@
+<g-c>#!/usr/bin/env bash</g-c>
+<g-c># Near misses are words, not keywords or builtins.</g-c>
+<g-f>iffy</g-f> thenable elsewhere fiftieth
+<g-f>printfx</g-f> echoing casework esacape
+<g-cb>command</g-cb> one#two <g-c># but this is a comment</g-c>
+<g-v>A=</g-v>1 <g-v>PATH+=</g-v>:/extra <g-cb>command</g-cb> arg
+<g-v>items=</g-v><g-pb>(</g-pb>alpha <g-s>'two words'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>HOME</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pb>)</g-pb>
+<g-v>items+=</g-v><g-pb>(</g-pb>more<g-pb>)</g-pb>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>items[@]</g-v><g-ps>}</g-ps><g-s>"</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>items[</g-v><g-ps>$((</g-ps><g-n>1</g-n> <g-o>+</g-o> <g-n>1</g-n><g-ps>))</g-ps><g-v>]</g-v><g-ps>}</g-ps><g-s>"</g-s>
+
+<g-k>case</g-k> <g-s>"</g-s><g-v>$1</g-v><g-s>"</g-s> <g-k>in</g-k>
+  -m*=native<g-pb>)</g-pb> <g-cb>echo</g-cb> native <g-o>;;&amp;</g-o>
+  *<g-se>\|</g-se>*<g-pb>)</g-pb> <g-cb>printf</g-cb> <g-s>'pipe\n'</g-s> <g-o>;;</g-o>
+  *<g-pb>)</g-pb> <g-cb>echo</g-cb> other <g-o>;&amp;</g-o>
+<g-k>esac</g-k>
+
+<g-c># Delimiter-like lines do not close a heredoc.</g-c>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>EOF</g-l>
+<g-s>EOF suffix
+ EOF
+continued </g-s><g-se>\
+</g-se><g-s>EOF
+actually the final delimiter follows
+</g-s><g-l>EOF</g-l>
+<g-c># An escaped delimiter is quoted after quote removal.</g-c>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o> <g-l>E\OF</g-l>
+<g-s>$HOME is literal here
+</g-s><g-l>EOF</g-l>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>é</g-l>
+<g-s>Unicode delimiter, </g-s><g-v>$HOME</g-v><g-s>
+</g-s><g-l>é</g-l>
+
+<g-c># These final constructs are intentionally incomplete.</g-c>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>unfinished:-</g-v><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'nested'</g-s><g-ps>)}</g-ps><g-s>
+</g-s>

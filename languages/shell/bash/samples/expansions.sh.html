@@ -1,0 +1,60 @@
+<g-c>#!/usr/bin/env bash</g-c>
+<g-c># Strings, shell words, substitutions, and redirections.</g-c>
+<g-v>name=</g-v><g-s>'Zoë'</g-s>
+<g-v>greeting=</g-v><g-s>"Hello, </g-s><g-v>$name</g-v><g-s>: </g-s><g-ps>${</g-ps><g-v>name^^</g-v><g-ps>}</g-ps><g-s>!"</g-s>
+<g-v>literal=</g-v><g-s>'a $variable and a backslash \ stay literal'</g-s>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$greeting</g-v><g-s>"</g-s> <g-s>"</g-s><g-v>$literal</g-v><g-s>"</g-s>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>$'first</g-s><g-se>\n</g-se><g-s>second</g-s><g-se>\t\x41\u263a</g-se><g-s>'</g-s>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> pre<g-s>"</g-s><g-v>$name</g-v><g-s>"</g-s>post escaped<g-se>\ </g-se>space <g-se>\é</g-se>
+
+<g-v>path=</g-v><g-ps>${</g-ps><g-v>PATH:-/usr/bin</g-v><g-ps>}</g-ps>
+<g-v>base=</g-v><g-ps>${</g-ps><g-v>path##*/</g-v><g-ps>}</g-ps>
+<g-v>short=</g-v><g-ps>${</g-ps><g-v>path%/*</g-v><g-ps>}</g-ps>
+<g-v>replacement=</g-v><g-ps>${</g-ps><g-v>name/o/ø</g-v><g-ps>}</g-ps>
+<g-v>indirect=</g-v>HOME
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>!indirect</g-v><g-ps>}</g-ps><g-s>"</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>name:0:2</g-v><g-ps>}</g-ps><g-s>"</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>missing:=fallback</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>name:+present</g-v><g-ps>}</g-ps><g-s>"</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>missing:?required</g-v><g-ps>}</g-ps><g-s>"</g-s>
+
+<g-v>number=</g-v><g-ps>$((</g-ps><g-n>16#ff</g-n> <g-o>+</g-o> <g-n>2</g-n> <g-o>*</g-o> <g-pb>(</g-pb><g-n>3</g-n> <g-o>+</g-o> <g-n>4</g-n><g-pb>)</g-pb><g-ps>))</g-ps>
+<g-ps>((</g-ps> <g-v>number</g-v> <g-o>+=</g-o> <g-n>1</g-n> <g-ps>))</g-ps>
+<g-v>result=</g-v><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> <g-s>"</g-s><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> nested<g-ps>)</g-ps><g-s>"</g-s><g-ps>)</g-ps>
+<g-v>old=</g-v><g-ps>`</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> legacy<g-ps>`</g-ps>
+<g-cb>printf</g-cb> <g-s>'%s %d\n'</g-s> <g-s>"</g-s><g-v>$result</g-v><g-s>"</g-s> <g-s>"</g-s><g-v>$number</g-v><g-s>"</g-s> <g-o>&gt;</g-o>output.txt <g-o>2&gt;&gt;</g-o>errors.txt
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$old</g-v><g-s>"</g-s> <g-o>|&amp;</g-o> <g-f>sed</g-f> <g-s>'s/legacy/new/'</g-s>
+<g-cb>read</g-cb> -r first rest <g-o>&lt;&lt;&lt;</g-o><g-s>"</g-s><g-v>$greeting</g-v><g-s>"</g-s>
+<g-f>diff</g-f> <g-ps>&lt;(</g-ps><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$first</g-v><g-s>"</g-s><g-ps>)</g-ps> <g-ps>&lt;(</g-ps><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$rest</g-v><g-s>"</g-s><g-ps>)</g-ps> <g-o>||</g-o> <g-cb>true</g-cb>
+
+<g-c># Multiple pending documents have independent quoting rules.</g-c>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>FIRST</g-l> <g-o>&lt;&lt;</g-o><g-l>'SECOND'</g-l>
+<g-s>Hello </g-s><g-v>$name</g-v><g-s>, computed: </g-s><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> <g-s>"</g-s><g-v>$base</g-v><g-s>"</g-s><g-ps>)</g-ps><g-s>
+</g-s><g-l>FIRST</g-l>
+<g-s>No expansion: $name $(not-a-command) `nor-this`
+</g-s><g-l>SECOND</g-l>
+
+<g-f>cat</g-f> <g-o>&lt;&lt;-</g-o><g-l>TABBED</g-l>
+<g-s>	Tabbed body: </g-s><g-ps>${</g-ps><g-v>name:-friend</g-v><g-ps>}</g-ps><g-s>
+	</g-s><g-l>TABBED</g-l>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>E"N"D</g-l>
+<g-s>Mixed quoting keeps $name literal.
+</g-s><g-l>END</g-l>
+<g-cb>printf</g-cb> <g-s>'done\n'</g-s> <g-c># trailing comment</g-c>
+
+<g-c># A substitution can queue its own heredoc while another is pending.</g-c>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>OUT</g-l> <g-ps>$(</g-ps><g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>IN</g-l>
+<g-s>inner </g-s><g-v>$HOME</g-v><g-s>
+</g-s><g-l>IN</g-l>
+<g-ps>)</g-ps>
+<g-s>outer </g-s><g-ps>${</g-ps><g-v>HOME:-/tmp</g-v><g-ps>}</g-ps><g-s>
+</g-s><g-l>OUT</g-l>
+<g-cb>printf</g-cb> <g-s>'after nested heredocs\n'</g-s>
+<g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>$'</g-s><g-se>\x4\x41\u263a\U0001f600\123\cA</g-se><g-s>'</g-s>
+<g-ps>((</g-ps> <g-v>value</g-v> <g-o>=</g-o> <g-n>64#_</g-n> <g-o>+</g-o> <g-n>2#10</g-n> <g-ps>))</g-ps>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>END</g-l> <g-ps>$(</g-ps><g-cb>printf</g-cb> x<g-ps>)</g-ps>
+<g-s>body
+</g-s><g-l>END</g-l>
+<g-cb>printf</g-cb> <g-s>'after substitution\n'</g-s>
+<g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>PIPE</g-l> <g-o>|</g-o>
+  <g-f>sed</g-f> <g-s>'s/body/BODY/'</g-s>
+<g-s>body
+</g-s><g-l>PIPE</g-l>
+<g-cb>printf</g-cb> <g-s>'after pipeline\n'</g-s>
