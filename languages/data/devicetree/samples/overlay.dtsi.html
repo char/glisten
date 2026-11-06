@@ -1,0 +1,24 @@
+<g-k>/plugin/</g-k><g-pd>;</g-pd>
+<g-k>/memreserve/</g-k> <g-n>0x80000000</g-n> <g-n>0x1000</g-n><g-pd>;</g-pd>
+<g-k>/include/</g-k> <g-s>"board-pins.dtsi"</g-s>
+<g-k>#define</g-k> <g-v>BUS_HZ</g-v> <g-pb>(</g-pb><g-n>400</g-n> <g-o>*</g-o> <g-n>1000</g-n><g-pb>)</g-pb>
+<g-k>#if</g-k> <g-v>defined</g-v><g-pb>(</g-pb><g-v>ENABLE_SENSOR</g-v><g-pb>)</g-pb> <g-o>&amp;&amp;</g-o> <g-v>ENABLE_SENSOR</g-v>
+<g-v>&amp;{/soc/i2c@1000}</g-v> <g-pb>{</g-pb>
+    <g-pr>clock-frequency</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-v>BUS_HZ</g-v><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-l>sensor</g-l><g-pd>:</g-pd> <g-v>temperature</g-v><g-ps>@</g-ps><g-tg>48</g-tg> <g-pb>{</g-pb>
+        <g-pr>reg</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>0x48</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+        <g-pr>calibration</g-pr> <g-o>=</g-o> <g-k>/bits/</g-k> <g-n>16</g-n> <g-pb>&lt;</g-pb><g-n>0x1234</g-n>
+<g-k>#ifdef</g-k> <g-v>EXTRA_CALIBRATION</g-v>
+                                  <g-n>42</g-n>
+<g-k>#endif</g-k>
+                                 <g-pb>&gt;</g-pb><g-pd>;</g-pd>
+        <g-pr>signature</g-pr> <g-o>=</g-o> <g-pb>[</g-pb><g-s>00 ff a1 2b</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+        <g-pr>data</g-pr> <g-o>=</g-o> <g-k>/incbin/</g-k><g-pb>(</g-pb><g-s>"cal.bin"</g-s><g-pd>,</g-pd> <g-n>0</g-n><g-pd>,</g-pd> <g-n>32</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-pr>text</g-pr> <g-o>=</g-o> <g-s>"line</g-s><g-se>\n</g-se><g-s>quote</g-s><g-se>\"</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-s>"λ"</g-s><g-pd>;</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-k>/delete-property/</g-k> <g-pr>old-mode</g-pr><g-pd>;</g-pd>
+    <g-k>/delete-node/</g-k> <g-v>obsolete</g-v><g-ps>@</g-ps><g-tg>4</g-tg><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>#endif</g-k>
+<g-c>// Keep the controller even without a reference.</g-c>
+<g-k>/omit-if-no-ref/</g-k> <g-v>&amp;sensor</g-v><g-pd>;</g-pd>

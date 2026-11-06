@@ -1,0 +1,25 @@
+/dts-v1/;
+#include <dt-bindings/gpio/gpio.h>
+#include "soc.dtsi"
+
+/ {
+    model = "Example board";
+    compatible = "example,board", "example,soc";
+    #address-cells = <2>;
+    #size-cells = <1>;
+    chosen { stdout-path = &uart0; };
+    aliases { serial0 = &uart0; };
+    leds {
+        compatible = "gpio-leds";
+        status_led: led-0 {
+            gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
+            label = "Status";
+        };
+    };
+};
+
+&uart0 {
+    status = "okay";
+    reg = <0x1000 0x100>;
+    clock-frequency = <(24 * 1000 * 1000)>;
+};

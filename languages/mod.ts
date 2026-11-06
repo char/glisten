@@ -2,6 +2,7 @@ import type { Grammar } from "#/grammar/mod.ts";
 import bash from "./shell/bash/grammar.ts";
 import c from "./systems/c/grammar.ts";
 import css from "./web/css/grammar.ts";
+import devicetree from "./data/devicetree/grammar.ts";
 import diff from "./data/diff/grammar.ts";
 import dockerfile from "./build/dockerfile/grammar.ts";
 import dot from "./data/dot/grammar.ts";
@@ -36,6 +37,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   bash,
   c,
   css,
+  devicetree,
   diff,
   dockerfile,
   dot,

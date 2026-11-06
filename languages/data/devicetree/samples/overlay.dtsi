@@ -1,0 +1,24 @@
+/plugin/;
+/memreserve/ 0x80000000 0x1000;
+/include/ "board-pins.dtsi"
+#define BUS_HZ (400 * 1000)
+#if defined(ENABLE_SENSOR) && ENABLE_SENSOR
+&{/soc/i2c@1000} {
+    clock-frequency = <BUS_HZ>;
+    sensor: temperature@48 {
+        reg = <0x48>;
+        calibration = /bits/ 16 <0x1234
+#ifdef EXTRA_CALIBRATION
+                                  42
+#endif
+                                 >;
+        signature = [00 ff a1 2b];
+        data = /incbin/("cal.bin", 0, 32);
+        text = "line\nquote\"", "λ";
+    };
+    /delete-property/ old-mode;
+    /delete-node/ obsolete@4;
+};
+#endif
+// Keep the controller even without a reference.
+/omit-if-no-ref/ &sensor;

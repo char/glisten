@@ -1,0 +1,15 @@
+<g-k>/dts-v1/</g-k><g-pd>;</g-pd>
+/ <g-pb>{</g-pb>
+    <g-pr>#interrupt-cells</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>1</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd> <g-c>// This is a property, not a preprocessor line.</g-c>
+    <g-pr>#if-cells</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>2</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-l>label_name</g-l><g-pd>:</g-pd> <g-v>serial</g-v><g-ps>@</g-ps><g-tg>ff00</g-tg> <g-pb>{</g-pb> <g-pr>compatible</g-pr> <g-o>=</g-o> <g-s>"demo,uart"</g-s><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-pr>broken</g-pr> <g-o>=</g-o> <g-pb>&lt;(</g-pb><g-n>1</g-n> <g-o>&lt;&lt;</g-o> <g-n>4</g-n><g-pb>)</g-pb> <g-v>&amp;good</g-v> <g-n>0x12UL</g-n><g-pb>&gt;</g-pb><g-pd>,</g-pd> <g-pb>[</g-pb><g-s>00 ab zz</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-pr>near</g-pr> <g-o>=</g-o> <g-s>"unfinished</g-s>
+    <g-pr>next</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>7</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-c>/* labels and property-like text: fake: x = &lt;1&gt;; */</g-c>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>#if</g-k> <g-v>defined</g-v><g-pb>(</g-pb><g-v>THING</g-v><g-pb>)</g-pb> \
+    <g-o>&amp;&amp;</g-o> <g-v>OTHER</g-v>
+<g-k>#define</g-k> <g-v>VALUE</g-v> <g-n>0x40</g-n>
+<g-k>#endif</g-k>
+&amp;<g-pb>{</g-pb> /<g-v>soc</g-v>/<g-v>unterminated</g-v>

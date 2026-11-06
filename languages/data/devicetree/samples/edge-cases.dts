@@ -1,0 +1,15 @@
+/dts-v1/;
+/ {
+    #interrupt-cells = <1>; // This is a property, not a preprocessor line.
+    #if-cells = <2>;
+    label_name: serial@ff00 { compatible = "demo,uart"; };
+    broken = <(1 << 4) &good 0x12UL>, [00 ab zz];
+    near = "unfinished
+    next = <7>;
+    /* labels and property-like text: fake: x = <1>; */
+};
+#if defined(THING) \
+    && OTHER
+#define VALUE 0x40
+#endif
+&{ /soc/unterminated

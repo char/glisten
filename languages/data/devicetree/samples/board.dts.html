@@ -1,0 +1,25 @@
+<g-k>/dts-v1/</g-k><g-pd>;</g-pd>
+<g-k>#include</g-k> <g-s>&lt;dt-bindings/gpio/gpio.h&gt;</g-s>
+<g-k>#include</g-k> <g-s>"soc.dtsi"</g-s>
+
+/ <g-pb>{</g-pb>
+    <g-pr>model</g-pr> <g-o>=</g-o> <g-s>"Example board"</g-s><g-pd>;</g-pd>
+    <g-pr>compatible</g-pr> <g-o>=</g-o> <g-s>"example,board"</g-s><g-pd>,</g-pd> <g-s>"example,soc"</g-s><g-pd>;</g-pd>
+    <g-pr>#address-cells</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>2</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-pr>#size-cells</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>1</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-v>chosen</g-v> <g-pb>{</g-pb> <g-pr>stdout-path</g-pr> <g-o>=</g-o> <g-v>&amp;uart0</g-v><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-v>aliases</g-v> <g-pb>{</g-pb> <g-pr>serial0</g-pr> <g-o>=</g-o> <g-v>&amp;uart0</g-v><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-v>leds</g-v> <g-pb>{</g-pb>
+        <g-pr>compatible</g-pr> <g-o>=</g-o> <g-s>"gpio-leds"</g-s><g-pd>;</g-pd>
+        <g-l>status_led</g-l><g-pd>:</g-pd> <g-v>led-0</g-v> <g-pb>{</g-pb>
+            <g-pr>gpios</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-v>&amp;gpio0</g-v> <g-n>3</g-n> <g-v>GPIO_ACTIVE_LOW</g-v><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+            <g-pr>label</g-pr> <g-o>=</g-o> <g-s>"Status"</g-s><g-pd>;</g-pd>
+        <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-v>&amp;uart0</g-v> <g-pb>{</g-pb>
+    <g-pr>status</g-pr> <g-o>=</g-o> <g-s>"okay"</g-s><g-pd>;</g-pd>
+    <g-pr>reg</g-pr> <g-o>=</g-o> <g-pb>&lt;</g-pb><g-n>0x1000</g-n> <g-n>0x100</g-n><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-pr>clock-frequency</g-pr> <g-o>=</g-o> <g-pb>&lt;(</g-pb><g-n>24</g-n> <g-o>*</g-o> <g-n>1000</g-n> <g-o>*</g-o> <g-n>1000</g-n><g-pb>)&gt;</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
