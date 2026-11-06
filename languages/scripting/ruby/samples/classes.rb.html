@@ -1,0 +1,18 @@
+<g-c># frozen_string_literal: true</g-c>
+<g-k>module</g-k> <g-t>Orchard</g-t>
+  <g-k>class</g-k> <g-t>Basket</g-t>
+    <g-f>attr_accessor</g-f> <g-s>:items</g-s>
+    <g-k>def</g-k> <g-f>initialize</g-f><g-pb>(</g-pb><g-v>items</g-v> <g-o>=</g-o> <g-pb>[])</g-pb>
+      <g-vm>@items</g-vm> <g-o>=</g-o> <g-v>items</g-v>
+    <g-k>end</g-k>
+
+    <g-k>def</g-k> <g-v>self.</g-v><g-f>empty?</g-f> <g-o>=</g-o> <g-cb>true</g-cb>
+    <g-k>def</g-k> <g-f>[]=</g-f><g-pb>(</g-pb><g-v>index</g-v><g-pd>,</g-pd> <g-v>value</g-v><g-pb>)</g-pb>
+      <g-vm>@items</g-vm><g-pb>[</g-pb><g-v>index</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>value</g-v>
+    <g-k>end</g-k>
+
+    <g-k>def</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-s>prefix:</g-s> <g-s>"fruit"</g-s><g-pb>)</g-pb>
+      <g-s>"</g-s><g-ps>#{</g-ps><g-v>prefix</g-v><g-ps>}</g-ps><g-s>: </g-s><g-ps>#{</g-ps><g-vm>@items</g-vm><g-pd>.</g-pd><g-f>map</g-f> <g-pb>{</g-pb> <g-o>|</g-o><g-v>item</g-v><g-o>|</g-o> <g-v>item</g-v><g-pd>.</g-pd><g-f>name</g-f> <g-pb>}</g-pb><g-pd>.</g-pd><g-f>join</g-f><g-pb>(</g-pb><g-s>', '</g-s><g-pb>)</g-pb><g-ps>}</g-ps><g-s>"</g-s>
+    <g-k>end</g-k>
+  <g-k>end</g-k>
+<g-k>end</g-k>

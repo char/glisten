@@ -1,0 +1,13 @@
+<g-c>#!/usr/bin/env ruby</g-c>
+<g-f>require</g-f> <g-s>"json"</g-s>
+<g-v>name</g-v> <g-o>=</g-o> <g-s>"雪"</g-s>
+<g-v>words</g-v> <g-o>=</g-o> <g-s>%w[one [two] three]</g-s>
+<g-v>symbols</g-v> <g-o>=</g-o> <g-s>%i(red blue)</g-s>
+<g-v>raw</g-v> <g-o>=</g-o> <g-s>%q{literal #{name}}</g-s>
+<g-v>expanded</g-v> <g-o>=</g-o> <g-s>%Q{Hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>upcase</g-f><g-ps>}</g-ps><g-s>!}</g-s>
+<g-v>pattern</g-v> <g-o>=</g-o> <g-s>%r&lt;</g-s><g-se>\A</g-se><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>/[a-z]+</g-s><g-se>\z</g-se><g-s>&gt;i</g-s>
+<g-v>match</g-v> <g-o>=</g-o> <g-s>/a[</g-s><g-se>\/</g-se><g-s>]b/i</g-s>
+<g-v>ratio</g-v> <g-o>=</g-o> <g-v>total</g-v> <g-o>/</g-o> <g-v>count</g-v>
+<g-v>text</g-v> <g-o>=</g-o> <g-s>"hello </g-s><g-v>#@user</g-v><g-s> and </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s>
+<g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0xff</g-n><g-pd>,</g-pd> <g-n>0b1010_0011</g-n><g-pd>,</g-pd> <g-n>0o77</g-n><g-pd>,</g-pd> <g-n>3r</g-n><g-pd>,</g-pd> <g-n>2i</g-n><g-pd>,</g-pd> <g-s>?a</g-s><g-pb>]</g-pb>
+<g-v>config</g-v> <g-o>=</g-o> <g-pb>{</g-pb><g-s>ready:</g-s> <g-cb>true</g-cb><g-pd>,</g-pd> <g-s>:title</g-s> <g-o>=&gt;</g-o> <g-s>:"hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pb>}</g-pb>

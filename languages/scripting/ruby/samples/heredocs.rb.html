@@ -1,0 +1,19 @@
+<g-v>left</g-v><g-pd>,</g-pd> <g-v>right</g-v> <g-o>=</g-o> <g-o>&lt;&lt;~</g-o><g-l>FIRST</g-l><g-pd>,</g-pd> <g-o>&lt;&lt;-</g-o><g-l>'SECOND'</g-l>
+<g-s>  Hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>upcase</g-f><g-ps>}</g-ps><g-s>
+</g-s><g-l>    FIRST</g-l>
+<g-s>  literal #{name}
+</g-s><g-l>	SECOND</g-l>
+<g-f>puts</g-f> <g-v>left</g-v><g-pd>,</g-pd> <g-v>right</g-v>
+
+<g-v>text</g-v> <g-o>=</g-o> <g-o>&lt;&lt;</g-o><g-l>END_TEXT</g-l>
+<g-ps>#{</g-ps><g-v>items</g-v><g-pd>.</g-pd><g-f>map</g-f> <g-k>do</g-k> <g-o>|</g-o><g-v>item</g-v><g-o>|</g-o>
+  <g-v>item</g-v><g-pd>.</g-pd><g-f>name</g-f>
+<g-l>END_TEXT</g-l>
+<g-f>puts</g-f> <g-s>"after"</g-s>
+
+<g-c>=begin
+Block comment
+=end</g-c>
+<g-c>__END__
+not Ruby #{code}
+</g-c>
