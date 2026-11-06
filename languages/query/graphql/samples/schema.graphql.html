@@ -1,0 +1,16 @@
+<g-s>"""A small API with a literal escaped triple quote: </g-s><g-se>\"""</g-se><g-s> here."""</g-s>
+<g-k>schema</g-k> <g-pb>{</g-pb> <g-pr>query</g-pr><g-pd>:</g-pd> <g-t>Query</g-t> <g-pr>mutation</g-pr><g-pd>:</g-pd> <g-t>Mutation</g-t> <g-pb>}</g-pb>
+<g-k>directive</g-k> <g-ps>@</g-ps><g-at>auth</g-at><g-pb>(</g-pb><g-pr>role</g-pr><g-pd>:</g-pd> <g-t>Role</g-t> <g-o>=</g-o> <g-cb>USER</g-cb><g-pb>)</g-pb> <g-k>repeatable</g-k> <g-k>on</g-k> <g-t>FIELD_DEFINITION</g-t> <g-o>|</g-o> <g-t>OBJECT</g-t>
+<g-k>scalar</g-k> <g-t>DateTime</g-t>
+<g-k>interface</g-k> <g-t>Node</g-t> <g-pb>{</g-pb> <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>ID</g-t><g-pb>!</g-pb> <g-pb>}</g-pb>
+<g-k>type</g-k> <g-t>User</g-t> <g-k>implements</g-k> <g-t>Node</g-t> <g-o>&amp;</g-o> <g-t>Named</g-t> <g-ps>@</g-ps><g-at>auth</g-at><g-pb>(</g-pb><g-pr>role</g-pr><g-pd>:</g-pd> <g-cb>ADMIN</g-cb><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>ID</g-t><g-pb>!</g-pb>
+  <g-s>"A public display name."</g-s>
+  <g-pr>name</g-pr><g-pd>:</g-pd> <g-t>String</g-t><g-pb>!</g-pb>
+  <g-pr>createdAt</g-pr><g-pd>:</g-pd> <g-t>DateTime</g-t>
+  <g-pr>friends</g-pr><g-pb>(</g-pb><g-pr>first</g-pr><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>10</g-n>, <g-pr>filter</g-pr><g-pd>:</g-pd> <g-t>Filter</g-t> <g-o>=</g-o> <g-pb>{</g-pb><g-pr>active</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>})</g-pb><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>User</g-t><g-pb>!]!</g-pb>
+<g-pb>}</g-pb>
+<g-k>input</g-k> <g-t>Filter</g-t> <g-pb>{</g-pb> <g-pr>active</g-pr><g-pd>:</g-pd> <g-t>Boolean</g-t> <g-o>=</g-o> <g-cb>true</g-cb> <g-pr>roles</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Role</g-t><g-pb>!]</g-pb> <g-o>=</g-o> <g-pb>[</g-pb><g-cb>USER</g-cb>, <g-cb>ADMIN</g-cb><g-pb>]</g-pb> <g-pb>}</g-pb>
+<g-k>enum</g-k> <g-t>Role</g-t> <g-pb>{</g-pb> <g-pr>USER</g-pr> <g-pr>ADMIN</g-pr> <g-pb>}</g-pb>
+<g-k>union</g-k> <g-t>SearchResult</g-t> <g-o>=</g-o> <g-t>User</g-t> <g-o>|</g-o> <g-t>Organization</g-t>
+<g-k>extend</g-k> <g-k>type</g-k> <g-t>User</g-t> <g-pb>{</g-pb> <g-pr>timezone</g-pr><g-pd>:</g-pd> <g-t>String</g-t> <g-pb>}</g-pb>

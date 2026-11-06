@@ -10,6 +10,7 @@ import dot from "./data/dot/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import gitattributes from "./config/gitattributes/grammar.ts";
 import go from "./managed/go/grammar.ts";
+import graphql from "./query/graphql/grammar.ts";
 import html from "./web/html/grammar.ts";
 import ini from "./config/ini/grammar.ts";
 import java from "./managed/java/grammar.ts";
@@ -49,6 +50,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   fjson,
   gitattributes,
   go,
+  graphql,
   html,
   ini,
   java,

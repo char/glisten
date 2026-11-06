@@ -1,0 +1,5 @@
+# Names are ASCII, but string content can be Unicode.
+{ true: field(arg: "雪\n\u03bb\u{1F600}", near: trueish, count: -12.5e+2) }
+query Odd($ id: ﻿ID = null) { ... @ skip(if: false) { id } ... on User { name } }
+{ malformed(arg: 01, invalid: 1e, quoted: "unfinished
+next }

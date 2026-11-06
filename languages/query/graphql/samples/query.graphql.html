@@ -1,0 +1,16 @@
+<g-c># Fetch a node and include optional details.</g-c>
+<g-k>query</g-k> <g-l>FindNode</g-l><g-pb>(</g-pb><g-v>$id</g-v><g-pd>:</g-pd> <g-t>ID</g-t><g-pb>!</g-pb>, <g-v>$details</g-v><g-pd>:</g-pd> <g-t>Boolean</g-t> <g-o>=</g-o> <g-cb>false</g-cb>, <g-v>$limit</g-v><g-pd>:</g-pd> <g-t>Int</g-t> <g-o>=</g-o> <g-n>10</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
+  <g-pr>result</g-pr><g-pd>:</g-pd> <g-pr>node</g-pr><g-pb>(</g-pb><g-pr>id</g-pr><g-pd>:</g-pd> <g-v>$id</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-pr>id</g-pr>
+    <g-ps>...</g-ps><g-l>NodeDetails</g-l>
+    <g-ps>...</g-ps> <g-k>on</g-k> <g-t>User</g-t> <g-ps>@</g-ps><g-at>include</g-at><g-pb>(</g-pb><g-pr>if</g-pr><g-pd>:</g-pd> <g-v>$details</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+      <g-pr>name</g-pr>
+      <g-pr>friends</g-pr><g-pb>(</g-pb><g-pr>first</g-pr><g-pd>:</g-pd> <g-v>$limit</g-v>, <g-pr>filter</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb><g-pr>active</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb>, <g-pr>role</g-pr><g-pd>:</g-pd> <g-cb>ADMIN</g-cb><g-pb>})</g-pb> <g-pb>{</g-pb>
+        <g-pr>id</g-pr>
+      <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-k>fragment</g-k> <g-t>NodeDetails</g-t> <g-k>on</g-k> <g-t>Node</g-t> <g-pb>{</g-pb>
+  <g-pr>id</g-pr>
+<g-pb>}</g-pb>

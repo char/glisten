@@ -1,0 +1,16 @@
+# Fetch a node and include optional details.
+query FindNode($id: ID!, $details: Boolean = false, $limit: Int = 10) {
+  result: node(id: $id) {
+    id
+    ...NodeDetails
+    ... on User @include(if: $details) {
+      name
+      friends(first: $limit, filter: {active: true, role: ADMIN}) {
+        id
+      }
+    }
+  }
+}
+fragment NodeDetails on Node {
+  id
+}

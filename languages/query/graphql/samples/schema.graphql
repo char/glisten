@@ -1,0 +1,16 @@
+"""A small API with a literal escaped triple quote: \""" here."""
+schema { query: Query mutation: Mutation }
+directive @auth(role: Role = USER) repeatable on FIELD_DEFINITION | OBJECT
+scalar DateTime
+interface Node { id: ID! }
+type User implements Node & Named @auth(role: ADMIN) {
+  id: ID!
+  "A public display name."
+  name: String!
+  createdAt: DateTime
+  friends(first: Int = 10, filter: Filter = {active: true}): [User!]!
+}
+input Filter { active: Boolean = true roles: [Role!] = [USER, ADMIN] }
+enum Role { USER ADMIN }
+union SearchResult = User | Organization
+extend type User { timezone: String }
