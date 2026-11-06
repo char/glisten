@@ -1,5 +1,5 @@
 import type { Effect, Matcher } from "./mod.ts";
-import { checkBaseState } from "./boundary.ts";
+import { checkBaseState, checkCharRanges } from "./boundary.ts";
 import { checkCachedPrefix } from "./combinator.ts";
 import { checkStateEffect } from "./state.ts";
 import { checkQueueOpen } from "./queue.ts";
@@ -64,6 +64,14 @@ const registry = {
     role: "matcher",
     validate: (matcher) => {
       bytesOf(matcher.set);
+    },
+  },
+  previousChar: {
+    role: "matcher",
+    validate: (matcher) => {
+      checkCharRanges(matcher.ranges);
+      if (typeof matcher.invert !== "boolean")
+        throw new TypeError("Invalid previous character polarity");
     },
   },
   lineEnd: { role: "matcher", validate: noValidation },

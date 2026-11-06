@@ -22,9 +22,19 @@ export const abandon = (): SpeculationEffect => ({ kind: "abandon" });
 export function checkSpeculationArm(arm: Arm): void {
   if (
     arm.then.some((step) => step.kind === "speculate") &&
+    !arm.redispatch &&
     (arm.match.length === 0 || !arm.then.some((step) => step.kind === "paint"))
   )
     throw new Error("A speculative opener must consume and paint");
+  if (
+    arm.redispatch &&
+    arm.then.some((step) => step.kind === "speculate") &&
+    arm.then.some(
+      (step) =>
+        !["speculate", "counterReset", "counterIncrement", "counterDecrement"].includes(step.kind),
+    )
+  )
+    throw new Error("A zero-width speculative opener permits only counter effects");
   if (
     arm.then.some((step) => step.kind === "abandon") &&
     (arm.then.length !== 1 ||
@@ -35,6 +45,7 @@ export function checkSpeculationArm(arm: Arm): void {
             "notAhead",
             "notNext",
             "notBehind",
+            "previousChar",
             "lineEnd",
             "columnAtLeast",
             "counterZero",

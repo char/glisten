@@ -32,6 +32,8 @@ function buildArm(set: ByteSet, steps: (Matcher | Effect)[], transition: boolean
 export function checkArm(arm: Arm) {
   bytesOf(arm.on);
   const classification = arm.then.find((effect) => effect.kind === "word");
+  const zeroWidthSpeculation =
+    arm.redispatch && arm.then.some((effect) => effect.kind === "speculate");
   const paintCount = arm.then.filter((effect) => effect.kind === "paint").length;
   if (paintCount > 1) throw new Error("An arm must have exactly one paint");
   const paints = paintCount !== 0 || classification !== undefined;
@@ -53,6 +55,7 @@ export function checkArm(arm: Arm) {
           "notAhead",
           "notNext",
           "notBehind",
+          "previousChar",
           "lineEnd",
           "columnAtLeast",
         ].includes(matcher.kind),
@@ -63,6 +66,13 @@ export function checkArm(arm: Arm) {
           effect.kind !== "push" &&
           effect.kind !== "pop" &&
           effect.kind !== "goto" &&
+          effect.kind !== "speculate" &&
+          !(
+            zeroWidthSpeculation &&
+            (effect.kind === "counterReset" ||
+              effect.kind === "counterIncrement" ||
+              effect.kind === "counterDecrement")
+          ) &&
           effect.kind !== "queueSave" &&
           effect.kind !== "queueOpen" &&
           effect.kind !== "closeInjection" &&

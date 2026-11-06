@@ -5,6 +5,7 @@ export type BoundaryMatcher =
   | { readonly kind: "baseState"; readonly states: readonly string[] }
   | { readonly kind: "notNext"; readonly set: ByteSet }
   | { readonly kind: "notBehind"; readonly set: ByteSet }
+  | { readonly kind: "previousChar"; readonly ranges: CharRanges; readonly invert: boolean }
   | { readonly kind: "lineEnd" }
   | { readonly kind: "columnAtLeast"; readonly column: number };
 
@@ -13,6 +14,38 @@ export const notNext = (set: ByteSet): Matcher => {
   bytesOf(set);
   return { kind: "notNext", set };
 };
+export type CharRanges = readonly (readonly [number, number])[];
+
+export function checkCharRanges(ranges: CharRanges): void {
+  if (!Array.isArray(ranges)) throw new RangeError("Expected Unicode code-point ranges");
+  for (const range of ranges) {
+    if (
+      !Array.isArray(range) ||
+      range.length !== 2 ||
+      !Number.isInteger(range[0]) ||
+      !Number.isInteger(range[1]) ||
+      range[0] < 0 ||
+      range[0] > range[1] ||
+      range[1] > 0x10ffff
+    )
+      throw new RangeError("Invalid Unicode code-point range");
+  }
+}
+
+const previousChar = (ranges: CharRanges, invert: boolean): Matcher => {
+  checkCharRanges(ranges);
+  return {
+    kind: "previousChar",
+    ranges: ranges.map(([start, end]) => [start, end] as const),
+    invert,
+  };
+};
+
+/** Test the preceding UTF-8 scalar, or LF at document start. Malformed UTF-8 is not in any set. */
+export const previousCharIn = (ranges: CharRanges): Matcher => previousChar(ranges, false);
+/** The complement of previousCharIn, including malformed UTF-8. */
+export const previousCharNotIn = (ranges: CharRanges): Matcher => previousChar(ranges, true);
+
 const notNewline = byteSet({
   ranges: [
     [0, 9],

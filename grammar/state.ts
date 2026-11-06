@@ -1,4 +1,4 @@
-import type { Effect, State } from "./mod.ts";
+import type { Effect, Grammar, State } from "./mod.ts";
 import type { EffectValidationContext } from "./registry.ts";
 
 export function checkStateEffect(effect: Effect, context: EffectValidationContext): void {
@@ -21,6 +21,42 @@ export function checkStateEffect(effect: Effect, context: EffectValidationContex
     throw new Error(`${grammar}.${name}: unknown state ${effect.fallback}`);
   if (effect.kind === "speculate" && effect.isolate && !names.has(effect.isolate.base))
     throw new Error(`${grammar}.${name}: unknown speculation base state ${effect.isolate.base}`);
+}
+
+export function checkSlotTransitions(
+  grammar: Grammar,
+  name: string,
+  effects: readonly Effect[],
+): void {
+  const sharing = (state: string) => grammar.states[state]?.slots === "shared";
+  const ownership = new Set(Object.keys(grammar.states).map(sharing));
+  const returned = ownership.size === 1 ? ownership.values().next().value : undefined;
+  let current: boolean | undefined = sharing(name);
+  const pushed: (boolean | undefined)[] = [];
+  const change = (target: string) => {
+    if (current === undefined)
+      throw new Error(
+        `${grammar.name}.${name}: cannot determine slot ownership after pop before changing state`,
+      );
+    if (current !== sharing(target))
+      throw new Error(
+        `${grammar.name}.${name}: state change cannot cross shared and owning slot frames`,
+      );
+  };
+  for (const effect of effects) {
+    if (effect.kind === "push" || effect.kind === "speculate") {
+      pushed.push(current);
+      current = sharing(effect.state);
+    } else if (effect.kind === "pop") {
+      if (!pushed.length && effect.fallback !== undefined) change(effect.fallback);
+      current = pushed.length ? pushed.pop() : returned;
+    } else if (effect.kind === "goto") {
+      change(effect.state);
+      current = sharing(effect.state);
+    } else if (effect.kind === "queueOpen" && grammar.queueSweep) {
+      change(grammar.queueSweep.footer);
+    }
+  }
 }
 
 export type StateEffect =

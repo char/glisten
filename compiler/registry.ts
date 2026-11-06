@@ -12,7 +12,13 @@ import {
   lowerAhead,
   lowerMany,
 } from "./combinator.ts";
-import { lowerBaseState, lowerNotNext, lowerLineEnd, lowerNotBehind } from "./boundary.ts";
+import {
+  lowerBaseState,
+  lowerNotNext,
+  lowerLineEnd,
+  lowerNotBehind,
+  lowerPreviousChar,
+} from "./boundary.ts";
 import { lowerSameRun } from "./run_slot.ts";
 import { lowerColumnMatcher } from "./column.ts";
 import {
@@ -70,6 +76,7 @@ const registry = {
   columnAtLeast: (m, fail) =>
     `(br_if ${fail} (i64.lt_u (i64.and (local.get $column) (i64.const 4611686018427387903)) (i64.const ${m.column})))`,
   notBehind: lowerNotBehind,
+  previousChar: lowerPreviousChar,
   captureReset: { shape: lowerCaptureReset, arm: noArm, inShape: true, target: noTarget },
   captureAppend: { shape: lowerCaptureAppend, arm: noArm, inShape: true, target: noTarget },
   captureMark: { shape: lowerCaptureMark, arm: noArm, inShape: true, target: noTarget },

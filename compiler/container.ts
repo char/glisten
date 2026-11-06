@@ -15,6 +15,7 @@ type ContainerContext = {
   frameCounterIndices: number[];
   frameCounterOffset: number;
   frameBytes: number;
+  shared: boolean;
   framesOffset: number;
   frameAddress: string;
   hasSpeculation: boolean;
@@ -38,6 +39,7 @@ export function containerCode(context: ContainerContext): string {
     frameCounterIndices,
     frameCounterOffset,
     frameBytes,
+    shared,
     framesOffset,
     frameAddress,
     hasSpeculation,
@@ -71,6 +73,11 @@ export function containerCode(context: ContainerContext): string {
   ].join(" ");
   const view = (index: string) =>
     [
+      ...(shared
+        ? [
+            `(local.set $slotOwnerIndex (call $findSlotOwner ${index} (local.get $containerBaseDepth) (local.get $containerBaseState)))`,
+          ]
+        : []),
       `(local.set $depth ${index})`,
       ...columns.map(
         (
@@ -90,9 +97,9 @@ export function containerCode(context: ContainerContext): string {
             ? [outer]
             : []
           : [
-              `(if (i32.lt_u ${index} (local.get $containerBaseDepth)) (then
-            (local.set $runByte${i} (i32.load offset=${frameRunOffset + slot * 8} ${frameAt(index)}))
-            (local.set $runLength${i} (i32.load offset=${frameRunOffset + slot * 8 + 4} ${frameAt(index)})))
+              `(if ${shared ? "(i32.ge_s (local.get $slotOwnerIndex) (i32.const 0))" : `(i32.lt_u ${index} (local.get $containerBaseDepth))`} (then
+            (local.set $runByte${i} (i32.load offset=${frameRunOffset + slot * 8} ${frameAt(shared ? "(local.get $slotOwnerIndex)" : index)}))
+            (local.set $runLength${i} (i32.load offset=${frameRunOffset + slot * 8 + 4} ${frameAt(shared ? "(local.get $slotOwnerIndex)" : index)})))
             (else ${outer}))`,
             ];
       }),
@@ -107,8 +114,8 @@ export function containerCode(context: ContainerContext): string {
           : slot < 0
             ? [outer]
             : [
-                `(if (i32.lt_u ${index} (local.get $containerBaseDepth)) (then
-              (local.set $counter${i} (i32.load offset=${frameCounterOffset + slot * 4} ${frameAt(index)})))
+                `(if ${shared ? "(i32.ge_s (local.get $slotOwnerIndex) (i32.const 0))" : `(i32.lt_u ${index} (local.get $containerBaseDepth))`} (then
+              (local.set $counter${i} (i32.load offset=${frameCounterOffset + slot * 4} ${frameAt(shared ? "(local.get $slotOwnerIndex)" : index)})))
               (else ${outer}))`,
               ];
       }),
@@ -120,6 +127,14 @@ export function containerCode(context: ContainerContext): string {
           ${limitLine ? lineBoundaryCheck(items, miss) : ""}
           (local.set $containerMatched (i32.const 1)))`;
   };
+  const restoreOwner = shared
+    ? `(local.set $slotOwnerIndex (call $findSlotOwner
+      (if (result i32) (local.get $containerIndex) (then (i32.sub (local.get $containerIndex) (i32.const 1))) (else (i32.const 0)))
+      (local.get $containerDepth) (local.get $state)))
+    (if (i32.ge_s (local.get $slotOwnerIndex) (i32.const 0)) (then
+      ${frameRunIndices.map((slot, index) => `(local.set $runByte${slot} (i32.load offset=${frameRunOffset + index * 8} ${frameAt("(local.get $slotOwnerIndex)")})) (local.set $runLength${slot} (i32.load offset=${frameRunOffset + index * 8 + 4} ${frameAt("(local.get $slotOwnerIndex)")}))`).join(" ")}
+      ${frameCounterIndices.map((slot, index) => `(local.set $counter${slot} (i32.load offset=${frameCounterOffset + index * 4} ${frameAt("(local.get $slotOwnerIndex)")}))`).join(" ")}))`
+    : "";
   const cases = states
     .map((state, i) => {
       const prefix = state.prefix;
@@ -145,12 +160,13 @@ export function containerCode(context: ContainerContext): string {
           (br $containerContinue)))
         ${lazy ? `(if ${top} (then ${view("(local.get $containerBaseDepth)")} ${attempt(lazy.unless, false)} ${restore} (br_if $containerDone (i32.eqz (local.get $containerMatched)))))` : ""}
         ${hasSpeculation ? `(if (local.get $specOpen) (then ${spec.rewind} (br $token)))` : ""}
+        ${restoreOwner}
         (if (local.get $containerIndex) (then
           (local.set $depth (i32.sub (local.get $containerIndex) (i32.const 1)))
           (local.set $state (i32.load offset=${framesOffset} ${frameAddress}))
           ${columns.map((_, slot) => `(local.set $columnSlot${slot} (i64.load offset=${framesOffset + 4 + slot * 8} ${frameAddress}))`).join(" ")}
-          ${frameRunIndices.map((slot, index) => `(local.set $runByte${slot} (i32.load offset=${frameRunOffset + index * 8} ${frameAddress})) (local.set $runLength${slot} (i32.load offset=${frameRunOffset + index * 8 + 4} ${frameAddress}))`).join(" ")}
-          ${frameCounterIndices.map((slot, index) => `(local.set $counter${slot} (i32.load offset=${frameCounterOffset + index * 4} ${frameAddress}))`).join(" ")})
+          ${shared ? "" : frameRunIndices.map((slot, index) => `(local.set $runByte${slot} (i32.load offset=${frameRunOffset + index * 8} ${frameAddress})) (local.set $runLength${slot} (i32.load offset=${frameRunOffset + index * 8 + 4} ${frameAddress}))`).join(" ")}
+          ${shared ? "" : frameCounterIndices.map((slot, index) => `(local.set $counter${slot} (i32.load offset=${frameCounterOffset + index * 4} ${frameAddress}))`).join(" ")})
           (else (local.set $state (i32.const ${names.indexOf(grammar.initial)})) (local.set $depth (i32.const 0))))
         ${hasInjections ? `(if (i32.and (local.get $host) (i32.gt_u (local.get $hostDepth) (local.get $depth))) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0)) (local.set $hostCurrent (i32.const -1))))` : ""}
         (local.set $containerOpen (call $findContainer (local.get $depth) (local.get $state)))

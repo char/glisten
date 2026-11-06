@@ -9,6 +9,9 @@ export type ShapeContext = {
   frameRunOffset: number;
   frameCounterIndices: number[];
   frameCounterOffset: number;
+  sharedStates: readonly number[];
+  sharedNames: ReadonlySet<string>;
+  currentShared: boolean | undefined;
   counterSlots: Map<string, number>;
   runSlots: Map<string, number>;
   hasSpeculation: boolean;

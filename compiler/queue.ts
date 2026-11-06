@@ -6,6 +6,7 @@ import { captureLimit } from "#/grammar/capture.ts";
 import { captureBytes } from "./capture.ts";
 import { maxDepth } from "#/grammar/limits.ts";
 import { heredocFooterWat } from "./heredoc_footer.ts";
+import { isSharedState } from "./state.ts";
 
 export const lowerQueueAction = (op: {
   kind: "queueEnter" | "queueLeave" | "queueShift";
@@ -155,6 +156,8 @@ export function queueSweepCode(
     counterIndices: number[];
     counterOffset: number;
     frameBytes: number;
+    sharedStates: readonly number[];
+    framesOffset: number;
   },
 ): string {
   return `(if (local.get $lineStart) (then
@@ -192,20 +195,27 @@ export function queueSweepCode(
               (local.set $sweepPos (i32.add (local.get $sweepPos) (i32.const 1))) (br $indent)))))
           (if (call $heredocFooter (local.get $input) (local.get $sweepPos) (local.get $limit)
             (i32.add (local.get $sweepEntry) (i32.const 12)) (local.get $sweepLen)) (then
+            ${
+              frameRuns.sharedStates.length
+                ? `(if (i32.gt_u (i32.load offset=4 (local.get $sweepBody)) (local.get $depth)) (then (call $fail)))
+            (if (i32.ne ${isSharedState(`(if (result i32) (i32.eq (i32.load offset=4 (local.get $sweepBody)) (local.get $depth)) (then (local.get $state)) (else (i32.load offset=${frameRuns.framesOffset} (i32.add (global.get $base) (i32.mul (i32.load offset=4 (local.get $sweepBody)) (i32.const ${frameRuns.frameBytes}))))))`, frameRuns.sharedStates)} (i32.const ${Number(frameRuns.sharedStates.includes(names.indexOf(sweep.footer)))})) (then (call $fail)))`
+                : ""
+            }
             (global.set $queueBodies (local.get $sweepIndex))
             (global.set $queueOwner (local.get $sweepOwner))
             ${
               frameRuns.indices.length || frameRuns.counterIndices.length
-                ? `(if (i32.lt_u (i32.load offset=4 (local.get $sweepBody)) (local.get $depth)) (then
+                ? `${frameRuns.sharedStates.length ? `(local.set $slotOwnerIndex (call $findSlotOwner (i32.load offset=4 (local.get $sweepBody)) (local.get $depth) (local.get $state)))` : ""}
+              (if ${frameRuns.sharedStates.length ? "(i32.ge_s (local.get $slotOwnerIndex) (i32.const 0))" : "(i32.lt_u (i32.load offset=4 (local.get $sweepBody)) (local.get $depth))"} (then
               ${frameRuns.indices
                 .map((slot, index) => {
-                  const address = `(i32.add (global.get $base) (i32.mul (i32.load offset=4 (local.get $sweepBody)) (i32.const ${frameRuns.frameBytes})))`;
+                  const address = `(i32.add (global.get $base) (i32.mul ${frameRuns.sharedStates.length ? "(local.get $slotOwnerIndex)" : "(i32.load offset=4 (local.get $sweepBody))"} (i32.const ${frameRuns.frameBytes})))`;
                   return `(local.set $runByte${slot} (i32.load offset=${frameRuns.offset + index * 8} ${address})) (local.set $runLength${slot} (i32.load offset=${frameRuns.offset + index * 8 + 4} ${address}))`;
                 })
                 .join(" ")}
               ${frameRuns.counterIndices
                 .map((slot, index) => {
-                  const address = `(i32.add (global.get $base) (i32.mul (i32.load offset=4 (local.get $sweepBody)) (i32.const ${frameRuns.frameBytes})))`;
+                  const address = `(i32.add (global.get $base) (i32.mul ${frameRuns.sharedStates.length ? "(local.get $slotOwnerIndex)" : "(i32.load offset=4 (local.get $sweepBody))"} (i32.const ${frameRuns.frameBytes})))`;
                   return `(local.set $counter${slot} (i32.load offset=${frameRuns.counterOffset + index * 4} ${address}))`;
                 })
                 .join(" ")}))`

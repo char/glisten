@@ -19,7 +19,7 @@ import { visitMatchers } from "./visit.ts";
 import { checkEffect, checkMatcher } from "./registry.ts";
 import { checkArm } from "./arm.ts";
 import { checkContainer } from "./container.ts";
-import { checkFallback, checkZeroWidthOpen } from "./state.ts";
+import { checkFallback, checkSlotTransitions, checkZeroWidthOpen } from "./state.ts";
 import { checkWraps } from "./wrap.ts";
 import { checkSlots } from "./slot.ts";
 export { slot, type RunSlot, type CounterSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
@@ -35,6 +35,9 @@ export {
   baseState,
   notNext,
   previousNotIn,
+  previousCharIn,
+  previousCharNotIn,
+  type CharRanges,
   lineStart,
   lineEnd,
   columnAtLeast,
@@ -133,6 +136,8 @@ export type Arm = {
 export type State = {
   readonly style: Style;
   readonly arms: readonly Arm[];
+  /** A pushed state shares its parent frame's frame-scoped slots. */
+  readonly slots?: "shared";
   readonly captureFallback?: boolean;
   readonly prefix?: {
     readonly match: readonly Matcher[];
@@ -168,6 +173,9 @@ export function defineGrammar<Name extends string>(grammar: Grammar<Name>): Gram
   checkWraps(grammar);
   const speculativeStates = checkSpeculativeStates(grammar);
   checkQueueSweep(grammar, names);
+  const hasSharedStates = Object.values<State>(grammar.states).some(
+    (state) => state.slots === "shared",
+  );
   const caches = new Map<string, string>();
   const checkMatchers = (root: Matcher, allowedColumn?: Matcher) =>
     visitMatchers([root], (matcher) => {
@@ -178,8 +186,17 @@ export function defineGrammar<Name extends string>(grammar: Grammar<Name>): Gram
       checkMatcher(matcher, { names, grammar: grammar.name, caches });
     });
   for (const [name, state] of Object.entries<State>(grammar.states)) {
+    if (state.slots !== undefined && state.slots !== "shared")
+      throw new Error(`${grammar.name}.${name}: invalid slot sharing option`);
     checkContainer(state, grammar.name, name, names, checkMatchers);
     checkFallback(state, grammar.name, name, names, speculativeStates);
+    if (hasSharedStates && state.otherwise !== undefined) {
+      const effects: readonly Effect[] =
+        typeof state.otherwise === "string"
+          ? [{ kind: "goto", state: state.otherwise }]
+          : state.otherwise;
+      checkSlotTransitions(grammar, name, effects);
+    }
     for (const arm of state.arms) {
       arm.match.forEach((matcher, index) =>
         checkMatchers(
@@ -199,6 +216,13 @@ export function defineGrammar<Name extends string>(grammar: Grammar<Name>): Gram
           speculativeStates,
           hasQueueSweep: !!grammar.queueSweep,
         });
+      if (hasSharedStates) {
+        const word = arm.then.find((effect) => effect.kind === "word");
+        for (const branch of word?.kind === "word"
+          ? [...word.cases.map((item) => item.then), word.otherwise]
+          : [arm.then])
+          checkSlotTransitions(grammar, name, branch);
+      }
     }
   }
   return grammar;

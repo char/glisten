@@ -16,9 +16,10 @@ import { analyzeGrammar } from "#/grammar/analysis.ts";
 import { maxDepth, maxTransitions } from "#/grammar/limits.ts";
 import { emitRaw, lowerInjectionActions } from "./injection.ts";
 import { columnFunction } from "./column.ts";
+import { previousCharFunction } from "./boundary.ts";
 import { lowerWordSelection, wordFunctions } from "./word.ts";
 import { captureAreaBytes, captureWat } from "./capture.ts";
-import { stateFrameAreaBytes } from "./state.ts";
+import { slotOwnerFunction, stateFrameAreaBytes } from "./state.ts";
 import { usesCapture } from "#/grammar/capture.ts";
 import { queueAreas, queueWat, queueSweepCode } from "./queue.ts";
 import { containerCode } from "./container.ts";
@@ -44,6 +45,8 @@ export function compile(
 ): Compiled {
   const names = Object.keys(grammar.states);
   const states = names.map((name) => grammar.states[name]!);
+  const sharedNames = new Set(names.filter((name) => grammar.states[name]!.slots === "shared"));
+  const sharedStates = names.flatMap((name, i) => (sharedNames.has(name) ? [i] : []));
   const initial = names.indexOf(grammar.initial);
   const hasContainers = states.some((state) => state.prefix);
   const speculationGroups = [
@@ -60,11 +63,20 @@ export function compile(
     ),
   ];
   const hasSpeculation = speculationGroups.length > 0;
+  const hasZeroWidthSpeculation = states.some((state) =>
+    state.arms.some(
+      (arm) => arm.redispatch && arm.then.some((effect) => effect.kind === "speculate"),
+    ),
+  );
   const hasQueue = !!grammar.queueSweep || usesQueue(grammar);
   const scratch = hasQueue || hasSpeculation || (options.speculationScratch ?? false);
   let hasWrap = false;
   let hasFrameWrap = false;
+  let hasPreviousChar = false;
   visitGrammar(grammar, {
+    matcher(matcher) {
+      if (matcher.kind === "previousChar") hasPreviousChar = true;
+    },
     effect(effect) {
       if (effect.kind === "wrap") {
         hasWrap = true;
@@ -151,6 +163,7 @@ export function compile(
     transitions: hasTransitions,
     containers: hasContainers,
     groups: hasWrap,
+    zeroWidth: hasZeroWidthSpeculation,
     snapshotOffset,
   });
   allocateArea(speculationAreaBytes(hasSpeculation, spec.bytes));
@@ -188,20 +201,36 @@ export function compile(
   const runFunctions = new Map<string, { name: string; code: string }>();
 
   // Arms sharing a byte, in order, form a case; equal cases are emitted once.
-  const cases = new Map<string, { label: string; arms: readonly Arm[]; bytes: Set<number> }>();
-  const caseOf = (arms: readonly Arm[], byte: number) => {
-    const key = JSON.stringify(arms.map(({ match, then }) => [match, then]));
+  const cases = new Map<
+    string,
+    { label: string; arms: readonly Arm[]; bytes: Set<number>; shared: boolean }
+  >();
+  const caseOf = (arms: readonly Arm[], byte: number, shared: boolean) => {
+    const key =
+      JSON.stringify(arms.map(({ match, then }) => [match, then])) +
+      (sharedStates.length ? `:${shared}` : "");
     let entry = cases.get(key);
-    if (!entry) cases.set(key, (entry = { label: fresh("case"), arms, bytes: new Set() }));
+    if (!entry) cases.set(key, (entry = { label: fresh("case"), arms, bytes: new Set(), shared }));
     entry.bytes.add(byte);
     return entry.label;
   };
   // Arms with the same sequence of stack operations share their code; targets travel in locals.
-  const shapes = new Map<string, { label: string; ops: Effect[]; transition: boolean }>();
-  const shapeOf = (ops: Effect[], transition = false) => {
+  const shapes = new Map<
+    string,
+    { label: string; ops: Effect[]; transition: boolean; shared: boolean }
+  >();
+  const shapeOf = (ops: Effect[], transition = false, shared = false) => {
     const key = `${transition}:${ops.map((op) => (op.kind === "captureAppend" ? `${op.kind}:${op.skip}` : op.kind === "captureMark" ? `${op.kind}:${op.flags}` : op.kind === "queueSave" ? `${op.kind}:${op.footerIndent}` : op.kind === "captureColumn" ? `${op.kind}:${columns.indexOf(op.slot.name)}` : op.kind === "captureRun" ? `${op.kind}:${runSlots.get(op.slot.name)}` : op.kind === "counterReset" || op.kind === "counterIncrement" || op.kind === "counterDecrement" ? `${op.kind}:${counterSlots.get(op.slot.name)}` : op.kind === "pop" && op.fallback !== undefined ? "popFallback" : op.kind)).join(",")}`;
-    let entry = shapes.get(key);
-    if (!entry) shapes.set(key, (entry = { label: fresh("shape"), ops, transition }));
+    const ownership = sharedStates.length
+      ? ops
+          .map((op) =>
+            op.kind === "push" || op.kind === "speculate" ? String(sharedNames.has(op.state)) : "",
+          )
+          .join(",")
+      : "";
+    const shapeKey = sharedStates.length ? `${key}:${shared}:${ownership}` : key;
+    let entry = shapes.get(shapeKey);
+    if (!entry) shapes.set(shapeKey, (entry = { label: fresh("shape"), ops, transition, shared }));
     return entry.label;
   };
   const words = wordFunctions(snapshotOffset, manifest);
@@ -269,7 +298,7 @@ export function compile(
     if (!opener.isolate) return group;
     return `(if (result i32) (i32.and (i32.ne (local.get $specOpen) (i32.const 0)) (i32.eq ${spec.outerField("state")} (i32.const ${names.indexOf(opener.isolate.base)}))) (then (i32.const ${speculationGroups.indexOf(opener.isolate.group)})) (else ${group}))`;
   };
-  const armCode = (arm: Arm, bytes: Set<number>) => {
+  const armCode = (arm: Arm, bytes: Set<number>, shared: boolean) => {
     const miss = fresh("arm");
     const skip = known(arm.match[0], bytes);
     const classification = arm.then.find((effect) => effect.kind === "word");
@@ -280,10 +309,14 @@ export function compile(
       return `(block ${miss} (local.set $p (local.get $pos))
         ${arm.match.map((item) => matcher(item, miss)).join("\n")}
         ${spec.rewind} (br $token))`;
-    if (transition)
+    if (transition) {
+      const opener = ops.find((effect) => effect.kind === "speculate");
+      const group = opener?.kind === "speculate" ? speculationGroup(opener) : undefined;
       return `(block ${miss}
+      ${group !== undefined ? `(br_if ${miss} (i32.or (i32.ge_u (local.get $depth) (i32.const ${maxDepth - 1})) (call $specHas (call $specGroupBits ${group}) (call $specGroupTags ${group}) (local.get $specEpoch) (local.get $pos))))` : ""}
       (local.set $p (local.get $pos))
       ${arm.match.map((m) => matcher(m, miss)).join("\n")}
+      ${group !== undefined ? `(local.set $specGroup ${group}) ${spec.save}` : ""}
       (local.set $transitions (i32.add (local.get $transitions) (i32.const 1)))
       (if (i32.gt_u (local.get $transitions) (i32.const ${maxTransitions})) (then (call $fail)))
       ${ops.some((effect) => effect.kind === "closeInjection") ? "(if (i32.eqz (local.get $host)) (then (call $fail))) (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0)) (local.set $hostCurrent (i32.const -1))" : ""}
@@ -293,11 +326,12 @@ export function compile(
         embeds,
       ).join(" ")}
       ${targets.join(" ")}
-      (br ${shapeOf(ops, true)}))`;
+      (br ${shapeOf(ops, true, shared)}))`;
+    }
     const rest = arm.match.slice(skip ? 1 : 0);
-    const shared = outlined.get(JSON.stringify(rest));
-    const body = shared
-      ? `(local.set $p (call ${shared.name} (local.get $input) (local.get $p) (local.get $limit) (local.get $docStart) ${runArguments}))
+    const outlinedMatcher = outlined.get(JSON.stringify(rest));
+    const body = outlinedMatcher
+      ? `(local.set $p (call ${outlinedMatcher.name} (local.get $input) (local.get $p) (local.get $limit) (local.get $docStart) ${runArguments}))
         (br_if ${miss} (i32.lt_s (local.get $p) (i32.const 0)))`
       : rest
           .map((m, i) =>
@@ -320,7 +354,7 @@ export function compile(
           names,
           speculationGroup,
           speculationSave: spec.save,
-          shapeOf,
+          shapeOf: (operations) => shapeOf(operations, false, shared),
           wrapStart: `(i32.load offset=${frameOpeningOffset ?? 0} (i32.add (global.get $base) (i32.mul (i32.sub (local.get $depth) (i32.const 1)) (i32.const ${frameBytes}))))`,
         },
       );
@@ -345,7 +379,7 @@ export function compile(
     const byByte = new Map<number, string>();
     for (let byte = 0; byte < 256; byte++) {
       const arms = state.arms.filter((arm) => bytesOf(arm.on).includes(byte));
-      if (arms.length) byByte.set(byte, caseOf(arms, byte));
+      if (arms.length) byByte.set(byte, caseOf(arms, byte, state.slots === "shared"));
     }
 
     const keys = [...byByte.keys()];
@@ -376,11 +410,7 @@ export function compile(
     const state = states[index]!;
     if (state.otherwise && typeof state.otherwise !== "string") {
       const ops = [...state.otherwise];
-      const targets = ops.flatMap((op, i) =>
-        op.kind === "push" || op.kind === "goto"
-          ? [`(local.set $t${i} (i32.const ${names.indexOf(op.state)}))`]
-          : [],
-      );
+      const targets = ops.flatMap((op, i) => targetAssignment(op, i, names));
       return `(local.set $transitions (i32.add (local.get $transitions) (i32.const 1)))
         (if (i32.gt_u (local.get $transitions) (i32.const ${maxTransitions})) (then (call $fail)))
         ${lowerInjectionActions(
@@ -389,7 +419,7 @@ export function compile(
           embeds,
         ).join(" ")}
         ${targets.join(" ")}
-        (br ${shapeOf(ops, true)})`;
+        (br ${shapeOf(ops, true, state.slots === "shared")})`;
     }
     const allStops = [
       ...new Set([
@@ -483,7 +513,8 @@ export function compile(
     });
   }
   const caseCode = caseList.map(
-    ({ arms, bytes }) => `${arms.map((arm) => armCode(arm, bytes)).join("\n")}\n(br $nomatch)`,
+    ({ arms, bytes, shared }) =>
+      `${arms.map((arm) => armCode(arm, bytes, shared)).join("\n")}\n(br $nomatch)`,
   );
   const shapeList = [...shapes.values()];
   const emitOpen = `(if (local.get $host) (then (call $fail)))
@@ -504,11 +535,13 @@ export function compile(
       (local.set $hostLast (i32.const -1))
       (local.set $hostCurrent (i32.const -1))
       (local.set $openAction (i32.const 0))`;
-  const shapeCode = shapeList.map(
-    ({ ops, transition }) =>
+  const shapeCode = shapeList.map(({ ops, transition, shared }) => {
+    let currentShared: boolean | undefined = shared;
+    const pushed: (boolean | undefined)[] = [];
+    return (
       ops
-        .map((op, i) =>
-          lowerShapeEffect(op, i, {
+        .map((op, i) => {
+          const code = lowerShapeEffect(op, i, {
             framesOffset,
             frameAddress,
             frameOpeningOffset,
@@ -517,12 +550,22 @@ export function compile(
             frameRunOffset,
             frameCounterIndices,
             frameCounterOffset,
+            sharedStates,
+            sharedNames,
+            currentShared,
             counterSlots,
             runSlots,
             hasSpeculation,
             speculationPass: spec.pass,
-          }),
-        )
+          });
+          if (op.kind === "push" || op.kind === "speculate") {
+            pushed.push(currentShared);
+            currentShared = sharedNames.has(op.state);
+          } else if (op.kind === "pop") {
+            currentShared = pushed.length ? pushed.pop() : undefined;
+          } else if (op.kind === "goto") currentShared = sharedNames.has(op.state);
+          return code;
+        })
         .join("\n") +
       (hasContainers &&
       ops.some(
@@ -534,8 +577,9 @@ export function compile(
       (transition && ops.some((op) => op.kind === "openStatic" || op.kind === "openNamed")
         ? `\n${emitOpen}`
         : "") +
-      (transition ? "\n(br $token)" : "\n(br $paint)"),
-  );
+      (transition ? "\n(br $token)" : "\n(br $paint)")
+    );
+  });
   const targetCount = Math.max(0, ...shapeList.map(({ ops }) => ops.length));
 
   const nest = (labels: string[], inner: string, bodies: string[]) =>
@@ -570,6 +614,7 @@ export function compile(
         frameCounterIndices,
         frameCounterOffset,
         frameBytes,
+        shared: sharedStates.length > 0,
         framesOffset,
         frameAddress,
         hasSpeculation,
@@ -645,7 +690,7 @@ export function compile(
         }`
       : ""
   }
-  ${charEndFunction}
+  ${charEndFunction}${hasPreviousChar ? `\n  ${previousCharFunction}` : ""}
   ${
     hasContainers
       ? `${crossesLineFunction}
@@ -662,6 +707,7 @@ export function compile(
       (br $more))) (i32.const 0))`
       : ""
   }
+  ${sharedStates.length && (hasContainers || grammar.queueSweep) ? slotOwnerFunction(sharedStates, frameBytes, framesOffset) : ""}
   ${hasCapture ? captureWat(captureOffset) : ""}
   ${states.some((state) => state.arms.some((arm) => usesGroup(arm.match)) || (state.prefix && (usesGroup(state.prefix.match) || (state.prefix.lazy && usesGroup(state.prefix.lazy.unless))))) ? groupWat : ""}
   ${hasQueue ? queueWat(captureOffset, ownerOffset, bodyOffset) : ""}
@@ -687,6 +733,7 @@ export function compile(
     ${recordPatching ? `(local $candidate i32) (local $patch i32) (local $mark i32) ${hasInjections ? "(local $markHost i32)" : ""}` : ""}
     ${hasTransitions ? "(local $transitions i32)" : ""}
     ${words.functions.size ? "(local $word i32)" : ""}
+    ${sharedStates.length && (hasContainers || grammar.queueSweep) ? "(local $slotOwnerIndex i32)" : ""}
     ${grammar.queueSweep ? "(local $lineStart i32) (local $joined i32) (local $recheck i32) (local $sweepIndex i32) (local $sweepBody i32) (local $sweepOwner i32) (local $sweepEntry i32) (local $sweepFlags i32) (local $sweepLen i32) (local $sweepPos i32)" : ""}
     ${hasContainers ? `(local $containerLine i32) (local $containerNext i32) (local $containerOpen i32) (local $containerIndex i32) (local $containerDepth i32) (local $containerBaseDepth i32) (local $containerBaseState i32) (local $containerFrameState i32) (local $containerMatched i32) ${columns.map((_, i) => `(local $containerColumn${i} i64)`).join(" ")} ${[...runSlots.values()].map((i) => `(local $containerRunByte${i} i32) (local $containerRunLength${i} i32)`).join(" ")} ${[...counterSlots.values()].map((i) => `(local $containerCounter${i} i32)`).join(" ")}` : ""}
     ${locals}
@@ -722,7 +769,7 @@ export function compile(
         ${hasWrap ? "(local.set $wrapStyle (i32.const -1))" : ""}
         ${recordPatching ? "(local.set $patch (i32.const -1)) (local.set $mark (i32.const 0))" : ""}
         ${grammar.queueSweep ? "(local.set $recheck (i32.const 0))" : ""}
-        (block $paint ${hasContainers ? `(if (local.get $containerOpen) (then ${container}) (else (local.set $containerLine (i32.const 0)) (local.set $containerNext (i32.const -1))))` : ""} ${grammar.queueSweep ? queueSweepCode(grammar.queueSweep, names, styles, ownerOffset, bodyOffset, hasInjections, hasContainers, { indices: frameRunIndices, offset: frameRunOffset, counterIndices: frameCounterIndices, counterOffset: frameCounterOffset, frameBytes }) : ""} ${body})
+        (block $paint ${hasContainers ? `(if (local.get $containerOpen) (then ${container}) (else (local.set $containerLine (i32.const 0)) (local.set $containerNext (i32.const -1))))` : ""} ${grammar.queueSweep ? queueSweepCode(grammar.queueSweep, names, styles, ownerOffset, bodyOffset, hasInjections, hasContainers, { indices: frameRunIndices, offset: frameRunOffset, counterIndices: frameCounterIndices, counterOffset: frameCounterOffset, frameBytes, sharedStates, framesOffset }) : ""} ${body})
         ${hasTransitions ? "(local.set $transitions (i32.const 0))" : ""}
         ${
           recordPatching

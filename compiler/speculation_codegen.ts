@@ -14,6 +14,7 @@ export function speculationCode(options: {
   transitions: boolean;
   containers: boolean;
   groups: boolean;
+  zeroWidth: boolean;
   snapshotOffset: number;
 }) {
   const i32 = [
@@ -66,14 +67,21 @@ export function speculationCode(options: {
     (local.set $specOpen (i32.add (local.get $specOpen) (i32.const 1)))`;
   const rewind = `(if (i32.eqz (local.get $specOpen)) (then (call $fail)))
     (local.set $specAddress ${top})
+    ${
+      options.zeroWidth
+        ? `(local.set $next (i64.gt_u
+      (i64.add (local.get $specRewound) (i64.extend_i32_u (i32.sub (local.get $pos) (i32.load (local.get $specAddress)))))
+      (i64.add (i64.mul (i64.const 4) (if (result i64) (i64.gt_u (i64.extend_i32_u (i32.sub (local.get $pos) (local.get $docStart))) (local.get $specFrontier)) (then (i64.extend_i32_u (i32.sub (local.get $pos) (local.get $docStart)))) (else (local.get $specFrontier)))) (i64.const 256))))`
+        : ""
+    }
     (call $specAbandon (i32.load ${outer}) (i32.load (local.get $specAddress)) (local.get $pos)
       (i64.extend_i32_u (i32.sub (local.get $pos) (local.get $docStart)))
       (local.get $specFrontier) (local.get $specRewound))
     (local.set $specRewound) (local.set $specFrontier) (local.set $specChosen)
-    (if (i32.ne (local.get $specChosen) (i32.load (local.get $specAddress))) (then
+    (if ${options.zeroWidth ? "(local.get $next)" : "(i32.ne (local.get $specChosen) (i32.load (local.get $specAddress)))"} (then
       (local.set $specOpen (i32.const 1)) (local.set $specAddress ${outer})))
     (local.set $specGroup (i32.load offset=${fields.find((field) => field.name === "specGroup")!.offset} (local.get $specAddress)))
-    (call $specDisable (call $specGroupBits (local.get $specGroup)) (call $specGroupTags (local.get $specGroup)) (local.get $specEpoch) (local.get $specChosen) (local.get $pos))
+    (call $specDisable (call $specGroupBits (local.get $specGroup)) (call $specGroupTags (local.get $specGroup)) (local.get $specEpoch) (local.get $specChosen) ${options.zeroWidth ? "(if (result i32) (i32.eq (local.get $specChosen) (local.get $pos)) (then (i32.add (local.get $pos) (i32.const 1))) (else (local.get $pos)))" : "(local.get $pos)"})
     ${options.injections ? `(call $specRestoreOutput (i32.add (local.get $specAddress) (i32.const ${outputOffset})))` : ""}
     ${fields.map(({ name, type, offset }) => `(local.set $${name} (${type}.load offset=${offset} (local.get $specAddress)))`).join("\n")}
     (global.set $injections (i32.load offset=${injectionOffset} (local.get $specAddress)))

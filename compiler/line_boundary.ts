@@ -86,6 +86,7 @@ export function mayCrossLine(matchers: readonly Matcher[]): boolean {
       case "notAhead":
       case "notNext":
       case "notBehind":
+      case "previousChar":
       case "lineEnd":
       case "columnAtLeast":
       case "queueHas":

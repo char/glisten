@@ -132,6 +132,11 @@ whole sequence has zero length fails.
   attempt remains document-bounded. `notNext(set)` succeeds without consuming
   if the next byte is not in the set, including at the document end.
   `previousNotIn(set)` similarly checks the preceding visible byte.
+  `previousCharIn(ranges)` and `previousCharNotIn(ranges)` test the preceding
+  UTF-8 scalar against inclusive numeric code-point ranges, without consuming.
+  At document start the preceding scalar is LF. Malformed UTF-8 is not in any
+  range, so it satisfies only the negated matcher. Ranges must have ordered
+  integer endpoints in 0..0x10FFFF.
   `lineStart()` succeeds at document start or immediately after an LF; document
   start supplies an LF sentinel.
   It is an assertion, not an indentation test, and is equivalent to
@@ -230,8 +235,20 @@ on("`", matchRun(fence), paint("punctuation.delimiter"), popState());
   They are document-scoped by default; `slot.counter(name, { scope: "frame" })`
   inherits the value on push and restores it on pop. `counterZero(slot)` and
   `counterPositive(slot)` are zero-width assertions. Counter effects execute in
-  written order after the complete arm matches. The interpreter supports these
-  operations; compiler support is not yet available.
+  written order after the complete arm matches.
+
+A state may declare `slots: "shared"` to share its parent's frame-scoped run and
+counter slots when pushed. Such a push does not save those slots, and popping the
+frame does not restore them; changes persist in the owner. The option belongs to
+the pushed frame: state replacement, redispatch, root-pop fallback, and queue
+footer replacement must preserve shared versus owning status; a stale queue body
+that would violate this rule fails as a resource error. For shared-slot
+grammars, a state change after a pop is rejected when the validator cannot
+determine the returned frame's ownership. Columns and other frame data retain
+their ordinary behavior. Speculation still rolls slot changes back on abandonment.
+For grammars using shared slots, a failed root-container prefix restores the first
+owning frame's slots before resetting the state stack; grammars without shared
+slots retain the existing root-reset behavior.
 
 - `saveColumn(slot)` saves the physical column at the end of the complete
   matched arm. Columns are frame-local, inherited on push, restored on pop,
@@ -310,11 +327,15 @@ on the joined line. The sweep can close a deeper injection.
 
 ## Speculation
 
-`speculate(state, group?, isolate?)` is a consuming, painting opener that saves
-a checkpoint and enters a speculative state. It must be the only stack action
-in that arm. At the stack-depth limit the opener is skipped and dispatch tries
-the next arm. An ordinary push cannot enter a speculative state or occur inside
-one; speculation cannot coexist in a grammar with shell capture or queues.
+`speculate(state, group?, isolate?)` saves a checkpoint and enters a speculative
+state. It may be used on a consuming, painting arm, or on a zero-width
+`redispatch` arm alongside optional counter effects. The latter checkpoints
+before the current byte and retries it in the new state; it counts toward the
+consecutive-redispatch limit and cannot open an injection. A speculative opener must be the only stack action
+in its arm. Nested speculation shares the normal `maxDepth` stack limit; at that
+limit the opener is skipped and dispatch tries the next arm. An ordinary push
+cannot enter a speculative state or occur inside one; speculation cannot coexist
+in a grammar with shell capture or queues.
 `popState` at the speculative frame commits it. `redispatch(set, abandon())`,
 optionally preceded by the permitted zero-width assertions, abandons it;
 `abandon` must be the only effect. An open attempt is also abandoned at the
@@ -331,6 +352,7 @@ search or on speculative side effects being observable before commit.
 
 ```ts
 on("[", literal("["), paint("punctuation.special"), speculate("link"));
+redispatch("*", speculate("candidate")); // checkpoint before the current byte
 redispatch("\n", abandon()); // in link: retry from its opener
 ```
 
