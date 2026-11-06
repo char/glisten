@@ -1,0 +1,32 @@
+{
+  "title": "Sky journal",
+  "locale": "日本語",
+  "version": 2,
+  "active": true,
+  "retired": false,
+  "notes": null,
+  "owner": {
+    "name": "Zoë",
+    "contact": "zoe@example.test",
+    "roles": ["editor", "observer"]
+  },
+  "stations": [
+    {
+      "id": "north",
+      "latitude": 51.502,
+      "longitude": -0.12,
+      "altitude": 1.5e2,
+      "instruments": ["camera", "spectrometer"]
+    },
+    {
+      "id": "south",
+      "latitude": -33.86,
+      "longitude": 151.21,
+      "altitude": 6E+0,
+      "instruments": []
+    }
+  ],
+  "thresholds": [0, -0, 0.001, 12e-3],
+  "metadata": {},
+  "visible": [true, false, null]
+}

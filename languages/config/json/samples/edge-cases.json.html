@@ -1,0 +1,32 @@
+<g-pb>{</g-pb>
+  <g-pr>"near constants"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>trueish<g-pd>,</g-pd> falsehood<g-pd>,</g-pd> nullable<g-pd>,</g-pd> true<g-n>1</g-n><g-pd>,</g-pd> <g-n>1</g-n>false<g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>"numbers"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>00</g-n><g-pd>,</g-pd> <g-n>01</g-n><g-pd>,</g-pd> <g-n>-01</g-n><g-pd>,</g-pd> +<g-n>1</g-n><g-pd>,</g-pd> .<g-n>5</g-n><g-pd>,</g-pd> <g-n>1</g-n>.<g-pd>,</g-pd> <g-n>1</g-n>e<g-pd>,</g-pd> <g-n>1</g-n>e+<g-pd>,</g-pd> <g-n>1e-2</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>"invalid escapes"</g-pr><g-pd>:</g-pd> <g-s>"\x \u12xz \q \u123"</g-s><g-pd>,</g-pd>
+  <g-pr>"valid escapes"</g-pr><g-pd>:</g-pd> <g-s>"</g-s><g-se>\u1234</g-se><g-s> </g-s><g-se>\n</g-se><g-s> </g-s><g-se>\\</g-se><g-s> </g-s><g-se>\/</g-se><g-s> </g-s><g-se>\"</g-se><g-s>"</g-s><g-pd>,</g-pd>
+  <g-pr>"missing value"</g-pr><g-pd>:</g-pd> <g-pd>,</g-pd>
+  <g-pr>"missing colon"</g-pr> <g-pr>"value"</g-pr><g-pd>,</g-pd>
+  <g-pr>"extra comma"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,,</g-pd> <g-n>2</g-n><g-pd>,</g-pd><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>"unexpected"</g-pr><g-pd>:</g-pd> <g-pb>{</g-pb> true<g-pd>:</g-pd> <g-cb>false</g-cb><g-pd>,</g-pd> null<g-pd>:</g-pd> <g-n>2</g-n> <g-pb>}</g-pb><g-pd>,</g-pd>
+  <g-pr>"comment-like"</g-pr><g-pd>:</g-pd> // JSON has no comments
+  <g-s>"block-like"</g-s><g-pd>:</g-pd> /* nor block comments */ <g-n>42</g-n><g-pd>,</g-pd>
+  <g-pr>"array"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb>
+    <g-pb>{</g-pb><g-pr>"inner"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-pb>{</g-pb><g-pr>"name"</g-pr><g-pd>:</g-pd> <g-s>"星"</g-s><g-pb>}]}</g-pb><g-pd>,</g-pd>
+    <g-cb>false</g-cb><g-pd>,</g-pd>
+    <g-cb>null</g-cb><g-pd>,</g-pd>
+    <g-s>"a : b"</g-s>
+  <g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>"recovered"</g-pr><g-pd>:</g-pd> <g-s>"after nested values"</g-s><g-pd>,</g-pd>
+  <g-pr>"key with </g-pr><g-se>\\</g-se><g-pr> slash"</g-pr><g-pd>:</g-pd> <g-n>12</g-n><g-pd>,</g-pd>
+  <g-pr>"empty object"</g-pr><g-pd>:</g-pd> <g-pb>{}</g-pb><g-pd>,</g-pd>
+  <g-pr>"empty array"</g-pr><g-pd>:</g-pd> <g-pb>[]</g-pb><g-pd>,</g-pd>
+  <g-pr>"exponents"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>-1.2e+4</g-n><g-pd>,</g-pd> <g-n>0E-3</g-n><g-pd>,</g-pd> <g-n>9e9</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+  <g-pr>"almost true"</g-pr><g-pd>:</g-pd> <g-s>"true_ false2 null-"</g-s><g-pd>,</g-pd>
+  <g-pr>"text"</g-pr><g-pd>:</g-pd> <g-s>"quotes and braces: } ] { ["</g-s><g-pd>,</g-pd>
+  <g-pr>"x"</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd>
+  <g-pr>"y"</g-pr><g-pd>:</g-pd> <g-n>2</g-n><g-pd>,</g-pd>
+  <g-pr>"z"</g-pr><g-pd>:</g-pd> <g-n>3</g-n><g-pd>,</g-pd>
+  <g-pr>"unicode"</g-pr><g-pd>:</g-pd> <g-s>"雪"</g-s><g-pd>,</g-pd>
+  <g-pr>"tail"</g-pr><g-pd>:</g-pd> <g-s>"string remains open
+  and consumes the rest
+  even a closing brace is text }
+</g-s>

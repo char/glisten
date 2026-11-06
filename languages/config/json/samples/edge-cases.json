@@ -1,0 +1,31 @@
+{
+  "near constants": [trueish, falsehood, nullable, true1, 1false],
+  "numbers": [00, 01, -01, +1, .5, 1., 1e, 1e+, 1e-2],
+  "invalid escapes": "\x \u12xz \q \u123",
+  "valid escapes": "\u1234 \n \\ \/ \"",
+  "missing value": ,
+  "missing colon" "value",
+  "extra comma": [1,, 2,],
+  "unexpected": { true: false, null: 2 },
+  "comment-like": // JSON has no comments
+  "block-like": /* nor block comments */ 42,
+  "array": [
+    {"inner": [1, 2, {"name": "星"}]},
+    false,
+    null,
+    "a : b"
+  ],
+  "recovered": "after nested values",
+  "key with \\ slash": 12,
+  "empty object": {},
+  "empty array": [],
+  "exponents": [-1.2e+4, 0E-3, 9e9],
+  "almost true": "true_ false2 null-",
+  "text": "quotes and braces: } ] { [",
+  "x": 1,
+  "y": 2,
+  "z": 3,
+  "unicode": "雪",
+  "tail": "string remains open
+  and consumes the rest
+  even a closing brace is text }

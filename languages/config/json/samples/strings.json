@@ -1,0 +1,32 @@
+{
+  "message": "Hello, 🌍",
+  "quote": "She said \"hello\".",
+  "backslash": "C:\\observatory\\data",
+  "solidus": "https:\/\/example.test\/sky",
+  "controls": "\b\f\n\r\t",
+  "unicode": "\u00e9 \u65e5 \u672c",
+  "surrogate": "\uD83D\uDE80",
+  "empty": "",
+  "space": " ",
+  "brackets": "[ { : , } ]",
+  "comment": "// not a comment /* either */",
+  "literal": "true false null 1.0",
+  "escaped\"key": "value",
+  "line\nbreak": "key contains an escape",
+  "translations": {
+    "français": "café",
+    "日本語": "星空",
+    "emoji 🌙": "night"
+  },
+  "paragraphs": [
+    "first line\nsecond line",
+    "tab\tseparated",
+    "a slash / and a quote \"",
+    "\\u1234 is literal text"
+  ],
+  "nested": [
+    {"text": "one"},
+    {"text": "two"},
+    {"text": "three"}
+  ]
+}
