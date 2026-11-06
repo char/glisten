@@ -1,0 +1,19 @@
+<g-k>function</g-k> <g-pb>[</g-pb><g-v>result</g-v><g-pd>,</g-pd> <g-v>average</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-f>analyze</g-f><g-pb>(</g-pb><g-v>A</g-v><g-pd>,</g-pd> <g-v>scale</g-v><g-pb>)</g-pb>
+<g-k>arguments</g-k>
+    <g-v>A</g-v> <g-v>double</g-v>
+    <g-f>scale</g-f> <g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd><g-n>1</g-n><g-pb>)</g-pb> <g-v>double</g-v> <g-o>=</g-o> <g-n>1</g-n>
+<g-k>end</g-k>
+<g-k>if</g-k> <g-f>isempty</g-f><g-pb>(</g-pb><g-v>A</g-v><g-pb>)</g-pb>
+    <g-v>result</g-v> <g-o>=</g-o> <g-pb>[]</g-pb><g-pd>;</g-pd>
+    <g-v>average</g-v> <g-o>=</g-o> <g-cb>NaN</g-cb><g-pd>;</g-pd>
+    <g-k>return</g-k>
+<g-k>elseif</g-k> <g-v>scale</g-v> <g-o>~=</g-o> <g-n>0</g-n>
+    <g-v>result</g-v> <g-o>=</g-o> <g-v>scale</g-v> <g-o>.*</g-o> <g-v>A</g-v><g-pd>;</g-pd>
+<g-k>else</g-k>
+    <g-v>result</g-v> <g-o>=</g-o> <g-v>A</g-v><g-pd>;</g-pd>
+<g-k>end</g-k>
+<g-v>average</g-v> <g-o>=</g-o> <g-f>mean</g-f><g-pb>(</g-pb><g-f>result</g-f><g-pb>(</g-pb><g-o>:</g-o><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-k>for</g-k> <g-v>k</g-v> <g-o>=</g-o> <g-n>1</g-n><g-o>:</g-o><g-f>numel</g-f><g-pb>(</g-pb><g-v>result</g-v><g-pb>)</g-pb>
+    <g-f>result</g-f><g-pb>(</g-pb><g-v>k</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-f>result</g-f><g-pb>(</g-pb><g-v>k</g-v><g-pb>)</g-pb> <g-o>+</g-o> <g-v>k</g-v><g-pd>;</g-pd>
+<g-k>end</g-k>
+<g-k>end</g-k>

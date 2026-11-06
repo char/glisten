@@ -42,6 +42,7 @@ import kotlin from "./managed/kotlin/grammar.ts";
 import lua from "./scripting/lua/grammar.ts";
 import make from "./build/make/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
+import matlab from "./datasci/matlab/grammar.ts";
 import nginx from "./config/nginx/grammar.ts";
 import ninja from "./build/ninja/grammar.ts";
 import nix from "./build/nix/grammar.ts";
@@ -118,6 +119,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   lua,
   make,
   markdown,
+  matlab,
   nginx,
   ninja,
   nix,
