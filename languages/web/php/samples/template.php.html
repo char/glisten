@@ -1,0 +1,23 @@
+<g-k>&lt;!doctype html&gt;</g-k>
+<g-pb>&lt;</g-pb><g-tg>html</g-tg><g-pb>&gt;&lt;</g-pb><g-tg>body</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>h1</g-tg> <g-at>class</g-at><g-o>=</g-o><g-s>"</g-s><g-ps>&lt;?=</g-ps> <g-f>htmlspecialchars</g-f><g-pb>(</g-pb><g-v>$class</g-v><g-pb>)</g-pb> <g-ps>?&gt;</g-ps><g-s>"</g-s><g-pb>&gt;</g-pb><g-ps>&lt;?=</g-ps> <g-v>$title</g-v> <g-ps>?&gt;</g-ps><g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+<g-ps>&lt;?php</g-ps> <g-k>if</g-k> <g-pb>(</g-pb><g-v>$show</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-ps>?&gt;</g-ps>
+<g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Welcome, <g-ps>&lt;?=</g-ps> <g-v>$name</g-v> <g-ps>?&gt;</g-ps>!<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-ps>&lt;?php</g-ps> <g-pb>}</g-pb> <g-ps>?&gt;</g-ps>
+<g-ps>&lt;?php</g-ps>
+<g-k>namespace</g-k> <g-t>App</g-t><g-pd>\</g-pd><g-t>View</g-t><g-pd>;</g-pd>
+<g-k>use</g-k> <g-t>App</g-t><g-pd>\</g-pd><g-t>Model</g-t><g-pd>\</g-pd><g-t>User</g-t><g-pd>;</g-pd>
+
+<g-ps>#[</g-ps><g-at>Route</g-at><g-pb>(</g-pb><g-s>'/users'</g-s><g-pd>,</g-pd> <g-l>methods</g-l><g-o>:</g-o> <g-pb>[</g-pb><g-s>'GET'</g-s><g-pb>])</g-pb><g-ps>]</g-ps>
+<g-k>final</g-k> <g-k>readonly</g-k> <g-k>class</g-k> <g-t>Users</g-t> <g-pb>{</g-pb>
+    <g-k>public</g-k> <g-k>function</g-k> <g-f>render</g-f><g-pb>(</g-pb><g-t>User</g-t> <g-v>$user</g-v><g-pb>)</g-pb><g-o>:</g-o> <g-t>string</g-t> <g-pb>{</g-pb>
+        <g-c>// Output uses the shared HTML document.</g-c>
+        <g-k>return</g-k> <g-k>match</g-k> <g-pb>(</g-pb><g-v>$user</g-v><g-o>-&gt;</g-o><g-v>status</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+            <g-t>Status</g-t><g-o>::</g-o><g-t>Active</g-t> <g-o>=&gt;</g-o> <g-s>"Hello, </g-s><g-ps>{</g-ps><g-v>$user</g-v><g-o>-&gt;</g-o><g-v>name</g-v><g-ps>}</g-ps><g-s>!"</g-s><g-pd>,</g-pd>
+            <g-k>default</g-k> <g-o>=&gt;</g-o> <g-s>'Welcome'</g-s><g-pd>,</g-pd>
+        <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-ps>?&gt;</g-ps>
+<g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>After PHP<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>body</g-tg><g-pb>&gt;&lt;/</g-pb><g-tg>html</g-tg><g-pb>&gt;</g-pb>

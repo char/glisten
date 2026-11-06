@@ -1,0 +1,13 @@
+<g-ps>&lt;?PHP</g-ps>
+<g-c>/** A docblock. */</g-c>
+<g-ps>#[</g-ps><g-at>Example</g-at><g-pb>(</g-pb><g-l>name</g-l><g-o>:</g-o> <g-s>'value'</g-s><g-pb>)</g-pb><g-ps>]</g-ps>
+<g-k>ENUM</g-k> <g-t>Result</g-t><g-o>:</g-o> <g-t>string</g-t> <g-pb>{</g-pb> <g-k>case</g-k> <g-t>Ok</g-t> <g-o>=</g-o> <g-s>'ok'</g-s><g-pd>;</g-pd> <g-k>case</g-k> <g-t>Error</g-t> <g-o>=</g-o> <g-s>'error'</g-s><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>FuNcTiOn</g-k> <g-f>process</g-f><g-pb>(</g-pb><g-o>?</g-o><g-t>int</g-t> <g-v>$x</g-v><g-pd>,</g-pd> <g-o>...</g-o><g-v>$rest</g-v><g-pb>)</g-pb><g-o>:</g-o> <g-t>mixed</g-t> <g-pb>{</g-pb>
+    <g-c># A comment, but not an attribute.</g-c>
+    <g-v>$class</g-v> <g-o>=</g-o> <g-k>new</g-k> <g-pd>\</g-pd><g-t>App</g-t><g-pd>\</g-pd><g-t>Service</g-t><g-pd>\</g-pd><g-t>Worker</g-t><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-v>$$name</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-t>int</g-t><g-pb>)</g-pb> <g-n>0xFF_FF</g-n> <g-o>+</g-o> <g-n>0b1010</g-n> <g-o>+</g-o> <g-n>1.5e-2</g-n><g-pd>;</g-pd>
+    <g-ps>${</g-ps><g-v>$name</g-v><g-ps>}</g-ps> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-v>$x</g-v> <g-o>??</g-o> <g-k>match</g-k> <g-pb>(</g-pb><g-v>$class</g-v><g-o>-&gt;</g-o><g-v>state</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-t>Result</g-t><g-o>::</g-o><g-t>Ok</g-t> <g-o>=&gt;</g-o> <g-v>$rest</g-v><g-pb>[</g-pb><g-n>0</g-n><g-pb>]</g-pb><g-pd>,</g-pd> <g-k>default</g-k> <g-o>=&gt;</g-o> <g-cb>null</g-cb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-c>// close tag ends this comment </g-c><g-ps>?&gt;</g-ps>
+<g-pb>&lt;</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb>Outside again<g-pb>&lt;/</g-pb><g-tg>strong</g-tg><g-pb>&gt;</g-pb>

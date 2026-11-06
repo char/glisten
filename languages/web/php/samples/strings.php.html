@@ -1,0 +1,14 @@
+<g-ps>&lt;?php</g-ps>
+<g-v>$name</g-v> <g-o>=</g-o> <g-s>'single </g-s><g-se>\'</g-se><g-s>quoted</g-s><g-se>\'</g-se><g-s> and </g-s><g-se>\\</g-se><g-s> slash'</g-s><g-pd>;</g-pd>
+<g-v>$text</g-v> <g-o>=</g-o> <g-s>"Hello </g-s><g-v>$name</g-v><g-s>, </g-s><g-v>$user-&gt;name</g-v><g-s>, </g-s><g-v>$items[0]</g-v><g-s>, </g-s><g-ps>{</g-ps><g-v>$user</g-v><g-o>-&gt;</g-o><g-v>profile</g-v><g-pb>[</g-pb><g-s>'name'</g-s><g-pb>]</g-pb><g-ps>}</g-ps><g-s>, </g-s><g-ps>${</g-ps><g-v>legacy</g-v><g-ps>}</g-ps><g-s>!</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+<g-v>$code</g-v> <g-o>=</g-o> <g-s>`echo </g-s><g-v>$name</g-v><g-s>`</g-s><g-pd>;</g-pd>
+<g-v>$body</g-v> <g-o>=</g-o> <g-o>&lt;&lt;&lt;</g-o><g-l>HTML</g-l><g-s>
+    &lt;p&gt;Hello, </g-s><g-v>$name</g-v><g-s>!&lt;/p&gt;
+</g-s><g-l>    HTML</g-l><g-pd>;</g-pd>
+<g-v>$quoted</g-v> <g-o>=</g-o> <g-o>&lt;&lt;&lt;</g-o><g-l>"TEXT"</g-l><g-s>
+  </g-s><g-ps>{</g-ps><g-v>$user</g-v><g-o>-&gt;</g-o><g-v>name</g-v><g-ps>}</g-ps><g-s> with </g-s><g-v>$items[0]</g-v><g-s>
+</g-s><g-l>  TEXT</g-l><g-pd>;</g-pd>
+<g-v>$literal</g-v> <g-o>=</g-o> <g-o>&lt;&lt;&lt;</g-o><g-l>'RAW'</g-l><g-s>
+  $notInterpolated and \n stay literal
+</g-s><g-l>  RAW</g-l><g-pd>;</g-pd>
+<g-v>$next</g-v> <g-o>=</g-o> <g-n>42</g-n><g-pd>;</g-pd>
