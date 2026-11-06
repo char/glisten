@@ -47,6 +47,7 @@ import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
 import wit from "./data/wit/grammar.ts";
+import xml from "./markup/xml/grammar.ts";
 import yaml from "./config/yaml/grammar.ts";
 import zig from "./systems/zig/grammar.ts";
 
@@ -100,6 +101,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   tsx,
   typescript,
   wit,
+  xml,
   yaml,
   zig,
 };

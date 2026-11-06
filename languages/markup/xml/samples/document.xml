@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="view.xsl"?>
+<book xmlns="urn:books" xmlns:meta="urn:meta" meta:id="b1">
+  <!-- Document title -->
+  <title>Tea &amp; Cake &#38; friends</title>
+  <empty label="a &quot;quoted&quot; value"/>
+  <![CDATA[<literal> & untouched]]>
+</book>

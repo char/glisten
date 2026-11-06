@@ -1,0 +1,12 @@
+<g-pb>&lt;?</g-pb><g-k>xml</g-k> <g-at>version</g-at><g-o>=</g-o><g-s>"1.1"</g-s><g-pb>?&gt;</g-pb>
+<g-pb>&lt;!</g-pb><g-k>DOCTYPE</g-k> <g-t>catalog</g-t> <g-pb>[</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>ELEMENT</g-k> <g-tg>catalog</g-tg> <g-pb>(</g-pb>item<g-o>*</g-o><g-pb>)&gt;</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>ELEMENT</g-k> <g-tg>item</g-tg> <g-pb>(</g-pb><g-k>#PCDATA</g-k><g-pb>)&gt;</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>ATTLIST</g-k> <g-tg>item</g-tg> <g-at>id</g-at> <g-k>ID</g-k> <g-k>#REQUIRED</g-k> <g-at>kind</g-at> <g-pb>(</g-pb><g-s>new</g-s><g-o>|</g-o><g-s>used</g-s><g-pb>)</g-pb> <g-s>"new"</g-s><g-pb>&gt;</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>ENTITY</g-k> <g-l>publisher</g-l> <g-s>"Tea </g-s><g-se>&amp;amp;</g-se><g-s> Co."</g-s><g-pb>&gt;</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>ENTITY</g-k> <g-o>%</g-o> <g-l>names</g-l> <g-s>"&lt;!ELEMENT extra EMPTY&gt;"</g-s><g-pb>&gt;</g-pb>
+  <g-pb>&lt;!</g-pb><g-k>NOTATION</g-k> <g-l>png</g-l> <g-k>SYSTEM</g-k> <g-s>"image/png"</g-s><g-pb>&gt;</g-pb>
+  <g-c>&lt;!-- declaration comment --&gt;</g-c>
+  <g-se>%names;</g-se>
+<g-pb>]&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>catalog</g-tg><g-pb>&gt;&lt;</g-pb><g-tg>item</g-tg> <g-at>id</g-at><g-o>=</g-o><g-s>"x"</g-s><g-pb>&gt;</g-pb><g-se>&amp;publisher;</g-se><g-pb>&lt;/</g-pb><g-tg>item</g-tg><g-pb>&gt;&lt;/</g-pb><g-tg>catalog</g-tg><g-pb>&gt;</g-pb>

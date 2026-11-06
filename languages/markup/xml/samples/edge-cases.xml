@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ns:root xmlns:ns="urn:one" data-value="%literal; &amp; &#x1F642;">
+  <?custom data="not an attribute" &not-an-entity;?>
+  <![CDATA[<x attr="&amp;">]]>
+  <!-- > and < and &amp; are comment text -->
+  <ns:child xml:lang="en-US">Unicode: &lt; café &#169;</ns:child>
+</ns:root>
