@@ -1,0 +1,9 @@
+<g-c>// Render a greeting with a nested component.</g-c>
+<g-at>@react.component</g-at>
+<g-k>let</g-k> <g-f>make</g-f> <g-o>=</g-o> <g-pb>(</g-pb><g-ps>~</g-ps><g-v>name</g-v><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-ps>~</g-ps><g-v>active</g-v><g-o>=</g-o><g-cb>true</g-cb><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>{</g-pb>
+  <g-k>let</g-k> <g-v>title</g-v> <g-o>=</g-o> <g-k>if</g-k> <g-v>active</g-v> <g-pb>{</g-pb> <g-s>`Hello, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>!`</g-s> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>"Welcome"</g-s> <g-pb>}</g-pb>
+  <g-pb>&lt;</g-pb><g-tg>section</g-tg> <g-pr>className</g-pr><g-o>=</g-o><g-s>"card"</g-s><g-pb>&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>Heading</g-tg> <g-pr>text</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>title</g-v><g-ps>}</g-ps> <g-pb>/&gt;</g-pb>
+    <g-pb>&lt;</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb> <g-ps>{</g-ps><g-t>React</g-t><g-pd>.</g-pd><g-f>string</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-ps>}</g-ps> <g-pb>&lt;/</g-pb><g-tg>span</g-tg><g-pb>&gt;</g-pb>
+  <g-pb>&lt;/</g-pb><g-tg>section</g-tg><g-pb>&gt;</g-pb>
+<g-pb>}</g-pb>

@@ -1,0 +1,12 @@
+<g-at>@module</g-at><g-pb>(</g-pb><g-s>"node:fs"</g-s><g-pb>)</g-pb>
+<g-k>external</g-k> <g-v>readFile</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=&gt;</g-o> <g-t>string</g-t> <g-o>=</g-o> <g-s>"readFileSync"</g-s>
+<g-at>@send</g-at> <g-k>external</g-k> <g-v>push</g-v><g-pd>:</g-pd> <g-pb>(</g-pb><g-t>array</g-t><g-o>&lt;</g-o><g-t>'a</g-t><g-o>&gt;</g-o><g-pd>,</g-pd> <g-t>'a</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>int</g-t> <g-o>=</g-o> <g-s>"push"</g-s>
+<g-at>@val</g-at> <g-k>external</g-k> <g-v>version</g-v><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-s>"version"</g-s>
+
+<g-k>let</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0xFF</g-n><g-pd>,</g-pd> <g-n>0b101</g-n><g-pd>,</g-pd> <g-n>1_000n</g-n><g-pb>]</g-pb>
+<g-k>let</g-k> <g-v>ratio</g-v> <g-o>=</g-o> <g-n>1.5e3</g-n> <g-o>+.</g-o> <g-n>2.0</g-n>
+<g-k>let</g-k> <g-v>letter</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s>
+<g-k>let</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-f>sql</g-f><g-s>`select * from people where name = </g-s><g-ps>${</g-ps><g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>`</g-s>
+<g-k>let</g-k> <g-v>foreign</g-v> <g-o>=</g-o> <g-k>%raw</g-k><g-pb>(</g-pb><g-s>"({value: 42})"</g-s><g-pb>)</g-pb>
+<g-k>%%raw</g-k><g-pb>(</g-pb><g-s>`console.log("ready")`</g-s><g-pb>)</g-pb>
+<g-k>let</g-k> <g-v>nested</g-v> <g-o>=</g-o> <g-s>`answer: </g-s><g-ps>${</g-ps><g-k>if</g-k> <g-v>ready</g-v> <g-pb>{</g-pb> <g-s>`</g-s><g-ps>${</g-ps><g-n>1</g-n> <g-o>+</g-o> <g-n>2</g-n><g-ps>}</g-ps><g-s>`</g-s> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>"wait"</g-s> <g-pb>}</g-pb><g-ps>}</g-ps><g-s>`</g-s>

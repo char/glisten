@@ -76,6 +76,7 @@ import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
 import r from "./datasci/r/grammar.ts";
 import rego from "./policy/rego/grammar.ts";
+import rescript from "./functional/rescript/grammar.ts";
 import ron from "./config/ron/grammar.ts";
 import ruby from "./scripting/ruby/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
@@ -185,6 +186,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   python,
   r,
   rego,
+  rescript,
   ron,
   ruby,
   rust,

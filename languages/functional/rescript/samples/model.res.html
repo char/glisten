@@ -1,0 +1,16 @@
+<g-c>/* Colors /* including nested comments */ for the view. */</g-c>
+<g-k>type</g-k> <g-t>color</g-t> <g-o>=</g-o>
+  <g-pd>|</g-pd> <g-t>Red</g-t>
+  <g-pd>|</g-pd> <g-t>Rgb</g-t><g-pb>(</g-pb><g-t>int</g-t><g-pd>,</g-pd> <g-t>int</g-t><g-pd>,</g-pd> <g-t>int</g-t><g-pb>)</g-pb>
+
+<g-k>type</g-k> <g-t>person</g-t> <g-o>=</g-o> <g-pb>{</g-pb><g-pr>name</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-pr>favorite</g-pr><g-pd>:</g-pd> <g-v>color</g-v><g-pd>,</g-pd> <g-pr>mood</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>#happy</g-t> <g-pd>|</g-pd> <g-t>#calm</g-t><g-pb>]}</g-pb>
+
+<g-k>module</g-k> <g-t>Labels</g-t> <g-o>=</g-o> <g-pb>{</g-pb>
+  <g-k>let</g-k> <g-f>describe</g-f> <g-o>=</g-o> <g-pb>(</g-pb><g-v>person</g-v><g-pd>:</g-pd> <g-v>person</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o>
+    <g-k>switch</g-k> <g-v>person</g-v><g-pd>.</g-pd><g-vm>favorite</g-vm> <g-pb>{</g-pb>
+    <g-pd>|</g-pd> <g-t>Red</g-t> <g-o>=&gt;</g-o> <g-s>"red"</g-s>
+    <g-pd>|</g-pd> <g-t>Rgb</g-t><g-pb>(</g-pb><g-v>r</g-v><g-pd>,</g-pd> <g-v>g</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-s>`rgb(</g-s><g-ps>${</g-ps><g-t>Int</g-t><g-pd>.</g-pd><g-f>toString</g-f><g-pb>(</g-pb><g-v>r</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s>, </g-s><g-ps>${</g-ps><g-t>Int</g-t><g-pd>.</g-pd><g-f>toString</g-f><g-pb>(</g-pb><g-v>g</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s>, </g-s><g-ps>${</g-ps><g-t>Int</g-t><g-pd>.</g-pd><g-f>toString</g-f><g-pb>(</g-pb><g-v>b</g-v><g-pb>)</g-pb><g-ps>}</g-ps><g-s>)`</g-s>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>let</g-k> <g-f>show</g-f> <g-o>=</g-o> <g-pb>(</g-pb><g-ps>~</g-ps><g-v>name</g-v><g-pd>,</g-pd> <g-ps>~</g-ps><g-v>mood</g-v><g-o>=</g-o><g-ps>?</g-ps><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>(</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>mood</g-v><g-pb>)</g-pb>
