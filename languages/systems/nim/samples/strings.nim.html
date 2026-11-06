@@ -1,0 +1,16 @@
+<g-k>template</g-k> <g-f>tag</g-f><g-pb>(</g-pb><g-v>s</g-v><g-pd>:</g-pd> <g-t>string</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-o>=</g-o> <g-v>s</g-v>
+
+<g-k>let</g-k> <g-v>ordinary</g-v> <g-o>=</g-o> <g-s>"line</g-s><g-se>\n</g-se><g-s> and </g-s><g-se>\x41</g-se><g-s>"</g-s>
+<g-k>let</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>r"backslashes \ and doubled ""quote"""</g-s>
+<g-k>let</g-k> <g-v>longText</g-v> <g-o>=</g-o> <g-s>"""A raw triple string
+with \n and "quotes"."""</g-s>
+<g-k>let</g-k> <g-v>generalized</g-v> <g-o>=</g-o> <g-s>tag"raw \n text"</g-s>
+<g-k>let</g-k> <g-v>generalizedTriple</g-v> <g-o>=</g-o> <g-s>tag"""raw \n
+multiple lines"""</g-s>
+<g-k>let</g-k> <g-v>ch</g-v> <g-o>=</g-o> <g-s>'a'</g-s>
+<g-k>let</g-k> <g-v>newline</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s>
+<g-k>let</g-k> <g-v>small</g-v> <g-o>=</g-o> <g-n>255'u8</g-n>
+<g-k>let</g-k> <g-v>hex</g-v> <g-o>=</g-o> <g-n>0xFF_FF'i32</g-n>
+<g-k>let</g-k> <g-v>bits</g-v> <g-o>=</g-o> <g-n>0b1010_0110'u64</g-n>
+<g-k>let</g-k> <g-v>octal</g-v> <g-o>=</g-o> <g-n>0o755</g-n>
+<g-k>let</g-k> <g-v>large</g-v> <g-o>=</g-o> <g-n>1e10'f32</g-n>

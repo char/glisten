@@ -1,0 +1,23 @@
+<g-c>## Documentation comment.</g-c>
+<g-c># Ordinary line comment.</g-c>
+
+<g-c>#[ An outer multiline comment.
+   #[ A nested comment. ]#
+   Back in the outer comment.
+]#</g-c>
+
+<g-c>##[ Documentation block.
+    ##[ Nested documentation. ]##
+    Still documentation.
+]##</g-c>
+
+<g-k>proc</g-k> <g-f>safeDivide</g-f><g-o>*</g-o><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-v>y</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>int</g-t> <g-o>=</g-o>
+  <g-c>## A documentation line inside the procedure.</g-c>
+  <g-k>try</g-k><g-pd>:</g-pd>
+    <g-k>if</g-k> <g-v>y</g-v> <g-o>==</g-o> <g-n>0</g-n><g-pd>:</g-pd>
+      <g-k>raise</g-k> <g-f>newException</g-f><g-pb>(</g-pb><g-t>ValueError</g-t><g-pd>,</g-pd> <g-s>"division by zero"</g-s><g-pb>)</g-pb>
+    <g-v>result</g-v> <g-o>=</g-o> <g-v>x</g-v> <g-k>div</g-k> <g-v>y</g-v>
+  <g-k>except</g-k> <g-t>ValueError</g-t><g-pd>:</g-pd>
+    <g-v>result</g-v> <g-o>=</g-o> <g-n>0</g-n>
+  <g-k>finally</g-k><g-pd>:</g-pd>
+    <g-k>discard</g-k>

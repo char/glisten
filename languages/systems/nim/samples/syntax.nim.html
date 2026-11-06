@@ -1,0 +1,26 @@
+<g-c>## Procedures, pragmas, operators and style-insensitive names.</g-c>
+<g-k>import</g-k> <g-v>std</g-v><g-o>/</g-o><g-v>strutils</g-v>
+
+<g-k>type</g-k>
+  <g-t>Widget</g-t><g-o>*</g-o> <g-o>=</g-o> <g-k>object</g-k>
+    <g-v>count</g-v><g-o>*:</g-o> <g-t>int</g-t>
+
+<g-k>pr_oc</g-k> <g-f>add_value</g-f><g-o>*</g-o><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-v>y</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>int</g-t> <g-ps>{.</g-ps><g-at>inline</g-at><g-pd>,</g-pd> <g-at>raises</g-at><g-pd>:</g-pd> <g-pb>[]</g-pb><g-ps>.}</g-ps> <g-o>=</g-o>
+  <g-v>x</g-v> <g-o>+</g-o> <g-v>y</g-v>
+
+<g-k>func</g-k> <g-f>twice</g-f><g-o>*</g-o><g-pb>(</g-pb><g-v>x</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>int</g-t> <g-o>=</g-o> <g-v>x</g-v> <g-o>*</g-o> <g-n>2</g-n>
+<g-k>proc</g-k> <g-f>`plus`</g-f><g-o>*</g-o><g-pb>(</g-pb><g-v>x</g-v><g-pd>,</g-pd> <g-v>y</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>int</g-t> <g-o>=</g-o> <g-v>x</g-v> <g-o>+</g-o> <g-v>y</g-v>
+
+<g-k>when</g-k> <g-f>defined</g-f><g-pb>(</g-pb><g-v>debug</g-v><g-pb>)</g-pb><g-pd>:</g-pd>
+  <g-k>let</g-k> <g-t>PrOc</g-t> <g-o>=</g-o> <g-s>"first letter differs"</g-s>
+  <g-v>echo</g-v> <g-t>PrOc</g-t>
+<g-k>else</g-k><g-pd>:</g-pd>
+  <g-k>discard</g-k>
+
+<g-k>let</g-k> <g-v>item</g-v> <g-o>=</g-o> <g-t>Widget</g-t><g-pb>(</g-pb><g-v>count</g-v><g-pd>:</g-pd> <g-n>3</g-n><g-pb>)</g-pb>
+<g-k>let</g-k> <g-v>resultValue</g-v> <g-o>=</g-o> <g-f>addValue</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>.</g-pd><g-v>count</g-v><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb><g-pd>.</g-pd><g-f>twice</g-f><g-pb>()</g-pb>
+<g-k>let</g-k> <g-v>`strange-name`</g-v> <g-o>=</g-o> <g-v>resultValue</g-v>
+<g-k>let</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-o>@</g-o><g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-n>3</g-n><g-pb>]</g-pb>
+<g-k>for</g-k> <g-v>value</g-v> <g-k>in</g-k> <g-v>values</g-v><g-pd>:</g-pd>
+  <g-k>if</g-k> <g-v>value</g-v> <g-k>notin</g-k> <g-pb>[</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-pb>]</g-pb><g-pd>:</g-pd>
+    <g-v>echo</g-v> <g-v>value</g-v>

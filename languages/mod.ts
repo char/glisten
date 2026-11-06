@@ -53,6 +53,7 @@ import markdown from "./markup/markdown/grammar.ts";
 import matlab from "./datasci/matlab/grammar.ts";
 import meson from "./build/meson/grammar.ts";
 import nginx from "./config/nginx/grammar.ts";
+import nim from "./systems/nim/grammar.ts";
 import ninja from "./build/ninja/grammar.ts";
 import nix from "./build/nix/grammar.ts";
 import objc from "./systems/objc/grammar.ts";
@@ -148,6 +149,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   matlab,
   meson,
   nginx,
+  nim,
   ninja,
   nix,
   objc,
