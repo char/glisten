@@ -1,0 +1,8 @@
+<g-pb>(</g-pb><g-k>define-library</g-k> <g-pb>(</g-pb><g-f>example</g-f> <g-v>geometry</g-v><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-k>export</g-k> <g-v>square</g-v> <g-v>area</g-v><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-k>import</g-k> <g-pb>(</g-pb><g-f>scheme</g-f> <g-v>base</g-v><g-pb>))</g-pb>
+  <g-pb>(</g-pb><g-k>begin</g-k>
+    <g-pb>(</g-pb><g-k>define</g-k> <g-pb>(</g-pb><g-f>square</g-f> <g-v>x</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>*</g-f> <g-v>x</g-v> <g-v>x</g-v><g-pb>))</g-pb>
+    <g-pb>(</g-pb><g-k>define</g-k> <g-pb>(</g-pb><g-f>area</g-f> <g-v>radius</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>*</g-f> <g-n>3.14159</g-n> <g-pb>(</g-pb><g-f>square</g-f> <g-v>radius</g-v><g-pb>)))</g-pb>
+    <g-pb>(</g-pb><g-k>define-syntax</g-k> <g-v>twice</g-v>
+      <g-pb>(</g-pb><g-k>syntax-rules</g-k> <g-pb>()</g-pb> <g-pb>((</g-pb><g-f>_</g-f> <g-v>x</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>+</g-f> <g-v>x</g-v> <g-v>x</g-v><g-pb>))))))</g-pb>

@@ -1,0 +1,14 @@
+<g-c>#| outer #| nested |# still outer |#</g-c>
+<g-c>#; #; (ignored #\) "x") '(also ignored)</g-c> <g-pb>(</g-pb><g-k>define</g-k> <g-v>live</g-v> <g-cb>#t</g-cb><g-pb>)</g-pb>
+<g-c>#; (one #;(two (three)) "close )" |symbol )| #\) #(4 5))</g-c>
+<g-pb>(</g-pb><g-k>define</g-k> <g-v>data</g-v> <g-ps>'</g-ps><g-pb>#(#u8(</g-pb><g-n>1</g-n> <g-n>2</g-n> <g-n>255</g-n><g-pb>)</g-pb> <g-cb>#true</g-cb> <g-cb>#false</g-cb> <g-cb>#\space</g-cb> <g-cb>#\x41</g-cb> <g-cb>#\a</g-cb><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>define</g-k> <g-v>numbers</g-v> <g-ps>'</g-ps><g-pb>(</g-pb><g-n>#e#x10</g-n> <g-n>#i1/3</g-n> <g-n>-2/7</g-n> <g-n>1.25e-3</g-n> <g-n>2+3i</g-n> <g-n>+inf.0</g-n> <g-n>-nan.0</g-n><g-pb>))</g-pb>
+<g-pb>(</g-pb><g-k>define</g-k> <g-v>|escaped symbol|</g-v> <g-s>"line</g-s><g-se>\n</g-se><g-s>quote: </g-s><g-se>\"</g-se><g-s> and hex: </g-s><g-se>\x41;</g-se><g-s>"</g-s><g-pb>)</g-pb>
+<g-ps>`</g-ps><g-pb>(</g-pb><g-f>a</g-f> <g-ps>,</g-ps><g-pb>(</g-pb><g-f>+</g-f> <g-n>1</g-n> <g-n>2</g-n><g-pb>)</g-pb> <g-ps>,@</g-ps><g-pb>(</g-pb><g-f>list</g-f> <g-ps>'</g-ps><g-v>b</g-v> <g-ps>'</g-ps><g-v>c</g-v><g-pb>))</g-pb>
+<g-c>;; Radix and exactness may appear in either order; invalid atoms are not numbers.</g-c>
+<g-ps>'</g-ps><g-pb>#(</g-pb><g-n>#b101/10</g-n> <g-n>#o17</g-n> <g-n>#x#iFF</g-n> <g-n>#d#e1.25</g-n> <g-n>3s+5</g-n> <g-n>1@-2</g-n> <g-n>-2i</g-n> <g-n>1-i</g-n> <g-n>+i</g-n>
+   <g-v>#b102</g-v> <g-v>#o8</g-v> <g-v>#xg</g-v> <g-v>1abc</g-v> <g-v>1/</g-v> <g-v>1e+</g-v> <g-v>.5.2</g-v> <g-v>2i</g-v><g-pb>)</g-pb>
+<g-c>#;#`(discard #,item #,@items)</g-c> <g-pb>(</g-pb><g-k>define</g-k> <g-v>retained</g-v> <g-cb>#t</g-cb><g-pb>)</g-pb>
+<g-pb>(</g-pb><g-k>define</g-k> <g-v>wrapped</g-v> <g-s>"first</g-s><g-se>\
+  </g-se><g-s>second"</g-s><g-pb>)</g-pb>
+<g-c>#;#1=(cyclic . #1#)</g-c> <g-pb>(</g-pb><g-k>define</g-k> <g-v>still-live</g-v> <g-cb>#t</g-cb><g-pb>)</g-pb>

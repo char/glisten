@@ -1,0 +1,12 @@
+<g-c>;; Count leaves in a tree.</g-c>
+<g-pb>(</g-pb><g-k>define</g-k> <g-pb>(</g-pb><g-f>leaf-count</g-f> <g-v>tree</g-v><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-k>cond</g-k> <g-pb>((</g-pb><g-f>null?</g-f> <g-v>tree</g-v><g-pb>)</g-pb> <g-n>0</g-n><g-pb>)</g-pb>
+        <g-pb>((</g-pb><g-f>pair?</g-f> <g-v>tree</g-v><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>+</g-f> <g-pb>(</g-pb><g-f>leaf-count</g-f> <g-pb>(</g-pb><g-f>car</g-f> <g-v>tree</g-v><g-pb>))</g-pb>
+                         <g-pb>(</g-pb><g-f>leaf-count</g-f> <g-pb>(</g-pb><g-f>cdr</g-f> <g-v>tree</g-v><g-pb>))))</g-pb>
+        <g-pb>(</g-pb><g-k>else</g-k> <g-n>1</g-n><g-pb>)))</g-pb>
+
+<g-pb>(</g-pb><g-k>let*</g-k> <g-pb>((</g-pb><g-f>tree</g-f> <g-ps>'</g-ps><g-pb>(</g-pb><g-f>a</g-f> <g-pb>(</g-pb><g-f>b</g-f> <g-v>c</g-v><g-pb>)</g-pb> <g-v>d</g-v><g-pb>))</g-pb>
+       <g-pb>(</g-pb><g-f>total</g-f> <g-pb>(</g-pb><g-f>leaf-count</g-f> <g-v>tree</g-v><g-pb>)))</g-pb>
+  <g-pb>(</g-pb><g-f>display</g-f> <g-s>"Leaves: "</g-s><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-f>write</g-f> <g-v>total</g-v><g-pb>)</g-pb>
+  <g-pb>(</g-pb><g-f>newline</g-f><g-pb>))</g-pb>
