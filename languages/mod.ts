@@ -41,6 +41,7 @@ import haskell from "./functional/haskell/grammar.ts";
 import hcl from "./config/hcl/grammar.ts";
 import hlsl from "./shaders/hlsl/grammar.ts";
 import html from "./web/html/grammar.ts";
+import idris from "./functional/idris/grammar.ts";
 import ini from "./config/ini/grammar.ts";
 import java from "./managed/java/grammar.ts";
 import javascript from "./web/javascript/grammar.ts";
@@ -145,6 +146,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   hcl,
   hlsl,
   html,
+  idris,
   ini,
   java,
   javascript,

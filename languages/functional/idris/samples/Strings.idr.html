@@ -1,0 +1,32 @@
+<g-k>module</g-k> <g-t>Strings</g-t>
+
+<g-at>%default</g-at> <g-k>total</g-k>
+
+<g-c>{- Outer comment with {- nesting -}, a string "-}" and -- a line comment
+   then the outer comment closes here. -}</g-c>
+
+<g-f>greeting</g-f> <g-o>:</g-o> <g-t>String</g-t> <g-o>-&gt;</g-o> <g-t>String</g-t>
+<g-v>greeting</g-v> <g-v>who</g-v> <g-o>=</g-o> <g-s>"Hello, </g-s><g-ps>\{</g-ps><g-v>who</g-v><g-ps>}</g-ps><g-s>!"</g-s>
+
+<g-f>rawGreeting</g-f> <g-o>:</g-o> <g-t>String</g-t> <g-o>-&gt;</g-o> <g-t>String</g-t>
+<g-v>rawGreeting</g-v> <g-v>who</g-v> <g-o>=</g-o> <g-s>#"raw \{not interpolated}, hello </g-s><g-ps>\#{</g-ps><g-v>who</g-v><g-ps>}</g-ps><g-s>!"#</g-s>
+
+<g-f>nested</g-f> <g-o>:</g-o> <g-t>String</g-t> <g-o>-&gt;</g-o> <g-t>String</g-t>
+<g-v>nested</g-v> <g-v>who</g-v> <g-o>=</g-o> <g-s>##"outer </g-s><g-ps>\##{</g-ps> <g-s>#"inner </g-s><g-ps>\#{</g-ps><g-v>who</g-v><g-ps>}</g-ps><g-s>"#</g-s> <g-ps>}</g-ps><g-s> done"##</g-s>
+
+<g-f>multiline</g-f> <g-o>:</g-o> <g-t>String</g-t> <g-o>-&gt;</g-o> <g-t>String</g-t>
+<g-v>multiline</g-v> <g-v>who</g-v> <g-o>=</g-o> <g-s>"""
+  Welcome, </g-s><g-ps>\{</g-ps><g-v>who</g-v><g-ps>}</g-ps><g-s>!
+  A second line.
+  """</g-s>
+
+<g-f>rawMultiline</g-f> <g-o>:</g-o> <g-t>String</g-t> <g-o>-&gt;</g-o> <g-t>String</g-t>
+<g-v>rawMultiline</g-v> <g-v>who</g-v> <g-o>=</g-o> <g-s>#"""
+  \{literal braces}; interpolated: </g-s><g-ps>\#{</g-ps><g-v>who</g-v><g-ps>}</g-ps><g-s>
+  """#</g-s>
+
+<g-f>quoted</g-f> <g-o>:</g-o> <g-t>Char</g-t>
+<g-v>quoted</g-v> <g-o>=</g-o> <g-s>'\n'</g-s>
+
+<g-f>hexChar</g-f> <g-o>:</g-o> <g-t>Char</g-t>
+<g-v>hexChar</g-v> <g-o>=</g-o> <g-s>'\x41'</g-s>

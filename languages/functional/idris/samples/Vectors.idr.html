@@ -1,0 +1,18 @@
+<g-k>module</g-k> <g-t>Vectors</g-t>
+
+<g-k>import</g-k> <g-t>Data</g-t><g-o>.</g-o><g-t>Vect</g-t>
+
+<g-at>%default</g-at> <g-k>total</g-k>
+
+<g-c>||| Append two vectors, preserving their lengths in the result type.</g-c>
+<g-k>public</g-k> <g-k>export</g-k>
+<g-f>appendV</g-f> <g-o>:</g-o> <g-t>Vect</g-t> <g-v>n</g-v> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-t>Vect</g-t> <g-v>m</g-v> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-t>Vect</g-t> <g-pb>(</g-pb><g-v>n</g-v> <g-o>+</g-o> <g-v>m</g-v><g-pb>)</g-pb> <g-v>a</g-v>
+<g-v>appendV</g-v> <g-pb>[]</g-pb> <g-v>ys</g-v> <g-o>=</g-o> <g-v>ys</g-v>
+<g-v>appendV</g-v> <g-pb>(</g-pb><g-v>x</g-v> <g-o>::</g-o> <g-v>xs</g-v><g-pb>)</g-pb> <g-v>ys</g-v> <g-o>=</g-o> <g-v>x</g-v> <g-o>::</g-o> <g-v>appendV</g-v> <g-v>xs</g-v> <g-v>ys</g-v>
+
+<g-f>mapV</g-f> <g-o>:</g-o> <g-pb>(</g-pb><g-v>a</g-v> <g-o>-&gt;</g-o> <g-v>b</g-v><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>Vect</g-t> <g-v>n</g-v> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-t>Vect</g-t> <g-v>n</g-v> <g-v>b</g-v>
+<g-v>mapV</g-v> <g-v>f</g-v> <g-pb>[]</g-pb> <g-o>=</g-o> <g-pb>[]</g-pb>
+<g-v>mapV</g-v> <g-v>f</g-v> <g-pb>(</g-pb><g-v>x</g-v> <g-o>::</g-o> <g-v>xs</g-v><g-pb>)</g-pb> <g-o>=</g-o> <g-v>f</g-v> <g-v>x</g-v> <g-o>::</g-o> <g-v>mapV</g-v> <g-v>f</g-v> <g-v>xs</g-v>
+
+<g-f>identity</g-f> <g-o>:</g-o> <g-pb>(</g-pb><g-n>0</g-n> <g-v>a</g-v> <g-o>:</g-o> <g-t>Type</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-v>a</g-v>
+<g-v>identity</g-v> <g-v>_</g-v> <g-o>=</g-o> <g-o>\</g-o><g-v>x</g-v> <g-o>=&gt;</g-o> <g-v>x</g-v>

@@ -1,0 +1,24 @@
+<g-k>module</g-k> <g-t>Records</g-t>
+
+<g-at>%default</g-at> <g-k>total</g-k>
+
+<g-k>record</g-k> <g-t>Point</g-t> <g-k>where</g-k>
+  <g-k>constructor</g-k> <g-t>MkPoint</g-t>
+  <g-f>x</g-f> <g-o>:</g-o> <g-t>Int</g-t>
+  <g-f>y</g-f> <g-o>:</g-o> <g-t>Int</g-t>
+
+<g-k>interface</g-k> <g-t>Describe</g-t> <g-v>a</g-v> <g-k>where</g-k>
+  <g-f>describe</g-f> <g-o>:</g-o> <g-v>a</g-v> <g-o>-&gt;</g-o> <g-t>String</g-t>
+
+<g-t>Describe</g-t> <g-t>Point</g-t> <g-k>where</g-k>
+  <g-v>describe</g-v> <g-v>p</g-v> <g-o>=</g-o> <g-s>"point (</g-s><g-ps>\{</g-ps><g-v>show</g-v> <g-v>p</g-v><g-o>.</g-o><g-v>x</g-v><g-ps>}</g-ps><g-s>, </g-s><g-ps>\{</g-ps><g-v>show</g-v> <g-v>p</g-v><g-o>.</g-o><g-v>y</g-v><g-ps>}</g-ps><g-s>)"</g-s>
+
+<g-f>shift</g-f> <g-o>:</g-o> <g-t>Point</g-t> <g-o>-&gt;</g-o> <g-t>Point</g-t>
+<g-v>shift</g-v> <g-v>p</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-v>x</g-v> <g-o>$=</g-o> <g-pb>(</g-pb><g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>y</g-v> <g-o>$=</g-o> <g-pb>(</g-pb><g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>}</g-pb> <g-v>p</g-v>
+
+<g-k>namespace</g-k> <g-t>Shapes</g-t>
+  <g-f>origin</g-f> <g-o>:</g-o> <g-t>Point</g-t>
+  <g-v>origin</g-v> <g-o>=</g-o> <g-t>MkPoint</g-t> <g-n>0</g-n> <g-n>0</g-n>
+
+<g-f>choose</g-f> <g-o>:</g-o> <g-t>Bool</g-t> <g-o>-&gt;</g-o> <g-t>Int</g-t>
+<g-v>choose</g-v> <g-v>b</g-v> <g-o>=</g-o> <g-k>if</g-k> <g-v>b</g-v> <g-k>then</g-k> <g-n>1</g-n> <g-k>else</g-k> <g-n>0</g-n>
