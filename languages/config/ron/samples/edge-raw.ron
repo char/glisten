@@ -1,0 +1,6 @@
+// Malformed endings should not alter earlier tokens.
+Broken(
+    close_match: r##"a "# is not the closer"##,
+    almost_number: 123oops,
+    byte: b'\x41',
+    last: r###"an unterminated raw string with "# and "## inside

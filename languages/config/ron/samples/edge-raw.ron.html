@@ -1,0 +1,7 @@
+<g-c>// Malformed endings should not alter earlier tokens.</g-c>
+<g-t>Broken</g-t><g-pb>(</g-pb>
+    <g-pr>close_match</g-pr><g-pd>:</g-pd> <g-s>r##"a "# is not the closer"##</g-s><g-pd>,</g-pd>
+    <g-pr>almost_number</g-pr><g-pd>:</g-pd> 123<g-t>oops</g-t><g-pd>,</g-pd>
+    <g-pr>byte</g-pr><g-pd>:</g-pd> <g-s>b'</g-s><g-se>\x41</g-se><g-s>'</g-s><g-pd>,</g-pd>
+    <g-pr>last</g-pr><g-pd>:</g-pd> <g-s>r###"an unterminated raw string with "# and "## inside
+</g-s>

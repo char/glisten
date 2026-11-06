@@ -1,0 +1,12 @@
+/* outer /* nested */ outer */
+(
+    raw: r###"embedded "# and "## stay open"###,
+    bytes: b"abc\x21",
+    character: '\n',
+    numbers: [0xff, 0o77, 0b1010, 1_000, -3.5e-2],
+    unicode: Δοκιμή,
+    near: trueish,
+    inf /* not a number here */ : NaN,
+    r#type: None,
+    κόσμος‎: [inf, NaNish, 1..=3],
+    unfinished: "no closing delimiter

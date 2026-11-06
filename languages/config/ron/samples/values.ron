@@ -1,0 +1,13 @@
+#![enable(unwrap_newtypes, implicit_some, explicit_struct_names)]
+Scene(
+    // A comment between the field name and colon is legal.
+    mode /* selected at startup */ : Running(speed: 1.25f32),
+    limits: [0xffu8, 0o77i16, 0b1010u32, -1_000i64, .5, 2., 6.02e23, -inf, NaNf64],
+    intervals: [1..=3, ..5, 10.., ..],
+    option: None,
+    names: [Unit, Tuple(1, "two"), Named(value: true), r#type],
+    bytes: [b'a', b'\x7f', br##"literal \n and "#"##],
+    escaped: "first\
+        second\t\"quoted\"",
+    chars: ['雪', '\u{1f34a}', '\''],
+)

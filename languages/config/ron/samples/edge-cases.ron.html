@@ -1,0 +1,13 @@
+<g-c>/* outer /* nested */ outer */</g-c>
+<g-pb>(</g-pb>
+    <g-pr>raw</g-pr><g-pd>:</g-pd> <g-s>r###"embedded "# and "## stay open"###</g-s><g-pd>,</g-pd>
+    <g-pr>bytes</g-pr><g-pd>:</g-pd> <g-s>b"abc</g-s><g-se>\x21</g-se><g-s>"</g-s><g-pd>,</g-pd>
+    <g-pr>character</g-pr><g-pd>:</g-pd> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>,</g-pd>
+    <g-pr>numbers</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>0xff</g-n><g-pd>,</g-pd> <g-n>0o77</g-n><g-pd>,</g-pd> <g-n>0b1010</g-n><g-pd>,</g-pd> <g-n>1_000</g-n><g-pd>,</g-pd> <g-n>-3.5e-2</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>unicode</g-pr><g-pd>:</g-pd> <g-t>Δοκιμή</g-t><g-pd>,</g-pd>
+    <g-pr>near</g-pr><g-pd>:</g-pd> <g-t>trueish</g-t><g-pd>,</g-pd>
+    <g-pr>inf</g-pr> <g-c>/* not a number here */</g-c> <g-pd>:</g-pd> <g-n>NaN</g-n><g-pd>,</g-pd>
+    <g-pr>r#type</g-pr><g-pd>:</g-pd> <g-cb>None</g-cb><g-pd>,</g-pd>
+    <g-pr>κόσμος</g-pr>‎<g-pd>:</g-pd> <g-pb>[</g-pb><g-n>inf</g-n><g-pd>,</g-pd> <g-t>NaNish</g-t><g-pd>,</g-pd> <g-n>1</g-n><g-o>..=</g-o><g-n>3</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>unfinished</g-pr><g-pd>:</g-pd> <g-s>"no closing delimiter
+</g-s>

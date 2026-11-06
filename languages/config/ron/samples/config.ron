@@ -1,0 +1,10 @@
+#![enable(implicit_some)]
+// A game configuration with named fields and enum variants.
+GameConfig(
+    title: "Snowfall \u{2744}",
+    window: Window(width: 1280, height: 720, fullscreen: false),
+    controls: {"jump": Space, "move": [Left, Right]},
+    spawn: (1.5, -2.0, 0.0),
+    save_path: Some(r#"data/"slot""#),
+    glyph: 'λ',
+)

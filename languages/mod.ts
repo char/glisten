@@ -18,6 +18,7 @@ import markdown from "./markup/markdown/grammar.ts";
 import nix from "./build/nix/grammar.ts";
 import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
+import ron from "./config/ron/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
@@ -47,6 +48,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   nix,
   proto,
   python,
+  ron,
   rust,
   "ssh-config": ssh_config,
   textproto,

@@ -1,0 +1,13 @@
+<g-ps>#![</g-ps><g-k>enable</g-k><g-pb>(</g-pb><g-cb>unwrap_newtypes</g-cb><g-pd>,</g-pd> <g-cb>implicit_some</g-cb><g-pd>,</g-pd> <g-cb>explicit_struct_names</g-cb><g-pb>)</g-pb><g-ps>]</g-ps>
+<g-t>Scene</g-t><g-pb>(</g-pb>
+    <g-c>// A comment between the field name and colon is legal.</g-c>
+    <g-pr>mode</g-pr> <g-c>/* selected at startup */</g-c> <g-pd>:</g-pd> <g-t>Running</g-t><g-pb>(</g-pb><g-pr>speed</g-pr><g-pd>:</g-pd> <g-n>1.25f32</g-n><g-pb>)</g-pb><g-pd>,</g-pd>
+    <g-pr>limits</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>0xffu8</g-n><g-pd>,</g-pd> <g-n>0o77i16</g-n><g-pd>,</g-pd> <g-n>0b1010u32</g-n><g-pd>,</g-pd> <g-n>-1_000i64</g-n><g-pd>,</g-pd> <g-n>.5</g-n><g-pd>,</g-pd> <g-n>2.</g-n><g-pd>,</g-pd> <g-n>6.02e23</g-n><g-pd>,</g-pd> <g-n>-inf</g-n><g-pd>,</g-pd> <g-n>NaNf64</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>intervals</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-o>..=</g-o><g-n>3</g-n><g-pd>,</g-pd> <g-o>..</g-o><g-n>5</g-n><g-pd>,</g-pd> <g-n>10</g-n><g-o>..</g-o><g-pd>,</g-pd> <g-o>..</g-o><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>option</g-pr><g-pd>:</g-pd> <g-cb>None</g-cb><g-pd>,</g-pd>
+    <g-pr>names</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>Unit</g-t><g-pd>,</g-pd> <g-t>Tuple</g-t><g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-s>"two"</g-s><g-pb>)</g-pb><g-pd>,</g-pd> <g-t>Named</g-t><g-pb>(</g-pb><g-pr>value</g-pr><g-pd>:</g-pd> <g-cb>true</g-cb><g-pb>)</g-pb><g-pd>,</g-pd> <g-t>r#type</g-t><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>bytes</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-s>b'a'</g-s><g-pd>,</g-pd> <g-s>b'</g-s><g-se>\x7f</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>br##"literal \n and "#"##</g-s><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-pr>escaped</g-pr><g-pd>:</g-pd> <g-s>"first</g-s><g-se>\
+        </g-se><g-s>second</g-s><g-se>\t\"</g-se><g-s>quoted</g-s><g-se>\"</g-se><g-s>"</g-s><g-pd>,</g-pd>
+    <g-pr>chars</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-s>'雪'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\u{1f34a}</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\'</g-se><g-s>'</g-s><g-pb>]</g-pb><g-pd>,</g-pd>
+<g-pb>)</g-pb>
