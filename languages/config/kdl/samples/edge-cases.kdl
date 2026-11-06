@@ -1,0 +1,9 @@
+// Slashdash applies to a node, a field, or a children block.
+/- ignored "node" { nested; }
+node /- discarded=123 keep="λ\n雪" /- { child "ignored"; }
+/* outer /* inner */ still outer */ next """
+    multi-line
+    text with "quotes"
+    """
+raw ##"embedded "# and ""##
+near #trueish 123oops key=+ broken="unterminated

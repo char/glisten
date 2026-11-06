@@ -1,0 +1,9 @@
+<g-c>// Slashdash applies to a node, a field, or a children block.</g-c>
+<g-c>/- ignored "node" { nested; }
+</g-c><g-t>node</g-t> <g-c>/- discarded=123</g-c> <g-pr>keep</g-pr><g-o>=</g-o><g-s>"λ</g-s><g-se>\n</g-se><g-s>雪"</g-s> <g-c>/- { child "ignored"; }</g-c>
+<g-c>/* outer /* inner */ still outer */</g-c> <g-t>next</g-t> <g-s>"""
+    multi-line
+    text with "quotes"
+    """</g-s>
+<g-t>raw</g-t> <g-s>##"embedded "# and ""##</g-s>
+<g-t>near</g-t> #<g-s>trueish</g-s> 123<g-s>oops</g-s> <g-pr>key</g-pr><g-o>=</g-o><g-s>+</g-s> <g-pr>broken</g-pr><g-o>=</g-o><g-s>"unterminated</g-s>

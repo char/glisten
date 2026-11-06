@@ -1,0 +1,6 @@
+<g-c>/- (old)root "}" { child { grandchild; }; other #"}"#; }
+</g-c><g-t>node</g-t> <g-c>/- (text)"discard" </g-c><g-pr>kept</g-pr><g-o>=</g-o><g-n>1</g-n> <g-c>/- "quoted key"=(text)"value"</g-c> <g-pr>after</g-pr><g-o>=</g-o><g-cb>#true</g-cb>
+<g-t>node</g-t> <g-pr>keep</g-pr><g-o>=</g-o><g-cb>#false</g-cb> <g-c>/- { one { two "}"; }; /* nested /* comment */ end */ three; }</g-c>
+<g-t>node</g-t> <g-c>/- raw=r##"not a } delimiter "# here"##</g-c> <g-pr>ok</g-pr><g-o>=</g-o><g-s>r"literal\n"</g-s>
+<g-t>node</g-t> <g-pr>"quoted key"</g-pr><g-o>=</g-o><g-cb>true</g-cb> <g-pr>second</g-pr><g-o>=</g-o><g-cb>false</g-cb> <g-pr>third</g-pr><g-o>=</g-o><g-cb>null</g-cb>
+<g-t>unicode</g-t> <g-s>value</g-s> <g-t>next</g-t> <g-s>"text"</g-s><g-t>last</g-t>　<g-s>end</g-s>

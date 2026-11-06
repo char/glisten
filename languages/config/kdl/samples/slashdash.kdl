@@ -1,0 +1,6 @@
+/- (old)root "}" { child { grandchild; }; other #"}"#; }
+node /- (text)"discard" kept=1 /- "quoted key"=(text)"value" after=#true
+node keep=#false /- { one { two "}"; }; /* nested /* comment */ end */ three; }
+node /- raw=r##"not a } delimiter "# here"## ok=r"literal\n"
+node "quoted key"=true second=false third=null
+unicode value next "text"last　end

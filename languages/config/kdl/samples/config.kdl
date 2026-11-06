@@ -1,0 +1,10 @@
+// A workspace with typed arguments, properties, and nested nodes.
+workspace "main" active=#true ratio=1.25 {
+    output "HDMI-A-1" scale=2 {
+        mode "1920x1080@60"
+    }
+    bind "Mod+Return" action=(command)"terminal"
+    env PATH=#"/home/user/bin:"quoted""#
+}
+limits (i64)-42 max=0xff mask=0b1010 missing=#null
+special #inf #-inf #nan
