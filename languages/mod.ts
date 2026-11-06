@@ -103,6 +103,7 @@ import tlaplus from "./proof/tlaplus/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsql from "./query/tsql/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
+import twig from "./web/twig/grammar.ts";
 import typescript from "./web/typescript/grammar.ts";
 import typst from "./markup/typst/grammar.ts";
 import vb from "./managed/vb/grammar.ts";
@@ -223,6 +224,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   toml,
   tsql,
   tsx,
+  twig,
   typescript,
   typst,
   vb,

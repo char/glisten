@@ -1,0 +1,11 @@
+<g-c>{#- Expressions, interpolation, and whitespace control. -#}</g-c>
+<g-ps>{{~</g-ps> <g-s>"Hello </g-s><g-ps>#{</g-ps><g-v>name</g-v><g-o>|</g-o><g-f>upper</g-f><g-ps>}</g-ps><g-s>: </g-s><g-ps>#{</g-ps><g-v>items</g-v><g-o>|</g-o><g-f>length</g-f><g-ps>}</g-ps><g-s>"</g-s> <g-ps>~}}</g-ps>
+<g-ps>{{</g-ps> <g-s>'Literal #{name}'</g-s> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-pb>(</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>5</g-n><g-pb>)</g-pb><g-o>|</g-o><g-f>map</g-f><g-pb>(</g-pb><g-v>x</g-v> <g-o>=&gt;</g-o> <g-v>x</g-v> <g-o>*</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-o>|</g-o><g-f>join</g-f><g-pb>(</g-pb><g-s>', '</g-s><g-pb>)</g-pb> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-v>value</g-v> <g-o>??</g-o> <g-v>fallback</g-v> <g-o>?:</g-o> <g-s>'none'</g-s> <g-ps>}}</g-ps>
+<g-ps>{%</g-ps> <g-k>if</g-k> <g-v>title</g-v> <g-o>starts with</g-o> <g-s>'A'</g-s> <g-o>or</g-o> <g-v>title</g-v> <g-o>ends with</g-o> <g-s>'z'</g-s> <g-ps>%}</g-ps>
+  <g-ps>{{</g-ps> <g-v>flags</g-v> <g-o>b-and</g-o> <g-n>4</g-n> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>flags</g-v> <g-o>b-or</g-o> <g-n>1</g-n> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>flags</g-v> <g-o>b-xor</g-o> <g-n>2</g-n> <g-ps>}}</g-ps>
+<g-ps>{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>if</g-k> <g-v>token</g-v> <g-o>matches</g-o> <g-s>'/^[a-z]+$/'</g-s> <g-o>and</g-o> <g-v>token</g-v> <g-o>not in</g-o> <g-v>banned</g-v> <g-ps>%}</g-ps>
+  <g-ps>{{</g-ps> <g-v>token</g-v> <g-o>is</g-o> <g-f>same</g-f> <g-k>as</g-k><g-pb>(</g-pb><g-s>'ok'</g-s><g-pb>)</g-pb> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>token</g-v> <g-o>is</g-o> <g-f>defined</g-f> <g-ps>}}</g-ps>
+<g-ps>{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>

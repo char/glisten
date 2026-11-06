@@ -1,0 +1,14 @@
+{% use 'shared.html.twig' %}
+{% from 'macros.html.twig' import input as field %}
+{% macro badge(label) %}<strong>{{ label }}</strong>{% endmacro %}
+{% set name = 'Ada' %}
+{% apply upper|escape %}Welcome {{ name }}{% endapply %}
+{% embed 'panel.html.twig' %}{% block body %}Panel{% endblock %}{% endembed %}
+{% with {name: 'Grace'} %}{{ name }}{% endwith %}
+{% sandbox %}{% include 'trusted.html.twig' %}{% endsandbox %}
+{% cache 'profile' %}{{ name }}{% endcache %}
+{% deprecated 'Use the new template' %}
+{% guard user %}
+{%~ verbatim ~%}
+  {{ this_stays_plain }} {% if not_parsed %}
+{%~ endverbatim ~%}

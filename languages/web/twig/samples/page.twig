@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+{% import 'macros.html.twig' as forms %}
+{% block title %}{{ title|default('Welcome') }}{% endblock %}
+{% block content %}
+  {% if user is defined and user.active %}
+    <h1>{{- "Hello, #{user.name}!"|escape -}}</h1>
+    {% for item in items if item.visible %}
+      {{ forms.render(item) }}
+    {% else %}
+      No items.
+    {% endfor %}
+  {% elseif guest %}
+    {% include 'guest.html.twig' with {name: guest} %}
+  {% endif %}
+{% endblock %}

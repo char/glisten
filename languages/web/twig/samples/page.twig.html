@@ -1,0 +1,15 @@
+<g-ps>{%</g-ps> <g-k>extends</g-k> <g-s>'layout.html.twig'</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>import</g-k> <g-s>'macros.html.twig'</g-s> <g-k>as</g-k> <g-v>forms</g-v> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>block</g-k> <g-v>title</g-v> <g-ps>%}{{</g-ps> <g-v>title</g-v><g-o>|</g-o><g-f>default</g-f><g-pb>(</g-pb><g-s>'Welcome'</g-s><g-pb>)</g-pb> <g-ps>}}{%</g-ps> <g-k>endblock</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>block</g-k> <g-v>content</g-v> <g-ps>%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>if</g-k> <g-v>user</g-v> <g-o>is</g-o> <g-f>defined</g-f> <g-o>and</g-o> <g-v>user</g-v><g-pd>.</g-pd><g-vm>active</g-vm> <g-ps>%}</g-ps>
+    &lt;h1&gt;<g-ps>{{-</g-ps> <g-s>"Hello, </g-s><g-ps>#{</g-ps><g-v>user</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>}</g-ps><g-s>!"</g-s><g-o>|</g-o><g-f>escape</g-f> <g-ps>-}}</g-ps>&lt;/h1&gt;
+    <g-ps>{%</g-ps> <g-k>for</g-k> <g-v>item</g-v> <g-o>in</g-o> <g-v>items</g-v> <g-k>if</g-k> <g-v>item</g-v><g-pd>.</g-pd><g-vm>visible</g-vm> <g-ps>%}</g-ps>
+      <g-ps>{{</g-ps> <g-v>forms</g-v><g-pd>.</g-pd><g-f>render</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pb>)</g-pb> <g-ps>}}</g-ps>
+    <g-ps>{%</g-ps> <g-k>else</g-k> <g-ps>%}</g-ps>
+      No items.
+    <g-ps>{%</g-ps> <g-k>endfor</g-k> <g-ps>%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>elseif</g-k> <g-v>guest</g-v> <g-ps>%}</g-ps>
+    <g-ps>{%</g-ps> <g-k>include</g-k> <g-s>'guest.html.twig'</g-s> <g-k>with</g-k> <g-pb>{</g-pb><g-v>name</g-v><g-pd>:</g-pd> <g-v>guest</g-v><g-pb>}</g-pb> <g-ps>%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>endif</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>endblock</g-k> <g-ps>%}</g-ps>

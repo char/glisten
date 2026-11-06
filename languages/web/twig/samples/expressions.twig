@@ -1,0 +1,11 @@
+{#- Expressions, interpolation, and whitespace control. -#}
+{{~ "Hello #{name|upper}: #{items|length}" ~}}
+{{ 'Literal #{name}' }}
+{{ (1..5)|map(x => x * 2)|join(', ') }}
+{{ value ?? fallback ?: 'none' }}
+{% if title starts with 'A' or title ends with 'z' %}
+  {{ flags b-and 4 }} {{ flags b-or 1 }} {{ flags b-xor 2 }}
+{% endif %}
+{% if token matches '/^[a-z]+$/' and token not in banned %}
+  {{ token is same as('ok') }} {{ token is defined }}
+{% endif %}

@@ -1,0 +1,14 @@
+<g-ps>{%</g-ps> <g-k>use</g-k> <g-s>'shared.html.twig'</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>from</g-k> <g-s>'macros.html.twig'</g-s> <g-k>import</g-k> <g-v>input</g-v> <g-k>as</g-k> <g-v>field</g-v> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>macro</g-k> <g-f>badge</g-f><g-pb>(</g-pb><g-v>label</g-v><g-pb>)</g-pb> <g-ps>%}</g-ps>&lt;strong&gt;<g-ps>{{</g-ps> <g-v>label</g-v> <g-ps>}}</g-ps>&lt;/strong&gt;<g-ps>{%</g-ps> <g-k>endmacro</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>set</g-k> <g-v>name</g-v> <g-o>=</g-o> <g-s>'Ada'</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>apply</g-k> <g-f>upper</g-f><g-o>|</g-o><g-f>escape</g-f> <g-ps>%}</g-ps>Welcome <g-ps>{{</g-ps> <g-v>name</g-v> <g-ps>}}{%</g-ps> <g-k>endapply</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>embed</g-k> <g-s>'panel.html.twig'</g-s> <g-ps>%}{%</g-ps> <g-k>block</g-k> <g-v>body</g-v> <g-ps>%}</g-ps>Panel<g-ps>{%</g-ps> <g-k>endblock</g-k> <g-ps>%}{%</g-ps> <g-k>endembed</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>with</g-k> <g-pb>{</g-pb><g-v>name</g-v><g-pd>:</g-pd> <g-s>'Grace'</g-s><g-pb>}</g-pb> <g-ps>%}{{</g-ps> <g-v>name</g-v> <g-ps>}}{%</g-ps> <g-k>endwith</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>sandbox</g-k> <g-ps>%}{%</g-ps> <g-k>include</g-k> <g-s>'trusted.html.twig'</g-s> <g-ps>%}{%</g-ps> <g-k>endsandbox</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>cache</g-k> <g-s>'profile'</g-s> <g-ps>%}{{</g-ps> <g-v>name</g-v> <g-ps>}}{%</g-ps> <g-k>endcache</g-k> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>deprecated</g-k> <g-s>'Use the new template'</g-s> <g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-k>guard</g-k> <g-v>user</g-v> <g-ps>%}</g-ps>
+<g-ps>{%~</g-ps> <g-k>verbatim</g-k> <g-ps>~%}</g-ps>
+  {{ this_stays_plain }} {% if not_parsed %}
+<g-ps>{%~</g-ps> <g-k>endverbatim</g-k> <g-ps>~%}</g-ps>
