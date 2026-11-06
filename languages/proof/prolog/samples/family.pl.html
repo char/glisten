@@ -1,0 +1,17 @@
+<g-o>:-</g-o> <g-f>module</g-f><g-pb>(</g-pb><g-cb>family</g-cb><g-pd>,</g-pd> <g-pb>[</g-pb><g-cb>ancestor</g-cb><g-o>/</g-o><g-n>2</g-n><g-pd>,</g-pd> <g-cb>count_children</g-cb><g-o>/</g-o><g-n>2</g-n><g-pb>])</g-pb><g-pd>.</g-pd>
+<g-o>:-</g-o> <g-f>use_module</g-f><g-pb>(</g-pb><g-f>library</g-f><g-pb>(</g-pb><g-cb>lists</g-cb><g-pb>))</g-pb><g-pd>.</g-pd>
+<g-o>:-</g-o> <g-k>dynamic</g-k> <g-cb>parent</g-cb><g-o>/</g-o><g-n>2</g-n><g-pd>.</g-pd>
+
+<g-c>% Each clause begins with a predicate, including facts.</g-c>
+<g-f>parent</g-f><g-pb>(</g-pb><g-cb>ada</g-cb><g-pd>,</g-pd> <g-cb>beatrice</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-f>parent</g-f><g-pb>(</g-pb><g-cb>beatrice</g-cb><g-pd>,</g-pd> <g-cb>charles</g-cb><g-pb>)</g-pb><g-pd>.</g-pd> <g-f>parent</g-f><g-pb>(</g-pb><g-cb>'D</g-cb><g-se>''</g-se><g-cb>Arcy'</g-cb><g-pd>,</g-pd> <g-cb>eve</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+
+<g-f>ancestor</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pd>,</g-pd> <g-v>Y</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-f>parent</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pd>,</g-pd> <g-v>Y</g-v><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-f>ancestor</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pd>,</g-pd> <g-v>Y</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-f>parent</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pd>,</g-pd> <g-v>Z</g-v><g-pb>)</g-pb><g-pd>,</g-pd>
+    <g-f>ancestor</g-f><g-pb>(</g-pb><g-v>Z</g-v><g-pd>,</g-pd> <g-v>Y</g-v><g-pb>)</g-pb><g-pd>.</g-pd>
+
+<g-f>count_children</g-f><g-pb>(</g-pb><g-v>Parent</g-v><g-pd>,</g-pd> <g-v>Count</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-f>findall</g-f><g-pb>(</g-pb><g-v>Child</g-v><g-pd>,</g-pd> <g-f>parent</g-f><g-pb>(</g-pb><g-v>Parent</g-v><g-pd>,</g-pd> <g-v>Child</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-v>Children</g-v><g-pb>)</g-pb><g-pd>,</g-pd>
+    <g-f>length</g-f><g-pb>(</g-pb><g-v>Children</g-v><g-pd>,</g-pd> <g-v>Count</g-v><g-pb>)</g-pb><g-pd>.</g-pd>

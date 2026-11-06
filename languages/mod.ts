@@ -51,6 +51,7 @@ import objc from "./systems/objc/grammar.ts";
 import ocaml from "./functional/ocaml/grammar.ts";
 import php from "./web/php/grammar.ts";
 import powershell from "./shell/powershell/grammar.ts";
+import prolog from "./proof/prolog/grammar.ts";
 import proto from "./data/proto/grammar.ts";
 import python from "./scripting/python/grammar.ts";
 import r from "./datasci/r/grammar.ts";
@@ -129,6 +130,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   ocaml,
   php,
   powershell,
+  prolog,
   proto,
   python,
   r,

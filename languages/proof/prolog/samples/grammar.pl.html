@@ -1,0 +1,15 @@
+<g-o>:-</g-o> <g-f>module</g-f><g-pb>(</g-pb><g-cb>words</g-cb><g-pd>,</g-pd> <g-pb>[</g-pb><g-cb>sentence</g-cb><g-o>//</g-o><g-n>1</g-n><g-pd>,</g-pd> <g-cb>pick</g-cb><g-o>/</g-o><g-n>2</g-n><g-pb>])</g-pb><g-pd>.</g-pd>
+
+<g-f>sentence</g-f><g-pb>(</g-pb><g-v>S</g-v><g-pb>)</g-pb> <g-o>--&gt;</g-o> <g-f>noun</g-f><g-pb>(</g-pb><g-v>N</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-f>verb</g-f><g-pb>(</g-pb><g-v>V</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pb>{</g-pb> <g-v>S</g-v> <g-o>=..</g-o> <g-pb>[</g-pb><g-cb>sentence</g-cb><g-pd>,</g-pd> <g-v>N</g-v><g-pd>,</g-pd> <g-v>V</g-v><g-pb>]</g-pb> <g-pb>}</g-pb><g-pd>.</g-pd>
+<g-f>noun</g-f><g-pb>(</g-pb><g-cb>cat</g-cb><g-pb>)</g-pb> <g-o>--&gt;</g-o> <g-pb>[</g-pb><g-cb>cat</g-cb><g-pb>]</g-pb><g-pd>.</g-pd>
+<g-f>noun</g-f><g-pb>(</g-pb><g-cb>dog</g-cb><g-pb>)</g-pb> <g-o>--&gt;</g-o> <g-pb>[</g-pb><g-cb>dog</g-cb><g-pb>]</g-pb><g-pd>.</g-pd>
+<g-f>verb</g-f><g-pb>(</g-pb><g-cb>sleeps</g-cb><g-pb>)</g-pb> <g-o>--&gt;</g-o> <g-pb>[</g-pb><g-cb>sleeps</g-cb><g-pb>]</g-pb><g-pd>.</g-pd>
+
+<g-f>pick</g-f><g-pb>([</g-pb><g-v>Head</g-v><g-pb>|</g-pb><g-v>Tail</g-v><g-pb>]</g-pb><g-pd>,</g-pd> <g-v>Value</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-pb>(</g-pb> <g-v>Head</g-v> <g-o>\=</g-o> <g-cb>none</g-cb> <g-o>-&gt;</g-o> <g-v>Value</g-v> <g-o>=</g-o> <g-v>Head</g-v>
+    <g-o>;</g-o> <g-v>Tail</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-v>Next</g-v><g-pb>|</g-pb><g-v>_</g-v><g-pb>]</g-pb> <g-o>-&gt;</g-o> <g-v>Value</g-v> <g-o>=</g-o> <g-v>Next</g-v>
+    <g-o>;</g-o> <g-o>!</g-o><g-pd>,</g-pd> <g-cb>fail</g-cb>
+    <g-pb>)</g-pb><g-pd>.</g-pd>
+
+<g-f>profile</g-f><g-pb>(</g-pb><g-v>Name</g-v><g-pd>,</g-pd> <g-v>Info</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-v>Info</g-v> <g-o>=</g-o> <g-v>_</g-v><g-pb>{</g-pb><g-cb>name</g-cb><g-o>:</g-o> <g-v>Name</g-v><g-pd>,</g-pd> <g-cb>status</g-cb><g-o>:</g-o> <g-cb>active</g-cb><g-pb>}</g-pb><g-pd>.</g-pd>

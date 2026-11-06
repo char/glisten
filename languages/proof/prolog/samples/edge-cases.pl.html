@@ -1,0 +1,16 @@
+<g-c>/* Outer comment, with /* nested */ text still commented. */</g-c>
+<g-o>:-</g-o> <g-f>use_module</g-f><g-pb>(</g-pb><g-f>library</g-f><g-pb>(</g-pb><g-cb>lists</g-cb><g-pb>))</g-pb><g-pd>.</g-pd>
+
+<g-f>'quoted head'</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pb>)</g-pb> <g-o>:-</g-o> <g-v>X</g-v> <g-o>=</g-o> <g-cb>'isn</g-cb><g-se>''</g-se><g-cb>t this an atom?'</g-cb><g-pd>.</g-pd>
+<g-f>numbers</g-f><g-pb>([</g-pb><g-n>0'a</g-n><g-pd>,</g-pd> <g-n>0'\n</g-n><g-pd>,</g-pd> <g-n>0xFF</g-n><g-pd>,</g-pd> <g-n>0o77</g-n><g-pd>,</g-pd> <g-n>0b1010</g-n><g-pd>,</g-pd> <g-n>2'1010</g-n><g-pd>,</g-pd>
+         <g-n>1_000_000</g-n><g-pd>,</g-pd> <g-n>1.25e-3</g-n><g-pb>])</g-pb><g-pd>.</g-pd>
+<g-f>texts</g-f><g-pb>(</g-pb><g-s>"quote: </g-s><g-se>\"</g-se><g-s> unicode: </g-s><g-se>\u263A</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-s>`backquoted </g-s><g-se>\n</g-se><g-s> codes`</g-s><g-pd>,</g-pd>
+      <g-cb>'octal </g-cb><g-se>\141\</g-se><g-cb> and hex </g-cb><g-se>\x41\</g-se><g-cb>'</g-cb><g-pb>)</g-pb><g-pd>.</g-pd>
+<g-f>comparisons</g-f><g-pb>(</g-pb><g-v>A</g-v><g-pd>,</g-pd> <g-v>B</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-v>A</g-v> <g-o>=\=</g-o> <g-v>B</g-v><g-pd>,</g-pd>
+    <g-v>A</g-v> <g-o>@&lt;</g-o> <g-v>B</g-v><g-pd>,</g-pd>
+    <g-o>\+</g-o> <g-v>A</g-v> <g-o>=..</g-o> <g-pb>[</g-pb><g-cb>bad</g-cb><g-pb>|</g-pb><g-v>_</g-v><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-v>Value</g-v> <g-o>is</g-o> <g-pb>(</g-pb><g-v>A</g-v> <g-o>+</g-o> <g-v>B</g-v><g-pb>)</g-pb> <g-o>//</g-o> <g-n>2</g-n><g-pd>,</g-pd>
+    <g-v>Value</g-v> <g-o>=:=</g-o> <g-n>42</g-n><g-pd>.</g-pd>
+<g-f>zero</g-f><g-pd>.</g-pd> <g-f>next</g-f><g-pb>(</g-pb><g-v>X</g-v><g-pb>)</g-pb> <g-o>:-</g-o>
+    <g-v>X</g-v> <g-o>=</g-o> <g-cb>a</g-cb><g-o>.</g-o><g-cb>b</g-cb><g-pd>.</g-pd>
