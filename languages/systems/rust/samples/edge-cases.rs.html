@@ -1,0 +1,37 @@
+<g-c>// Intentionally incomplete and invalid lexical probes.</g-c>
+<g-ps>#![</g-ps><g-f>cfg_attr</g-f><g-pb>(</g-pb><g-v>feature</g-v> <g-o>=</g-o> <g-s>"extra"</g-s><g-pd>,</g-pd> <g-f>allow</g-f><g-pb>(</g-pb><g-v>unused</g-v><g-pb>))</g-pb><g-ps>]</g-ps>
+<g-c>/* outer comment /* nested comment */ still outer */</g-c>
+<g-k>struct</g-k> <g-t>Fields</g-t><g-o>&lt;</g-o><g-t>T</g-t><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-vm>café</g-vm><g-pd>:</g-pd> <g-t>Option</g-t><g-o>&lt;</g-o><g-pb>(</g-pb><g-t>T</g-t><g-pd>,</g-pd> <g-t>u8</g-t><g-pb>)</g-pb><g-o>&gt;</g-o><g-pd>,</g-pd>
+    <g-k>pub</g-k><g-pb>(</g-pb><g-k>crate</g-k><g-pb>)</g-pb> <g-vm>r#type</g-vm><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>u8</g-t><g-pd>;</g-pd> <g-n>4</g-n><g-pb>]</g-pb><g-pd>,</g-pd>
+    <g-vm>callback</g-vm><g-pd>:</g-pd> <g-k>fn</g-k><g-pb>(</g-pb><g-t>u8</g-t><g-pd>,</g-pd> <g-t>u8</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>u8</g-t><g-pd>,</g-pd>
+    <g-vm>final_field</g-vm><g-pd>:</g-pd> <g-t>T</g-t><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+<g-k>fn</g-k> <g-f>keyword_near_misses</g-f><g-o>&lt;</g-o><g-l>'staticish</g-l><g-o>&gt;</g-o><g-pb>(</g-pb><g-v>input</g-v><g-pd>:</g-pd> <g-o>&amp;</g-o><g-l>'staticish</g-l> <g-t>str</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>let</g-k> <g-v>return_value</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>asyncness</g-v> <g-o>=</g-o> <g-cb>false</g-cb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>selfless</g-v> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>r#match</g-v> <g-o>=</g-o> <g-v>input</g-v><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>café</g-v> <g-o>=</g-o> <g-s>"unicode identifier"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>field</g-v> <g-o>=</g-o> <g-v>thing</g-v><g-o>.</g-o><g-f>method</g-f><g-pd>::</g-pd><g-o>&lt;</g-o><g-t>u8</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-v>thing</g-v><g-o>.</g-o><g-f>café</g-f><g-pd>::</g-pd><g-o>&lt;</g-o><g-t>u8</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-v>thing</g-v><g-o>.</g-o><g-f>r#type</g-f> <g-pd>::</g-pd> <g-o>&lt;</g-o><g-t>u8</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>fn</g-k> <g-f>r#match</g-f><g-o>&lt;</g-o><g-t>T</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>T</g-t> <g-pb>{</g-pb> <g-v>value</g-v> <g-pb>}</g-pb>
+    <g-k>let</g-k> <g-v>ranges</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>2</g-n><g-pd>,</g-pd> <g-n>1.0</g-n><g-o>..</g-o><g-n>2.0</g-n><g-pd>,</g-pd> <g-n>1.</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-o>.</g-o><g-f>foo</g-f><g-pb>())</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>suffixes</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-n>0xff_u8</g-n><g-pd>,</g-pd> <g-n>12usize</g-n><g-pd>,</g-pd> <g-n>1.2e-3f64</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>almost</g-v> <g-o>=</g-o> <g-s>r##"one "# is not the end"##</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>extra</g-v> <g-o>=</g-o> <g-s>r#"text"#</g-s><g-ps>#[</g-ps><g-f>cfg</g-f><g-pb>(</g-pb><g-v>test</g-v><g-pb>)</g-pb><g-ps>]</g-ps><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>char_or_lifetime</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-s>'a'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-l>'label</g-l><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-l>'label</g-l><g-pd>:</g-pd> <g-k>loop</g-k> <g-pb>{</g-pb> <g-k>break</g-k> <g-l>'label</g-l><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>let</g-k> <g-v>bad_escape</g-v> <g-o>=</g-o> <g-s>"bad </g-s><g-se>\q</g-se><g-s> and </g-s><g-se>\u</g-se><g-s>{zz}"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>bad_char</g-v> <g-o>=</g-o> '\<g-v>xZ0</g-v>'<g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>return_value</g-v><g-pd>,</g-pd> <g-v>asyncness</g-v><g-pd>,</g-pd> <g-v>selfless</g-v><g-pd>,</g-pd> <g-v>r#match</g-v><g-pd>,</g-pd> <g-v>café</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>field</g-v><g-pd>,</g-pd> <g-v>ranges</g-v><g-pd>,</g-pd> <g-v>suffixes</g-v><g-pd>,</g-pd> <g-v>almost</g-v><g-pd>,</g-pd> <g-v>extra</g-v><g-pd>,</g-pd> <g-v>char_or_lifetime</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-c>// A stray closing delimiter should not consume subsequent code.</g-c>
+<g-o>*/</g-o> <g-k>fn</g-k> <g-f>still_code</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-k>let</g-k> <g-v>x</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+
+<g-c>// Unterminated raw string at EOF:</g-c>
+<g-k>let</g-k> <g-v>unfinished</g-v> <g-o>=</g-o> <g-s>r###"a "## is not enough
+</g-s>

@@ -1,0 +1,33 @@
+<g-c>//! Literals and macros used by a tiny message formatter.</g-c>
+
+<g-k>const</g-k> <g-cb>LIMIT</g-cb><g-pd>:</g-pd> <g-t>usize</g-t> <g-o>=</g-o> <g-n>1_024</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-cb>MASK</g-cb><g-pd>:</g-pd> <g-t>u32</g-t> <g-o>=</g-o> <g-n>0xff00_abcd</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-cb>BITS</g-cb><g-pd>:</g-pd> <g-t>u8</g-t> <g-o>=</g-o> <g-n>0b1010_0011</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-cb>OCTAL</g-cb><g-pd>:</g-pd> <g-t>u16</g-t> <g-o>=</g-o> <g-n>0o755</g-n><g-pd>;</g-pd>
+<g-k>const</g-k> <g-cb>RATIO</g-cb><g-pd>:</g-pd> <g-t>f64</g-t> <g-o>=</g-o> <g-n>6.02e+23</g-n><g-pd>;</g-pd>
+
+<g-f>macro_rules</g-f><g-o>!</g-o> <g-v>announce</g-v> <g-pb>{</g-pb>
+    <g-pb>(</g-pb>$<g-v>name</g-v><g-pd>:</g-pd><g-v>expr</g-v><g-pd>,</g-pd> $<g-v>value</g-v><g-pd>:</g-pd><g-v>expr</g-v><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-pb>{</g-pb>
+        <g-f>println</g-f><g-o>!</g-o><g-pb>(</g-pb><g-s>"{} = {:?}"</g-s><g-pd>,</g-pd> $<g-v>name</g-v><g-pd>,</g-pd> $<g-v>value</g-v><g-pb>)</g-pb>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>fn</g-k> <g-f>main</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+    <g-k>let</g-k> <g-v>ordinary</g-v> <g-o>=</g-o> <g-s>"line</g-s><g-se>\n</g-se><g-s>quote: </g-s><g-se>\"</g-se><g-s> slash: </g-s><g-se>\\</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>unicode</g-v> <g-o>=</g-o> <g-s>"λ = </g-s><g-se>\u{03bb}</g-se><g-s>; byte = </g-s><g-se>\x41</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>r#"a "quote" and # remain literal"#</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>nested</g-v> <g-o>=</g-o> <g-s>r###"embedded "# and "## stay inside"###</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>bytes</g-v> <g-o>=</g-o> <g-s>b"a</g-s><g-se>\x20</g-se><g-s>b</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>raw_bytes</g-v> <g-o>=</g-o> <g-s>br##"not \n or "# yet"##</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>c_string</g-v> <g-o>=</g-o> <g-s>c"hello</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>raw_c</g-v> <g-o>=</g-o> <g-s>cr#"café"#</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>letter</g-v> <g-o>=</g-o> <g-s>'λ'</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>escaped</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\u{1f980}</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>byte</g-v> <g-o>=</g-o> <g-s>b'</g-s><g-se>\x41</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>r#type</g-v> <g-o>=</g-o> <g-cb>true</g-cb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>result</g-v> <g-o>=</g-o> <g-f>Some</g-f><g-pb>(</g-pb><g-n>42_u32</g-n><g-pb>)</g-pb><g-o>.</g-o><g-f>map</g-f><g-pb>(</g-pb><g-o>|</g-o><g-v>n</g-v><g-o>|</g-o> <g-v>n</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-f>announce</g-f><g-o>!</g-o><g-pb>(</g-pb><g-s>"result"</g-s><g-pd>,</g-pd> <g-v>result</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-f>println</g-f><g-o>!</g-o><g-pb>(</g-pb><g-s>"{ordinary} {unicode} {raw} {nested}"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>bytes</g-v><g-pd>,</g-pd> <g-v>raw_bytes</g-v><g-pd>,</g-pd> <g-v>c_string</g-v><g-pd>,</g-pd> <g-v>raw_c</g-v><g-pd>,</g-pd> <g-v>letter</g-v><g-pd>,</g-pd> <g-v>escaped</g-v><g-pd>,</g-pd> <g-v>byte</g-v><g-pd>,</g-pd> <g-v>r#type</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>let</g-k> <g-v>_</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-cb>LIMIT</g-cb><g-pd>,</g-pd> <g-cb>MASK</g-cb><g-pd>,</g-pd> <g-cb>BITS</g-cb><g-pd>,</g-pd> <g-cb>OCTAL</g-cb><g-pd>,</g-pd> <g-cb>RATIO</g-cb><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

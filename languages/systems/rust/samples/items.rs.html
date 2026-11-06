@@ -1,0 +1,44 @@
+<g-ps>#![</g-ps><g-f>allow</g-f><g-pb>(</g-pb><g-v>dead_code</g-v><g-pb>)</g-pb><g-ps>]</g-ps>
+<g-k>use</g-k> <g-v>std</g-v><g-pd>::</g-pd><g-v>fmt</g-v><g-pd>::</g-pd><g-pb>{</g-pb><g-k>self</g-k><g-pd>,</g-pd> <g-t>Display</g-t><g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-c>/// A reading borrowed from a sensor.</g-c>
+<g-c>///</g-c>
+<g-c>/// # Examples</g-c>
+<g-c>/// ```rust</g-c>
+<g-c>/// let reading = Reading { name: "café", value: 12 };</g-c>
+<g-c>/// assert_eq!(reading.value, 12);</g-c>
+<g-c>/// ```</g-c>
+<g-ps>#[</g-ps><g-f>derive</g-f><g-pb>(</g-pb><g-t>Debug</g-t><g-pd>,</g-pd> <g-t>Clone</g-t><g-pb>)</g-pb><g-ps>]</g-ps>
+<g-k>pub</g-k> <g-k>struct</g-k> <g-t>Reading</g-t><g-o>&lt;</g-o><g-l>'a</g-l><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-k>pub</g-k> <g-vm>name</g-vm><g-pd>:</g-pd> <g-o>&amp;</g-o><g-l>'a</g-l> <g-t>str</g-t><g-pd>,</g-pd>
+    <g-k>pub</g-k> <g-vm>value</g-vm><g-pd>:</g-pd> <g-t>i32</g-t><g-pd>,</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>pub</g-k> <g-k>trait</g-k> <g-t>Describe</g-t> <g-pb>{</g-pb>
+    <g-k>fn</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-k>self</g-k><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>String</g-t><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>impl</g-k><g-o>&lt;</g-o><g-l>'a</g-l><g-o>&gt;</g-o> <g-t>Describe</g-t> <g-k>for</g-k> <g-t>Reading</g-t><g-o>&lt;</g-o><g-l>'a</g-l><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-k>fn</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-k>self</g-k><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>String</g-t> <g-pb>{</g-pb>
+        <g-f>format</g-f><g-o>!</g-o><g-pb>(</g-pb><g-s>"{}: {}"</g-s><g-pd>,</g-pd> <g-k>self</g-k><g-o>.</g-o><g-vm>name</g-vm><g-pd>,</g-pd> <g-k>self</g-k><g-o>.</g-o><g-vm>value</g-vm><g-pb>)</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>impl</g-k> <g-t>Display</g-t> <g-k>for</g-k> <g-t>Reading</g-t><g-o>&lt;</g-o><g-l>'_</g-l><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-k>fn</g-k> <g-f>fmt</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-k>self</g-k><g-pd>,</g-pd> <g-v>f</g-v><g-pd>:</g-pd> <g-o>&amp;</g-o><g-k>mut</g-k> <g-v>fmt</g-v><g-pd>::</g-pd><g-t>Formatter</g-t><g-o>&lt;</g-o><g-l>'_</g-l><g-o>&gt;</g-o><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-v>fmt</g-v><g-pd>::</g-pd><g-t>Result</g-t> <g-pb>{</g-pb>
+        <g-f>write</g-f><g-o>!</g-o><g-pb>(</g-pb><g-v>f</g-v><g-pd>,</g-pd> <g-s>"{}"</g-s><g-pd>,</g-pd> <g-k>self</g-k><g-o>.</g-o><g-f>describe</g-f><g-pb>())</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>pub</g-k> <g-k>fn</g-k> <g-f>first</g-f><g-o>&lt;</g-o><g-l>'a</g-l><g-pd>,</g-pd> <g-t>T</g-t><g-pd>:</g-pd> <g-t>Describe</g-t><g-o>&gt;</g-o><g-pb>(</g-pb><g-v>items</g-v><g-pd>:</g-pd> <g-o>&amp;</g-o><g-l>'a</g-l> <g-pb>[</g-pb><g-t>T</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>Option</g-t><g-o>&lt;&amp;</g-o><g-l>'a</g-l> <g-t>T</g-t><g-o>&gt;</g-o> <g-pb>{</g-pb>
+    <g-v>items</g-v><g-o>.</g-o><g-f>first</g-f><g-pb>()</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>fn</g-k> <g-f>scan</g-f><g-pb>(</g-pb><g-v>values</g-v><g-pd>:</g-pd> <g-o>&amp;</g-o><g-pb>[</g-pb><g-t>i32</g-t><g-pb>])</g-pb> <g-o>-&gt;</g-o> <g-t>i32</g-t> <g-pb>{</g-pb>
+    <g-l>'outer</g-l><g-pd>:</g-pd> <g-k>loop</g-k> <g-pb>{</g-pb>
+        <g-k>for</g-k> <g-o>&amp;</g-o><g-v>value</g-v> <g-k>in</g-k> <g-v>values</g-v> <g-pb>{</g-pb>
+            <g-k>if</g-k> <g-v>value</g-v> <g-o>&gt;</g-o> <g-n>0</g-n> <g-pb>{</g-pb> <g-k>break</g-k> <g-l>'outer</g-l> <g-v>value</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+        <g-pb>}</g-pb>
+        <g-k>break</g-k> <g-l>'outer</g-l> <g-n>0</g-n><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
