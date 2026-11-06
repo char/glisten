@@ -1,0 +1,41 @@
+<g-k>#include</g-k> <g-s>&lt;stdint.h&gt;</g-s>
+<g-k>#include</g-k> <g-s>&lt;stdio.h&gt;</g-s>
+
+<g-c>/* Store a reading and its origin. */</g-c>
+<g-k>enum</g-k> <g-t>Source</g-t> <g-pb>{</g-pb> <g-cb>SOURCE_LOCAL</g-cb><g-pd>,</g-pd> <g-cb>SOURCE_REMOTE</g-cb> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>union</g-k> <g-t>Value</g-t> <g-pb>{</g-pb>
+    <g-t>long</g-t> <g-vm>integer</g-vm><g-pd>;</g-pd>
+    <g-t>double</g-t> <g-vm>real</g-vm><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>struct</g-k> <g-t>Reading</g-t> <g-pb>{</g-pb>
+    <g-k>enum</g-k> <g-t>Source</g-t> <g-vm>source</g-vm><g-pd>;</g-pd>
+    <g-k>union</g-k> <g-t>Value</g-t> <g-vm>value</g-vm><g-pd>;</g-pd>
+    <g-t>unsigned</g-t> <g-vm>flags</g-vm><g-pd>,</g-pd> <g-vm>count</g-vm><g-pd>;</g-pd>
+    <g-t>char</g-t> <g-vm>label</g-vm><g-pb>[</g-pb><g-n>32</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>typedef</g-k> <g-k>struct</g-k> <g-t>Reading</g-t> <g-t>reading_t</g-t><g-pd>;</g-pd>
+<g-k>static</g-k> <g-k>const</g-k> <g-t>double</g-t> <g-cb>SCALE</g-cb> <g-o>=</g-o> <g-n>1.25e-3</g-n><g-pd>;</g-pd>
+
+<g-k>static</g-k> <g-t>int</g-t> <g-f>print_reading</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-t>reading_t</g-t> <g-o>*</g-o><g-v>item</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>item</g-v> <g-o>==</g-o> <g-cb>NULL</g-cb><g-pb>)</g-pb> <g-k>goto</g-k> <g-l>missing</g-l><g-pd>;</g-pd>
+    <g-f>printf</g-f><g-pb>(</g-pb><g-s>"%s: %ld</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-v>item</g-v><g-o>-&gt;</g-o><g-vm>label</g-vm><g-pd>,</g-pd> <g-v>item</g-v><g-o>-&gt;</g-o><g-vm>value</g-vm><g-o>.</g-o><g-vm>integer</g-vm><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>for</g-k> <g-pb>(</g-pb><g-t>unsigned</g-t> <g-v>i</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd> <g-v>i</g-v> <g-o>&lt;</g-o> <g-v>item</g-v><g-o>-&gt;</g-o><g-vm>count</g-vm><g-pd>;</g-pd> <g-o>++</g-o><g-v>i</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>switch</g-k> <g-pb>(</g-pb><g-v>item</g-v><g-o>-&gt;</g-o><g-vm>flags</g-vm> <g-o>&amp;</g-o> <g-pb>(</g-pb><g-n>1u</g-n> <g-o>&lt;&lt;</g-o> <g-v>i</g-v><g-pb>))</g-pb> <g-pb>{</g-pb>
+        <g-k>case</g-k> <g-n>0</g-n><g-o>:</g-o> <g-k>continue</g-k><g-pd>;</g-pd>
+        <g-k>default</g-k><g-o>:</g-o> <g-f>putchar</g-f><g-pb>(</g-pb><g-s>'</g-s><g-se>\x2a</g-se><g-s>'</g-s><g-pb>)</g-pb><g-pd>;</g-pd> <g-k>break</g-k><g-pd>;</g-pd>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+    <g-k>return</g-k> <g-n>0</g-n><g-pd>;</g-pd>
+<g-l>missing</g-l><g-o>:</g-o>
+    <g-k>return</g-k> <g-o>-</g-o><g-n>1</g-n><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-t>int</g-t> <g-f>main</g-f><g-pb>(</g-pb><g-t>void</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>reading_t</g-t> <g-v>sample</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-o>.</g-o><g-vm>source</g-vm> <g-o>=</g-o> <g-cb>SOURCE_LOCAL</g-cb><g-pd>,</g-pd> <g-o>.</g-o><g-vm>value</g-vm><g-o>.</g-o><g-vm>integer</g-vm> <g-o>=</g-o> <g-n>42</g-n><g-pd>,</g-pd>
+                         <g-o>.</g-o><g-vm>flags</g-vm> <g-o>=</g-o> <g-n>03</g-n><g-pd>,</g-pd> <g-o>.</g-o><g-vm>count</g-vm> <g-o>=</g-o> <g-n>2</g-n><g-pd>,</g-pd> <g-o>.</g-o><g-vm>label</g-vm> <g-o>=</g-o> <g-s>"温度"</g-s> <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-t>float</g-t> <g-v>a</g-v> <g-o>=</g-o> <g-n>0x1.fp+2f</g-n><g-pd>,</g-pd> <g-v>b</g-v> <g-o>=</g-o> <g-n>.5F</g-n><g-pd>;</g-pd>
+    <g-t>wchar_t</g-t> <g-v>wide</g-v> <g-o>=</g-o> <g-s>L'</g-s><g-se>\u03bb</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-pb>(</g-pb><g-t>void</g-t><g-pb>)</g-pb><g-v>a</g-v><g-pd>;</g-pd> <g-pb>(</g-pb><g-t>void</g-t><g-pb>)</g-pb><g-v>b</g-v><g-pd>;</g-pd> <g-pb>(</g-pb><g-t>void</g-t><g-pb>)</g-pb><g-v>wide</g-v><g-pd>;</g-pd> <g-pb>(</g-pb><g-t>void</g-t><g-pb>)</g-pb><g-cb>SCALE</g-cb><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-f>print_reading</g-f><g-pb>(</g-pb><g-o>&amp;</g-o><g-v>sample</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

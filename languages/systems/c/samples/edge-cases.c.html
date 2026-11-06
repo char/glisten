@@ -1,0 +1,43 @@
+<g-c>// Lexical probes; this file is intentionally not a translation unit.</g-c>
+<g-k>#define</g-k> <g-f>continued</g-f><g-pb>(</g-pb><g-v>x</g-v><g-pb>)</g-pb> <g-pb>((</g-pb><g-v>x</g-v><g-pb>)</g-pb> <g-o>+</g-o> \
+    <g-n>1</g-n><g-pb>)</g-pb> <g-c>// directive continuation</g-c>
+<g-k>#define</g-k> <g-v>iffy</g-v> <g-n>12</g-n>
+  <g-k>#include</g-k> <g-s>&lt;missing-header</g-s>
+<g-t>int</g-t> <g-v>after_header</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>;</g-pd>
+<g-c>/* comment before directive */</g-c> <g-k>#define</g-k> <g-cb>NOT_AT_START</g-cb> <g-n>2</g-n>
+  <g-c>/* first */</g-c> <g-c>/* second */</g-c> <g-k>#include</g-k> <g-s>&lt;after-comments.h&gt;</g-s>
+<g-t>int</g-t> <g-v>before_comment</g-v><g-pd>;</g-pd> <g-c>/* not a directive */</g-c> #<g-v>define</g-v> <g-cb>NO</g-cb> <g-n>1</g-n>
+<g-c>/* crosses
+   lines */</g-c> <g-k>#define</g-k> <g-cb>AFTER_COMMENT</g-cb> <g-n>3</g-n>
+<g-t>int</g-t> <g-v>prior</g-v> <g-c>/* crosses
+   lines */</g-c> <g-k>#define</g-k> <g-cb>AFTER_PRIOR</g-cb> <g-n>4</g-n>
+<g-k>typedef</g-k> <g-t>unsigned</g-t> <g-t>long</g-t> <g-t>Counter</g-t><g-pd>,</g-pd> <g-o>*</g-o><g-t>CounterPtr</g-t><g-pd>;</g-pd>
+<g-k>typedef</g-k> <g-k>enum</g-k> <g-pb>{</g-pb> <g-cb>FIRST</g-cb><g-pd>,</g-pd> <g-cb>SECOND</g-cb> <g-pb>}</g-pb> <g-t>Choice</g-t><g-pd>;</g-pd>
+<g-k>typedef</g-k> <g-k>union</g-k> <g-pb>{</g-pb> <g-k>enum</g-k> <g-pb>{</g-pb> <g-cb>SMALL</g-cb><g-pd>,</g-pd> <g-cb>LARGE</g-cb> <g-pb>}</g-pb> <g-vm>size</g-vm><g-pd>;</g-pd> <g-t>int</g-t> <g-vm>count</g-vm><g-pd>;</g-pd> <g-pb>}</g-pb> <g-t>Sized</g-t><g-pd>;</g-pd>
+<g-k>typedef</g-k> <g-t>int</g-t> <g-t>Callback</g-t><g-pb>(</g-pb><g-t>int</g-t> <g-v>argument</g-v><g-pd>,</g-pd> <g-t>int</g-t> <g-v>other</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-t>int</g-t> <g-v>iffy</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>,</g-pd> <g-v>return_value</g-v> <g-o>=</g-o> <g-n>1</g-n><g-pd>,</g-pd> <g-v>while2</g-v> <g-o>=</g-o> <g-n>2</g-n><g-pd>;</g-pd>
+<g-t>int</g-t> <g-v>_Atomicity</g-v> <g-o>=</g-o> <g-n>3</g-n><g-pd>,</g-pd> <g-v>sizeof_value</g-v> <g-o>=</g-o> <g-n>4</g-n><g-pd>;</g-pd>
+<g-k>struct</g-k> <g-t>Odd</g-t> <g-pb>{</g-pb>
+    <g-t>int</g-t> <g-pb>(</g-pb><g-o>*</g-o><g-vm>callback</g-vm><g-pb>)(</g-pb><g-t>int</g-t> <g-v>arg</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-t>unsigned</g-t> <g-vm>bits</g-vm> <g-o>:</g-o> <g-n>3</g-n><g-pd>;</g-pd>
+    <g-t>int</g-t> <g-vm>first</g-vm><g-pd>,</g-pd> <g-vm>second</g-vm><g-pb>[</g-pb><g-n>2</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-t>void</g-t> <g-f>probe</g-f><g-pb>(</g-pb><g-k>struct</g-k> <g-t>Odd</g-t> <g-o>*</g-o><g-v>p</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-v>p</g-v><g-o>-&gt;</g-o><g-vm>callback</g-vm><g-pb>(</g-pb><g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-v>p</g-v> <g-c>/* comment */</g-c> <g-o>-&gt;</g-o> <g-vm>first</g-vm> <g-o>=</g-o> <g-n>0b1010</g-n><g-pd>;</g-pd>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>iffy</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-l>retry</g-l><g-o>:</g-o> <g-o>++</g-o><g-v>iffy</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>goto</g-k> <g-c>/* comment */</g-c> <g-l>retry</g-l><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-t>char</g-t> <g-o>*</g-o><g-v>s</g-v> <g-o>=</g-o> <g-s>"quote: </g-s><g-se>\"</g-se><g-s> slash: </g-s><g-se>\\</g-se><g-s> tab: </g-s><g-se>\t</g-se><g-s>"</g-s><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-t>char</g-t> <g-o>*</g-o><g-v>escapes</g-v> <g-o>=</g-o> <g-s>"</g-s><g-se>\x123abc</g-se><g-s>Z </g-s><g-se>\u00e9</g-se><g-s>f </g-s><g-se>\U0001F642</g-se><g-s>0 </g-s><g-se>\1</g-se><g-s>x </g-s><g-se>\12</g-se><g-s>x </g-s><g-se>\123</g-se><g-s>4"</g-s><g-pd>;</g-pd>
+    <g-k>const</g-k> <g-t>char</g-t> <g-o>*</g-o><g-v>broken</g-v> <g-o>=</g-o> <g-s>"unterminated</g-s>
+    <g-t>int</g-t> <g-v>recovered</g-v> <g-o>=</g-o> <g-n>0x1p-2</g-n><g-pd>;</g-pd>
+    <g-t>char</g-t> <g-v>bad</g-v> <g-o>=</g-o> <g-s>'</g-s><g-se>\q</g-se><g-s>'</g-s><g-pd>;</g-pd>
+    <g-t>double</g-t> <g-v>dots</g-v> <g-o>=</g-o> <g-n>1..2</g-n><g-pd>;</g-pd>
+    <g-c>// a continued comment \
+    still a comment</g-c>
+    <g-v>recovered</g-v><g-o>++</g-o><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-c>// Deliberately left open at end of file:</g-c>
+<g-c>/* unfinished comment, café
+</g-c>

@@ -1,0 +1,37 @@
+<g-k>#ifndef</g-k> <g-cb>GLISTEN_SAMPLE_H</g-cb>
+<g-k>#define</g-k> <g-cb>GLISTEN_SAMPLE_H</g-cb>
+
+<g-k>#include</g-k> <g-s>&lt;stddef.h&gt;</g-s>
+<g-k>#include</g-k> <g-s>"local/config.h"</g-s>
+
+<g-k>#define</g-k> <g-cb>BUFFER_SIZE</g-cb> <g-n>0x100u</g-n>
+<g-k>#define</g-k> <g-f>MINIMUM</g-f><g-pb>(</g-pb><g-v>a</g-v><g-pd>,</g-pd> <g-v>b</g-v><g-pb>)</g-pb> <g-pb>((</g-pb><g-v>a</g-v><g-pb>)</g-pb> <g-o>&lt;</g-o> <g-pb>(</g-pb><g-v>b</g-v><g-pb>)</g-pb> <g-o>?</g-o> <g-pb>(</g-pb><g-v>a</g-v><g-pb>)</g-pb> <g-o>:</g-o> <g-pb>(</g-pb><g-v>b</g-v><g-pb>))</g-pb>
+<g-k>#define</g-k> <g-f>LOG_PAIR</g-f><g-pb>(</g-pb><g-v>name</g-v><g-pd>,</g-pd> <g-v>value</g-v><g-pb>)</g-pb> \
+    <g-f>log_pair</g-f><g-pb>((</g-pb><g-v>name</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-pb>(</g-pb><g-v>value</g-v><g-pb>))</g-pb>
+
+<g-k>#if</g-k> <g-f>defined</g-f><g-pb>(</g-pb><g-cb>ENABLE_TRACE</g-cb><g-pb>)</g-pb> <g-o>&amp;&amp;</g-o> <g-cb>ENABLE_TRACE</g-cb> <g-o>&gt;</g-o> <g-n>0</g-n>
+<g-k>#define</g-k> <g-f>TRACE</g-f><g-pb>(</g-pb><g-v>message</g-v><g-pb>)</g-pb> <g-f>log_message</g-f><g-pb>(</g-pb><g-v>message</g-v><g-pb>)</g-pb>
+<g-k>#elif</g-k> <g-f>defined</g-f><g-pb>(</g-pb><g-cb>QUIET</g-cb><g-pb>)</g-pb>
+<g-k>#define</g-k> <g-f>TRACE</g-f><g-pb>(</g-pb><g-v>message</g-v><g-pb>)</g-pb> <g-pb>((</g-pb><g-t>void</g-t><g-pb>)</g-pb><g-n>0</g-n><g-pb>)</g-pb>
+<g-k>#else</g-k>
+<g-k>#define</g-k> <g-f>TRACE</g-f><g-pb>(</g-pb><g-v>message</g-v><g-pb>)</g-pb> <g-f>log_message</g-f><g-pb>(</g-pb><g-s>"fallback: "</g-s> <g-v>message</g-v><g-pb>)</g-pb>
+<g-k>#endif</g-k>
+
+<g-c>/* A header with a directive inside an aggregate. */</g-c>
+<g-k>typedef</g-k> <g-k>struct</g-k> <g-t>Buffer</g-t> <g-pb>{</g-pb>
+    <g-t>unsigned</g-t> <g-t>char</g-t> <g-o>*</g-o><g-vm>data</g-vm><g-pd>;</g-pd>
+    <g-t>size_t</g-t> <g-vm>length</g-vm><g-pd>;</g-pd>
+<g-k>#ifdef</g-k> <g-cb>ENABLE_TRACE</g-cb>
+    <g-k>const</g-k> <g-t>char</g-t> <g-o>*</g-o><g-vm>name</g-vm><g-pd>;</g-pd>
+<g-k>#endif</g-k>
+<g-pb>}</g-pb> <g-t>Buffer</g-t><g-pd>;</g-pd>
+
+<g-k>static</g-k> <g-k>inline</g-k> <g-t>size_t</g-t> <g-f>buffer_size</g-f><g-pb>(</g-pb><g-k>const</g-k> <g-t>Buffer</g-t> <g-o>*</g-o><g-v>buffer</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>return</g-k> <g-f>MINIMUM</g-f><g-pb>(</g-pb><g-v>buffer</g-v><g-o>-&gt;</g-o><g-vm>length</g-vm><g-pd>,</g-pd> <g-cb>BUFFER_SIZE</g-cb><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-c>// The café message is deliberately UTF-8.</g-c>
+<g-k>static</g-k> <g-k>const</g-k> <g-t>char</g-t> <g-o>*</g-o><g-v>greeting</g-v> <g-o>=</g-o> <g-s>u8"Hello, café!</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+<g-k>_Static_assert</g-k><g-pb>(</g-pb><g-cb>BUFFER_SIZE</g-cb> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>,</g-pd> <g-s>"buffer must not be empty"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-k>#endif</g-k> <g-c>/* GLISTEN_SAMPLE_H */</g-c>
