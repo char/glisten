@@ -1,0 +1,10 @@
+<g-k>#define</g-k> <g-cb>USE_TEXTURE</g-cb> <g-n>1</g-n>
+<g-t>Texture2D</g-t><g-o>&lt;</g-o><g-t>float4</g-t><g-o>&gt;</g-o> <g-v>albedo</g-v> <g-o>:</g-o> <g-k>register</g-k><g-pb>(</g-pb><g-v>t0</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-t>SamplerState</g-t> <g-v>linearSampler</g-v> <g-o>:</g-o> <g-k>register</g-k><g-pb>(</g-pb><g-v>s0</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+
+<g-t>float4</g-t> <g-f>main</g-f><g-pb>(</g-pb><g-t>float2</g-t> <g-v>uv</g-v> <g-o>:</g-o> <g-at>TEXCOORD0</g-at><g-pd>,</g-pd> <g-t>float4</g-t> <g-v>position</g-v> <g-o>:</g-o> <g-at>SV_Position</g-at><g-pb>)</g-pb> <g-o>:</g-o> <g-at>SV_Target0</g-at> <g-pb>{</g-pb>
+    <g-t>float4</g-t> <g-v>surface</g-v> <g-o>=</g-o> <g-v>albedo</g-v><g-o>.</g-o><g-f>Sample</g-f><g-pb>(</g-pb><g-v>linearSampler</g-v><g-pd>,</g-pd> <g-v>uv</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-t>float</g-t> <g-v>light</g-v> <g-o>=</g-o> <g-f>saturate</g-f><g-pb>(</g-pb><g-f>dot</g-f><g-pb>(</g-pb><g-v>surface</g-v><g-o>.</g-o><g-vm>xyz</g-vm><g-pd>,</g-pd> <g-t>float3</g-t><g-pb>(</g-pb><g-n>0.3</g-n><g-pd>,</g-pd> <g-n>0.5</g-n><g-pd>,</g-pd> <g-n>0.2</g-n><g-pb>)))</g-pb><g-pd>;</g-pd>
+    <g-pb>[</g-pb><g-at>branch</g-at><g-pb>]</g-pb> <g-k>if</g-k> <g-pb>(</g-pb><g-v>position</g-v><g-o>.</g-o><g-vm>x</g-vm> <g-o>&lt;</g-o> <g-n>1.0</g-n><g-pb>)</g-pb> <g-k>discard</g-k><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-f>lerp</g-f><g-pb>(</g-pb><g-v>surface</g-v><g-pd>,</g-pd> <g-t>float4</g-t><g-pb>(</g-pb><g-v>light</g-v><g-pd>,</g-pd> <g-v>light</g-v><g-pd>,</g-pd> <g-v>light</g-v><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>)</g-pb><g-pd>,</g-pd> <g-n>0.25</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

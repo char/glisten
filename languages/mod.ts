@@ -31,6 +31,7 @@ import graphql from "./query/graphql/grammar.ts";
 import groovy from "./managed/groovy/grammar.ts";
 import haskell from "./functional/haskell/grammar.ts";
 import hcl from "./config/hcl/grammar.ts";
+import hlsl from "./shaders/hlsl/grammar.ts";
 import html from "./web/html/grammar.ts";
 import ini from "./config/ini/grammar.ts";
 import java from "./managed/java/grammar.ts";
@@ -120,6 +121,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   groovy,
   haskell,
   hcl,
+  hlsl,
   html,
   ini,
   java,

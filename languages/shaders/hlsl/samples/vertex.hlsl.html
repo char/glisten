@@ -1,0 +1,19 @@
+<g-k>cbuffer</g-k> <g-t>Camera</g-t> <g-o>:</g-o> <g-k>register</g-k><g-pb>(</g-pb><g-v>b0</g-v><g-pd>,</g-pd> <g-v>space1</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>float4x4</g-t> <g-v>viewProjection</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>struct</g-k> <g-t>VertexInput</g-t> <g-pb>{</g-pb>
+    <g-t>float3</g-t> <g-vm>position</g-vm> <g-o>:</g-o> <g-at>POSITION</g-at><g-pd>;</g-pd>
+    <g-t>float2</g-t> <g-vm>uv</g-vm> <g-o>:</g-o> <g-at>TEXCOORD0</g-at><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+<g-k>struct</g-k> <g-t>VertexOutput</g-t> <g-pb>{</g-pb>
+    <g-t>float4</g-t> <g-vm>position</g-vm> <g-o>:</g-o> <g-at>SV_Position</g-at><g-pd>;</g-pd>
+    <g-t>float2</g-t> <g-vm>uv</g-vm> <g-o>:</g-o> <g-at>TEXCOORD0</g-at><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-t>VertexOutput</g-t> <g-f>main</g-f><g-pb>(</g-pb><g-t>VertexInput</g-t> <g-v>input</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-t>VertexOutput</g-t> <g-v>output</g-v><g-pd>;</g-pd>
+    <g-v>output</g-v><g-o>.</g-o><g-vm>position</g-vm> <g-o>=</g-o> <g-f>mul</g-f><g-pb>(</g-pb><g-v>viewProjection</g-v><g-pd>,</g-pd> <g-t>float4</g-t><g-pb>(</g-pb><g-v>input</g-v><g-o>.</g-o><g-vm>position</g-vm><g-pd>,</g-pd> <g-n>1.0</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+    <g-v>output</g-v><g-o>.</g-o><g-vm>uv</g-vm> <g-o>=</g-o> <g-v>input</g-v><g-o>.</g-o><g-vm>uv</g-vm><g-pd>;</g-pd>
+    <g-k>return</g-k> <g-v>output</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>

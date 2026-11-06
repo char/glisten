@@ -1,0 +1,13 @@
+<g-t>RWStructuredBuffer</g-t><g-o>&lt;</g-o><g-t>float4</g-t><g-o>&gt;</g-o> <g-v>particles</g-v> <g-o>:</g-o> <g-k>register</g-k><g-pb>(</g-pb><g-v>u0</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-t>RWByteAddressBuffer</g-t> <g-v>counter</g-v> <g-o>:</g-o> <g-k>register</g-k><g-pb>(</g-pb><g-v>u1</g-v><g-pd>,</g-pd> <g-v>space1</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>groupshared</g-k> <g-t>uint</g-t> <g-v>completed</g-v><g-pd>;</g-pd>
+
+<g-pb>[</g-pb><g-at>numthreads</g-at><g-pb>(</g-pb><g-n>8</g-n><g-pd>,</g-pd> <g-n>8</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-pb>)]</g-pb>
+<g-t>void</g-t> <g-f>main</g-f><g-pb>(</g-pb><g-t>uint3</g-t> <g-v>id</g-v> <g-o>:</g-o> <g-at>SV_DispatchThreadID</g-at><g-pd>,</g-pd> <g-t>uint</g-t> <g-v>lane</g-v> <g-o>:</g-o> <g-at>SV_GroupIndex</g-at><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-v>lane</g-v> <g-o>==</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-v>completed</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+    <g-f>GroupMemoryBarrierWithGroupSync</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+    <g-pb>[</g-pb><g-at>unroll</g-at><g-pb>]</g-pb> <g-k>for</g-k> <g-pb>(</g-pb><g-t>uint</g-t> <g-v>i</g-v> <g-o>=</g-o> <g-n>0</g-n><g-pd>;</g-pd> <g-v>i</g-v> <g-o>&lt;</g-o> <g-n>4</g-n><g-pd>;</g-pd> <g-o>++</g-o><g-v>i</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-v>particles</g-v><g-pb>[</g-pb><g-v>id</g-v><g-o>.</g-o><g-vm>x</g-vm><g-pb>]</g-pb><g-o>.</g-o><g-vm>xyz</g-vm> <g-o>+=</g-o> <g-t>float3</g-t><g-pb>(</g-pb><g-n>0.01</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pd>,</g-pd> <g-n>0.0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+    <g-v>counter</g-v><g-o>.</g-o><g-f>InterlockedAdd</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
