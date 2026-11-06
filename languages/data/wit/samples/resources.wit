@@ -1,0 +1,18 @@
+package acme:storage@0.3.0-rc.1+build.5;
+interface storage {
+  /** A handle with a nested /* explanation */ and a constructor. */
+  resource blob {
+    constructor(bytes: list<u8>);
+    read: func(n: u32) -> list<u8>;
+    write: func(data: list<u8>) -> result<_, storage-error>;
+    merge: static func(left: borrow<blob>, right: own<blob>) -> blob;
+  }
+  enum storage-error { closed, full, }
+  @deprecated(version = 0.3.0)
+  old-open: func() -> option<blob>;
+  async-read: async func(b: borrow<blob>) -> future<stream<u8>>;
+}
+world app {
+  include acme:shared/base@1.0.0 with { old as new };
+  export storage;
+}

@@ -1,0 +1,11 @@
+package demo:edge@1.0.0;
+// Unicode is allowed in comments: 雪 🦀
+interface %interface {
+  %type: func(%record: u8) -> result<_, string>;
+  invalid--name: func();
+  mixedCase: u32;
+  a: u32; /* nested /* inner */ still outer */
+  @since(version = 1.2.3)
+  unfinished: func(x: list<u8>;
+  /* never closed
+}

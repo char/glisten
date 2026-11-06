@@ -1,0 +1,18 @@
+<g-k>package</g-k> acme<g-pd>:</g-pd>storage<g-pd>@</g-pd><g-n>0.3.0-rc.1+build.5</g-n><g-pd>;</g-pd>
+<g-k>interface</g-k> storage <g-pb>{</g-pb>
+  <g-c>/** A handle with a nested /* explanation */ and a constructor. */</g-c>
+  <g-k>resource</g-k> <g-t>blob</g-t> <g-pb>{</g-pb>
+    <g-k>constructor</g-k><g-pb>(</g-pb><g-pr>bytes</g-pr><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>u8</g-t><g-pb>&gt;)</g-pb><g-pd>;</g-pd>
+    <g-f>read</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>n</g-pr><g-pd>:</g-pd> <g-t>u32</g-t><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>u8</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-f>write</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>data</g-pr><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>u8</g-t><g-pb>&gt;)</g-pb> <g-pd>-&gt;</g-pd> <g-t>result</g-t><g-pb>&lt;</g-pb>_<g-pd>,</g-pd> <g-t>storage-error</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+    <g-f>merge</g-f><g-pd>:</g-pd> <g-k>static</g-k> <g-k>func</g-k><g-pb>(</g-pb><g-pr>left</g-pr><g-pd>:</g-pd> <g-t>borrow</g-t><g-pb>&lt;</g-pb><g-t>blob</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd> <g-pr>right</g-pr><g-pd>:</g-pd> <g-t>own</g-t><g-pb>&lt;</g-pb><g-t>blob</g-t><g-pb>&gt;)</g-pb> <g-pd>-&gt;</g-pd> <g-t>blob</g-t><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>enum</g-k> <g-t>storage-error</g-t> <g-pb>{</g-pb> <g-cb>closed</g-cb><g-pd>,</g-pd> <g-cb>full</g-cb><g-pd>,</g-pd> <g-pb>}</g-pb>
+  <g-ps>@</g-ps><g-at>deprecated</g-at><g-pb>(</g-pb><g-v>version</g-v> <g-o>=</g-o> <g-n>0.3.0</g-n><g-pb>)</g-pb>
+  <g-f>old-open</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>()</g-pb> <g-pd>-&gt;</g-pd> <g-t>option</g-t><g-pb>&lt;</g-pb><g-t>blob</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+  <g-f>async-read</g-f><g-pd>:</g-pd> <g-k>async</g-k> <g-k>func</g-k><g-pb>(</g-pb><g-pr>b</g-pr><g-pd>:</g-pd> <g-t>borrow</g-t><g-pb>&lt;</g-pb><g-t>blob</g-t><g-pb>&gt;)</g-pb> <g-pd>-&gt;</g-pd> <g-t>future</g-t><g-pb>&lt;</g-pb><g-t>stream</g-t><g-pb>&lt;</g-pb><g-t>u8</g-t><g-pb>&gt;&gt;</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>world</g-k> app <g-pb>{</g-pb>
+  <g-k>include</g-k> acme<g-pd>:</g-pd>shared<g-pd>/</g-pd>base<g-pd>@</g-pd><g-n>1.0.0</g-n> <g-k>with</g-k> <g-pb>{</g-pb> old <g-k>as</g-k> new <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-k>export</g-k> <g-v>storage</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>

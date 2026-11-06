@@ -1,0 +1,26 @@
+<g-k>package</g-k> acme<g-pd>:</g-pd>catalog<g-pd>@</g-pd><g-n>1.2.3</g-n><g-pd>;</g-pd>
+
+<g-c>/// Shared values for a product catalog.</g-c>
+<g-k>interface</g-k> types <g-pb>{</g-pb>
+  <g-k>record</g-k> <g-t>product</g-t> <g-pb>{</g-pb>
+    <g-pr>id</g-pr><g-pd>:</g-pd> <g-t>u64</g-t><g-pd>,</g-pd>
+    <g-pr>title</g-pr><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd>
+    <g-pr>tags</g-pr><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>variant</g-k> <g-t>catalog-error</g-t> <g-pb>{</g-pb> <g-cb>missing</g-cb><g-pd>,</g-pd> <g-cb>denied</g-cb><g-pb>(</g-pb><g-t>string</g-t><g-pb>)</g-pb><g-pd>,</g-pd> <g-pb>}</g-pb>
+  <g-k>enum</g-k> <g-t>visibility</g-t> <g-pb>{</g-pb> <g-cb>public</g-cb><g-pd>,</g-pd> <g-cb>private</g-cb><g-pd>,</g-pd> <g-pb>}</g-pb>
+  <g-k>flags</g-k> <g-t>permissions</g-t> <g-pb>{</g-pb> <g-pr>read</g-pr><g-pd>,</g-pd> <g-pr>write</g-pr><g-pd>,</g-pd> <g-pb>}</g-pb>
+  <g-k>type</g-k> <g-t>product-id</g-t> <g-o>=</g-o> <g-t>u64</g-t><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+
+<g-k>interface</g-k> catalog <g-pb>{</g-pb>
+  <g-k>use</g-k> types<g-pd>.</g-pd><g-pb>{</g-pb>product<g-pd>,</g-pd> product-id <g-k>as</g-k> id<g-pd>,</g-pd> catalog-error<g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-ps>@</g-ps><g-at>since</g-at><g-pb>(</g-pb><g-v>version</g-v> <g-o>=</g-o> <g-n>1.2.0</g-n><g-pb>)</g-pb>
+  <g-f>lookup</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>key</g-pr><g-pd>:</g-pd> <g-t>id</g-t><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-t>result</g-t><g-pb>&lt;</g-pb><g-t>product</g-t><g-pd>,</g-pd> <g-t>catalog-error</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+  <g-ps>@</g-ps><g-at>unstable</g-at><g-pb>(</g-pb><g-v>feature</g-v> <g-o>=</g-o> <g-v>batch-lookup</g-v><g-pb>)</g-pb>
+  <g-f>lookup-many</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>keys</g-pr><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>id</g-t><g-pb>&gt;)</g-pb> <g-pd>-&gt;</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>option</g-t><g-pb>&lt;</g-pb><g-t>product</g-t><g-pb>&gt;&gt;</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>world</g-k> shop <g-pb>{</g-pb>
+  <g-k>import</g-k> <g-pr>wasi</g-pr><g-pd>:</g-pd><g-t>clocks</g-t><g-pd>/</g-pd><g-v>monotonic-clock</g-v><g-ps>@</g-ps><g-n>0.2.0</g-n><g-pd>;</g-pd>
+  <g-k>export</g-k> <g-v>catalog</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>

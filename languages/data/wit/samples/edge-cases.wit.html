@@ -1,0 +1,12 @@
+<g-k>package</g-k> demo<g-pd>:</g-pd>edge<g-pd>@</g-pd><g-n>1.0.0</g-n><g-pd>;</g-pd>
+<g-c>// Unicode is allowed in comments: 雪 🦀</g-c>
+<g-k>interface</g-k> %interface <g-pb>{</g-pb>
+  <g-f>%type</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>%record</g-pr><g-pd>:</g-pd> <g-t>u8</g-t><g-pb>)</g-pb> <g-pd>-&gt;</g-pd> <g-t>result</g-t><g-pb>&lt;</g-pb>_<g-pd>,</g-pd> <g-t>string</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+  invalid--name<g-pd>:</g-pd> <g-k>func</g-k><g-pb>()</g-pb><g-pd>;</g-pd>
+  mixedCase<g-pd>:</g-pd> <g-t>u32</g-t><g-pd>;</g-pd>
+  <g-pr>a</g-pr><g-pd>:</g-pd> <g-t>u32</g-t><g-pd>;</g-pd> <g-c>/* nested /* inner */ still outer */</g-c>
+  <g-ps>@</g-ps><g-at>since</g-at><g-pb>(</g-pb><g-v>version</g-v> <g-o>=</g-o> <g-n>1.2.3</g-n><g-pb>)</g-pb>
+  <g-f>unfinished</g-f><g-pd>:</g-pd> <g-k>func</g-k><g-pb>(</g-pb><g-pr>x</g-pr><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>u8</g-t><g-pb>&gt;</g-pb><g-pd>;</g-pd>
+  <g-c>/* never closed
+}
+</g-c>

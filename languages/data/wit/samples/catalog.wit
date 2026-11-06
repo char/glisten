@@ -1,0 +1,26 @@
+package acme:catalog@1.2.3;
+
+/// Shared values for a product catalog.
+interface types {
+  record product {
+    id: u64,
+    title: string,
+    tags: list<string>,
+  }
+  variant catalog-error { missing, denied(string), }
+  enum visibility { public, private, }
+  flags permissions { read, write, }
+  type product-id = u64;
+}
+
+interface catalog {
+  use types.{product, product-id as id, catalog-error};
+  @since(version = 1.2.0)
+  lookup: func(key: id) -> result<product, catalog-error>;
+  @unstable(feature = batch-lookup)
+  lookup-many: func(keys: list<id>) -> list<option<product>>;
+}
+world shop {
+  import wasi:clocks/monotonic-clock@0.2.0;
+  export catalog;
+}
