@@ -1,0 +1,19 @@
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"ts"</g-s><g-pb>&gt;</g-pb>
+  <g-k>let</g-k> <g-v>count</g-v> <g-o>=</g-o> <g-f>$state</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-v>doubled</g-v> <g-o>=</g-o> <g-f>$derived</g-f><g-pb>(</g-pb><g-v>count</g-v> <g-o>*</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>function</g-k> <g-f>increment</g-f><g-pb>()</g-pb> <g-pb>{</g-pb> <g-v>count</g-v> <g-o>+=</g-o> <g-n>1</g-n><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>Counter<g-pb>&lt;/</g-pb><g-tg>h1</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>button</g-tg> <g-at>onclick</g-at><g-o>=</g-o><g-ps>{</g-ps><g-v>increment</g-v><g-ps>}</g-ps> <g-at>disabled</g-at><g-o>=</g-o><g-ps>{</g-ps><g-v>count</g-v> <g-o>&gt;</g-o> <g-n>10</g-n><g-ps>}</g-ps> <g-at>class</g-at><g-ps>:</g-ps><g-pr>active</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-ps>}</g-ps><g-pb>&gt;</g-pb>
+  Count: <g-ps>{</g-ps><g-v>count</g-v><g-ps>}</g-ps>; doubled: <g-ps>{</g-ps><g-v>doubled</g-v><g-ps>}</g-ps>
+<g-pb>&lt;/</g-pb><g-tg>button</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{#</g-ps><g-k>if</g-k> <g-v>count</g-v> <g-o>&gt;</g-o> <g-n>3</g-n><g-ps>}</g-ps>
+  <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Many clicks<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{:</g-ps><g-k>else</g-k> <g-k>if</g-k> <g-v>count</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-ps>}</g-ps>
+  <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Getting started<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{:</g-ps><g-k>else</g-k><g-ps>}</g-ps>
+  <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>No clicks yet<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{/</g-ps><g-k>if</g-k><g-ps>}</g-ps>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>
+  <g-tg>button</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="rebeccapurple">rebeccapurple</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>

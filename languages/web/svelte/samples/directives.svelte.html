@@ -1,0 +1,16 @@
+<g-pb>&lt;</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-k>let</g-k> <g-v>value</g-v> <g-o>=</g-o> <g-f>$state</g-f><g-pb>(</g-pb><g-s>""</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-k>let</g-k> <g-v>props</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>title</g-vm><g-pd>:</g-pd> <g-s>"hello"</g-s> <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-k>const</g-k> <g-v>handle</g-v> <g-o>=</g-o> <g-pb>()</g-pb> <g-o>=&gt;</g-o> <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-f>$effect</g-f><g-pb>(()</g-pb> <g-o>=&gt;</g-o> <g-v>console</g-v><g-o>.</g-o><g-vm>log</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>))</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>input</g-tg> <g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps> <g-ps>{</g-ps><g-o>...</g-o><g-v>props</g-v><g-ps>}</g-ps> <g-at>bind</g-at><g-ps>:</g-ps><g-pr>value</g-pr> <g-at>on</g-at><g-ps>:</g-ps><g-pr>input</g-pr><g-ps>|</g-ps><g-l>once</g-l><g-o>=</g-o><g-ps>{</g-ps><g-v>handle</g-v><g-ps>}</g-ps> <g-at>use</g-at><g-ps>:</g-ps><g-pr>focus</g-pr> <g-pb>/&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>div</g-tg> <g-at>class</g-at><g-ps>:</g-ps><g-pr>active</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps> <g-at>style</g-at><g-ps>:</g-ps><g-pr>color</g-pr><g-o>=</g-o><g-ps>{</g-ps><g-v>value</g-v><g-ps>}</g-ps> <g-at>transition</g-at><g-ps>:</g-ps><g-pr>fade</g-pr><g-ps>|</g-ps><g-l>local</g-l> <g-at>in</g-at><g-ps>:</g-ps><g-pr>fly</g-pr> <g-at>out</g-at><g-ps>:</g-ps><g-pr>fade</g-pr> <g-at>animate</g-at><g-ps>:</g-ps><g-pr>flip</g-pr><g-pb>&gt;</g-pb>
+  <g-ps>{</g-ps><g-pb>({</g-pb> <g-vm>text</g-vm><g-pd>:</g-pd> <g-s>"}"</g-s><g-pd>,</g-pd> <g-vm>nested</g-vm><g-pd>:</g-pd> <g-pb>{</g-pb> <g-vm>n</g-vm><g-pd>:</g-pd> <g-n>1</g-n> <g-pb>}</g-pb> <g-pb>})</g-pb><g-o>.</g-o><g-vm>text</g-vm><g-ps>}</g-ps>
+  <g-ps>{</g-ps><g-s>`value: </g-s><g-ps>${</g-ps><g-v>value</g-v><g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps>
+  <g-ps>{</g-ps><g-s>/}/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>value</g-v><g-pb>)</g-pb> <g-o>?</g-o> <g-s>"brace"</g-s> <g-pd>:</g-pd> <g-s>"other"</g-s><g-ps>}</g-ps>
+<g-pb>&lt;/</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>style</g-tg> <g-at>lang</g-at><g-o>=</g-o><g-s>"scss"</g-s><g-pb>&gt;</g-pb>
+  <g-v>$accent</g-v><g-pd>:</g-pd> <g-co v="#369"><g-s>#369</g-s></g-co><g-pd>;</g-pd>
+  <g-tg>div</g-tg> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>$accent</g-v><g-pd>;</g-pd> <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb> <g-pr>opacity</g-pr><g-pd>:</g-pd> <g-n>.8</g-n><g-pd>;</g-pd> <g-pb>}</g-pb> <g-pb>}</g-pb>
+<g-pb>&lt;/</g-pb><g-tg>style</g-tg><g-pb>&gt;</g-pb>

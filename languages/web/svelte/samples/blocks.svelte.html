@@ -1,0 +1,24 @@
+<g-pb>&lt;</g-pb><g-tg>script</g-tg> <g-at>module</g-at><g-pb>&gt;</g-pb>
+  <g-k>export</g-k> <g-k>const</g-k> <g-v>title</g-v> <g-o>=</g-o> <g-s>"Tasks"</g-s><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-pb>&lt;</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+  <g-k>let</g-k> <g-pb>{</g-pb> <g-vm>items</g-vm><g-pd>,</g-pd> <g-vm>promise</g-vm> <g-pb>}</g-pb> <g-o>=</g-o> <g-f>$props</g-f><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-pb>&lt;/</g-pb><g-tg>script</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{#</g-ps><g-k>snippet</g-k> <g-f>row</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>,</g-pd> <g-v>index</g-v><g-pb>)</g-pb><g-ps>}</g-ps>
+  <g-pb>&lt;</g-pb><g-tg>li</g-tg> <g-at>title</g-at><g-o>=</g-o><g-s>"Item </g-s><g-ps>{</g-ps><g-v>index</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pb>&gt;</g-pb><g-ps>{</g-ps><g-v>item</g-v><g-o>.</g-o><g-vm>label</g-vm><g-ps>}</g-ps><g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{/</g-ps><g-k>snippet</g-k><g-ps>}</g-ps>
+<g-pb>&lt;</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{#</g-ps><g-k>each</g-k> <g-v>items</g-v> <g-k>as</g-k> <g-v>item</g-v><g-pd>,</g-pd> <g-f>i</g-f> <g-pb>(</g-pb><g-v>item</g-v><g-o>.</g-o><g-vm>id</g-vm><g-pb>)</g-pb><g-ps>}</g-ps>
+    <g-ps>{@</g-ps><g-k>render</g-k> <g-f>row</g-f><g-pb>(</g-pb><g-v>item</g-v><g-pd>,</g-pd> <g-v>i</g-v><g-pb>)</g-pb><g-ps>}</g-ps>
+  <g-ps>{:</g-ps><g-k>else</g-k><g-ps>}</g-ps>
+    <g-pb>&lt;</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>Nothing here<g-pb>&lt;/</g-pb><g-tg>li</g-tg><g-pb>&gt;</g-pb>
+  <g-ps>{/</g-ps><g-k>each</g-k><g-ps>}</g-ps>
+<g-pb>&lt;/</g-pb><g-tg>ul</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{#</g-ps><g-k>await</g-k> <g-v>promise</g-v><g-ps>}</g-ps>
+  <g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Loading…<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>
+<g-ps>{:</g-ps><g-k>then</g-k> <g-v>result</g-v><g-ps>}</g-ps>
+  <g-ps>{@</g-ps><g-k>html</g-k> <g-v>result</g-v><g-o>.</g-o><g-vm>html</g-vm><g-ps>}</g-ps>
+<g-ps>{:</g-ps><g-k>catch</g-k> <g-v>error</g-v><g-ps>}</g-ps>
+  <g-ps>{@</g-ps><g-k>debug</g-k> <g-v>error</g-v><g-ps>}</g-ps>
+<g-ps>{/</g-ps><g-k>await</g-k><g-ps>}</g-ps>
+<g-ps>{#</g-ps><g-k>key</g-k> <g-v>items</g-v><g-o>.</g-o><g-vm>length</g-vm><g-ps>}</g-ps><g-pb>&lt;</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb>Updated<g-pb>&lt;/</g-pb><g-tg>p</g-tg><g-pb>&gt;</g-pb><g-ps>{/</g-ps><g-k>key</g-k><g-ps>}</g-ps>

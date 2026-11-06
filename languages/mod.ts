@@ -59,6 +59,7 @@ import scheme from "./functional/scheme/grammar.ts";
 import scss from "./web/scss/grammar.ts";
 import sql from "./query/sql/grammar.ts";
 import ssh_config from "./config/ssh-config/grammar.ts";
+import svelte from "./web/svelte/grammar.ts";
 import swift from "./managed/swift/grammar.ts";
 import textproto from "./data/textproto/grammar.ts";
 import thrift from "./data/thrift/grammar.ts";
@@ -133,6 +134,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   scss,
   sql,
   "ssh-config": ssh_config,
+  svelte,
   swift,
   textproto,
   thrift,
