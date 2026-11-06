@@ -1,0 +1,14 @@
+string: 'it''s fine'
+quoted: "a\tb"
+url: https://example.org/a#frag
+empty: null
+legacy: yes
+limit: 0x2a
+folded: |-
+    first
+
+      nested
+    last
+outside: value
+command: echo "${{ github.sha }}"
+after-command: [one, two]

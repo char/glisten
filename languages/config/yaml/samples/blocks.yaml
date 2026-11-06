@@ -1,0 +1,31 @@
+plain: |
+
+  alpha
+    beta
+  gamma
+next: true
+nested:
+  text: >-
+    first
+    second
+  another: value
+---
+- key: |2+
+    explicit
+      extra
+  next: false
+---
+zero: >3-
+   a
+b: not-in-scalar
+end: done
+---
+- |2
+  item
+- sibling
+- - |1
+    child
+  - next
+- 'quoted key': |2- # comment
+    quoted
+  after: yes
