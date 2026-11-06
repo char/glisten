@@ -1,0 +1,13 @@
+<g-k>@namespace</g-k> <g-s>"demo"</g-s>
+<g-k>@include</g-k> <g-s>"shared.awk"</g-s>
+<g-k>BEGINFILE</g-k> <g-pb>{</g-pb> <g-f>print</g-f> <g-cb>FILENAME</g-cb><g-pd>,</g-pd> <g-cb>ARGIND</g-cb> <g-pb>}</g-pb>
+<g-k>function</g-k> <g-f>describe</g-f><g-pb>(</g-pb><g-v>text</g-v><g-pd>,</g-pd> <g-v>parts</g-v><g-pd>,</g-pd> <g-v>n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-v>n</g-v> <g-o>=</g-o> <g-f>split</g-f><g-pb>(</g-pb><g-v>text</g-v><g-pd>,</g-pd> <g-v>parts</g-v><g-pd>,</g-pd> <g-s>/[,:]/</g-s><g-pb>)</g-pb>
+    <g-k>return</g-k> <g-f>sprintf</g-f><g-pb>(</g-pb><g-s>"%d fields"</g-s><g-pd>,</g-pd> <g-v>n</g-v><g-pb>)</g-pb>
+<g-pb>}</g-pb>
+<g-pb>{</g-pb>
+    <g-v>line</g-v> <g-o>=</g-o> <g-f>gensub</g-f><g-pb>(</g-pb><g-s>/foo/</g-s><g-pd>,</g-pd> <g-s>"bar"</g-s><g-pd>,</g-pd> <g-s>"g"</g-s><g-pd>,</g-pd> <g-ps>$</g-ps><g-n>0</g-n><g-pb>)</g-pb>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-f>length</g-f><g-pb>(</g-pb><g-v>line</g-v><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-f>print</g-f> <g-f>describe</g-f><g-pb>(</g-pb><g-v>line</g-v><g-pb>)</g-pb>
+    <g-k>nextfile</g-k>
+<g-pb>}</g-pb>
+<g-k>ENDFILE</g-k> <g-pb>{</g-pb> <g-f>print</g-f> <g-cb>FNR</g-cb> <g-pb>}</g-pb>

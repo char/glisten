@@ -1,0 +1,10 @@
+<g-c># Summarize records by category.</g-c>
+<g-k>BEGIN</g-k> <g-pb>{</g-pb> <g-cb>FS</g-cb> <g-o>=</g-o> <g-s>","</g-s><g-pd>;</g-pd> <g-cb>OFS</g-cb> <g-o>=</g-o> <g-s>"</g-s><g-se>\t</g-se><g-s>"</g-s> <g-pb>}</g-pb>
+<g-cb>NR</g-cb> <g-o>&gt;</g-o> <g-n>1</g-n> <g-o>&amp;&amp;</g-o> <g-ps>$</g-ps><g-n>2</g-n> <g-o>~</g-o> <g-s>/^[0-9]+$/</g-s> <g-pb>{</g-pb>
+    <g-v>count</g-v><g-pb>[</g-pb><g-ps>$</g-ps><g-n>1</g-n><g-pb>]</g-pb><g-o>++</g-o>
+    <g-v>total</g-v><g-pb>[</g-pb><g-ps>$</g-ps><g-n>1</g-n><g-pb>]</g-pb> <g-o>+=</g-o> <g-ps>$</g-ps><g-n>2</g-n>
+<g-pb>}</g-pb>
+<g-k>END</g-k> <g-pb>{</g-pb>
+    <g-k>for</g-k> <g-pb>(</g-pb><g-v>key</g-v> <g-k>in</g-k> <g-v>count</g-v><g-pb>)</g-pb>
+        <g-f>printf</g-f> <g-s>"%s%s%.2f</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-v>key</g-v><g-pd>,</g-pd> <g-cb>OFS</g-cb><g-pd>,</g-pd> <g-v>total</g-v><g-pb>[</g-pb><g-v>key</g-v><g-pb>]</g-pb> <g-o>/</g-o> <g-v>count</g-v><g-pb>[</g-pb><g-v>key</g-v><g-pb>]</g-pb>
+<g-pb>}</g-pb>

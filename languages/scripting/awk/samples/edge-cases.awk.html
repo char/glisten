@@ -1,0 +1,12 @@
+<g-c># Slash after an operand is division, after an operator a regex.</g-c>
+<g-s>/a[</g-s><g-se>\/</g-se><g-s>]b/</g-s> <g-pb>{</g-pb> <g-v>x</g-v> <g-o>=</g-o> <g-ps>$</g-ps><g-n>1</g-n> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd> <g-v>y</g-v> <g-o>=</g-o> <g-v>x</g-v> <g-o>/</g-o> <g-s>/z/</g-s><g-pd>;</g-pd> <g-ps>$</g-ps><g-cb>NF</g-cb> <g-o>=</g-o> <g-s>"$(not a field)"</g-s> <g-pb>}</g-pb>
+<g-k>BEGIN</g-k> <g-pb>{</g-pb>
+    <g-v>n</g-v> <g-o>=</g-o> <g-n>.5e+2</g-n><g-pd>;</g-pd> <g-v>n</g-v> <g-o>/=</g-o> <g-n>2</g-n>
+    <g-k>if</g-k> <g-pb>(</g-pb><g-ps>$</g-ps><g-n>0</g-n> <g-o>!~</g-o> <g-s>/[/]/</g-s><g-pb>)</g-pb> <g-f>print</g-f> <g-s>"escaped: </g-s><g-se>\"</g-se><g-s> and </g-s><g-se>\n</g-se><g-s>"</g-s>
+    <g-v>a</g-v> <g-o>=</g-o> <g-ps>$</g-ps><g-pb>(</g-pb><g-v>i</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb><g-pd>;</g-pd> <g-v>b</g-v> <g-o>=</g-o> <g-o>++</g-o><g-v>i</g-v> <g-o>/</g-o> <g-n>3</g-n><g-pd>;</g-pd> <g-v>c</g-v> <g-o>=</g-o> <g-v>i</g-v><g-o>++</g-o> <g-o>/</g-o> <g-n>4</g-n>
+    <g-k>if</g-k> <g-pb>((</g-pb><g-v>i</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb> <g-s>/statement/</g-s>
+    <g-v>ratio</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>i</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-o>/</g-o> <g-n>2</g-n>
+    <g-v>typed</g-v> <g-o>=</g-o> <g-s>@/a[</g-s><g-se>\/</g-se><g-s>]b/</g-s><g-pd>;</g-pd> <g-v>matched</g-v> <g-o>=</g-o> <g-f>match</g-f><g-pb>(</g-pb><g-ps>$</g-ps><g-n>0</g-n><g-pd>,</g-pd> <g-v>typed</g-v><g-pb>)</g-pb>
+    <g-v>x</g-v> <g-o>=</g-o> <g-n>1</g-n> <g-o>+</g-o> <g-se>\
+</g-se>        <g-n>2</g-n> <g-c># continuation</g-c>
+<g-pb>}</g-pb>
