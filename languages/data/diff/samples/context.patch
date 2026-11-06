@@ -1,0 +1,11 @@
+*** old/config 2024-01-01
+--- new/config 2024-01-02
+***************
+*** 1,3 ****
+  keep
+! before
+- removed
+--- 1,3 ----
+  keep
+! after
++ added

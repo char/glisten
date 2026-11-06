@@ -1,0 +1,7 @@
+Not a patch + or - in the middle
+@@ malformed @@
+@@ -0,0 +1 @@ café
++++ a real addition starting with plus
+--- a real removal starting with minus
++λ
+\ No newline at end of file

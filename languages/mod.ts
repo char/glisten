@@ -2,6 +2,7 @@ import type { Grammar } from "#/grammar/mod.ts";
 import bash from "./shell/bash/grammar.ts";
 import c from "./systems/c/grammar.ts";
 import css from "./web/css/grammar.ts";
+import diff from "./data/diff/grammar.ts";
 import fjson from "./config/fjson/grammar.ts";
 import go from "./managed/go/grammar.ts";
 import html from "./web/html/grammar.ts";
@@ -23,6 +24,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   bash,
   c,
   css,
+  diff,
   fjson,
   go,
   html,
