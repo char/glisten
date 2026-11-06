@@ -1,0 +1,18 @@
+@color: #3a6ea5;
+@accent: fade(@color, 75%);
+@name: color;
+@assets: "../images";
+
+// A nested selector keeps its parent and adds a suffix.
+.button {
+  color: @@name;
+  background: @accent;
+  background-image: url("@{assets}/button.svg");
+  border: 1px solid darken(@color, 12%);
+  &:hover { color: white; }
+  &-large { padding: (8px * 2); }
+}
+
+@supports (color: rgb(0, 0, 0)) {
+  .button { color: blue; }
+}

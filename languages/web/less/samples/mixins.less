@@ -1,0 +1,16 @@
+@import (reference) "library.less";
+@plugin "less-plugin-example";
+
+.rounded(@radius: 4px; @extra: 0px) when (isnumber(@radius)) {
+  border-radius: @radius;
+}
+#theme {
+  .accent(@color) when (iscolor(@color)) { color: @color; }
+}
+@declarations: { color: red; background: rgb(20, 40, 60); };
+
+.card {
+  .rounded(6px; 1px) !important;
+  #theme > .accent(#aabbcc);
+  @declarations();
+}

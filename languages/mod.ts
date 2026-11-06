@@ -59,6 +59,7 @@ import kdl from "./config/kdl/grammar.ts";
 import kotlin from "./managed/kotlin/grammar.ts";
 import latex from "./markup/latex/grammar.ts";
 import lean from "./proof/lean/grammar.ts";
+import less from "./web/less/grammar.ts";
 import lua from "./scripting/lua/grammar.ts";
 import make from "./build/make/grammar.ts";
 import markdown from "./markup/markdown/grammar.ts";
@@ -177,6 +178,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   kotlin,
   latex,
   lean,
+  less,
   lua,
   make,
   markdown,

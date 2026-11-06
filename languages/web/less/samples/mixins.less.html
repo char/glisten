@@ -1,0 +1,16 @@
+<g-k>@import</g-k> <g-pb>(</g-pb>reference<g-pb>)</g-pb> <g-s>"library.less"</g-s><g-pd>;</g-pd>
+<g-k>@plugin</g-k> <g-s>"less-plugin-example"</g-s><g-pd>;</g-pd>
+
+<g-pd>.</g-pd><g-f>rounded</g-f><g-pb>(</g-pb><g-v>@radius</g-v><g-pd>:</g-pd> <g-n>4</g-n><g-t>px</g-t><g-pd>;</g-pd> <g-v>@extra</g-v><g-pd>:</g-pd> <g-n>0</g-n><g-t>px</g-t><g-pb>)</g-pb> <g-k>when</g-k> <g-pb>(</g-pb><g-f>isnumber</g-f><g-pb>(</g-pb><g-v>@radius</g-v><g-pb>))</g-pb> <g-pb>{</g-pb>
+  <g-pr>border-radius</g-pr><g-pd>:</g-pd> <g-v>@radius</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-pd>#</g-pd><g-pr>theme</g-pr> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-f>accent</g-f><g-pb>(</g-pb><g-v>@color</g-v><g-pb>)</g-pb> <g-k>when</g-k> <g-pb>(</g-pb><g-f>iscolor</g-f><g-pb>(</g-pb><g-v>@color</g-v><g-pb>))</g-pb> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>@color</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-v>@declarations</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="red">red</g-co><g-pd>;</g-pd> <g-pr>background</g-pr><g-pd>:</g-pd> <g-co v="rgb(20, 40, 60)"><g-f>rgb</g-f><g-pb>(</g-pb><g-n>20</g-n><g-pd>,</g-pd> <g-n>40</g-n><g-pd>,</g-pd> <g-n>60</g-n><g-pb>)</g-pb></g-co><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-pd>.</g-pd><g-pr>card</g-pr> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-f>rounded</g-f><g-pb>(</g-pb><g-n>6</g-n><g-t>px</g-t><g-pd>;</g-pd> <g-n>1</g-n><g-t>px</g-t><g-pb>)</g-pb> <g-k>!important</g-k><g-pd>;</g-pd>
+  <g-pd>#</g-pd><g-f>theme</g-f> <g-o>&gt;</g-o> <g-pd>.</g-pd><g-f>accent</g-f><g-pb>(</g-pb><g-co v="#aabbcc"><g-s>#aabbcc</g-s></g-co><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-v>@declarations</g-v><g-pb>()</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

@@ -1,0 +1,18 @@
+<g-v>@color</g-v><g-pd>:</g-pd> <g-co v="#3a6ea5"><g-s>#3a6ea5</g-s></g-co><g-pd>;</g-pd>
+<g-v>@accent</g-v><g-pd>:</g-pd> <g-f>fade</g-f><g-pb>(</g-pb><g-v>@color</g-v><g-pd>,</g-pd> <g-n>75</g-n><g-t>%</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-v>@name</g-v><g-pd>:</g-pd> color<g-pd>;</g-pd>
+<g-v>@assets</g-v><g-pd>:</g-pd> <g-s>"../images"</g-s><g-pd>;</g-pd>
+
+<g-c>// A nested selector keeps its parent and adds a suffix.</g-c>
+<g-pd>.</g-pd><g-pr>button</g-pr> <g-pb>{</g-pb>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-v>@@name</g-v><g-pd>;</g-pd>
+  <g-pr>background</g-pr><g-pd>:</g-pd> <g-v>@accent</g-v><g-pd>;</g-pd>
+  <g-pr>background-image</g-pr><g-pd>:</g-pd> <g-f>url</g-f><g-pb>(</g-pb><g-s>"</g-s><g-ps>@{</g-ps><g-v>assets</g-v><g-ps>}</g-ps><g-s>/button.svg"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>border</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-t>px</g-t> solid <g-f>darken</g-f><g-pb>(</g-pb><g-v>@color</g-v><g-pd>,</g-pd> <g-n>12</g-n><g-t>%</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-tg>&amp;</g-tg><g-pd>:</g-pd><g-at>hover</g-at> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="white">white</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+  <g-tg>&amp;</g-tg><g-pr>-large</g-pr> <g-pb>{</g-pb> <g-pr>padding</g-pr><g-pd>:</g-pd> <g-pb>(</g-pb><g-n>8</g-n><g-t>px</g-t> <g-o>*</g-o> <g-n>2</g-n><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+
+<g-k>@supports</g-k> <g-pb>(</g-pb><g-pr>color</g-pr><g-pd>:</g-pd> <g-f>rgb</g-f><g-pb>(</g-pb><g-n>0</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-pb>))</g-pb> <g-pb>{</g-pb>
+  <g-pd>.</g-pd><g-pr>button</g-pr> <g-pb>{</g-pb> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="blue">blue</g-co><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

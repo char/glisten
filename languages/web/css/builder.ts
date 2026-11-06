@@ -26,7 +26,9 @@ import {
   wrap,
 } from "#/grammar/mod.ts";
 
-export function css(scss: boolean) {
+export function css(mode: boolean | "less") {
+  const scss = mode === true;
+  const less = mode === "less";
   const digit = range("0", "9");
   const hex = union(digit, range("a", "f"), range("A", "F"));
   const nonAscii = byteSet({ ranges: [[128, 255]] });
@@ -39,14 +41,21 @@ export function css(scss: boolean) {
   ];
   const ident = [choice([byte(nameStart)], escape), repeat(choice([byte(rest)], escape))];
   const anyByte = byteSet({ ranges: [[0, 255]] });
-  const other = except(anyByte, "{};\"'/");
+  const other = except(anyByte, less ? "{};\"'/@" : "{};\"'/");
   const doubleContent = except(anyByte, '"\\\n\r\f');
   const singleContent = except(anyByte, "'\\\n\r\f");
   const commentContent = except(anyByte, "*");
   const beforeBlock = repeat(
     choice(
-      [byte(other)],
-      [literal("/"), notNext("*")],
+      [less ? bytes(other) : byte(other)],
+      ...(less
+        ? [
+            [literal("@{"), bytes(except(anyByte, "}"), { min: 0 }), literal("}")],
+            [literal("@"), notNext("{")],
+          ]
+        : []),
+      ...(less ? [[literal("//"), bytes(except(anyByte, "\r\n"), { min: 0 })]] : []),
+      [literal("/"), notNext(less ? "*/" : "*")],
       [
         literal('"'),
         repeat(choice([literal("\\"), character()], [byte(doubleContent)])),
@@ -180,7 +189,7 @@ export function css(scss: boolean) {
     on("#", literal("#"), bytes(hex), paint("string")),
     on("-", lookahead(literal("--")), ...ident, paint("variable")),
     number,
-    ...(scss ? [on("-", literal("-"), notNext(rest), paint("operator"))] : []),
+    ...(scss || less ? [on("-", literal("-"), notNext(rest), paint("operator"))] : []),
     unicodeRange,
     url,
     on(
@@ -210,6 +219,38 @@ export function css(scss: boolean) {
   const variable = on("$", literal("$"), ...ident, paint("variable"));
   const lineComment = token("//", "comment", pushState("scssLineComment"));
   const scssAtoms = [lineComment, interpolation, variable];
+  const lessInterpolation = token("@{", "punctuation.special", pushState("lessInterpolation"));
+  const lessVariable = on("@", literal("@"), optional(literal("@")), ...ident, paint("variable"));
+  const lessAtoms = [
+    lineComment,
+    lessInterpolation,
+    lessVariable,
+    on("$", literal("$"), ...ident, paint("variable")),
+    token("`", "string", pushState("lessJavaScript")),
+    on("%", literal("%"), lookahead(literal("(")), paint("function")),
+    token("~", "operator"),
+  ];
+  const lessMixin = on(
+    ".#",
+    byte(".#"),
+    lookahead(...ident, literal("(")),
+    paint("punctuation.delimiter"),
+    pushState("lessMixinName"),
+  );
+  const lessInterpolationFragment = [literal("@{"), ...ident, literal("}")];
+  const lessBareMixin = on(
+    ".#",
+    byte(".#"),
+    lookahead(
+      choice(ident, lessInterpolationFragment),
+      repeat(choice(ident, lessInterpolationFragment)),
+      notNext("("),
+      beforeBlock,
+      literal(";"),
+    ),
+    paint("punctuation.delimiter"),
+    pushState("lessBareMixinName"),
+  );
   const namespacedCall = on(
     start,
     ...ident,
@@ -231,24 +272,52 @@ export function css(scss: boolean) {
         ),
       ]
     : [];
-  const valueAtoms = [...scssValueAtoms, ...makeValueAtoms(true)];
-  const preludeValueAtoms = scss ? valueAtoms : makeValueAtoms(false);
+  const valueAtoms = [
+    ...scssValueAtoms,
+    ...(less ? [...lessAtoms, token(oneOf("[]"), "punctuation.bracket")] : []),
+    ...makeValueAtoms(true),
+  ];
+  const preludeValueAtoms = scss
+    ? valueAtoms
+    : less
+      ? [...lessAtoms, token(oneOf("[]"), "punctuation.bracket"), ...makeValueAtoms(false)]
+      : makeValueAtoms(false);
   const selectorAtoms = [
     ...(scss ? [...scssAtoms, on("%", literal("%"), ...ident, paint("tag"))] : []),
+    ...(less ? [lessMixin, ...lessAtoms] : []),
     comment,
     ...strings,
-    token(".", "punctuation.delimiter", pushState("className")),
-    token("#", "punctuation.delimiter", pushState("className")),
+    token(".", "punctuation.delimiter", pushState(less ? "lessClassName" : "className")),
+    token("#", "punctuation.delimiter", pushState(less ? "lessClassName" : "className")),
     token("::", "punctuation.delimiter", pushState("pseudoName")),
     token(":", "punctuation.delimiter", pushState("pseudoName")),
     token("[", "punctuation.bracket", pushState("attributeSelector")),
     token("(", "punctuation.bracket", pushState("selectorGroup")),
     token("*", "tag"),
+    ...(less
+      ? [
+          on(
+            "&",
+            literal("&"),
+            lookahead(choice([literal("-")], [literal("@{")])),
+            paint("tag"),
+            pushState("lessClassName"),
+          ),
+        ]
+      : []),
     token("&", "tag"),
     token(oneOf(">+~|"), "operator"),
     token(",", "punctuation.delimiter"),
     on(start, ...ident, paint("tag")),
   ];
+  const sharedSelectorAtoms = selectorAtoms.map((arm) => ({
+    ...arm,
+    then: [popState(), ...arm.then],
+  }));
+  const sharedSelector = redispatch(
+    union(start, ".#@$`%~/'\":[(*&>+|,"),
+    pushState("lessSelectorAtom"),
+  );
   const keyframes = [
     on(
       "@",
@@ -286,6 +355,49 @@ export function css(scss: boolean) {
     paint("property"),
     pushState("scssProperty"),
   );
+  const lessDeclarations = [
+    on(
+      "@",
+      literal("@"),
+      ...ident,
+      lookahead(bytes(space, { min: 0 }), literal(":")),
+      paint("variable"),
+      pushState("afterProperty"),
+    ),
+    on(
+      "@",
+      literal("@"),
+      ...ident,
+      lookahead(literal("(")),
+      paint("variable"),
+      pushState("lessMixinPrelude"),
+    ),
+    on(
+      start,
+      ...ident,
+      lookahead(
+        ...lessInterpolationFragment,
+        repeat(choice(ident, lessInterpolationFragment)),
+        bytes(space, { min: 0 }),
+        literal(":"),
+      ),
+      paint("property"),
+      pushState("lessProperty"),
+    ),
+    on(
+      "@",
+      lookahead(
+        ...lessInterpolationFragment,
+        repeat(choice(ident, lessInterpolationFragment)),
+        bytes(space, { min: 0 }),
+        literal(":"),
+      ),
+      literal("@{"),
+      paint("punctuation.special"),
+      pushState("lessProperty"),
+      pushState("lessInterpolation"),
+    ),
+  ];
   const declarations = [
     ...(scss
       ? [
@@ -324,7 +436,7 @@ export function css(scss: boolean) {
   ];
 
   return defineGrammar<string>({
-    name: scss ? "scss" : "css",
+    name: less ? "less" : scss ? "scss" : "css",
     initial: "root",
     states: {
       root: {
@@ -332,10 +444,11 @@ export function css(scss: boolean) {
         arms: [
           ...keyframes,
           ...(scss ? callableRules : []),
+          ...(less ? lessDeclarations : []),
           atRule,
           token("{", "punctuation.bracket", pushState("block")),
           ...declarations,
-          ...selectorAtoms,
+          ...(less ? [sharedSelector] : selectorAtoms),
         ],
       },
       block: {
@@ -344,17 +457,19 @@ export function css(scss: boolean) {
           comment,
           ...keyframes,
           ...(scss ? callableRules : []),
+          ...(less ? lessDeclarations : []),
           atRule,
           token("}", "punctuation.bracket", popState()),
           token("{", "punctuation.bracket", pushState("block")),
           ...declarations,
-          ...selectorAtoms,
+          ...(less ? [lessBareMixin] : []),
+          ...(less ? [sharedSelector] : selectorAtoms),
         ],
       },
       afterProperty: {
         style: "plain",
         arms: [
-          ...(scss ? [lineComment] : []),
+          ...(scss || less ? [lineComment] : []),
           comment,
           token(":", "punctuation.delimiter", pushState("value")),
           redispatch(";}", popState()),
@@ -390,6 +505,7 @@ export function css(scss: boolean) {
         arms: [
           token(";", "punctuation.delimiter", popState(), popState()),
           redispatch("}", popState(), popState()),
+          ...(less ? [token("{", "punctuation.bracket", pushState("block"))] : []),
           ...valueAtoms,
         ],
       },
@@ -422,6 +538,7 @@ export function css(scss: boolean) {
         style: "string",
         arms: [
           token(")", "punctuation.bracket", popState()),
+          ...(less ? [lessInterpolation, lessVariable] : []),
           ...strings,
           on("\\", ...escape, paint("string.escape")),
           on(
@@ -454,7 +571,7 @@ export function css(scss: boolean) {
           token(")", "punctuation.bracket", popState()),
           redispatch("{};", popState()),
           number,
-          ...selectorAtoms,
+          ...(less ? [sharedSelector] : selectorAtoms),
         ],
       },
       attributeSelector: {
@@ -506,6 +623,7 @@ export function css(scss: boolean) {
       prelude: {
         style: "plain",
         arms: [
+          ...(less ? lessAtoms : []),
           ...(scss
             ? [
                 ...scssAtoms,
@@ -541,6 +659,7 @@ export function css(scss: boolean) {
       preludeGroup: {
         style: "plain",
         arms: [
+          ...(less ? lessAtoms : []),
           ...(scss
             ? [
                 ...scssAtoms,
@@ -589,6 +708,116 @@ export function css(scss: boolean) {
             },
           }
         : {}),
+      ...(less
+        ? {
+            lessSelectorAtom: {
+              style: "plain",
+              arms: [...sharedSelectorAtoms, on(anyByte, character(), paint("plain"), popState())],
+            },
+            scssLineComment: { style: "comment", arms: [redispatch("\n\r", popState())] },
+            lessInterpolation: {
+              style: "plain",
+              arms: [
+                token("}", "punctuation.special", popState()),
+                lessVariable,
+                on(start, ...ident, paint("variable")),
+              ],
+            },
+            lessClassName: {
+              style: "plain",
+              arms: [lessInterpolation, on(start, ...ident, paint("property"))],
+              otherwise: [popState()],
+            },
+            lessJavaScript: {
+              style: "string",
+              arms: [
+                lessInterpolation,
+                on("\\", literal("\\"), character(), paint("string.escape")),
+                token("`", "string", popState()),
+              ],
+            },
+            lessProperty: {
+              style: "property",
+              arms: [
+                lessInterpolation,
+                on(start, ...ident, paint("property")),
+                token(":", "punctuation.delimiter", setState("afterProperty"), pushState("value")),
+                redispatch(";}", popState()),
+              ],
+            },
+            lessBareMixinName: {
+              style: "plain",
+              arms: [
+                on(start, ...ident, paint("function"), setState("lessBareMixinTail")),
+                on(
+                  "@",
+                  literal("@{"),
+                  paint("punctuation.special"),
+                  setState("lessBareMixinTail"),
+                  pushState("lessInterpolation"),
+                ),
+              ],
+              otherwise: [popState()],
+            },
+            lessBareMixinTail: {
+              style: "plain",
+              arms: [
+                token(";", "punctuation.delimiter", popState()),
+                redispatch("}", popState()),
+                on(
+                  "!",
+                  literal("!"),
+                  bytes(space, { min: 0 }),
+                  ...insensitive("important"),
+                  notNext(rest),
+                  paint("keyword"),
+                ),
+                on(
+                  ".#",
+                  byte(".#"),
+                  lookahead(choice(ident, lessInterpolationFragment)),
+                  paint("punctuation.delimiter"),
+                  pushState("lessBareMixinMember"),
+                ),
+                token("(", "punctuation.bracket", pushState("lessMixinGroup")),
+                sharedSelector,
+              ],
+            },
+            lessBareMixinMember: {
+              style: "plain",
+              arms: [lessInterpolation, on(start, ...ident, paint("function"), popState())],
+              otherwise: [popState()],
+            },
+            lessMixinName: {
+              style: "plain",
+              arms: [on(start, ...ident, paint("function"), setState("lessMixinPrelude"))],
+              otherwise: [popState()],
+            },
+            lessMixinPrelude: {
+              style: "plain",
+              arms: [
+                token(";", "punctuation.delimiter", popState()),
+                token("{", "punctuation.bracket", setState("block")),
+                redispatch("}", popState()),
+                ...["when", "and", "not"].map((word) =>
+                  on(word[0]!, literal(word), notNext(rest), paint("keyword")),
+                ),
+                token("(", "punctuation.bracket", pushState("lessMixinGroup")),
+                ...valueAtoms,
+              ],
+            },
+            lessMixinGroup: {
+              style: "plain",
+              arms: [
+                token(")", "punctuation.bracket", popState()),
+                token("(", "punctuation.bracket", pushState("lessMixinGroup")),
+                token(";", "punctuation.delimiter"),
+                redispatch("}", popState()),
+                ...valueAtoms,
+              ],
+            },
+          }
+        : {}),
       comment: { style: "comment", arms: [token("*/", "comment", popState())] },
       badValue: {
         style: "plain",
@@ -626,7 +855,7 @@ export function css(scss: boolean) {
       doubleValueString: {
         style: "string",
         arms: [
-          ...(scss ? [interpolation] : []),
+          ...(scss ? [interpolation] : less ? [lessInterpolation] : []),
           on("\\", ...escape, paint("string.escape")),
           token('"', "string", popState()),
           redispatch("\n\r\f", setState("badValue")),
@@ -635,7 +864,7 @@ export function css(scss: boolean) {
       singleValueString: {
         style: "string",
         arms: [
-          ...(scss ? [interpolation] : []),
+          ...(scss ? [interpolation] : less ? [lessInterpolation] : []),
           on("\\", ...escape, paint("string.escape")),
           token("'", "string", popState()),
           redispatch("\n\r\f", setState("badValue")),
@@ -644,7 +873,7 @@ export function css(scss: boolean) {
       doubleString: {
         style: "string",
         arms: [
-          ...(scss ? [interpolation] : []),
+          ...(scss ? [interpolation] : less ? [lessInterpolation] : []),
           on("\\", ...escape, paint("string.escape")),
           token('"', "string", popState()),
           redispatch("\n\r\f", popState()),
@@ -653,7 +882,7 @@ export function css(scss: boolean) {
       singleString: {
         style: "string",
         arms: [
-          ...(scss ? [interpolation] : []),
+          ...(scss ? [interpolation] : less ? [lessInterpolation] : []),
           on("\\", ...escape, paint("string.escape")),
           token("'", "string", popState()),
           redispatch("\n\r\f", popState()),

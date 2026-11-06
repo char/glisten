@@ -1,0 +1,16 @@
+@side: left;
+@component: badge;
+@icon: "star";
+@config: { size: 12px; color: #fff; };
+@legacy: ~`2 + 2`;
+
+.@{component}-compact {
+  border-@{side}-width: 2px;
+  @{side}: @config[size];
+  background: url(icons/@{icon}.svg);
+  content: ~"icon-@{icon}";
+  width: (10px + 2px);
+  filter: e("progid:DXImageTransform.Microsoft.Alpha(opacity=50)");
+  label: %("Hello, %s", @component);
+  // Interpolation in strings is not a line comment: "//".
+}

@@ -1,0 +1,16 @@
+<g-v>@side</g-v><g-pd>:</g-pd> left<g-pd>;</g-pd>
+<g-v>@component</g-v><g-pd>:</g-pd> badge<g-pd>;</g-pd>
+<g-v>@icon</g-v><g-pd>:</g-pd> <g-s>"star"</g-s><g-pd>;</g-pd>
+<g-v>@config</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> <g-pr>size</g-pr><g-pd>:</g-pd> <g-n>12</g-n><g-t>px</g-t><g-pd>;</g-pd> <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="#fff"><g-s>#fff</g-s></g-co><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-v>@legacy</g-v><g-pd>:</g-pd> <g-o>~</g-o><g-s>`2 + 2`</g-s><g-pd>;</g-pd>
+
+<g-pd>.</g-pd><g-ps>@{</g-ps><g-v>component</g-v><g-ps>}</g-ps><g-pr>-compact</g-pr> <g-pb>{</g-pb>
+  <g-pr>border-</g-pr><g-ps>@{</g-ps><g-v>side</g-v><g-ps>}</g-ps><g-pr>-width</g-pr><g-pd>:</g-pd> <g-n>2</g-n><g-t>px</g-t><g-pd>;</g-pd>
+  <g-ps>@{</g-ps><g-v>side</g-v><g-ps>}</g-ps><g-pd>:</g-pd> <g-v>@config</g-v><g-pb>[</g-pb>size<g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-pr>background</g-pr><g-pd>:</g-pd> <g-f>url</g-f><g-pb>(</g-pb><g-s>icons/</g-s><g-ps>@{</g-ps><g-v>icon</g-v><g-ps>}</g-ps><g-s>.svg</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>content</g-pr><g-pd>:</g-pd> <g-o>~</g-o><g-s>"icon-</g-s><g-ps>@{</g-ps><g-v>icon</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+  <g-pr>width</g-pr><g-pd>:</g-pd> <g-pb>(</g-pb><g-n>10</g-n><g-t>px</g-t> <g-o>+</g-o> <g-n>2</g-n><g-t>px</g-t><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>filter</g-pr><g-pd>:</g-pd> <g-f>e</g-f><g-pb>(</g-pb><g-s>"progid:DXImageTransform.Microsoft.Alpha(opacity=50)"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pr>label</g-pr><g-pd>:</g-pd> <g-f>%</g-f><g-pb>(</g-pb><g-s>"Hello, %s"</g-s><g-pd>,</g-pd> <g-v>@component</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-c>// Interpolation in strings is not a line comment: "//".</g-c>
+<g-pb>}</g-pb>
