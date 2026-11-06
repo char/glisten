@@ -1,0 +1,32 @@
+<g-c># Near keywords and ambiguous punctuation.</g-c>
+<g-k>let</g-k>
+  <g-vm>iffy</g-vm> <g-pd>=</g-pd> <g-v>trueValue</g-v><g-pd>;</g-pd>
+  <g-vm>thenable</g-vm> <g-pd>=</g-pd> <g-v>falsehood</g-v><g-pd>;</g-pd>
+  <g-vm>elsewhere</g-vm> <g-pd>=</g-pd> <g-v>nullable</g-v><g-pd>;</g-pd>
+  <g-vm>inheritFrom</g-vm> <g-pd>=</g-pd> <g-n>1</g-n><g-pd>;</g-pd>
+  <g-vm>inkwell</g-vm> <g-pd>=</g-pd> <g-n>2</g-n><g-pd>;</g-pd>
+  <g-vm>recursor</g-vm> <g-pd>=</g-pd> <g-n>3</g-n><g-pd>;</g-pd>
+  <g-vm>ordinary</g-vm> <g-pd>=</g-pd> <g-n>4</g-n><g-pd>;</g-pd>
+  <g-vm>true-key</g-vm> <g-pd>=</g-pd> <g-cb>false</g-cb><g-pd>;</g-pd>
+  <g-vm>number</g-vm> <g-pd>=</g-pd> <g-pb>[</g-pb> <g-n>0</g-n> <g-n>12</g-n> <g-n>1.5</g-n> <g-n>.5</g-n> <g-n>1</g-n><g-v>e3</g-v> <g-n>1.0e-2</g-n> <g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-vm>operators</g-vm> <g-pd>=</g-pd> <g-v>a</g-v> <g-o>//</g-o> <g-v>b</g-v> <g-o>++</g-o> <g-v>c</g-v> <g-o>==</g-o> <g-v>d</g-v> <g-o>!=</g-o> <g-v>e</g-v> <g-o>&amp;&amp;</g-o> <g-v>f</g-v> <g-o>||</g-o> <g-o>!</g-o><g-v>g</g-v><g-pd>;</g-pd>
+  <g-vm>division</g-vm> <g-pd>=</g-pd> <g-v>a</g-v> <g-o>/</g-o> <g-v>b</g-v><g-pd>;</g-pd>
+  <g-vm>path</g-vm> <g-pd>=</g-pd> <g-s>a/b</g-s><g-pd>;</g-pd>
+  <g-vm>dynamic</g-vm> <g-pd>=</g-pd> <g-s>./dir/</g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>/file</g-s><g-pd>;</g-pd>
+  <g-vm>key</g-vm><g-pd>.</g-pd><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-pd>.</g-pd><g-s>"quoted part"</g-s> <g-pd>=</g-pd> <g-n>1</g-n><g-pd>;</g-pd>
+  <g-k>inherit</g-k> <g-pb>(</g-pb><g-v>source</g-v><g-pb>)</g-pb> <g-vm>alpha</g-vm> <g-vm>beta</g-vm><g-pd>;</g-pd>
+  <g-vm>uri</g-vm> <g-pd>=</g-pd> <g-tu>https://example.test/a?x=1</g-tu><g-pd>;</g-pd>
+  <g-vm>notUri</g-vm> <g-pd>=</g-pd> <g-v>https</g-v><g-pd>:;</g-pd>
+  <g-vm>search</g-vm> <g-pd>=</g-pd> <g-s>&lt;nixpkgs&gt;</g-s><g-pd>;</g-pd>
+  <g-vm>comparison</g-vm> <g-pd>=</g-pd> <g-v>a</g-v> <g-o>&lt;</g-o> <g-v>b</g-v> <g-o>&amp;&amp;</g-o> <g-v>b</g-v> <g-o>&gt;</g-o> <g-v>c</g-v><g-pd>;</g-pd>
+  <g-c># Nested braces in interpolation.</g-c>
+  <g-vm>text</g-vm> <g-pd>=</g-pd> <g-s>"</g-s><g-ps>${</g-ps> <g-pb>{</g-pb> <g-vm>x</g-vm> <g-pd>=</g-pd> <g-s>"nested"</g-s><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>.</g-pd><g-v>x</g-v> <g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+  <g-vm>shell</g-vm> <g-pd>=</g-pd> <g-s>''
+    echo "</g-s><g-se>''$</g-se><g-s>{HOME}"
+    echo </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>
+  ''</g-s><g-pd>;</g-pd>
+  <g-c>/* A closed block comment. */</g-c>
+  <g-vm>invalid</g-vm> <g-pd>=</g-pd> <g-s>"unterminated string
+  fake = true;
+  } # still string at EOF
+</g-s>

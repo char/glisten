@@ -1,0 +1,33 @@
+<g-pb>{</g-pb> <g-v>lib</g-v><g-pd>,</g-pd> <g-v>pkgs</g-v><g-pd>,</g-pd> <g-v>config</g-v><g-pd>,</g-pd> <g-pd>...</g-pd> <g-pb>}</g-pb><g-pd>:</g-pd>
+<g-k>let</g-k>
+  <g-k>inherit</g-k> <g-pb>(</g-pb><g-v>lib</g-v><g-pb>)</g-pb> <g-vm>mkIf</g-vm> <g-vm>mkOption</g-vm> <g-vm>types</g-vm><g-pd>;</g-pd>
+  <g-vm>cfg</g-vm> <g-pd>=</g-pd> <g-v>config</g-v><g-pd>.</g-pd><g-v>services</g-v><g-pd>.</g-pd><g-v>sky</g-v><g-pd>;</g-pd>
+  <g-vm>defaultPort</g-vm> <g-pd>=</g-pd> <g-n>8080</g-n><g-pd>;</g-pd>
+  <g-vm>banner</g-vm> <g-pd>=</g-pd> <g-s>"Observatory </g-s><g-ps>${</g-ps><g-v>cfg</g-v><g-pd>.</g-pd><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+  <g-vm>paths</g-vm> <g-pd>=</g-pd> <g-pb>[</g-pb> <g-s>./data</g-s> <g-s>../shared</g-s> <g-s>~/sky</g-s> <g-s>&lt;nixpkgs&gt;</g-s> <g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>in</g-k>
+<g-pb>{</g-pb>
+  <g-vm>options</g-vm><g-pd>.</g-pd><g-vm>services</g-vm><g-pd>.</g-pd><g-vm>sky</g-vm> <g-pd>=</g-pd> <g-pb>{</g-pb>
+    <g-vm>enable</g-vm> <g-pd>=</g-pd> <g-v>mkOption</g-v> <g-pb>{</g-pb>
+      <g-vm>type</g-vm> <g-pd>=</g-pd> <g-v>types</g-v><g-pd>.</g-pd><g-v>bool</g-v><g-pd>;</g-pd>
+      <g-vm>default</g-vm> <g-pd>=</g-pd> <g-cb>false</g-cb><g-pd>;</g-pd>
+      <g-vm>description</g-vm> <g-pd>=</g-pd> <g-s>"Enable the sky journal"</g-s><g-pd>;</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+    <g-vm>name</g-vm> <g-pd>=</g-pd> <g-v>mkOption</g-v> <g-pb>{</g-pb>
+      <g-vm>type</g-vm> <g-pd>=</g-pd> <g-v>types</g-v><g-pd>.</g-pd><g-v>str</g-v><g-pd>;</g-pd>
+      <g-vm>default</g-vm> <g-pd>=</g-pd> <g-s>"星空"</g-s><g-pd>;</g-pd>
+    <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb><g-pd>;</g-pd>
+
+  <g-vm>config</g-vm> <g-pd>=</g-pd> <g-v>mkIf</g-v> <g-v>cfg</g-v><g-pd>.</g-pd><g-v>enable</g-v> <g-pb>{</g-pb>
+    <g-vm>environment</g-vm><g-pd>.</g-pd><g-vm>systemPackages</g-vm> <g-pd>=</g-pd> <g-pb>[</g-pb> <g-v>pkgs</g-v><g-pd>.</g-pd><g-v>curl</g-v> <g-v>pkgs</g-v><g-pd>.</g-pd><g-v>jq</g-v> <g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-vm>services</g-vm><g-pd>.</g-pd><g-vm>sky</g-vm><g-pd>.</g-pd><g-vm>port</g-vm> <g-pd>=</g-pd> <g-v>defaultPort</g-v><g-pd>;</g-pd>
+    <g-vm>services</g-vm><g-pd>.</g-pd><g-vm>sky</g-vm><g-pd>.</g-pd><g-vm>url</g-vm> <g-pd>=</g-pd> <g-tu>https://example.test/sky?view=wide</g-tu><g-pd>;</g-pd>
+    <g-vm>services</g-vm><g-pd>.</g-pd><g-vm>sky</g-vm><g-pd>.</g-pd><g-vm>message</g-vm> <g-pd>=</g-pd> <g-v>banner</g-v><g-pd>;</g-pd>
+    <g-vm>services</g-vm><g-pd>.</g-pd><g-vm>sky</g-vm><g-pd>.</g-pd><g-vm>locations</g-vm> <g-pd>=</g-pd> <g-v>paths</g-v> <g-o>++</g-o> <g-pb>[</g-pb> <g-s>/var/lib/sky</g-s> <g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-vm>assertions</g-vm> <g-pd>=</g-pd> <g-pb>[</g-pb> <g-pb>{</g-pb>
+      <g-vm>assertion</g-vm> <g-pd>=</g-pd> <g-v>cfg</g-v><g-pd>.</g-pd><g-v>name</g-v> <g-o>!=</g-o> <g-s>""</g-s> <g-o>&amp;&amp;</g-o> <g-v>defaultPort</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>;</g-pd>
+      <g-vm>message</g-vm> <g-pd>=</g-pd> <g-s>"A name and positive port are required"</g-s><g-pd>;</g-pd>
+    <g-pb>}</g-pb> <g-pb>]</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-pb>}</g-pb>

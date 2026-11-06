@@ -6,6 +6,7 @@ import fjson from "./config/fjson/grammar.ts";
 import javascript from "./web/javascript/grammar.ts";
 import json from "./config/json/grammar.ts";
 import jsx from "./web/jsx/grammar.ts";
+import nix from "./build/nix/grammar.ts";
 import rust from "./systems/rust/grammar.ts";
 import toml from "./config/toml/grammar.ts";
 import tsx from "./web/tsx/grammar.ts";
@@ -21,6 +22,7 @@ export const languages: Readonly<Record<string, Grammar>> = {
   javascript,
   json,
   jsx,
+  nix,
   rust,
   toml,
   tsx,

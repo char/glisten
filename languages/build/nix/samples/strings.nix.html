@@ -1,0 +1,33 @@
+<g-pb>{</g-pb> <g-v>pkgs</g-v><g-pd>,</g-pd> <g-v>name</g-v> <g-o>?</g-o> <g-s>"sky"</g-s><g-pd>,</g-pd> <g-pd>...</g-pd> <g-pb>}</g-pb><g-pd>:</g-pd>
+<g-k>let</g-k>
+  <g-vm>greeting</g-vm> <g-pd>=</g-pd> <g-s>"Hello, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>!"</g-s><g-pd>;</g-pd>
+  <g-vm>quoted</g-vm> <g-pd>=</g-pd> <g-s>"A </g-s><g-se>\"</g-se><g-s>bright</g-s><g-se>\"</g-se><g-s> night</g-s><g-se>\\</g-se><g-s>morning</g-s><g-se>\n</g-se><g-s>"</g-s><g-pd>;</g-pd>
+  <g-vm>literalDollar</g-vm> <g-pd>=</g-pd> <g-s>"$$HOME"</g-s><g-pd>;</g-pd>
+  <g-vm>script</g-vm> <g-pd>=</g-pd> <g-s>''
+    # This is Bash, not a Nix comment.
+    echo "Hello </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"
+    echo "Home: $HOME"
+    echo "Literal: </g-s><g-se>''$</g-se><g-s>{HOME}"
+    printf '%s\n' "</g-s><g-se>''$</g-se><g-s>{items[@]}"
+    printf '%s\n' "</g-s><g-se>'''</g-se><g-s>quoted</g-s><g-se>'''</g-se><g-s>"
+    echo "Line break:</g-s><g-se>''\n</g-se><g-s>next"
+  ''</g-s><g-pd>;</g-pd>
+  <g-vm>nested</g-vm> <g-pd>=</g-pd> <g-s>"</g-s><g-ps>${</g-ps><g-k>if</g-k> <g-v>name</g-v> <g-o>==</g-o> <g-s>"星"</g-s> <g-k>then</g-k> <g-s>"🌙"</g-s> <g-k>else</g-k> <g-s>"night"</g-s><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+  <g-vm>file</g-vm> <g-pd>=</g-pd> <g-s>./assets/</g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>/image.png</g-s><g-pd>;</g-pd>
+  <g-vm>absolute</g-vm> <g-pd>=</g-pd> <g-s>/var/lib/sky/</g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-pd>;</g-pd>
+  <g-vm>home</g-vm> <g-pd>=</g-pd> <g-s>~/sky/notes</g-s><g-pd>;</g-pd>
+  <g-vm>relative</g-vm> <g-pd>=</g-pd> <g-s>../shared/catalog.json</g-s><g-pd>;</g-pd>
+  <g-vm>search</g-vm> <g-pd>=</g-pd> <g-s>&lt;nixpkgs/lib&gt;</g-s><g-pd>;</g-pd>
+  <g-vm>url</g-vm> <g-pd>=</g-pd> <g-tu>https://example.test/path?q=sky&amp;lang=en</g-tu><g-pd>;</g-pd>
+  <g-vm>source</g-vm> <g-pd>=</g-pd> <g-tu>git+https://example.test/repo</g-tu><g-pd>;</g-pd>
+<g-k>in</g-k>
+<g-v>pkgs</g-v><g-pd>.</g-pd><g-v>writeShellScriptBin</g-v> <g-s>"observe"</g-s> <g-s>''
+  set -eu
+  mkdir -p "$HOME/sky"
+  echo </g-s><g-ps>${</g-ps><g-v>greeting</g-v><g-ps>}</g-ps><g-s>
+  echo </g-s><g-ps>${</g-ps><g-v>nested</g-v><g-ps>}</g-ps><g-s>
+  cat &lt;&lt;'EOF'
+  雪 and stars
+  EOF
+  </g-s><g-ps>${</g-ps><g-v>script</g-v><g-ps>}</g-ps><g-s>
+''</g-s>
