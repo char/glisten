@@ -1,0 +1,19 @@
+<g-c>// SPDX-License-Identifier: Apache-2.0</g-c>
+<g-k>pragma</g-k> <g-k>solidity</g-k> <g-o>^</g-o><g-n>0.8</g-n><g-pd>.</g-pd><g-n>24</g-n><g-pd>;</g-pd>
+
+<g-k>interface</g-k> <g-t>IPrice</g-t> <g-pb>{</g-pb> <g-k>function</g-k> <g-f>price</g-f><g-pb>()</g-pb> <g-k>external</g-k> <g-k>view</g-k> <g-k>returns</g-k> <g-pb>(</g-pb><g-t>uint256</g-t><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>library</g-k> <g-t>Quotes</g-t> <g-pb>{</g-pb>
+    <g-k>struct</g-k> <g-t>Quote</g-t> <g-pb>{</g-pb> <g-t>address</g-t> <g-k>payable</g-k> <g-v>recipient</g-v><g-pd>;</g-pd> <g-t>uint256</g-t> <g-v>amount</g-v><g-pd>;</g-pd> <g-t>bytes32</g-t> <g-v>memo</g-v><g-pd>;</g-pd> <g-pb>}</g-pb>
+    <g-k>enum</g-k> <g-t>Status</g-t> <g-pb>{</g-pb> <g-t>Pending</g-t><g-pd>,</g-pd> <g-t>Paid</g-t><g-pd>,</g-pd> <g-t>Cancelled</g-t> <g-pb>}</g-pb>
+    <g-t>uint256</g-t> <g-k>internal</g-k> <g-k>constant</g-k> <g-t>SCALE</g-t> <g-o>=</g-o> <g-n>1e18</g-n><g-pd>;</g-pd>
+    <g-t>uint256</g-t> <g-k>internal</g-k> <g-k>constant</g-k> <g-t>LIMIT</g-t> <g-o>=</g-o> <g-n>1_000</g-n> <g-cb>ether</g-cb><g-pd>;</g-pd>
+    <g-t>uint256</g-t> <g-k>internal</g-k> <g-k>constant</g-k> <g-t>DELAY</g-t> <g-o>=</g-o> <g-n>2</g-n> <g-cb>days</g-cb> <g-o>+</g-o> <g-n>3</g-n> <g-cb>hours</g-cb> <g-o>+</g-o> <g-n>1</g-n> <g-cb>seconds</g-cb><g-pd>;</g-pd>
+
+    <g-k>function</g-k> <g-f>payment</g-f><g-pb>(</g-pb><g-t>address</g-t> <g-k>payable</g-k> <g-v>to</g-v><g-pd>,</g-pd> <g-t>uint256</g-t> <g-v>amount</g-v><g-pb>)</g-pb> <g-k>internal</g-k> <g-k>pure</g-k> <g-k>returns</g-k> <g-pb>(</g-pb><g-t>Quote</g-t> <g-k>memory</g-k><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-f>require</g-f><g-pb>(</g-pb><g-v>amount</g-v> <g-o>&gt;</g-o> <g-n>0</g-n><g-pd>,</g-pd> <g-s>"amount must be positive"</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-t>bytes</g-t> <g-k>memory</g-k> <g-v>encoded</g-v> <g-o>=</g-o> <g-s>hex"deadbeef"</g-s><g-pd>;</g-pd>
+        <g-t>string</g-t> <g-k>memory</g-k> <g-v>message</g-v> <g-o>=</g-o> <g-s>unicode"Hello, 世界"</g-s><g-pd>;</g-pd>
+        <g-f>assert</g-f><g-pb>(</g-pb><g-v>encoded</g-v><g-pd>.</g-pd><g-vm>length</g-vm> <g-o>==</g-o> <g-n>4</g-n> <g-o>&amp;&amp;</g-o> <g-t>bytes</g-t><g-pb>(</g-pb><g-v>message</g-v><g-pb>)</g-pb><g-pd>.</g-pd><g-vm>length</g-vm> <g-o>&gt;</g-o> <g-n>0</g-n><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-k>return</g-k> <g-t>Quote</g-t><g-pb>(</g-pb><g-v>to</g-v><g-pd>,</g-pd> <g-v>amount</g-v> <g-o>*</g-o> <g-t>SCALE</g-t><g-pd>,</g-pd> <g-t>bytes32</g-t><g-pb>(</g-pb><g-n>0</g-n><g-pb>))</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>

@@ -1,0 +1,27 @@
+<g-c>// SPDX-License-Identifier: MIT</g-c>
+<g-k>pragma</g-k> <g-k>solidity</g-k> <g-o>^</g-o><g-n>0.8</g-n><g-pd>.</g-pd><g-n>24</g-n><g-pd>;</g-pd>
+
+<g-c>/// </g-c><g-at>@title</g-at><g-c> A minimal ether vault</g-c>
+<g-k>contract</g-k> <g-t>Vault</g-t> <g-pb>{</g-pb>
+    <g-t>address</g-t> <g-k>public</g-k> <g-k>immutable</g-k> <g-v>owner</g-v><g-pd>;</g-pd>
+    <g-k>mapping</g-k><g-pb>(</g-pb><g-t>address</g-t> <g-o>=&gt;</g-o> <g-t>uint256</g-t><g-pb>)</g-pb> <g-k>public</g-k> <g-v>balance</g-v><g-pd>;</g-pd>
+    <g-k>event</g-k> <g-f>Deposited</g-f><g-pb>(</g-pb><g-t>address</g-t> <g-k>indexed</g-k> <g-v>sender</g-v><g-pd>,</g-pd> <g-t>uint256</g-t> <g-v>amount</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>error</g-k> <g-f>InsufficientBalance</g-f><g-pb>(</g-pb><g-t>uint256</g-t> <g-v>requested</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+
+    <g-k>constructor</g-k><g-pb>()</g-pb> <g-pb>{</g-pb> <g-v>owner</g-v> <g-o>=</g-o> <g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pd>;</g-pd> <g-pb>}</g-pb>
+
+    <g-c>/// </g-c><g-at>@notice</g-at><g-c> Adds ether to the sender's balance.</g-c>
+    <g-k>function</g-k> <g-f>deposit</g-f><g-pb>()</g-pb> <g-k>public</g-k> <g-k>payable</g-k> <g-pb>{</g-pb>
+        <g-v>balance</g-v><g-pb>[</g-pb><g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pb>]</g-pb> <g-o>+=</g-o> <g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>value</g-vm><g-pd>;</g-pd>
+        <g-k>emit</g-k> <g-t>Deposited</g-t><g-pb>(</g-pb><g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pd>,</g-pd> <g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>value</g-vm><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-c>/// </g-c><g-at>@param</g-at><g-c> amount The amount to withdraw.</g-c>
+    <g-k>function</g-k> <g-f>withdraw</g-f><g-pb>(</g-pb><g-t>uint256</g-t> <g-v>amount</g-v><g-pb>)</g-pb> <g-k>external</g-k> <g-pb>{</g-pb>
+        <g-k>if</g-k> <g-pb>(</g-pb><g-v>balance</g-v><g-pb>[</g-pb><g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pb>]</g-pb> <g-o>&lt;</g-o> <g-v>amount</g-v><g-pb>)</g-pb> <g-k>revert</g-k> <g-t>InsufficientBalance</g-t><g-pb>(</g-pb><g-v>amount</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+        <g-v>balance</g-v><g-pb>[</g-pb><g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pb>]</g-pb> <g-o>-=</g-o> <g-v>amount</g-v><g-pd>;</g-pd>
+        <g-k>payable</g-k><g-pb>(</g-pb><g-cb>msg</g-cb><g-pd>.</g-pd><g-vm>sender</g-vm><g-pb>)</g-pb><g-pd>.</g-pd><g-f>transfer</g-f><g-pb>(</g-pb><g-v>amount</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-pb>}</g-pb>
+
+    <g-k>receive</g-k><g-pb>()</g-pb> <g-k>external</g-k> <g-k>payable</g-k> <g-pb>{</g-pb> <g-f>deposit</g-f><g-pb>()</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-pb>}</g-pb>

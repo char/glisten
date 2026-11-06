@@ -1,0 +1,29 @@
+<g-c>// SPDX-License-Identifier: MIT</g-c>
+<g-k>pragma</g-k> <g-k>solidity</g-k> <g-o>^</g-o><g-n>0.8</g-n><g-pd>.</g-pd><g-n>24</g-n><g-pd>;</g-pd>
+
+<g-c>/** </g-c><g-at>@title</g-at><g-c> Memory and storage examples
+ *  </g-c><g-at>@notice</g-at><g-c> Assembly uses Yul builtins and scoped blocks.
+ */</g-c>
+<g-k>contract</g-k> <g-t>Slots</g-t> <g-pb>{</g-pb>
+    <g-t>uint256</g-t> <g-k>private</g-k> <g-v>stored</g-v><g-pd>;</g-pd>
+
+    <g-k>function</g-k> <g-f>load</g-f><g-pb>()</g-pb> <g-k>external</g-k> <g-k>view</g-k> <g-k>returns</g-k> <g-pb>(</g-pb><g-t>uint256</g-t> <g-v>result</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>assembly</g-k> <g-pb>(</g-pb><g-s>"memory-safe"</g-s><g-pb>)</g-pb> <g-pb>{</g-pb>
+            <g-k>let</g-k> <g-v>value</g-v> <g-o>:=</g-o> <g-f>sload</g-f><g-pb>(</g-pb><g-v>stored</g-v><g-pd>.</g-pd><g-v>slot</g-v><g-pb>)</g-pb>
+            <g-k>switch</g-k> <g-v>value</g-v>
+            <g-k>case</g-k> <g-n>0</g-n> <g-pb>{</g-pb> <g-v>result</g-v> <g-o>:=</g-o> <g-n>1</g-n> <g-pb>}</g-pb>
+            <g-k>default</g-k> <g-pb>{</g-pb>
+                <g-f>mstore</g-f><g-pb>(</g-pb><g-n>0x00</g-n><g-pd>,</g-pd> <g-v>value</g-v><g-pb>)</g-pb>
+                <g-v>result</g-v> <g-o>:=</g-o> <g-f>mload</g-f><g-pb>(</g-pb><g-n>0x00</g-n><g-pb>)</g-pb>
+            <g-pb>}</g-pb>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+
+    <g-k>function</g-k> <g-f>sum</g-f><g-pb>(</g-pb><g-t>uint256</g-t> <g-v>n</g-v><g-pb>)</g-pb> <g-k>external</g-k> <g-k>pure</g-k> <g-k>returns</g-k> <g-pb>(</g-pb><g-t>uint256</g-t> <g-v>result</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+        <g-k>assembly</g-k> <g-pb>{</g-pb>
+            <g-k>for</g-k> <g-pb>{</g-pb> <g-k>let</g-k> <g-v>i</g-v> <g-o>:=</g-o> <g-n>0</g-n> <g-pb>}</g-pb> <g-f>lt</g-f><g-pb>(</g-pb><g-v>i</g-v><g-pd>,</g-pd> <g-v>n</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-v>i</g-v> <g-o>:=</g-o> <g-f>add</g-f><g-pb>(</g-pb><g-v>i</g-v><g-pd>,</g-pd> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>}</g-pb> <g-pb>{</g-pb>
+                <g-v>result</g-v> <g-o>:=</g-o> <g-f>add</g-f><g-pb>(</g-pb><g-v>result</g-v><g-pd>,</g-pd> <g-v>i</g-v><g-pb>)</g-pb>
+            <g-pb>}</g-pb>
+        <g-pb>}</g-pb>
+    <g-pb>}</g-pb>
+<g-pb>}</g-pb>
