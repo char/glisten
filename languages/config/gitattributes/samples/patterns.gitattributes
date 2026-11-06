@@ -1,0 +1,4 @@
+"docs/my file.txt" text
+"a\\\"b" -text !ident
+*.{c,h} diff=cpp
+assets/[ab]*.svg filter=lfs -text

@@ -1,0 +1,7 @@
+<g-c># Normalize text and keep generated images binary</g-c>
+<g-s>*</g-s> <g-at>text</g-at><g-o>=</g-o><g-s>auto</g-s>
+<g-s>*</g-s>.png <g-at>binary</g-at>
+<g-s>*</g-s>.sh <g-at>text</g-at> <g-at>eol</g-at><g-o>=</g-o><g-s>lf</g-s>
+src<g-s>/**</g-s> <g-at>linguist-language</g-at><g-o>=</g-o><g-s>TypeScript</g-s> <g-o>-</g-o><g-at>diff</g-at>
+<g-k>[attr]</g-k><g-pr>generated</g-pr> <g-o>-</g-o><g-at>diff</g-at> <g-at>merge</g-at><g-o>=</g-o><g-s>ours</g-s>
+vendor<g-s>/**</g-s> <g-at>generated</g-at>

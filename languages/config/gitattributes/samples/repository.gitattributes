@@ -1,0 +1,7 @@
+# Normalize text and keep generated images binary
+* text=auto
+*.png binary
+*.sh text eol=lf
+src/** linguist-language=TypeScript -diff
+[attr]generated -diff merge=ours
+vendor/** generated

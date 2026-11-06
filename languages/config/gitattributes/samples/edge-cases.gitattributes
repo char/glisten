@@ -1,0 +1,7 @@
+  # a comment
+#not an attribute
+"unfinished pattern
+[attr]custom !text -merge eol=crlf
+unicode/λ.txt custom
+foo #not-a-comment
+!negative text
