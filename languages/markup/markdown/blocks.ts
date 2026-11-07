@@ -16,7 +16,19 @@ import { paragraphScratch } from "./scratch.ts";
 import { logicalRanges } from "./logical.ts";
 import { inlineAtoms } from "./inline_atoms.ts";
 import { attention } from "./attention.ts";
-import { ends, event, match, queued, run } from "./layout.ts";
+import { bracketStack } from "./brackets.ts";
+import { inlineResource } from "./resource.ts";
+import {
+  backtickRun,
+  bracket,
+  delimiterStackEntry,
+  ends,
+  event,
+  link,
+  match,
+  queued,
+  run,
+} from "./layout.ts";
 import { kind, styled, styleId } from "./styles.ts";
 import { referenceDefinition } from "./reference.ts";
 import { htmlEnd, htmlStart } from "./html.ts";
@@ -81,8 +93,11 @@ export function blocks(workPerByte = 16384) {
     definitionCursor = local("definitionCursor"),
     definitionNext = local("definitionNext"),
     inlineCursor = local("inlineCursor"),
-    inlineStart = local("inlineStart"),
     inlineStyle = local("inlineStyle"),
+    inlineWorkspace = local("inlineWorkspace"),
+    inlineTickBytes = local("inlineTickBytes"),
+    inlineEventCapacity = local("inlineEventCapacity"),
+    inlineWorkspaceBytes = local("inlineWorkspaceBytes"),
     attentionEvent = local("attentionEvent"),
     attentionNode = local("attentionNode"),
     attentionPair = local("attentionPair"),
@@ -127,7 +142,9 @@ export function blocks(workPerByte = 16384) {
   const logical = logicalRanges(scratch.address, charge);
   const definition = referenceDefinition(logical);
   const inline = inlineAtoms(logical, scratch, charge);
-  const emphasis = attention(logical, scratch, inline, charge);
+  const resource = inlineResource(logical, definition.destination, definition.title);
+  const links = bracketStack(logical, definition.label, resource);
+  const emphasis = attention(logical, scratch, inline, links, resource, charge);
   const inScratch = (offset: Part) => wat`(i32.add (global.get ${scratch.address}) ${offset})`;
   const queueAt = inScratch(wat`(local.get ${queueIndex})`);
   const eventAt = inScratch(wat`(local.get ${attentionEvent})`);
@@ -136,6 +153,9 @@ export function blocks(workPerByte = 16384) {
   );
   const endsAt = inScratch(
     ends.at(wat`(global.get ${emphasis.heads})`, wat`(local.get ${attentionNode})`),
+  );
+  const linkAt = inScratch(
+    link.at(wat`(global.get ${inline.links})`, wat`(local.get ${attentionNode})`),
   );
   const matchAt = inScratch(
     match.at(wat`(global.get ${emphasis.pairs})`, wat`(local.get ${attentionPair})`),
@@ -260,13 +280,43 @@ export function blocks(workPerByte = 16384) {
         (local.set ${queueLimit} (global.get ${scratch.used}))
         (global.set ${inline.ready} (i32.const 0))
         ${replayDefinitions()}
-        (local.set ${inlineCursor} (local.get ${definitionCursor}))
-        (block $inlineDone (loop $inline
-          (local.set ${inlineStart} (call ${inline.parse} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark}) (local.get ${out})))
-          (br_if $inlineDone (i64.eq (local.get ${inlineStart}) (i64.const -1)))
-          ${replayTo(wat`(local.get ${inlineStart})`, title ? styleId("text.title") : styleId("plain"), true)}
-          (if (i32.eq (global.get ${inline.style}) (i32.const ${kind.delimiterRun})) (then
-            (call ${emphasis.build} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark}) (local.get ${out}) (local.get ${inlineStart}))
+        (local.set ${inlineCursor} (call ${inline.next} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark})))
+        (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
+          (call ${inline.countSpecial} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark}))
+          ;; The backtick table has one slot per possible run length and one record per run.
+          (local.set ${inlineTickBytes} (i64.add
+            (i64.mul (i64.add (i64.extend_i32_u (global.get ${inline.tickMax})) (i64.const 1)) (i64.const 4))
+            (i64.mul (i64.extend_i32_u (global.get ${inline.tickRuns})) (i64.const ${backtickRun.size}))))
+          ;; Each atom consumes a special byte and has at most one preceding text gap, plus one trailing gap.
+          (local.set ${inlineEventCapacity} (i64.add (i64.const 1)
+            (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.specialCount})) (i64.const 2))
+              (i64.mul (i64.extend_i32_u (global.get ${inline.closeCount})) (i64.const 8)))))
+          ;; Runs, ends, active stack entries, and work runs are each bounded by delimiter bytes.
+          ;; A match consumes at least two delimiter bytes.
+          ;; Every bracket entry consumes an opening bracket; one extra entry is the null sentinel.
+          ;; Every link consumes a closing bracket.
+          (local.set ${inlineWorkspaceBytes} (i64.add (i64.add (local.get ${inlineTickBytes}) (i64.const ${56 + bracket.size}))
+            (i64.add (i64.mul (local.get ${inlineEventCapacity}) (i64.const ${event.size}))
+              (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.delimiterCount}))
+                (i64.const ${run.size * 2 + ends.size + delimiterStackEntry.size}))
+                (i64.add (i64.mul (i64.shr_u (i64.extend_i32_u (global.get ${inline.delimiterCount})) (i64.const 1)) (i64.const ${match.size}))
+                  (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.openCount})) (i64.const ${bracket.size}))
+                    (i64.mul (i64.extend_i32_u (global.get ${inline.closeCount})) (i64.const ${link.size}))))))))
+          (call ${charge} (local.get ${inlineWorkspaceBytes}))
+          (local.set ${inlineWorkspace} (call ${scratch.reserveExact} (local.get ${inlineWorkspaceBytes}) (local.get ${out})))
+          (global.set ${inline.backticks} (local.get ${inlineWorkspace}))
+          (global.set ${inline.backtickCapacity} (i32.wrap_i64 (local.get ${inlineTickBytes})))
+          (global.set ${inline.events} (i32.add (local.get ${inlineWorkspace}) (global.get ${inline.backtickCapacity})))
+          (global.set ${inline.runs} (i32.add (global.get ${inline.events}) (i32.mul (i32.wrap_i64 (local.get ${inlineEventCapacity})) (i32.const ${event.size}))))
+          (global.set ${inline.heads} (i32.add (global.get ${inline.runs}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${run.size}))))
+          (global.set ${inline.matches} (i32.add (global.get ${inline.heads}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${ends.size}))))
+          (global.set ${inline.brackets} (i32.add (global.get ${inline.matches}) (i32.mul (i32.shr_u (global.get ${inline.delimiterCount}) (i32.const 1)) (i32.const ${match.size}))))
+          (global.set ${inline.stack} (i32.add (global.get ${inline.brackets}) (i32.mul (i32.add (global.get ${inline.openCount}) (i32.const 1)) (i32.const ${bracket.size}))))
+          (global.set ${inline.work} (i32.add (global.get ${inline.stack}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${delimiterStackEntry.size}))))
+          (global.set ${inline.bottoms} (i32.add (global.get ${inline.work}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${run.size}))))
+          (global.set ${inline.links} (i32.add (global.get ${inline.bottoms}) (i32.const 56)))))
+        (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
+            (call ${emphasis.build} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark}) (local.get ${out}))
             (local.set ${attentionEvent} (global.get ${emphasis.first}))
             (local.set ${attentionStyle} (i32.const ${title ? styleId("text.title") : styleId("plain")}))
             (block $attentionDone (loop $attention
@@ -301,16 +351,33 @@ export function blocks(workPerByte = 16384) {
                     (local.set ${attentionPair} ${match.get(matchAt, "nextOpening")})
                     (br $open)))
                   ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, attentionStyle, true)})
+                (else (if (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.linkOpen}))
+                (then
+                  (local.set ${attentionNode} ${event.get(eventAt, "run")})
+                  ${link.set(linkAt, "saved", wat`(local.get ${attentionStyle})`)}
+                  (local.set ${attentionStyle} ${styled("text.reference")})
+                  ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, attentionStyle, true)})
+                (else (if (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.linkTail}))
+                (then
+                  (local.set ${attentionNode} ${event.get(eventAt, "run")})
+                  (if (i32.eq ${link.get(linkAt, "uri")} (i32.const -1))
+                    (then ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, styleId("text.reference"), true)})
+                    (else
+                      ${replayTo(wat`(i64.extend_i32_u ${link.get(linkAt, "uri")})`, styleId("text.reference"), true)}
+                      (if (i32.ne ${link.get(linkAt, "titleStart")} (i32.const -1)) (then
+                        ${replayTo(wat`(i64.extend_i32_u ${link.get(linkAt, "titleStart")})`, styleId("text.uri"), true)}
+                        ${replayTo(wat`(i64.extend_i32_u ${link.get(linkAt, "titleEnd")})`, styleId("string"), true)}))
+                      ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, styleId("text.uri"), true)}))
+                  (local.set ${attentionStyle} ${link.get(linkAt, "saved")}))
                 (else
-                  (local.set ${inlineStyle} ${event.get(eventAt, "style")})
-                  ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, inlineStyle, true)}))
+                  (local.set ${inlineStyle} (if (result i32) (i32.or
+                    (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.inlineText}))
+                    (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.inlineBracket})))
+                    (then (local.get ${attentionStyle})) (else ${event.get(eventAt, "style")})))
+                  ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, inlineStyle, true)}))))))
               (local.set ${attentionEvent} ${event.get(eventAt, "next")})
               (br $attention)))
-            (br $inlineDone)))
-          (local.set ${inlineCursor} (global.get ${inline.end}))
-          (local.set ${inlineStyle} (global.get ${inline.style}))
-          ${replayTo(wat`(local.get ${inlineCursor})`, inlineStyle, true)}
-          (br $inline)))
+            ))
         (block $queueDone (loop $queue
           (call ${charge} (i64.const 1))
           (br_if $queueDone (i32.ge_u (local.get ${queueIndex}) (local.get ${queueLimit})))
@@ -721,7 +788,8 @@ export function blocks(workPerByte = 16384) {
     (local ${paragraph} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)
-    (local ${inlineCursor} i64) (local ${inlineStart} i64) (local ${inlineStyle} i32)
+    (local ${inlineCursor} i64) (local ${inlineStyle} i32)
+    (local ${inlineWorkspace} i32) (local ${inlineTickBytes} i64) (local ${inlineEventCapacity} i64) (local ${inlineWorkspaceBytes} i64)
     (local ${attentionEvent} i32) (local ${attentionNode} i32) (local ${attentionPair} i32)
     (local ${attentionStart} i32) (local ${attentionEnd} i32) (local ${attentionStyle} i32) (local ${attentionTarget} i32)
     (local ${onlyDefinitions} i32) (local ${fence} i64) (local ${fenceStart} i32) (local ${fenceEnd} i32)

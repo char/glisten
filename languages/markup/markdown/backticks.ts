@@ -45,9 +45,9 @@ export function backtickIndex(
   const prepare = func(
     "indexBackticks",
     () => wat`
-    (param $input i32) (param $start i64) (param $limit i32) (param $out i32)
+    (param $input i32) (param $start i64) (param $limit i32) (param $table i32) (param $capacity i32)
     (local $cursor i64) (local $run i64) (local $count i32) (local $length i32) (local $max i32)
-    (local $table i32) (local $records i32) (local $entry i32) (local $previous i32) (local $slot i32)
+    (local $records i32) (local $entry i32) (local $previous i32) (local $slot i32)
     (local $need i64) (local $bytes i64)
     (local.set $cursor (local.get $start))
     (block $counted (loop $countRuns
@@ -63,14 +63,9 @@ export function backtickIndex(
       (local.set $count (i32.add (local.get $count) (i32.const 1)))
       (if (i32.gt_u (local.get $length) (local.get $max)) (then (local.set $max (local.get $length))))
       (br $countRuns)))
-    (local.set $table (global.get ${scratch.used}))
     (local.set $bytes (i64.mul (i64.add (i64.extend_i32_u (local.get $max)) (i64.const 1)) (i64.const 4)))
-    (local.set $need (i64.add (i64.extend_i32_u (local.get $table))
-      (i64.add (local.get $bytes) (i64.mul (i64.extend_i32_u (local.get $count)) (i64.const ${backtickRun.size})))))
-    (if (i64.gt_u (local.get $need) (i64.const 2147483640)) (then (call ${fail})))
-    (if (i64.gt_u (local.get $need) (i64.extend_i32_u (global.get ${scratch.capacity}))) (then
-      (call ${scratch.resize} (i32.wrap_i64 (local.get $need)) (i64.extend_i32_u (local.get $out)))))
-    (global.set ${scratch.used} (i32.wrap_i64 (local.get $need)))
+    (local.set $need (i64.add (local.get $bytes) (i64.mul (i64.extend_i32_u (local.get $count)) (i64.const ${backtickRun.size}))))
+    (if (i64.gt_u (local.get $need) (i64.extend_i32_u (local.get $capacity))) (then (call ${fail})))
     (call ${charge} (local.get $bytes))
     (memory.fill (i32.add (global.get ${scratch.address}) (local.get $table)) (i32.const 0) (i32.wrap_i64 (local.get $bytes)))
     (local.set $records (i32.add (local.get $table) (i32.wrap_i64 (local.get $bytes))))

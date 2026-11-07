@@ -67,5 +67,18 @@ export function paragraphScratch(charge: Def) {
     (global.set ${used} (i32.wrap_i64 (local.get $need)))
     (local.get $start)`,
   );
-  return { address, capacity, used, required, resize, append, reserve };
+  const reserveExact = func(
+    "paragraphReserveExact",
+    () => wat`
+    (param $bytes i64) (param $out i32) (result i32)
+    (local $start i32) (local $need i64)
+    (local.set $start (global.get ${used}))
+    (local.set $need (i64.add (i64.extend_i32_u (local.get $start)) (local.get $bytes)))
+    (if (i64.gt_u (local.get $need) (i64.const 2147483640)) (then (call ${fail})))
+    (if (i64.gt_u (local.get $need) (i64.extend_i32_u (global.get ${capacity}))) (then
+      (call ${resize} (i32.wrap_i64 (local.get $need)) (i64.extend_i32_u (local.get $out)))))
+    (global.set ${used} (i32.wrap_i64 (local.get $need)))
+    (local.get $start)`,
+  );
+  return { address, capacity, used, required, resize, append, reserve, reserveExact };
 }

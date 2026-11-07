@@ -6,6 +6,9 @@ export const queued = struct({ end: "i32", style: "i32" });
 /** A collected inline event, linked in source order. */
 export const event = struct({ next: "i32", style: "i32", start: "i64", end: "i64", run: "i32" });
 
+/** A source interval and the style it contributes during replay. */
+export const interval = struct({ start: "i32", end: "i32", style: "i32" });
+
 /**
  * A delimiter run. `remaining` shrinks as matches consume it, `consumed` counts
  * what its left edge has given up, and `previous`/`next` link the live stack.
@@ -39,6 +42,9 @@ export const match = struct({
 /** Per run: the first match it opens, and the first and last match it closes. */
 export const ends = struct({ opens: "i32", closes: "i32", lastClose: "i32" });
 
+/** A source-run index in the active delimiter stack. */
+export const delimiterStackEntry = struct({ index: "i32" });
+
 /** An open `[` or `![` on the bracket stack. */
 export const bracket = struct({
   below: "i32",
@@ -46,7 +52,15 @@ export const bracket = struct({
   cursor: "i64",
   image: "i32",
   delimiterBottom: "i32",
+  event: "i32",
 });
+
+/**
+ * A resolved link or image: the style around it, which replay restores after
+ * it, and where its URI and title begin and end. `uri` is -1 for the reference
+ * forms, and the title positions are -1 without a title.
+ */
+export const link = struct({ saved: "i32", uri: "i32", titleStart: "i32", titleEnd: "i32" });
 
 /** An indexed backtick run: where it starts, and the logical cursor after its closer. */
 export const backtickRun = struct({ position: "i32", closer: "i64" });
