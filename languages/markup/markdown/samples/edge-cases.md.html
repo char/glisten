@@ -9,7 +9,7 @@ But <g-em>*a </g-em><g-ts>**nested**</g-ts><g-em> word*</g-em> and <g-tx>~~remov
 Single <g-tx>~strike~</g-tx>; <g-tx>~~double strike~~</g-tx>; ~~~not strike~~~.
 Escapes: <g-se>\[</g-se>brackets<g-se>\]</g-se>, <g-se>\`</g-se>ticks<g-se>\`</g-se>, <g-se>\\</g-se> and <g-se>\!</g-se>; Unicode: naïve 雪.
 A code span can contain a tick: <g-tl>`` `inside` ``</g-tl> and <g-tl>` a  b `</g-tl>.
-An unmatched `` opener should not swallow `a later span`.
+An unmatched `` opener should not swallow <g-tl>`a later span`</g-tl>.
 
 A paragraph
 with a lazy continuation in a quote follows:
@@ -20,27 +20,27 @@ continued here*</g-em> and <g-tr>[a link](</g-tr><g-tu>https://example.org/a(b)c
 <g-ps>&gt;   &gt; </g-ps>nested quotation
 <g-ps>&gt;   &gt; </g-ps>continued
 
-<g-tt>A </g-tt><g-pd>|</g-pd><g-tt> B
-</g-tt><g-pd>--- | --- | ---</g-pd>
-extra <g-pd>|</g-pd> delimiter <g-pd>|</g-pd> column
+A | B
+--- | --- | ---
+extra | delimiter | column
 
-<g-tt>Title </g-tt><g-pd>|</g-pd><g-tt> not necessarily a table
+<g-tt>Title | not necessarily a table
 ===</g-tt>
 
-<g-tr>[split definition]:</g-tr>
-  <g-tu>/destination</g-tu><g-tr> </g-tr><g-s>"title on the next line"</g-s>
+<g-tr>[split definition]:
+  </g-tr><g-tu>/destination</g-tu><g-tr> </g-tr><g-s>"title on the next line"</g-s>
 
-<g-tr>[three-line definition]:</g-tr>
-  <g-tu>/another-destination</g-tu>
-  <g-s>"title on a separate line"</g-s>
+<g-tr>[three-line definition]:
+  </g-tr><g-tu>/another-destination</g-tu><g-tr>
+  </g-tr><g-s>"title on a separate line"</g-s>
 
-<g-ps>&lt;div
+&lt;div
 class="multiline"&gt;
 *HTML or markdown?*
-&lt;/div&gt;</g-ps>
+&lt;/div&gt;
 
-<g-c>&lt;!-- An HTML comment
-     with *literal* content --&gt;</g-c>
+&lt;!-- An HTML comment
+     with *literal* content --&gt;
 
 A fence longer than the apparent closer:
 

@@ -1,6 +1,6 @@
 <g-tt># Field guide: café &amp; tea</g-tt>
 
-A paragraph with <g-em>*emphasis*</g-em>, <g-ts>**strong**</g-ts>, <g-ts>***both***</g-ts>, <g-tx>~~old text~~</g-tx>,
+A paragraph with <g-em>*emphasis*</g-em>, <g-ts>**strong**</g-ts>, <g-em>*</g-em><g-ts>**both**</g-ts><g-em>*</g-em>, <g-tx>~~old text~~</g-tx>,
 <g-tl>`inline code`</g-tl>, and an escaped <g-se>\*</g-se>asterisk<g-se>\*</g-se>. A hard break follows.  
 The next line has <g-se>&amp;amp;</g-se> and <g-se>&amp;#x263A;</g-se> entities.
 
@@ -10,7 +10,7 @@ Read <g-tr>[the manual](</g-tr><g-tu>https://example.org/guide </g-tu><g-s>"A ti
 <g-tr>[the local page](</g-tr><g-tu>../notes/intro.md)</g-tu>. An <g-tr>![icon](</g-tr><g-tu>images/cup.png </g-tu><g-s>"Cup"</g-s><g-tu>)</g-tu>
 may accompany <g-tr>[a reference][manual]</g-tr>, <g-tr>[a collapsed reference][]</g-tr>, or <g-tr>[manual]</g-tr>.
 Visit <g-tu>&lt;https://example.org/a?b=c&gt;</g-tu> or email <g-tu>&lt;tea@example.org&gt;</g-tu>.
-Inline <g-ps>&lt;kbd&gt;</g-ps>Ctrl<g-ps>&lt;/kbd&gt;</g-ps> and <g-c>&lt;!-- a note --&gt;</g-c> are HTML.
+Inline &lt;kbd&gt;Ctrl&lt;/kbd&gt; and &lt;!-- a note --&gt; are HTML.
 
 <g-tr>[manual]: </g-tr><g-tu>https://example.org/manual</g-tu><g-tr> </g-tr><g-s>"Manual"</g-s>
 <g-tr>[a collapsed reference]: </g-tr><g-tu>&lt;../reference.md&gt;</g-tu><g-tr> </g-tr><g-s>'Reference'</g-s>
@@ -29,17 +29,17 @@ Inline <g-ps>&lt;kbd&gt;</g-ps>Ctrl<g-ps>&lt;/kbd&gt;</g-ps> and <g-c>&lt;!-- a 
 <g-ps>&gt; 1. </g-ps>Numbered inside the quote
 <g-ps>&gt; 2. </g-ps>Another numbered item
 
-<g-ps>- [x]</g-ps> Steep the leaves
-<g-ps>- [ ]</g-ps> Pour into a cup
-<g-ps>- [ ]</g-ps> Serve with milk
+<g-ps>- </g-ps><g-tr>[x]</g-tr> Steep the leaves
+<g-ps>- </g-ps>[ ] Pour into a cup
+<g-ps>- </g-ps>[ ] Serve with milk
 
 <g-pd>---</g-pd>
 
 <g-tl>    Indented code is not *emphasis*.
     Its second line contains &lt;tags&gt;.
 
-</g-tl><g-ps>&lt;div class="notice"&gt;
+</g-tl>&lt;div class="notice"&gt;
 &lt;p&gt;HTML block with &lt;strong&gt;content&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;</g-ps>
+&lt;/div&gt;
 
 Back to ordinary prose, with Unicode: 雪 and ☕.
