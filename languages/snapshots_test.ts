@@ -11,15 +11,20 @@ const update = env.get("GLISTEN_UPDATE_SNAPSHOTS") === "1";
 // Every language is loaded, so samples also exercise their injections. Run
 // `avril task build` after changing grammars or the compiler; these tests use the last build.
 const highlighter = new Highlighter({ checks: true });
-for (const module of await Promise.all(
+// A missing or invalid module fails only its own language's tests; the others still run.
+const failures = new Map<string, unknown>();
+await Promise.all(
   Object.keys(languages).map(async (name) => {
     const path = `dist/${name}.wasm`;
-    if (!(await exists(path)))
-      throw new Error(`${path} is missing; run \`avril task build\` before snapshot tests`);
-    return new WebAssembly.Module(await readFile(path));
+    try {
+      if (!(await exists(path)))
+        throw new Error(`${path} is missing; run \`avril task build\` before snapshot tests`);
+      await highlighter.add(new WebAssembly.Module(await readFile(path)));
+    } catch (error) {
+      failures.set(name, error);
+    }
   }),
-))
-  await highlighter.add(module);
+);
 
 function compare(actual: string, expected: string, path: string): void {
   if (actual === expected) return;
@@ -49,6 +54,7 @@ test("every language directory is registered", () => {
 for (const name of Object.keys(languages)) {
   const directory = `${directories.get(name) ?? `languages/?/${name}`}/samples`;
   test(`${name} has samples`, async () => {
+    if (failures.has(name)) throw failures.get(name);
     if (!(await exists(directory))) throw new Error(`${directory} is missing`);
   });
   if (!(await exists(directory))) continue;
@@ -57,6 +63,7 @@ for (const name of Object.keys(languages)) {
     if (entry.isFile && !entry.name.endsWith(".html")) samples.push(entry.name);
   for (const sample of samples.sort()) {
     test(`${name}: ${sample}`, async () => {
+      if (failures.has(name)) throw failures.get(name);
       const html = highlighter.highlight(name, await readFile(`${directory}/${sample}`));
       const path = `${directory}/${sample}.html`;
       if (update) await writeTextFile(path, html);

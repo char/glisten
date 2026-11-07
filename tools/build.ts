@@ -7,7 +7,8 @@ import { buildModule } from "./module.ts";
 await mkdirs("dist");
 const sizes: Record<string, number> = {};
 await Promise.all(
-  Object.entries(languages).map(async ([name, source]) => {
+  Object.entries(languages).map(async ([name, load]) => {
+    const { default: source } = await load();
     const compiled = compileLanguage(source);
     const module = await buildModule(compiled);
     await writeTextFile(`dist/${name}.wat`, compiled.wat);

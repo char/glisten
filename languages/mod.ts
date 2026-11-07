@@ -1,263 +1,134 @@
 import type { LanguageSource } from "#/compiler/language.ts";
-import ada from "./systems/ada/grammar.ts";
-import agda from "./proof/agda/grammar.ts";
-import asciidoc from "./markup/asciidoc/grammar.ts";
-import astro from "./web/astro/grammar.ts";
-import awk from "./scripting/awk/grammar.ts";
-import bash from "./shell/bash/grammar.ts";
-import batch from "./shell/batch/grammar.ts";
-import c from "./systems/c/grammar.ts";
-import c_sharp from "./managed/c-sharp/grammar.ts";
-import caddy from "./config/caddy/grammar.ts";
-import capnp from "./data/capnp/grammar.ts";
-import cedar from "./policy/cedar/grammar.ts";
-import cedarschema from "./policy/cedarschema/grammar.ts";
-import clojure from "./functional/clojure/grammar.ts";
-import cmake from "./build/cmake/grammar.ts";
-import cobol from "./managed/cobol/grammar.ts";
-import commonlisp from "./functional/commonlisp/grammar.ts";
-import cpp from "./systems/cpp/grammar.ts";
-import crystal from "./scripting/crystal/grammar.ts";
-import css from "./web/css/grammar.ts";
-import csv from "./data/csv/grammar.ts";
-import cuda from "./shaders/cuda/grammar.ts";
-import d from "./systems/d/grammar.ts";
-import dart from "./managed/dart/grammar.ts";
-import devicetree from "./data/devicetree/grammar.ts";
-import diff from "./data/diff/grammar.ts";
-import dockerfile from "./build/dockerfile/grammar.ts";
-import dot from "./data/dot/grammar.ts";
-import dotenv from "./config/dotenv/grammar.ts";
-import elisp from "./functional/elisp/grammar.ts";
-import elixir from "./functional/elixir/grammar.ts";
-import elm from "./functional/elm/grammar.ts";
-import erlang from "./functional/erlang/grammar.ts";
-import fish from "./shell/fish/grammar.ts";
-import fjson from "./config/fjson/grammar.ts";
-import fortran from "./datasci/fortran/grammar.ts";
-import fortran_fixed from "./datasci/fortran-fixed/grammar.ts";
-import fsharp from "./functional/fsharp/grammar.ts";
-import gdscript from "./scripting/gdscript/grammar.ts";
-import gitattributes from "./config/gitattributes/grammar.ts";
-import gleam from "./functional/gleam/grammar.ts";
-import glsl from "./shaders/glsl/grammar.ts";
-import go from "./managed/go/grammar.ts";
-import graphql from "./query/graphql/grammar.ts";
-import groovy from "./managed/groovy/grammar.ts";
-import handlebars from "./web/handlebars/grammar.ts";
-import haskell from "./functional/haskell/grammar.ts";
-import hcl from "./config/hcl/grammar.ts";
-import hlsl from "./shaders/hlsl/grammar.ts";
-import html from "./web/html/grammar.ts";
-import idris from "./functional/idris/grammar.ts";
-import ini from "./config/ini/grammar.ts";
-import java from "./managed/java/grammar.ts";
-import javascript from "./web/javascript/grammar.ts";
-import jinja from "./web/jinja/grammar.ts";
-import jq from "./query/jq/grammar.ts";
-import jsdoc from "./web/jsdoc/grammar.ts";
-import json from "./config/json/grammar.ts";
-import jsx from "./web/jsx/grammar.ts";
-import julia from "./datasci/julia/grammar.ts";
-import just from "./build/just/grammar.ts";
-import kconfig from "./build/kconfig/grammar.ts";
-import kdl from "./config/kdl/grammar.ts";
-import kotlin from "./managed/kotlin/grammar.ts";
-import latex from "./markup/latex/grammar.ts";
-import lean from "./proof/lean/grammar.ts";
-import less from "./web/less/grammar.ts";
-import lua from "./scripting/lua/grammar.ts";
-import make from "./build/make/grammar.ts";
-import markdown from "./markup/markdown/grammar.ts";
-import matlab from "./datasci/matlab/grammar.ts";
-import mermaid from "./markup/mermaid/grammar.ts";
-import meson from "./build/meson/grammar.ts";
-import nginx from "./config/nginx/grammar.ts";
-import nim from "./systems/nim/grammar.ts";
-import ninja from "./build/ninja/grammar.ts";
-import nix from "./build/nix/grammar.ts";
-import objc from "./systems/objc/grammar.ts";
-import ocaml from "./functional/ocaml/grammar.ts";
-import odin from "./systems/odin/grammar.ts";
-import pascal from "./systems/pascal/grammar.ts";
-import perl from "./scripting/perl/grammar.ts";
-import php from "./web/php/grammar.ts";
-import plsql from "./query/plsql/grammar.ts";
-import powershell from "./shell/powershell/grammar.ts";
-import prolog from "./proof/prolog/grammar.ts";
-import proto from "./data/proto/grammar.ts";
-import python from "./scripting/python/grammar.ts";
-import r from "./datasci/r/grammar.ts";
-import regex from "./query/regex/grammar.ts";
-import rego from "./policy/rego/grammar.ts";
-import rescript from "./functional/rescript/grammar.ts";
-import ron from "./config/ron/grammar.ts";
-import ruby from "./scripting/ruby/grammar.ts";
-import rust from "./systems/rust/grammar.ts";
-import scala from "./managed/scala/grammar.ts";
-import scheme from "./functional/scheme/grammar.ts";
-import scss from "./web/scss/grammar.ts";
-import solidity from "./contracts/solidity/grammar.ts";
-import sparql from "./query/sparql/grammar.ts";
-import sql from "./query/sql/grammar.ts";
-import ssh_config from "./config/ssh-config/grammar.ts";
-import svelte from "./web/svelte/grammar.ts";
-import swift from "./managed/swift/grammar.ts";
-import tcl from "./scripting/tcl/grammar.ts";
-import textproto from "./data/textproto/grammar.ts";
-import thrift from "./data/thrift/grammar.ts";
-import tlaplus from "./proof/tlaplus/grammar.ts";
-import toml from "./config/toml/grammar.ts";
-import tsql from "./query/tsql/grammar.ts";
-import tsv from "./data/tsv/grammar.ts";
-import tsx from "./web/tsx/grammar.ts";
-import twig from "./web/twig/grammar.ts";
-import typescript from "./web/typescript/grammar.ts";
-import typst from "./markup/typst/grammar.ts";
-import vb from "./managed/vb/grammar.ts";
-import vba from "./managed/vba/grammar.ts";
-import vbscript from "./managed/vbscript/grammar.ts";
-import verilog from "./hdl/verilog/grammar.ts";
-import vhdl from "./hdl/vhdl/grammar.ts";
-import vim from "./scripting/vim/grammar.ts";
-import vue from "./web/vue/grammar.ts";
-import wat from "./systems/wat/grammar.ts";
-import wgsl from "./shaders/wgsl/grammar.ts";
-import wit from "./data/wit/grammar.ts";
-import x86asm from "./systems/x86asm/grammar.ts";
-import xml from "./markup/xml/grammar.ts";
-import yaml from "./config/yaml/grammar.ts";
-import zig from "./systems/zig/grammar.ts";
 
-/** Every language, by module name (`dist/<name>.wasm`); each lives in `languages/<category>/<name>/`. */
-export const languages: Readonly<Record<string, LanguageSource>> = {
-  ada,
-  agda,
-  asciidoc,
-  astro,
-  awk,
-  bash,
-  batch,
-  c,
-  "c-sharp": c_sharp,
-  caddy,
-  capnp,
-  cedar,
-  cedarschema,
-  clojure,
-  cmake,
-  cobol,
-  commonlisp,
-  cpp,
-  crystal,
-  css,
-  csv,
-  cuda,
-  d,
-  dart,
-  devicetree,
-  diff,
-  dockerfile,
-  dot,
-  dotenv,
-  elisp,
-  elixir,
-  elm,
-  erlang,
-  fish,
-  fjson,
-  fortran,
-  "fortran-fixed": fortran_fixed,
-  fsharp,
-  gdscript,
-  gitattributes,
-  gleam,
-  glsl,
-  go,
-  graphql,
-  groovy,
-  handlebars,
-  haskell,
-  hcl,
-  hlsl,
-  html,
-  idris,
-  ini,
-  java,
-  javascript,
-  jinja,
-  jq,
-  jsdoc,
-  json,
-  jsx,
-  julia,
-  just,
-  kconfig,
-  kdl,
-  kotlin,
-  latex,
-  lean,
-  less,
-  lua,
-  make,
-  markdown,
-  matlab,
-  mermaid,
-  meson,
-  nginx,
-  nim,
-  ninja,
-  nix,
-  objc,
-  ocaml,
-  odin,
-  pascal,
-  perl,
-  php,
-  plsql,
-  powershell,
-  prolog,
-  proto,
-  python,
-  r,
-  regex,
-  rego,
-  rescript,
-  ron,
-  ruby,
-  rust,
-  scala,
-  scheme,
-  scss,
-  solidity,
-  sparql,
-  sql,
-  "ssh-config": ssh_config,
-  svelte,
-  swift,
-  tcl,
-  textproto,
-  thrift,
-  tlaplus,
-  toml,
-  tsql,
-  tsv,
-  tsx,
-  twig,
-  typescript,
-  typst,
-  vb,
-  vba,
-  vbscript,
-  verilog,
-  vhdl,
-  vim,
-  vue,
-  wat,
-  wgsl,
-  wit,
-  x86asm,
-  xml,
-  yaml,
-  zig,
+/** Every language, by module name (`dist/<name>.wasm`). */
+export const languages: Readonly<Record<string, () => Promise<{ default: LanguageSource }>>> = {
+  ada: () => import("./systems/ada/grammar.ts"),
+  agda: () => import("./proof/agda/grammar.ts"),
+  asciidoc: () => import("./markup/asciidoc/grammar.ts"),
+  astro: () => import("./web/astro/grammar.ts"),
+  awk: () => import("./scripting/awk/grammar.ts"),
+  bash: () => import("./shell/bash/grammar.ts"),
+  batch: () => import("./shell/batch/grammar.ts"),
+  c: () => import("./systems/c/grammar.ts"),
+  "c-sharp": () => import("./managed/c-sharp/grammar.ts"),
+  caddy: () => import("./config/caddy/grammar.ts"),
+  capnp: () => import("./data/capnp/grammar.ts"),
+  cedar: () => import("./policy/cedar/grammar.ts"),
+  cedarschema: () => import("./policy/cedarschema/grammar.ts"),
+  clojure: () => import("./functional/clojure/grammar.ts"),
+  cmake: () => import("./build/cmake/grammar.ts"),
+  cobol: () => import("./managed/cobol/grammar.ts"),
+  commonlisp: () => import("./functional/commonlisp/grammar.ts"),
+  cpp: () => import("./systems/cpp/grammar.ts"),
+  crystal: () => import("./scripting/crystal/grammar.ts"),
+  css: () => import("./web/css/grammar.ts"),
+  csv: () => import("./data/csv/grammar.ts"),
+  cuda: () => import("./shaders/cuda/grammar.ts"),
+  d: () => import("./systems/d/grammar.ts"),
+  dart: () => import("./managed/dart/grammar.ts"),
+  devicetree: () => import("./data/devicetree/grammar.ts"),
+  diff: () => import("./data/diff/grammar.ts"),
+  dockerfile: () => import("./build/dockerfile/grammar.ts"),
+  dot: () => import("./data/dot/grammar.ts"),
+  dotenv: () => import("./config/dotenv/grammar.ts"),
+  elisp: () => import("./functional/elisp/grammar.ts"),
+  elixir: () => import("./functional/elixir/grammar.ts"),
+  elm: () => import("./functional/elm/grammar.ts"),
+  erlang: () => import("./functional/erlang/grammar.ts"),
+  fish: () => import("./shell/fish/grammar.ts"),
+  fjson: () => import("./config/fjson/grammar.ts"),
+  fortran: () => import("./datasci/fortran/grammar.ts"),
+  "fortran-fixed": () => import("./datasci/fortran-fixed/grammar.ts"),
+  fsharp: () => import("./functional/fsharp/grammar.ts"),
+  gdscript: () => import("./scripting/gdscript/grammar.ts"),
+  gitattributes: () => import("./config/gitattributes/grammar.ts"),
+  gleam: () => import("./functional/gleam/grammar.ts"),
+  glsl: () => import("./shaders/glsl/grammar.ts"),
+  go: () => import("./managed/go/grammar.ts"),
+  graphql: () => import("./query/graphql/grammar.ts"),
+  groovy: () => import("./managed/groovy/grammar.ts"),
+  handlebars: () => import("./web/handlebars/grammar.ts"),
+  haskell: () => import("./functional/haskell/grammar.ts"),
+  hcl: () => import("./config/hcl/grammar.ts"),
+  hlsl: () => import("./shaders/hlsl/grammar.ts"),
+  html: () => import("./web/html/grammar.ts"),
+  idris: () => import("./functional/idris/grammar.ts"),
+  ini: () => import("./config/ini/grammar.ts"),
+  java: () => import("./managed/java/grammar.ts"),
+  javascript: () => import("./web/javascript/grammar.ts"),
+  jinja: () => import("./web/jinja/grammar.ts"),
+  jq: () => import("./query/jq/grammar.ts"),
+  jsdoc: () => import("./web/jsdoc/grammar.ts"),
+  json: () => import("./config/json/grammar.ts"),
+  jsx: () => import("./web/jsx/grammar.ts"),
+  julia: () => import("./datasci/julia/grammar.ts"),
+  just: () => import("./build/just/grammar.ts"),
+  kconfig: () => import("./build/kconfig/grammar.ts"),
+  kdl: () => import("./config/kdl/grammar.ts"),
+  kotlin: () => import("./managed/kotlin/grammar.ts"),
+  latex: () => import("./markup/latex/grammar.ts"),
+  lean: () => import("./proof/lean/grammar.ts"),
+  less: () => import("./web/less/grammar.ts"),
+  lua: () => import("./scripting/lua/grammar.ts"),
+  make: () => import("./build/make/grammar.ts"),
+  markdown: () => import("./markup/markdown/grammar.ts"),
+  matlab: () => import("./datasci/matlab/grammar.ts"),
+  mermaid: () => import("./markup/mermaid/grammar.ts"),
+  meson: () => import("./build/meson/grammar.ts"),
+  nginx: () => import("./config/nginx/grammar.ts"),
+  nim: () => import("./systems/nim/grammar.ts"),
+  ninja: () => import("./build/ninja/grammar.ts"),
+  nix: () => import("./build/nix/grammar.ts"),
+  objc: () => import("./systems/objc/grammar.ts"),
+  ocaml: () => import("./functional/ocaml/grammar.ts"),
+  odin: () => import("./systems/odin/grammar.ts"),
+  pascal: () => import("./systems/pascal/grammar.ts"),
+  perl: () => import("./scripting/perl/grammar.ts"),
+  php: () => import("./web/php/grammar.ts"),
+  plsql: () => import("./query/plsql/grammar.ts"),
+  powershell: () => import("./shell/powershell/grammar.ts"),
+  prolog: () => import("./proof/prolog/grammar.ts"),
+  proto: () => import("./data/proto/grammar.ts"),
+  python: () => import("./scripting/python/grammar.ts"),
+  r: () => import("./datasci/r/grammar.ts"),
+  regex: () => import("./query/regex/grammar.ts"),
+  rego: () => import("./policy/rego/grammar.ts"),
+  rescript: () => import("./functional/rescript/grammar.ts"),
+  ron: () => import("./config/ron/grammar.ts"),
+  ruby: () => import("./scripting/ruby/grammar.ts"),
+  rust: () => import("./systems/rust/grammar.ts"),
+  scala: () => import("./managed/scala/grammar.ts"),
+  scheme: () => import("./functional/scheme/grammar.ts"),
+  scss: () => import("./web/scss/grammar.ts"),
+  solidity: () => import("./contracts/solidity/grammar.ts"),
+  sparql: () => import("./query/sparql/grammar.ts"),
+  sql: () => import("./query/sql/grammar.ts"),
+  "ssh-config": () => import("./config/ssh-config/grammar.ts"),
+  svelte: () => import("./web/svelte/grammar.ts"),
+  swift: () => import("./managed/swift/grammar.ts"),
+  tcl: () => import("./scripting/tcl/grammar.ts"),
+  textproto: () => import("./data/textproto/grammar.ts"),
+  thrift: () => import("./data/thrift/grammar.ts"),
+  tlaplus: () => import("./proof/tlaplus/grammar.ts"),
+  toml: () => import("./config/toml/grammar.ts"),
+  tsql: () => import("./query/tsql/grammar.ts"),
+  tsv: () => import("./data/tsv/grammar.ts"),
+  tsx: () => import("./web/tsx/grammar.ts"),
+  twig: () => import("./web/twig/grammar.ts"),
+  typescript: () => import("./web/typescript/grammar.ts"),
+  typst: () => import("./markup/typst/grammar.ts"),
+  vb: () => import("./managed/vb/grammar.ts"),
+  vba: () => import("./managed/vba/grammar.ts"),
+  vbscript: () => import("./managed/vbscript/grammar.ts"),
+  verilog: () => import("./hdl/verilog/grammar.ts"),
+  vhdl: () => import("./hdl/vhdl/grammar.ts"),
+  vim: () => import("./scripting/vim/grammar.ts"),
+  vue: () => import("./web/vue/grammar.ts"),
+  wat: () => import("./systems/wat/grammar.ts"),
+  wgsl: () => import("./shaders/wgsl/grammar.ts"),
+  wit: () => import("./data/wit/grammar.ts"),
+  x86asm: () => import("./systems/x86asm/grammar.ts"),
+  xml: () => import("./markup/xml/grammar.ts"),
+  yaml: () => import("./config/yaml/grammar.ts"),
+  zig: () => import("./systems/zig/grammar.ts"),
 };
