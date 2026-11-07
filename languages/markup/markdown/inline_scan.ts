@@ -1,5 +1,5 @@
 import { stopScan } from "#/compiler/runtime.ts";
-import { func, wat, type Def } from "#/testing/wat/mod.ts";
+import { func, wat, type Def, type Fragment } from "#/testing/wat/mod.ts";
 import { logicalRanges } from "./logical.ts";
 
 export function inlineScan(
@@ -8,6 +8,8 @@ export function inlineScan(
   charge?: Def,
   stops = "\n\r!&*<>@HW[\\]_`hw~",
   name = "inlineScan",
+  /** Whether a stop at `$pos` counts; rejected stops resume the scan in place. */
+  accept?: Fragment,
 ) {
   const scan = stopScan(
     `${name}Stop`,
@@ -32,6 +34,15 @@ export function inlineScan(
         (then (local.set $end (i32.add (local.get $pos) (i32.const 256)))))
       ${work}
       (local.set $pos (call ${scan} (local.get $input) (local.get $pos) (local.get $end)))
+      ${
+        accept
+          ? wat`(block $accepted (loop $filter
+        (br_if $accepted (i32.ge_u (local.get $pos) (local.get $end)))
+        (br_if $accepted ${accept})
+        (local.set $pos (call ${scan} (local.get $input) (i32.add (local.get $pos) (i32.const 1)) (local.get $end)))
+        (br $filter)))`
+          : wat``
+      }
       (local.set $cursor (i64.or (i64.shl (i64.extend_i32_u (local.get $index)) (i64.const 32))
         (i64.extend_i32_u (local.get $pos))))
       (br_if $done (i32.lt_u (local.get $pos) (local.get $end)))
