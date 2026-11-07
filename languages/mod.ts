@@ -80,6 +80,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   nim: () => import("./systems/nim/grammar.ts"),
   ninja: () => import("./build/ninja/grammar.ts"),
   nix: () => import("./build/nix/grammar.ts"),
+  nushell: () => import("./shell/nushell/grammar.ts"),
   objc: () => import("./systems/objc/grammar.ts"),
   ocaml: () => import("./functional/ocaml/grammar.ts"),
   odin: () => import("./systems/odin/grammar.ts"),

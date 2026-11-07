@@ -1,0 +1,14 @@
+<g-k>export</g-k> <g-k>def</g-k> <g-at>--env</g-at> <g-f>greet</g-f> <g-pb>[</g-pb><g-v>name</g-v><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-at>--loud</g-at><g-pb>(</g-pb><g-at>-l</g-at><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>bool</g-t><g-pb>]</g-pb> <g-o>-&gt;</g-o> <g-t>string</g-t> <g-pb>{</g-pb>
+  <g-k>let</g-k> greeting <g-o>=</g-o> <g-ps>$"</g-ps><g-s>Hello, </g-s><g-ps>(</g-ps><g-v>$name</g-v><g-ps>)</g-ps><g-s>!</g-s><g-ps>"</g-ps>
+  <g-k>if</g-k> <g-v>$loud</g-v> <g-pb>{</g-pb> <g-v>$greeting</g-v> <g-o>|</g-o> <g-f>str</g-f> <g-f>upcase</g-f> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-v>$greeting</g-v> <g-pb>}</g-pb>
+<g-pb>}</g-pb>
+<g-at>@example</g-at> <g-s>"Greet someone"</g-s> <g-pb>{</g-pb> <g-f>greet</g-f> Nushell <g-pb>}</g-pb>
+<g-at>@search-terms</g-at> <g-s>"hello"</g-s>
+<g-at>@category</g-at> <g-s>"strings"</g-s>
+<g-at>@deprecated</g-at>
+<g-k>def</g-k> <g-f>example</g-f> <g-pb>[</g-pb><g-v>x</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pb>]</g-pb><g-pd>:</g-pd> <g-pb>[</g-pb><g-t>nothing</g-t> <g-o>-&gt;</g-o> <g-t>string</g-t><g-pd>,</g-pd> <g-t>list</g-t> <g-o>-&gt;</g-o> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;]</g-pb> <g-pb>{</g-pb>
+  <g-v>$x</g-v> <g-o>|</g-o> <g-f>into</g-f> <g-f>string</g-f>
+<g-pb>}</g-pb>
+<g-k>def</g-k> <g-f>render</g-f> <g-pb>[]</g-pb><g-pd>:</g-pd> <g-t>string</g-t> <g-o>-&gt;</g-o> <g-t>string</g-t> <g-pb>{</g-pb> <g-v>$in</g-v> <g-pb>}</g-pb>
+<g-k>let</g-k> items <g-o>=</g-o> <g-pb>[[</g-pb>name size<g-pb>]</g-pb><g-pd>;</g-pd> <g-pb>[</g-pb>one <g-n>5kb</g-n><g-pb>]</g-pb> <g-pb>[</g-pb>two <g-n>1mb</g-n><g-pb>]]</g-pb>
+<g-k>for</g-k> item <g-o>in</g-o> <g-v>$items</g-v> <g-pb>{</g-pb> <g-f>print</g-f> <g-v>$item</g-v><g-pd>.</g-pd><g-vm>name</g-vm> <g-pb>}</g-pb>

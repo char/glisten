@@ -1,0 +1,6 @@
+<g-c># Find large files</g-c>
+<g-f>ls</g-f> <g-at>--all</g-at> <g-o>|</g-o> <g-f>where</g-f> size <g-o>&gt;</g-o> <g-n>10kb</g-n> <g-o>|</g-o> <g-f>sort-by</g-f> size <g-o>|</g-o> <g-f>each</g-f> <g-pb>{|</g-pb><g-v>row</g-v><g-pb>|</g-pb>
+  <g-ps>$"(</g-ps><g-v>$row</g-v><g-pd>.</g-pd><g-vm>name</g-vm><g-ps>)</g-ps><g-s>: </g-s><g-ps>(</g-ps><g-v>$row</g-v><g-pd>.</g-pd><g-vm>size</g-vm><g-ps>)"</g-ps>
+<g-pb>}</g-pb>
+<g-k>let</g-k> paths <g-o>=</g-o> <g-v>$env</g-v><g-pd>.</g-pd><g-vm>PATH</g-vm>
+<g-f>print</g-f> <g-v>$paths</g-v><g-pd>.</g-pd><g-vm>0?</g-vm>

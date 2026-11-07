@@ -1,0 +1,11 @@
+<g-c># Delimiters, literals and operators</g-c>
+<g-k>let</g-k> raw <g-o>=</g-o> <g-s>r##'a '# b'##</g-s>
+<g-k>let</g-k> nested <g-o>=</g-o> <g-ps>$"</g-ps><g-s>value: </g-s><g-ps>(</g-ps><g-pb>(</g-pb><g-v>$in</g-v> <g-o>|</g-o> <g-f>str</g-f> <g-f>trim</g-f><g-pb>)</g-pb><g-ps>)"</g-ps>
+<g-k>let</g-k> x <g-o>=</g-o> <g-pb>[</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>10</g-n> <g-n>1</g-n><g-o>..&lt;</g-o><g-n>5</g-n> <g-n>5sec</g-n> <g-n>1day</g-n> <g-cb>null</g-cb> <g-cb>true</g-cb> <g-cb>false</g-cb><g-pb>]</g-pb>
+<g-k>let</g-k> record <g-o>=</g-o> <g-pb>{</g-pb><g-pr>a</g-pr><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-pr>'quoted key'</g-pr><g-pd>:</g-pd> <g-s>'literal'</g-s><g-pd>,</g-pd> <g-pr>"double key"</g-pr><g-pd>:</g-pd> <g-s>`path name`</g-s><g-pb>}</g-pb>
+<g-k>let</g-k> dates <g-o>=</g-o> <g-pb>[</g-pb><g-n>2024-01-01</g-n> <g-n>2024-01-01T10:00:00+02:00</g-n> <g-n>1</g-n> <g-o>-</g-o> <g-n>2</g-n><g-pb>]</g-pb>
+<g-k>let</g-k> joined <g-o>=</g-o> <g-pb>(</g-pb><g-s>'a'</g-s> <g-o>|</g-o> <g-f>path</g-f> <g-f>join</g-f> <g-s>'b'</g-s> <g-o>|</g-o> <g-f>str</g-f> <g-f>replace</g-f> a b <g-o>|</g-o> <g-f>into</g-f> <g-f>string</g-f><g-pb>)</g-pb>
+<g-k>def</g-k> <g-f>typed</g-f> <g-pb>[</g-pb><g-v>x</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pd>,</g-pd> <g-at>--flag</g-at><g-pb>(</g-pb><g-at>-f</g-at><g-pb>)</g-pb><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-v>xs</g-v><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>int</g-t><g-pb>&gt;]</g-pb> <g-o>-&gt;</g-o> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>int</g-t><g-pb>&gt;</g-pb> <g-pb>{</g-pb> <g-v>$xs</g-v> <g-pb>}</g-pb>
+<g-k>extern</g-k> <g-f>"bw login"</g-f> <g-pb>[</g-pb><g-v>email</g-v><g-ps>?</g-ps><g-pd>:</g-pd> <g-t>string</g-t><g-pd>,</g-pd> <g-pd>...</g-pd><g-v>args</g-v><g-pd>:</g-pd> <g-t>list</g-t><g-pb>&lt;</g-pb><g-t>string</g-t><g-pb>&gt;]</g-pb>
+where name <g-o>=~</g-o> <g-s>'foo'</g-s> <g-o>and</g-o> size <g-o>not-in</g-o> <g-pb>[</g-pb><g-n>1</g-n> <g-n>2</g-n><g-pb>]</g-pb>
+<g-f>print</g-f> <g-s>"escaped </g-s><g-se>\"</g-se><g-s>quote</g-s><g-se>\"\n</g-se><g-s>"</g-s> <g-c># trailing comment</g-c>
