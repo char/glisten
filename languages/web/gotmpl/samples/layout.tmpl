@@ -1,0 +1,6 @@
+{{ define "page" }}
+<h1>{{ .Title }}</h1>
+{{ with .Site.Params.author }}{{ .Name }}{{ else with .Site.Title }}{{ . }}{{ end }}
+{{ if and (eq .Kind "page") (not .Draft) }}{{ template "body" . }}{{ end }}
+{{ block "footer" . }}default{{ end }}
+{{ end }}

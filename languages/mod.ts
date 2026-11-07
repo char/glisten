@@ -45,6 +45,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   gleam: () => import("./functional/gleam/grammar.ts"),
   glsl: () => import("./shaders/glsl/grammar.ts"),
   go: () => import("./managed/go/grammar.ts"),
+  gotmpl: () => import("./web/gotmpl/grammar.ts"),
   graphql: () => import("./query/graphql/grammar.ts"),
   groovy: () => import("./managed/groovy/grammar.ts"),
   handlebars: () => import("./web/handlebars/grammar.ts"),

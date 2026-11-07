@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: <g-ps>{{</g-ps> <g-f>include</g-f> <g-s>"demo.fullname"</g-s> <g-v>.</g-v> <g-ps>}}</g-ps>
+data:
+  <g-ps>{{-</g-ps> <g-k>range</g-k> <g-v>$i</g-v><g-pd>,</g-pd> <g-v>$v</g-v> <g-o>:=</g-o> <g-vm>.Values.items</g-vm> <g-ps>}}</g-ps>
+  item-<g-ps>{{</g-ps> <g-v>$i</g-v> <g-ps>}}</g-ps>: <g-ps>{{</g-ps> <g-v>$v</g-v><g-vm>.name</g-vm> <g-o>|</g-o> <g-f>default</g-f> <g-s>"unknown"</g-s> <g-o>|</g-o> <g-f>quote</g-f> <g-ps>}}</g-ps>
+  <g-ps>{{-</g-ps> <g-k>else</g-k> <g-ps>}}</g-ps>
+  empty: "yes"
+  <g-ps>{{-</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>
+  config: |
+    <g-ps>{{-</g-ps> <g-f>toYaml</g-f> <g-vm>.Values.config</g-vm> <g-o>|</g-o> <g-f>nindent</g-f> <g-n>4</g-n> <g-ps>}}</g-ps>

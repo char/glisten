@@ -1,0 +1,6 @@
+<g-ps>{{</g-ps> <g-k>define</g-k> <g-s>"page"</g-s> <g-ps>}}</g-ps>
+&lt;h1&gt;<g-ps>{{</g-ps> <g-vm>.Title</g-vm> <g-ps>}}</g-ps>&lt;/h1&gt;
+<g-ps>{{</g-ps> <g-k>with</g-k> <g-vm>.Site.Params.author</g-vm> <g-ps>}}{{</g-ps> <g-vm>.Name</g-vm> <g-ps>}}{{</g-ps> <g-k>else</g-k> <g-k>with</g-k> <g-vm>.Site.Title</g-vm> <g-ps>}}{{</g-ps> <g-v>.</g-v> <g-ps>}}{{</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-k>if</g-k> <g-f>and</g-f> <g-pb>(</g-pb><g-f>eq</g-f> <g-vm>.Kind</g-vm> <g-s>"page"</g-s><g-pb>)</g-pb> <g-pb>(</g-pb><g-f>not</g-f> <g-vm>.Draft</g-vm><g-pb>)</g-pb> <g-ps>}}{{</g-ps> <g-k>template</g-k> <g-s>"body"</g-s> <g-v>.</g-v> <g-ps>}}{{</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-k>block</g-k> <g-s>"footer"</g-s> <g-v>.</g-v> <g-ps>}}</g-ps>default<g-ps>{{</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>

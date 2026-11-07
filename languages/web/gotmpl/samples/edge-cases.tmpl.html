@@ -1,0 +1,12 @@
+plain &lt;b&gt;&amp; remains plain&lt;/b&gt;
+<g-c>{{/* a comment */}}{{- /* trim comment */ -}}</g-c>
+<g-ps>{{</g-ps><g-n>-3</g-n><g-ps>}}</g-ps> <g-ps>{{-</g-ps> <g-n>3</g-n><g-ps>}}</g-ps> <g-ps>{{</g-ps><g-n>3</g-n>-<g-ps>}}</g-ps> <g-ps>{{</g-ps><g-n>3</g-n> <g-ps>-}}</g-ps>
+<g-ps>{{</g-ps> <g-v>$</g-v> <g-o>:=</g-o> <g-v>.</g-v> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>$x</g-v> <g-o>:=</g-o> <g-vm>.Values.image.tag</g-vm> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>$x</g-v><g-vm>.Field</g-vm> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-k>range</g-k> <g-v>$i</g-v><g-pd>,</g-pd> <g-v>$v</g-v> <g-o>:=</g-o> <g-vm>.Items</g-vm> <g-ps>}}{{</g-ps> <g-k>if</g-k> <g-v>$i</g-v> <g-ps>}}{{</g-ps> <g-k>continue</g-k> <g-ps>}}{{</g-ps> <g-k>else</g-k> <g-ps>}}{{</g-ps> <g-k>break</g-k> <g-ps>}}{{</g-ps> <g-k>end</g-k> <g-ps>}}{{</g-ps> <g-k>end</g-k> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-f>printf</g-f> <g-s>"%q</g-s><g-se>\n</g-se><g-s>"</g-s> <g-s>`raw }} text`</g-s> <g-s>'a'</g-s> <g-n>0xff</g-n> <g-n>0o77</g-n> <g-n>0b10</g-n> <g-n>1.5e-2</g-n> <g-n>2i</g-n> <g-cb>true</g-cb> <g-cb>false</g-cb> <g-cb>nil</g-cb> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-f>customFunction</g-f> <g-pb>(</g-pb><g-f>index</g-f> <g-vm>.Values</g-vm> <g-s>"x"</g-s><g-pb>)</g-pb> <g-o>|</g-o> <g-f>nindent</g-f> <g-n>2</g-n> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-vm>.Capabilities.APIVersions.</g-vm><g-f>Has</g-f> <g-s>"apps/v1"</g-s> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>$x</g-v><g-vm>.</g-vm><g-f>Method</g-f> <g-vm>.Arg</g-vm> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-vm>.Item.</g-vm><g-f>Method</g-f> <g-pb>(</g-pb><g-f>printf</g-f> <g-s>"%s"</g-s> <g-vm>.Arg</g-vm><g-pb>)</g-pb> <g-o>|</g-o> <g-f>quote</g-f> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-pb>(</g-pb><g-f>index</g-f> <g-vm>.Items</g-vm> <g-n>0</g-n><g-pb>)</g-pb><g-vm>.</g-vm><g-f>Lookup</g-f> <g-s>"key"</g-s> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-vm>.Item.Field</g-vm> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-v>$x</g-v><g-vm>.Method</g-vm> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-f>printf</g-f> <g-s>"%s %s"</g-s> <g-vm>.Item.Field</g-vm> <g-vm>.Other</g-vm> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-vm>.Item.Field</g-vm> <g-o>|</g-o> <g-f>quote</g-f> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-vm>.Item.Field</g-vm> <g-ps>-}}</g-ps> <g-ps>{{</g-ps> <g-vm>.Item.</g-vm><g-f>Add</g-f> <g-n>-3</g-n> <g-ps>}}</g-ps>
+<g-ps>{{</g-ps> <g-f>resources</g-f><g-vm>.</g-vm><g-f>Get</g-f> <g-s>"css/main.css"</g-s> <g-ps>}}</g-ps> <g-ps>{{</g-ps> <g-f>now</g-f><g-vm>.Year</g-vm> <g-ps>}}</g-ps>

@@ -1,0 +1,12 @@
+plain <b>& remains plain</b>
+{{/* a comment */}}{{- /* trim comment */ -}}
+{{-3}} {{- 3}} {{3-}} {{3 -}}
+{{ $ := . }} {{ $x := .Values.image.tag }} {{ $x.Field }}
+{{ range $i, $v := .Items }}{{ if $i }}{{ continue }}{{ else }}{{ break }}{{ end }}{{ end }}
+{{ printf "%q\n" `raw }} text` 'a' 0xff 0o77 0b10 1.5e-2 2i true false nil }}
+{{ customFunction (index .Values "x") | nindent 2 }}
+{{ .Capabilities.APIVersions.Has "apps/v1" }} {{ $x.Method .Arg }}
+{{ .Item.Method (printf "%s" .Arg) | quote }} {{ (index .Items 0).Lookup "key" }}
+{{ .Item.Field }} {{ $x.Method }} {{ printf "%s %s" .Item.Field .Other }}
+{{ .Item.Field | quote }} {{ .Item.Field -}} {{ .Item.Add -3 }}
+{{ resources.Get "css/main.css" }} {{ now.Year }}
