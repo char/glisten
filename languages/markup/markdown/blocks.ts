@@ -98,6 +98,7 @@ export function blocks(workPerByte = 16384) {
     tableDivider = local("tableDivider"),
     tableHead = local("tableHead"),
     inlineHost = local("inlineHost"),
+    codeContinues = local("codeContinues"),
     rowStart = local("rowStart"),
     rowEnd = local("rowEnd"),
     rowNext = local("rowNext"),
@@ -234,6 +235,66 @@ export function blocks(workPerByte = 16384) {
     blank = priced(blankLine(), 0, "i32"),
     thematic = priced(thematicBreak(), 2, "i32"),
     indentCode = priced(indentedCode(), 1, "i32");
+  /**
+   * Whether indented code continues after the blank lines from `$pos`: the first nonblank
+   * line must continue every open container and still be indented code. Mirrors the
+   * container loop without emitting anything.
+   */
+  const codeAhead = func(
+    "indentedCodeAhead",
+    () => wat`
+    (param $input i32) (param $pos i32) (param $limit i32) (param $depth i32) (result i32)
+    (local $lineEnd i32) (local $next i32) (local $i i32) (local $frame i32) (local $prefix i64)
+    (local $prefixEnd i32) (local $at i32) (local $column i32) (local $previous i32)
+    (local $virtual i32) (local $previousVirtual i32)
+    (block $none (loop $lines
+      (br_if $none (i32.ge_u (local.get $pos) (local.get $limit)))
+      (local.set $lineEnd (call ${scan} (local.get $input) (local.get $pos) (local.get $limit)))
+      (if (i32.and (i32.lt_u (i32.add (local.get $lineEnd) (i32.const 1)) (local.get $limit))
+        (i32.and (i32.eq (i32.load8_u (i32.add (local.get $input) (local.get $lineEnd))) (i32.const 13))
+          (i32.eq (i32.load8_u offset=1 (i32.add (local.get $input) (local.get $lineEnd))) (i32.const 10))))
+        (then (local.set $lineEnd (i32.add (local.get $lineEnd) (i32.const 1)))))
+      (local.set $next (if (result i32) (i32.lt_u (local.get $lineEnd) (local.get $limit))
+        (then (i32.add (local.get $lineEnd) (i32.const 1))) (else (local.get $lineEnd))))
+      (local.set $at (local.get $pos))
+      (local.set $column (i32.const 0))
+      (local.set $virtual (i32.const 0))
+      (local.set $i (i32.const 0))
+      (block $continued (loop $frames
+        (br_if $continued (i32.ge_u (local.get $i) (local.get $depth)))
+        (local.set $frame (i32.load (i32.add (global.get $base) (i32.add (i32.const 32) (i32.shl (local.get $i) (i32.const 2))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (local.set $prefix (call ${continueContainer} (local.get $input) (local.get $at) (local.get $lineEnd)
+          (local.get $column) (local.get $frame) (local.get $virtual)))
+        (if (i64.eq (local.get $prefix) (i64.const -1)) (then
+          (br_if $frames (i32.and (i32.ne (local.get $frame) (i32.const 1))
+            (call ${blank} (local.get $input) (local.get $at) (local.get $lineEnd))))
+          (return (i32.const 0))))
+        (local.set $prefixEnd (i32.wrap_i64 (local.get $prefix)))
+        (local.set $previous (local.get $column))
+        (local.set $previousVirtual (local.get $virtual))
+        (local.set $column (i32.wrap_i64 (i64.shr_u (local.get $prefix) (i64.const 32))))
+        (local.set $virtual (i32.const 0))
+        (if (i32.eq (local.get $frame) (i32.const 1))
+          (then
+            (if (i32.and (i32.gt_u (local.get $prefixEnd) (local.get $at))
+              (i32.eq (i32.load8_u (i32.add (local.get $input) (i32.sub (local.get $prefixEnd) (i32.const 1)))) (i32.const 9))) (then
+              (local.set $virtual (i32.sub (i32.sub (local.get $column)
+                (call ${advanceColumns} (local.get $input) (local.get $at) (i32.sub (local.get $prefixEnd) (i32.const 1))
+                  (local.get $previous))) (i32.const 1))))))
+          (else (if (i32.gt_u (i32.add (local.get $previousVirtual) (i32.sub (local.get $column) (local.get $previous)))
+            (i32.shr_u (local.get $frame) (i32.const 1))) (then
+            (local.set $virtual (i32.sub (i32.add (local.get $previousVirtual)
+              (i32.sub (local.get $column) (local.get $previous)))
+              (i32.shr_u (local.get $frame) (i32.const 1))))))))
+        (local.set $at (local.get $prefixEnd))
+        (br $frames)))
+      (if (call ${blank} (local.get $input) (local.get $at) (local.get $lineEnd)) (then
+        (local.set $pos (local.get $next))
+        (br $lines)))
+      (return (call ${indentCode} (local.get $input) (local.get $at) (local.get $lineEnd) (local.get $virtual)))))
+    (i32.const 0)`,
+  );
   const infoScan = priced(stopScan("infoEnd", [9, 13, 32], false), 0, "i32");
   const backtick = priced(stopScan("backtick", [96], false), 0, "i32");
   // Wasm's i32.and and i32.or evaluate every operand; these stop at the first that decides.
@@ -806,10 +867,15 @@ export function blocks(workPerByte = 16384) {
   function indentedAndThematic() {
     return wat`
         (if (i32.eq (local.get ${mode}) (i32.const 3)) (then
-          (if (i32.or (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))
-            (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))) (then
-            (local.set ${style} ${styled("text.literal")})
+          ;; Blank lines belong to indented code only if more code follows them.
+          (if (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})) (then
+            (local.set ${style} (if (result i32) (local.get ${codeContinues})
+              (then ${styled("text.literal")}) (else ${styled("plain")})))
             ${coalesce(span, next, style, writers.emit)}
+            (local.set ${pos} (local.get ${next}))
+            (br ${line})))
+          (if (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})) (then
+            ${codeLine()}
             (local.set ${pos} (local.get ${next}))
             (br ${line})))
           (local.set ${mode} (i32.const 0))
@@ -820,8 +886,7 @@ export function blocks(workPerByte = 16384) {
           wat`(i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))`,
         )} (then
           (local.set ${mode} (i32.const 3))
-          (local.set ${style} ${styled("text.literal")})
-          ${coalesce(span, next, style, writers.emit)}
+          ${codeLine()}
           (local.set ${pos} (local.get ${next}))
           (br ${line})))
         (if (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent})) (then
@@ -836,6 +901,22 @@ export function blocks(workPerByte = 16384) {
           (local.set ${pos} (local.get ${next}))
           (br ${line})))
     `;
+  }
+
+  /**
+   * A line of indented code. Its line ending, and any blank lines after it, belong to the
+   * block only if more code follows.
+   */
+  function codeLine() {
+    return wat`
+          (local.set ${cursor} ${withoutReturn(pos, lineEnd)})
+          (local.set ${style} ${styled("text.literal")})
+          ${coalesce(span, cursor, style, writers.emit)}
+          (local.set ${codeContinues} (call ${codeAhead} (local.get ${input}) (local.get ${next}) (local.get ${limit}) (local.get ${depth})))
+          (if (i32.lt_u (local.get ${cursor}) (local.get ${next})) (then
+            (local.set ${style} (if (result i32) (local.get ${codeContinues})
+              (then ${styled("text.literal")}) (else ${styled("plain")})))
+            ${coalesce(span, next, style, writers.emit)}))`;
   }
 
   function fenceOpening() {
@@ -1113,6 +1194,7 @@ export function blocks(workPerByte = 16384) {
     (local ${paragraph} i32) (local ${openedList} i32) (local ${taskCandidate} i32) (local ${taskStart} i64) (local ${taskEnd} i64) (local ${taskByte} i32)
     (local ${table} i32) (local ${tableAt} i32) (local ${tableCell} i32) (local ${tableEnd} i32)
     (local ${tableBase} i32) (local ${tableDivider} i32) (local ${tableHead} i32) (local ${inlineHost} i32)
+    (local ${codeContinues} i32)
     (local ${rowStart} i32) (local ${rowEnd} i32) (local ${rowNext} i32) (local ${rowLazy} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)
