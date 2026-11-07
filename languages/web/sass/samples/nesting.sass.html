@@ -1,0 +1,15 @@
+<g-k>@use</g-k> <g-s>"sass:math"</g-s>
+<g-v>$spacing</g-v><g-pd>:</g-pd> <g-n>4</g-n><g-t>px</g-t> <g-k>!default</g-k>
+
+<g-k>=</g-k><g-f>space</g-f><g-pb>(</g-pb><g-v>$amount</g-v><g-pb>)</g-pb>
+  <g-pr>padding</g-pr><g-pd>:</g-pd> <g-v>$amount</g-v>
+
+<g-tg>%panel</g-tg>
+  <g-pr>color</g-pr><g-pd>:</g-pd> <g-co v="#369"><g-s>#369</g-s></g-co>
+
+<g-pd>.</g-pd><g-pr>card</g-pr><g-pd>:</g-pd><g-at>hover</g-at>
+  <g-k>@extend</g-k> <g-tg>%panel</g-tg>
+  <g-k>+</g-k><g-f>space</g-f><g-pb>(</g-pb><g-v>$spacing</g-v><g-pb>)</g-pb>
+  <g-tg>&amp;__title</g-tg>
+    <g-pr>font-size</g-pr><g-pd>:</g-pd> math.<g-f>div</g-f><g-pb>(</g-pb><g-n>24</g-n><g-t>px</g-t><g-pd>,</g-pd> <g-n>2</g-n><g-pb>)</g-pb>
+    <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"item </g-s><g-ps>#{</g-ps><g-v>$spacing</g-v><g-ps>}</g-ps><g-s>"</g-s>

@@ -103,6 +103,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   ron: () => import("./config/ron/grammar.ts"),
   ruby: () => import("./scripting/ruby/grammar.ts"),
   rust: () => import("./systems/rust/grammar.ts"),
+  sass: () => import("./web/sass/grammar.ts"),
   scala: () => import("./managed/scala/grammar.ts"),
   scheme: () => import("./functional/scheme/grammar.ts"),
   scss: () => import("./web/scss/grammar.ts"),

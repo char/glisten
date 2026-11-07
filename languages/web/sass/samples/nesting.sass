@@ -1,0 +1,15 @@
+@use "sass:math"
+$spacing: 4px !default
+
+=space($amount)
+  padding: $amount
+
+%panel
+  color: #369
+
+.card:hover
+  @extend %panel
+  +space($spacing)
+  &__title
+    font-size: math.div(24px, 2)
+    content: "item #{$spacing}"

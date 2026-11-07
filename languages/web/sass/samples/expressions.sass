@@ -1,0 +1,9 @@
+$sizes: (small: 8px, large: 16px)
+@forward "colors" as theme-*
+
+@each $name, $size in $sizes
+  .size-#{$name}
+    width:$size
+    border-#{$name}-width: -2px
+    + .neighbor
+      content: "size #{$name}"

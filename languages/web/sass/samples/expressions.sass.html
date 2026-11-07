@@ -1,0 +1,9 @@
+<g-v>$sizes</g-v><g-pd>:</g-pd> <g-pb>(</g-pb>small<g-pd>:</g-pd> <g-n>8</g-n><g-t>px</g-t><g-pd>,</g-pd> large<g-pd>:</g-pd> <g-n>16</g-n><g-t>px</g-t><g-pb>)</g-pb>
+<g-k>@forward</g-k> <g-s>"colors"</g-s> as theme-<g-o>*</g-o>
+
+<g-k>@each</g-k> <g-v>$name</g-v><g-pd>,</g-pd> <g-v>$size</g-v> <g-o>in</g-o> <g-v>$sizes</g-v>
+  <g-pd>.</g-pd><g-pr>size-</g-pr><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps>
+    <g-pr>width</g-pr><g-pd>:</g-pd><g-v>$size</g-v>
+    <g-pr>border-</g-pr><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps><g-pr>-width</g-pr><g-pd>:</g-pd> <g-n>-2</g-n><g-t>px</g-t>
+    <g-o>+</g-o> <g-pd>.</g-pd><g-pr>neighbor</g-pr>
+      <g-pr>content</g-pr><g-pd>:</g-pd> <g-s>"size </g-s><g-ps>#{</g-ps><g-v>$name</g-v><g-ps>}</g-ps><g-s>"</g-s>
