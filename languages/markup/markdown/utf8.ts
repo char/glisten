@@ -1,7 +1,7 @@
 import { func, wat, type Def } from "#/testing/wat/mod.ts";
 import { get, queued } from "./layout.ts";
 import { logicalRanges } from "./logical.ts";
-import { styled } from "./styles.ts";
+import { kind, styled } from "./styles.ts";
 
 export function logicalUtf8(ranges: ReturnType<typeof logicalRanges>, address: Def, charge: Def) {
   const previous = func(
@@ -22,7 +22,8 @@ export function logicalUtf8(ranges: ReturnType<typeof logicalRanges>, address: D
       (local.set $begin (if (result i32) (i32.eq (local.get $index) (local.get $first))
         (then (i32.wrap_i64 (local.get $start)))
         (else ${queued.get(wat`(i32.sub (local.get $entry) (i32.const ${queued.size}))`, "end")})))
-      (if (i32.and (i32.ne ${queued.get(get("entry"), "style")} ${styled("punctuation.special")})
+      (if (i32.and (i32.and (i32.ne ${queued.get(get("entry"), "style")} ${styled("punctuation.special")})
+          (i32.ne ${queued.get(get("entry"), "style")} (i32.const ${kind.indent})))
         (i32.gt_u (local.get $pos) (local.get $begin))) (then
         (return (i64.or (i64.shl (i64.extend_i32_u (local.get $index)) (i64.const 32))
           (i64.extend_i32_u (i32.sub (local.get $pos) (i32.const 1)))))))

@@ -234,6 +234,20 @@ export function blocks(workPerByte = 16384) {
   const backtick = priced(stopScan("backtick", [96], false), 0, "i32");
   const delimiter = wat`(call ${marker} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`;
   const underline = wat`(call ${setext} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`;
+  /** Emit plain whitespace from `from` up to the first other byte, leaving `cursor` there. */
+  function plainIndent(from: Local, end: Local) {
+    return wat`
+        (local.set ${cursor} (local.get ${from}))
+        (block $indentDone (loop $indent
+          (br_if $indentDone (i32.ge_u (local.get ${cursor}) (local.get ${end})))
+          (br_if $indentDone (i32.and (i32.ne (i32.load8_u (i32.add (local.get ${input}) (local.get ${cursor}))) (i32.const 32))
+            (i32.ne (i32.load8_u (i32.add (local.get ${input}) (local.get ${cursor}))) (i32.const 9))))
+          (local.set ${cursor} (i32.add (local.get ${cursor}) (i32.const 1)))
+          (br $indent)))
+        (if (i32.gt_u (local.get ${cursor}) (local.get ${from})) (then
+          (local.set ${style} ${styled("plain")})
+          ${coalesce(span, cursor, style, writers.emit)}))`;
+  }
   function append(end: Local, spanStyle: Local) {
     return wat`(if (local.get ${collecting})
       (then (call ${scratch.append} (local.get ${out}) (local.get ${end}) (local.get ${spanStyle})))
@@ -431,6 +445,8 @@ export function blocks(workPerByte = 16384) {
           (br_if $queueDone (i32.ge_u (local.get ${queueIndex}) (local.get ${queueLimit})))
           (local.set ${queueEnd} ${queued.get(queueAt, "end")})
           (local.set ${queueStyle} ${queued.get(queueAt, "style")})
+          (if (i32.eq (local.get ${queueStyle}) (i32.const ${kind.indent}))
+            (then (local.set ${queueStyle} ${title ? styled("text.title") : styled("plain")})))
           ${
             title
               ? wat`(if (i32.and (i32.lt_u (local.get ${queueIndex}) (local.get ${queueMark})) (i32.eqz (local.get ${queueStyle})))
@@ -535,10 +551,26 @@ export function blocks(workPerByte = 16384) {
                 (i32.eq (i32.load8_u (i32.add (local.get ${input}) (i32.sub (local.get ${prefixEnd}) (i32.const 1)))) (i32.const 9)))))) (then
             (local.set ${prefixEnd} (i32.sub (local.get ${prefixEnd}) (i32.const 1)))
             (local.set ${sharedTab} (i32.const 1))))
+          ;; Only a block quote's ">" (and its space) is styled; indentation takes the style around it.
           (if (i32.gt_u (local.get ${prefixEnd}) (local.get ${pos})) (then
             (local.set ${hostCurrent} (i32.const -1))
-            (local.set ${style} ${styled("punctuation.special")})
-            ${append(prefixEnd, style)}))
+            (local.set ${cursor} (local.get ${prefixEnd}))
+            (if (i32.eq (local.get ${frame}) (i32.const 1)) (then
+              (local.set ${cursor} (local.get ${pos}))
+              (block $quoteDone (loop $quote
+                (br_if $quoteDone (i32.ge_u (local.get ${cursor}) (local.get ${prefixEnd})))
+                (br_if $quoteDone (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${cursor}))) (i32.const 62)))
+                (local.set ${cursor} (i32.add (local.get ${cursor}) (i32.const 1)))
+                (br $quote)))))
+            (if (i32.gt_u (local.get ${cursor}) (local.get ${pos})) (then
+              (if (local.get ${collecting})
+                (then (call ${scratch.append} (local.get ${out}) (local.get ${cursor}) (i32.const ${kind.indent})))
+                (else
+                  (local.set ${style} ${styled("plain")})
+                  ${coalesce(span, cursor, style, writers.emit)}))))
+            (if (i32.gt_u (local.get ${prefixEnd}) (local.get ${cursor})) (then
+              (local.set ${style} ${styled("punctuation.special")})
+              ${append(prefixEnd, style)}))))
           (local.set ${pos} (local.get ${prefixEnd}))
           (local.set ${containerIndex} (i32.add (local.get ${containerIndex}) (i32.const 1)))
           (br ${stackLoop})))
@@ -579,6 +611,7 @@ export function blocks(workPerByte = 16384) {
                 (i32.shr_u (local.get ${frame}) (i32.const 1))) (then
                 (local.set ${virtualIndent} (i32.sub (i32.sub (local.get ${containerColumn}) (local.get ${previousColumn}))
                   (i32.shr_u (local.get ${frame}) (i32.const 1))))))))
+            ${plainIndent(pos, prefixEnd)}
             (local.set ${style} ${styled("punctuation.special")})
             ${coalesce(span, prefixEnd, style, writers.emit)}
             (local.set ${pos} (local.get ${prefixEnd}))
@@ -633,6 +666,7 @@ export function blocks(workPerByte = 16384) {
               (local.set ${host} (i32.const 0))
               (local.set ${hostCurrent} (i32.const -1))
               (local.set ${mode} (i32.const 0))
+              ${plainIndent(pos, fenceStart)}
               (local.set ${style} ${styled("punctuation.delimiter")})
               ${coalesce(span, lineEnd, style, writers.emit)}
               (if (i32.lt_u (local.get ${lineEnd}) (local.get ${next})) (then
@@ -714,6 +748,7 @@ export function blocks(workPerByte = 16384) {
         (if (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent})) (then
           ${resolve(false)}
           (local.set ${paragraph} (i32.const 0))
+          ${plainIndent(pos, lineEnd)}
           (local.set ${style} ${styled("punctuation.delimiter")})
           ${coalesce(span, lineEnd, style, writers.emit)}
           (if (i32.lt_u (local.get ${lineEnd}) (local.get ${next})) (then
@@ -738,6 +773,7 @@ export function blocks(workPerByte = 16384) {
             (local.set ${paragraph} (i32.const 0))
             (local.set ${fenceLength} (i32.sub (local.get ${fenceEnd}) (local.get ${fenceStart})))
             (local.set ${fenceIndent} (i32.add (local.get ${virtualIndent}) (i32.sub (local.get ${fenceStart}) (local.get ${pos}))))
+            ${plainIndent(pos, fenceStart)}
             (local.set ${style} ${styled("punctuation.delimiter")})
             ${coalesce(span, fenceEnd, style, writers.emit)}
             (local.set ${cursor} (local.get ${fenceEnd}))
@@ -868,9 +904,25 @@ export function blocks(workPerByte = 16384) {
             (then
               (local.set ${style} ${styled("text.title")})
               ${coalesce(span, rowNext, style, writers.emit)}
-              (if (i32.gt_u (local.get ${pos}) (local.get ${rowNext})) (then
-                (local.set ${style} ${styled("punctuation.special")})
-                ${coalesce(span, pos, style, writers.emit)}))
+              ;; The delimiter row's container prefixes: a block quote's ">" and its space, and indentation.
+              (local.set ${tableAt} (local.get ${rowNext}))
+              (block $prefixed (loop $prefix
+                (br_if $prefixed (i32.ge_u (local.get ${tableAt}) (local.get ${pos})))
+                (if (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${tableAt}))) (i32.const 62))
+                  (then
+                    (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))
+                    (if (i32.and (i32.lt_u (local.get ${tableAt}) (local.get ${pos})) ${spaceAt(tableAt)})
+                      (then (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))))
+                    (local.set ${style} ${styled("punctuation.special")}))
+                  (else
+                    (block $plain (loop $indent
+                      (br_if $plain (i32.ge_u (local.get ${tableAt}) (local.get ${pos})))
+                      (br_if $plain (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${tableAt}))) (i32.const 62)))
+                      (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))
+                      (br $indent)))
+                    (local.set ${style} ${styled("plain")})))
+                ${coalesce(span, tableAt, style, writers.emit)}
+                (br $prefix)))
               (local.set ${tableEnd} ${withoutReturn(pos, lineEnd)})
               (local.set ${style} ${styled("punctuation.delimiter")})
               ${coalesce(span, tableEnd, style, writers.emit)}
@@ -926,6 +978,8 @@ export function blocks(workPerByte = 16384) {
               (then
                 ${resolve(false)}
                 (local.set ${paragraph} (i32.const 0))
+                ${plainIndent(pos, lineEnd)}
+                (local.set ${pos} (local.get ${cursor}))
                 (local.set ${collecting} (i32.const 1))
                 (local.set ${paragraphStart} (local.get ${pos}))
                 (local.set ${style} ${styled("text.title")})

@@ -31,7 +31,8 @@ export const styled = (name: Name) => wat`(i32.const ${styleId(name)})`;
 /**
  * Queue and event kinds that are never rendered: leading whitespace that keeps
  * its own style when replayed, unresolved delimiter runs and brackets, inline text,
- * and a resolved link's opening bracket and its tail from `]` onwards.
+ * a resolved link's opening bracket and its tail from `]` onwards, and container
+ * indentation, which isn't inline content but takes the style around it.
  */
 export const kind = {
   leading: -2,
@@ -40,4 +41,5 @@ export const kind = {
   inlineBracket: -5,
   linkOpen: -6,
   linkTail: -7,
+  indent: -8,
 } as const;

@@ -1,6 +1,6 @@
 import { func, wat, type Def } from "#/testing/wat/mod.ts";
 import { get, queued } from "./layout.ts";
-import { styled } from "./styles.ts";
+import { kind, styled } from "./styles.ts";
 
 export function logicalRanges(address: Def, charge?: Def) {
   const work = charge ? wat`(call ${charge} (i64.const 1))` : wat``;
@@ -19,7 +19,8 @@ export function logicalRanges(address: Def, charge?: Def) {
       (if (i32.ge_u (local.get $pos) (local.get $end)) (then
         (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
         (br $more)))
-      (br_if $done (i32.ne ${queued.get(get("entry"), "style")} ${styled("punctuation.special")}))
+      (br_if $done (i32.and (i32.ne ${queued.get(get("entry"), "style")} ${styled("punctuation.special")})
+        (i32.ne ${queued.get(get("entry"), "style")} (i32.const ${kind.indent}))))
       (local.set $pos (local.get $end))
       (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
       (br $more)))
