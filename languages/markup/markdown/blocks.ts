@@ -46,6 +46,9 @@ import {
   stopScan,
 } from "#/compiler/runtime.ts";
 
+/** Static injections, by their index in the manifest's embeds. */
+export const embeds = { yaml: 0, html: 1 } as const;
+
 export function blocks(workPerByte = 16384) {
   const input = local("input"),
     length = local("length"),
@@ -94,6 +97,7 @@ export function blocks(workPerByte = 16384) {
     tableBase = local("tableBase"),
     tableDivider = local("tableDivider"),
     tableHead = local("tableHead"),
+    inlineHost = local("inlineHost"),
     rowStart = local("rowStart"),
     rowEnd = local("rowEnd"),
     rowNext = local("rowNext"),
@@ -436,15 +440,52 @@ export function blocks(workPerByte = 16384) {
                         ${replayTo(wat`(i64.extend_i32_u ${link.get(linkAt, "titleEnd")})`, styleId("string"), true)}))
                       ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, styleId("text.uri"), true)}))
                   (local.set ${attentionStyle} ${link.get(linkAt, "saved")}))
+                (else (if (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.html}))
+                (then ${inlineHtmlSegments()})
                 (else
                   (local.set ${inlineStyle} (if (result i32) (i32.or
                     (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.inlineText}))
                     (i32.eq ${event.get(eventAt, "style")} (i32.const ${kind.inlineBracket})))
                     (then (local.get ${attentionStyle})) (else ${event.get(eventAt, "style")})))
-                  ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, inlineStyle, true)}))))))
+                  ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, inlineStyle, true)}))))))))
               (local.set ${attentionEvent} ${event.get(eventAt, "next")})
               (br $attention)))
-            ))`;
+            (if (local.get ${inlineHost}) (then
+              ${sealHtml()}
+              (local.set ${inlineHost} (i32.const 0))))))`;
+  }
+  /**
+   * Raw HTML in inline content: each construct is a segment of one `html` injection for
+   * the whole paragraph, interrupted by container prefixes.
+   */
+  function inlineHtmlSegments() {
+    return wat`
+                  (if (i32.eqz (local.get ${inlineHost})) (then
+                    (local.set ${openAction} (i32.const 2))
+                    (local.set ${openStart} (i32.const ${embeds.html}))
+                    ${openInjection(injection, { ...writers, fail, injections })}
+                    (local.set ${inlineHost} (i32.const 1))))
+                  (local.set ${hostCurrent} (i32.const -1))
+                  (block $htmlDone (loop $htmlRange
+                    (call ${charge} (i64.const 1))
+                    (br_if $htmlDone (i32.ge_u (local.get ${queuePos}) (local.get ${attentionEnd})))
+                    (local.set ${queueEnd} ${queued.get(queueAt, "end")})
+                    (local.set ${queueStyle} ${queued.get(queueAt, "style")})
+                    (local.set ${attentionTarget} (if (result i32) (i32.lt_u (local.get ${queueEnd}) (local.get ${attentionEnd}))
+                      (then (local.get ${queueEnd})) (else (local.get ${attentionEnd}))))
+                    (if (i32.or (i32.eq (local.get ${queueStyle}) ${styled("punctuation.special")})
+                      (i32.eq (local.get ${queueStyle}) (i32.const ${kind.indent})))
+                      (then
+                        (local.set ${hostCurrent} (i32.const -1))
+                        (if (i32.eq (local.get ${queueStyle}) (i32.const ${kind.indent}))
+                          (then (local.set ${queueStyle} (local.get ${attentionStyle}))))
+                        ${coalesce(span, attentionTarget, queueStyle, writers.emit)})
+                      (else ${emitSegment(injection, attentionTarget, writers)}))
+                    (local.set ${queuePos} (local.get ${attentionTarget}))
+                    (if (i32.eq (local.get ${queuePos}) (local.get ${queueEnd})) (then
+                      (local.set ${queueIndex} (i32.add (local.get ${queueIndex}) (i32.const ${queued.size})))))
+                    (br $htmlRange)))
+                  (local.set ${hostCurrent} (i32.const -1))`;
   }
   /** Emit the queue's remaining entries with their own styles. */
   function drain(title: boolean) {
@@ -532,7 +573,7 @@ export function blocks(workPerByte = 16384) {
                 (br ${stackDone})))))
             ${resolve(false)}
             (local.set ${depth} (local.get ${containerIndex}))
-            (if (i32.eq (local.get ${mode}) (i32.const 2)) (then
+            (if (local.get ${host}) (then
               (call ${sealHost} (local.get ${hostLast}))
               (local.set ${host} (i32.const 0))
               (local.set ${hostCurrent} (i32.const -1))))
@@ -657,9 +698,11 @@ export function blocks(workPerByte = 16384) {
           delimiter,
         )} (then
           (local.set ${style} ${styled("punctuation.delimiter")})
+          ${coalesce(span, lineEnd, style, writers.emit)}
+          (local.set ${style} ${styled("plain")})
           ${coalesce(span, next, style, writers.emit)}
           (local.set ${openAction} (i32.const 2))
-          (local.set ${openStart} (i32.const 0))
+          (local.set ${openStart} (i32.const ${embeds.yaml}))
           ${openInjection(injection, { ...writers, fail, injections })}
           (local.set ${mode} (i32.const 1))
           (local.set ${pos} (local.get ${next}))
@@ -712,18 +755,36 @@ export function blocks(workPerByte = 16384) {
   function htmlBody() {
     return wat`
         (if (i32.ge_u (local.get ${mode}) (i32.const 4)) (then
-          (if (i32.and (i32.eq (local.get ${mode}) (i32.const 12))
-            (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
-            (then (local.set ${mode} (i32.const 0)))
+          (if ${all(
+            wat`(i32.eq (local.get ${mode}) (i32.const 12))`,
+            wat`(call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`,
+          )}
+            (then
+              (local.set ${mode} (i32.const 0))
+              ${sealHtml()})
             (else
-              (local.set ${style} ${styled("plain")})
-              ${coalesce(span, next, style, writers.emit)}
-              (if (i32.and (i32.ne (local.get ${mode}) (i32.const 12))
-                (call ${endHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${mode})))
-                (then (local.set ${mode} (i32.const 0))))
+              ${htmlLine()}
               (local.set ${pos} (local.get ${next}))
               (br ${line})))))
     `;
+  }
+
+  /** An HTML block's line is a segment of its `html` injection, which ends with the block. */
+  function htmlLine() {
+    return wat`
+          ${emitSegment(injection, next, writers)}
+          (if ${all(
+            wat`(i32.ne (local.get ${mode}) (i32.const 12))`,
+            wat`(call ${endHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${mode}))`,
+          )} (then
+            (local.set ${mode} (i32.const 0))
+            ${sealHtml()}))`;
+  }
+  function sealHtml() {
+    return wat`
+          (call ${sealHost} (local.get ${hostLast}))
+          (local.set ${host} (i32.const 0))
+          (local.set ${hostCurrent} (i32.const -1))`;
   }
 
   function htmlOpening() {
@@ -733,11 +794,10 @@ export function blocks(workPerByte = 16384) {
         (if (local.get ${mode}) (then
           ${resolve(false)}
           (local.set ${paragraph} (i32.const 0))
-          (local.set ${style} ${styled("plain")})
-          ${coalesce(span, next, style, writers.emit)}
-          (if (i32.and (i32.ne (local.get ${mode}) (i32.const 12))
-            (call ${endHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${mode})))
-            (then (local.set ${mode} (i32.const 0))))
+          (local.set ${openAction} (i32.const 2))
+          (local.set ${openStart} (i32.const ${embeds.html}))
+          ${openInjection(injection, { ...writers, fail, injections })}
+          ${htmlLine()}
           (local.set ${pos} (local.get ${next}))
           (br ${line})))
     `;
@@ -1052,7 +1112,7 @@ export function blocks(workPerByte = 16384) {
     (local ${depth} i32) (local ${openAction} i32) (local ${openStart} i32) (local ${openEnd} i32)
     (local ${paragraph} i32) (local ${openedList} i32) (local ${taskCandidate} i32) (local ${taskStart} i64) (local ${taskEnd} i64) (local ${taskByte} i32)
     (local ${table} i32) (local ${tableAt} i32) (local ${tableCell} i32) (local ${tableEnd} i32)
-    (local ${tableBase} i32) (local ${tableDivider} i32) (local ${tableHead} i32)
+    (local ${tableBase} i32) (local ${tableDivider} i32) (local ${tableHead} i32) (local ${inlineHost} i32)
     (local ${rowStart} i32) (local ${rowEnd} i32) (local ${rowNext} i32) (local ${rowLazy} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)

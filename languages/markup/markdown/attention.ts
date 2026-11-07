@@ -66,6 +66,7 @@ export function attention(
     (global.set ${first} (i32.const 0))
     (call ${links.reset})
     (call ${autolinks.reset})
+    (call ${inline.html.reset})
     (global.set ${nodes} (global.get ${inline.runs}))
     (local.set $cursor (local.get $start))
     (local.set $gap (local.get $start))

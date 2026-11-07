@@ -4,6 +4,7 @@ import { logicalRanges } from "./logical.ts";
 import { paragraphScratch } from "./scratch.ts";
 import { backtickIndex } from "./backticks.ts";
 import { angleAutolink } from "./autolinks.ts";
+import { inlineHtml } from "./inline_html.ts";
 import { kind, styled } from "./styles.ts";
 import { get, queued } from "./layout.ts";
 
@@ -42,6 +43,7 @@ export function inlineAtoms(
           (else (i32.const 1)))))))`,
   );
   const autolink = angleAutolink(ranges);
+  const html = inlineHtml(ranges, charge);
   const index = backtickIndex(ranges, scratch, scan, charge);
   const backticks = global("inlineBackticks", () => wat`(mut i32) (i32.const 0)`);
   const backtickCapacity = global("inlineBacktickCapacity", () => wat`(mut i32) (i32.const 0)`);
@@ -155,7 +157,11 @@ export function inlineAtoms(
         (local.set $look (call ${autolink} (local.get $input) (local.get $start) (local.get $limit)))
         (if (i64.ne (local.get $look) (i64.const -1)) (then
           (global.set ${end} (local.get $look))
-          (global.set ${style} ${styled("text.uri")}) (return (local.get $start))))))
+          (global.set ${style} ${styled("text.uri")}) (return (local.get $start))))
+        (local.set $look (call ${html.parse} (local.get $input) (local.get $start) (local.get $limit)))
+        (if (i64.ne (local.get $look) (i64.const -1)) (then
+          (global.set ${end} (local.get $look))
+          (global.set ${style} (i32.const ${kind.html})) (return (local.get $start))))))
       (if (i32.or (i32.eq (local.get $byte) (i32.const 42))
         (i32.or (i32.eq (local.get $byte) (i32.const 95)) (i32.eq (local.get $byte) (i32.const 126)))) (then
         (block $runDone (loop $run
@@ -219,6 +225,7 @@ export function inlineAtoms(
   );
   return {
     next,
+    html,
     countSpecial,
     specialCount,
     delimiterCount,

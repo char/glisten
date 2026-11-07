@@ -1,7 +1,7 @@
 import { ABI, type Manifest } from "#/abi/mod.ts";
 import type { WatSource } from "#/compiler/language.ts";
 import { module, wat } from "#/testing/wat/mod.ts";
-import { blocks } from "./blocks.ts";
+import { blocks, embeds } from "./blocks.ts";
 import { manifestStyles } from "./styles.ts";
 import { punctuationBytes } from "./unicode.ts";
 
@@ -9,7 +9,7 @@ const manifest: Manifest = {
   abi: ABI,
   language: "markdown",
   aliases: ["md"],
-  embeds: ["yaml"],
+  embeds: Object.keys(embeds),
   styles: manifestStyles,
   styleMap: 0,
   areaBytes: 544 + punctuationBytes,
