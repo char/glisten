@@ -1,4 +1,4 @@
-import type { Grammar } from "#/grammar/mod.ts";
+import type { LanguageSource } from "#/compiler/language.ts";
 import ada from "./systems/ada/grammar.ts";
 import agda from "./proof/agda/grammar.ts";
 import asciidoc from "./markup/asciidoc/grammar.ts";
@@ -130,7 +130,7 @@ import yaml from "./config/yaml/grammar.ts";
 import zig from "./systems/zig/grammar.ts";
 
 /** Every language, by module name (`dist/<name>.wasm`); each lives in `languages/<category>/<name>/`. */
-export const languages: Readonly<Record<string, Grammar>> = {
+export const languages: Readonly<Record<string, LanguageSource>> = {
   ada,
   agda,
   asciidoc,

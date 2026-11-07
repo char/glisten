@@ -1,14 +1,14 @@
 import { mkdirs, writeFile, writeTextFile } from "avril:fs";
 import { run } from "avril:std";
-import { compile } from "#/compiler/mod.ts";
+import { compileLanguage } from "#/compiler/language.ts";
 import { languages } from "#/languages/mod.ts";
 import { buildModule } from "./module.ts";
 
 await mkdirs("dist");
 const sizes: Record<string, number> = {};
 await Promise.all(
-  Object.entries(languages).map(async ([name, grammar]) => {
-    const compiled = compile(grammar);
+  Object.entries(languages).map(async ([name, source]) => {
+    const compiled = compileLanguage(source);
     const module = await buildModule(compiled);
     await writeTextFile(`dist/${name}.wat`, compiled.wat);
     await writeFile(`dist/${name}.wasm`, module);

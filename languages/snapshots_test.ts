@@ -1,7 +1,7 @@
 import { test } from "avril:test";
 import { exists, readFile, readTextFile, writeTextFile } from "avril:fs";
 import { env, readDir } from "avril:std";
-import { compile } from "#/compiler/mod.ts";
+import { compileLanguage } from "#/compiler/language.ts";
 import { Highlighter } from "#/host/mod.ts";
 import { buildModule } from "#/tools/module.ts";
 import { languages } from "./mod.ts";
@@ -15,7 +15,7 @@ const update = env.get("GLISTEN_UPDATE_SNAPSHOTS") === "1";
 const highlighter = new Highlighter({ checks: true });
 for (const module of await Promise.all(
   Object.values(languages).map(
-    async (grammar) => new WebAssembly.Module(await buildModule(compile(grammar))),
+    async (source) => new WebAssembly.Module(await buildModule(compileLanguage(source))),
   ),
 ))
   await highlighter.add(module);
