@@ -1,6 +1,6 @@
 # Module/host ABI
 
-The current module/host contract is ABI version **4**.
+The current module/host contract is ABI version **4**. Hosts are available in [JavaScript](../host/mod.ts) and [Rust](rust-host.md).
 
 ```
 grammar.ts ─compiler─▶ .wat ─wat2wasm / wasm-opt─▶ dist/<name>.wasm (with manifest)
