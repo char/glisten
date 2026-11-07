@@ -232,6 +232,15 @@ export function blocks(workPerByte = 16384) {
     indentCode = priced(indentedCode(), 1, "i32");
   const infoScan = priced(stopScan("infoEnd", [9, 13, 32], false), 0, "i32");
   const backtick = priced(stopScan("backtick", [96], false), 0, "i32");
+  // Wasm's i32.and and i32.or evaluate every operand; these stop at the first that decides.
+  const all = (...terms: Part[]): Part =>
+    terms.reduceRight(
+      (rest, term) => wat`(if (result i32) ${term} (then ${rest}) (else (i32.const 0)))`,
+    );
+  const any = (...terms: Part[]): Part =>
+    terms.reduceRight(
+      (rest, term) => wat`(if (result i32) ${term} (then (i32.const 1)) (else ${rest}))`,
+    );
   const delimiter = wat`(call ${marker} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`;
   const underline = wat`(call ${setext} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`;
   /** Emit plain whitespace from `from` up to the first other byte, leaving `cursor` there. */
@@ -509,14 +518,16 @@ export function blocks(workPerByte = 16384) {
               (br ${stackLoop})))
             (if (i32.and (i32.eqz (local.get ${mode})) (local.get ${paragraph})) (then
               ${fenceAhead()}
-              (if (i32.and (i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
-                (i32.and (i64.eq (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
-                  (local.get ${containerColumn}) (i32.eq (local.get ${frame}) (i32.const 1))) (i64.const -1))
-                  (i32.and (i32.eqz (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))
-                    (i32.and (i32.eqz (local.get ${runValue}))
-                      (i32.and (i32.eqz (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))
-                        (i32.and (i32.eqz (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 1) (local.get ${virtualIndent})))
-                          (i32.eqz ${underline}))))))) (then
+              (if ${all(
+                wat`(i32.eqz (local.get ${runValue}))`,
+                wat`(i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))`,
+                wat`(i64.eq (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+                  (local.get ${containerColumn}) (i32.eq (local.get ${frame}) (i32.const 1))) (i64.const -1))`,
+                wat`(i32.eqz (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))`,
+                wat`(i32.eqz (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))`,
+                wat`(i32.eqz (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 1) (local.get ${virtualIndent})))`,
+                wat`(i32.eqz ${underline})`,
+              )} (then
                 (local.set ${lazy} (i32.const 1))
                 (br ${stackDone})))))
             ${resolve(false)}
@@ -580,8 +591,11 @@ export function blocks(workPerByte = 16384) {
 
   function openContainers() {
     return wat`
-        (if (i32.and (i32.and (i32.eqz (local.get ${lazy})) (i32.eqz (local.get ${mode})))
-          (i32.eqz (i32.and (local.get ${paragraph}) ${underline}))) (then
+        (if ${all(
+          wat`(i32.eqz (local.get ${lazy}))`,
+          wat`(i32.eqz (local.get ${mode}))`,
+          wat`(i32.eqz ${all(wat`(local.get ${paragraph})`, underline)})`,
+        )} (then
           (block ${openDone} (loop ${openLoop}
             (br_if ${openDone} (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))
             (br_if ${openDone} (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent})))
@@ -637,8 +651,11 @@ export function blocks(workPerByte = 16384) {
             (else ${emitSegment(injection, next, writers)}))
           (local.set ${pos} (local.get ${next}))
           (br ${line})))
-        (if (i32.and (i32.eq (local.get ${pos}) (local.get ${start}))
-          (i32.and (i32.lt_u (local.get ${lineEnd}) (local.get ${next})) ${delimiter})) (then
+        (if ${all(
+          wat`(i32.eq (local.get ${pos}) (local.get ${start}))`,
+          wat`(i32.lt_u (local.get ${lineEnd}) (local.get ${next}))`,
+          delimiter,
+        )} (then
           (local.set ${style} ${styled("punctuation.delimiter")})
           ${coalesce(span, next, style, writers.emit)}
           (local.set ${openAction} (i32.const 2))
@@ -737,9 +754,11 @@ export function blocks(workPerByte = 16384) {
             (br ${line})))
           (local.set ${mode} (i32.const 0))
           ${openContainers()}))
-        (if (i32.and (i32.eqz (local.get ${paragraph}))
-          (i32.and (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))
-            (i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))))) (then
+        (if ${all(
+          wat`(i32.eqz (local.get ${paragraph}))`,
+          wat`(call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+          wat`(i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))`,
+        )} (then
           (local.set ${mode} (i32.const 3))
           (local.set ${style} ${styled("text.literal")})
           ${coalesce(span, next, style, writers.emit)}
@@ -834,12 +853,14 @@ export function blocks(workPerByte = 16384) {
         (local.set ${tableEnd} ${withoutReturn(pos, lineEnd)})
         (if (local.get ${table}) (then
           ${fenceAhead()}
-          (if (i32.or (i32.or (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))
-              (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))
-            (i32.or (i32.or (local.get ${runValue})
-                (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))
-              (i32.or (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))
-                (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))))
+          (if ${any(
+            wat`(local.get ${runValue})`,
+            wat`(call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`,
+            wat`(call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+            wat`(call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent}))`,
+            wat`(call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+            wat`(call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent}))`,
+          )}
             (then (local.set ${table} (i32.const 0)))
             (else
               (local.set ${tableBase} ${styled("plain")})
@@ -938,7 +959,7 @@ export function blocks(workPerByte = 16384) {
 
   function setextHeading() {
     return wat`
-      (if (i32.and (local.get ${paragraph}) ${underline}) (then
+      (if ${all(wat`(local.get ${paragraph})`, underline)} (then
         (local.set ${onlyDefinitions} (i32.const 0))
         (local.set ${definitionCursor} (call ${logical.normalize} (i64.extend_i32_u (local.get ${paragraphStart})) (local.get ${queueMark})))
         (block $checked (loop $checkDefinition

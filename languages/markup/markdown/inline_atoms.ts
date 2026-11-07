@@ -1,10 +1,11 @@
-import { func, global, wat, type Def } from "#/testing/wat/mod.ts";
+import { func, global, wat, type Def, type Fragment } from "#/testing/wat/mod.ts";
 import { inlineScan } from "./inline_scan.ts";
 import { logicalRanges } from "./logical.ts";
 import { paragraphScratch } from "./scratch.ts";
 import { backtickIndex } from "./backticks.ts";
 import { angleAutolink } from "./autolinks.ts";
 import { kind, styled } from "./styles.ts";
+import { get, queued } from "./layout.ts";
 
 export function inlineAtoms(
   ranges: ReturnType<typeof logicalRanges>,
@@ -57,49 +58,85 @@ export function inlineAtoms(
   const delimiterCount = global("inlineDelimiterCount", () => wat`(mut i32) (i32.const 0)`);
   const openCount = global("inlineOpenCount", () => wat`(mut i32) (i32.const 0)`);
   const closeCount = global("inlineCloseCount", () => wat`(mut i32) (i32.const 0)`);
-  const bangCount = global("inlineBangCount", () => wat`(mut i32) (i32.const 0)`);
-  const atomCount = global("inlineAtomCount", () => wat`(mut i32) (i32.const 0)`);
   const tickBytes = global("inlineTickBytes", () => wat`(mut i32) (i32.const 0)`);
   const tickRuns = global("inlineTickRuns", () => wat`(mut i32) (i32.const 0)`);
   const tickMax = global("inlineTickMax", () => wat`(mut i32) (i32.const 0)`);
+  const special = "!&*.:<@[\\]_`~";
+  // A byte-set mask from nibble tables, as in the runtime's stop scans.
+  const low = Array(16).fill(0),
+    high = Array(16).fill(0);
+  for (const byte of [...special].map((char) => char.charCodeAt(0))) {
+    low[byte & 15] |= 1 << (byte >> 4);
+    high[byte >> 4] = 1 << (byte >> 4);
+  }
+  const lanes = (mask: Fragment) => wat`(i32.popcnt (i8x16.bitmask ${mask}))`;
+  const equal = (char: string) =>
+    wat`(i8x16.eq (local.get $chunk) (i8x16.splat (i32.const ${char.charCodeAt(0)})))`;
+  const is = (char: string) => wat`(i32.eq (local.get $byte) (i32.const ${char.charCodeAt(0)}))`;
+  const add = (counter: Def, amount: Fragment) =>
+    wat`(global.set ${counter} (i32.add (global.get ${counter}) ${amount}))`;
+  // Counts bound the workspace: every collected event, run, bracket and backtick run
+  // consumes one of the counted bytes.
+  const countRange = func(
+    "countInlineRange",
+    () => wat`
+    (param $input i32) (param $pos i32) (param $end i32)
+    (local $chunk v128) (local $byte i32)
+    (call ${charge} (i64.extend_i32_u (i32.sub (local.get $end) (local.get $pos))))
+    (block $wide (loop $chunks
+      (br_if $wide (i32.gt_u (i32.add (local.get $pos) (i32.const 16)) (local.get $end)))
+      (local.set $chunk (v128.load (i32.add (local.get $input) (local.get $pos))))
+      ${add(
+        specialCount,
+        lanes(wat`(i8x16.ne (v128.and
+        (i8x16.swizzle (v128.const i8x16 ${low}) (v128.and (local.get $chunk) (i8x16.splat (i32.const 15))))
+        (i8x16.swizzle (v128.const i8x16 ${high}) (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) (i8x16.splat (i32.const 15)))))
+        (i8x16.splat (i32.const 0)))`),
+      )}
+      ${add(delimiterCount, lanes(wat`(v128.or (v128.or ${equal("*")} ${equal("_")}) ${equal("~")})`))}
+      ${add(openCount, lanes(equal("[")))}
+      ${add(closeCount, lanes(equal("]")))}
+      ${add(tickBytes, lanes(equal("`")))}
+      (local.set $pos (i32.add (local.get $pos) (i32.const 16)))
+      (br $chunks)))
+    (block $narrow (loop $bytes
+      (br_if $narrow (i32.ge_u (local.get $pos) (local.get $end)))
+      (local.set $byte (i32.load8_u (i32.add (local.get $input) (local.get $pos))))
+      ${add(
+        specialCount,
+        [...special].map(is).reduce((a, b) => wat`(i32.or ${a} ${b})`),
+      )}
+      ${add(delimiterCount, wat`(i32.or (i32.or ${is("*")} ${is("_")}) ${is("~")})`)}
+      ${add(openCount, is("["))}
+      ${add(closeCount, is("]"))}
+      ${add(tickBytes, is("`"))}
+      (local.set $pos (i32.add (local.get $pos) (i32.const 1)))
+      (br $bytes)))`,
+  );
   const countSpecial = func(
     "countInlineSpecial",
     () => wat`
     (param $input i32) (param $cursor i64) (param $limit i32)
-    (local $byte i32) (local $length i32)
+    (local $index i32) (local $pos i32) (local $entry i32) (local $end i32) (local $style i32)
     (global.set ${specialCount} (i32.const 0)) (global.set ${delimiterCount} (i32.const 0))
     (global.set ${openCount} (i32.const 0)) (global.set ${closeCount} (i32.const 0))
-    (global.set ${bangCount} (i32.const 0)) (global.set ${atomCount} (i32.const 0))
-    (global.set ${tickBytes} (i32.const 0)) (global.set ${tickRuns} (i32.const 0))
-    (global.set ${tickMax} (i32.const 0))
-    (block $done (loop $more
-      (local.set $cursor (call ${next} (local.get $input) (local.get $cursor) (local.get $limit)))
-      (local.set $byte (call ${ranges.peek} (local.get $input) (local.get $cursor) (local.get $limit)))
-      (br_if $done (i32.eq (local.get $byte) (i32.const -1)))
-      (if (i32.eq (local.get $byte) (i32.const 96)) (then
-        (local.set $length (i32.const 0))
-        (block $runDone (loop $run
-          (br_if $runDone (i32.ne (call ${ranges.peek} (local.get $input) (local.get $cursor) (local.get $limit)) (i32.const 96)))
-          (local.set $length (i32.add (local.get $length) (i32.const 1)))
-          (local.set $cursor (call ${ranges.advance} (local.get $cursor) (local.get $limit)))
-          (br $run)))
-        (global.set ${tickBytes} (i32.add (global.get ${tickBytes}) (local.get $length)))
-        (global.set ${tickRuns} (i32.add (global.get ${tickRuns}) (i32.const 1)))
-        (if (i32.gt_u (local.get $length) (global.get ${tickMax})) (then (global.set ${tickMax} (local.get $length))))
-        (global.set ${specialCount} (i32.add (global.get ${specialCount}) (local.get $length)))
-        (br $more)))
-      (global.set ${specialCount} (i32.add (global.get ${specialCount}) (i32.const 1)))
-      (if (i32.or (i32.eq (local.get $byte) (i32.const 42))
-        (i32.or (i32.eq (local.get $byte) (i32.const 95)) (i32.eq (local.get $byte) (i32.const 126)))) (then
-        (global.set ${delimiterCount} (i32.add (global.get ${delimiterCount}) (i32.const 1)))))
-      (if (i32.eq (local.get $byte) (i32.const 91)) (then (global.set ${openCount} (i32.add (global.get ${openCount}) (i32.const 1)))))
-      (if (i32.eq (local.get $byte) (i32.const 93)) (then (global.set ${closeCount} (i32.add (global.get ${closeCount}) (i32.const 1)))))
-      (if (i32.eq (local.get $byte) (i32.const 33)) (then (global.set ${bangCount} (i32.add (global.get ${bangCount}) (i32.const 1)))))
-      (if (i32.or (i32.eq (local.get $byte) (i32.const 38))
-        (i32.or (i32.eq (local.get $byte) (i32.const 60)) (i32.eq (local.get $byte) (i32.const 92)))) (then
-        (global.set ${atomCount} (i32.add (global.get ${atomCount}) (i32.const 1)))))
-      (local.set $cursor (call ${ranges.advance} (local.get $cursor) (local.get $limit)))
-      (br $more)))`,
+    (global.set ${tickBytes} (i32.const 0))
+    (local.set $index (i32.wrap_i64 (i64.shr_u (local.get $cursor) (i64.const 32))))
+    (local.set $pos (i32.wrap_i64 (local.get $cursor)))
+    (block $done (loop $ranges
+      (br_if $done (i32.ge_u (local.get $index) (local.get $limit)))
+      (local.set $entry (i32.add (global.get ${scratch.address}) (local.get $index)))
+      (local.set $end ${queued.get(get("entry"), "end")})
+      (local.set $style ${queued.get(get("entry"), "style")})
+      (if (i32.and (i32.lt_u (local.get $pos) (local.get $end))
+        (i32.and (i32.ne (local.get $style) ${styled("punctuation.special")}) (i32.ne (local.get $style) (i32.const ${kind.indent}))))
+        (then (call ${countRange} (local.get $input) (local.get $pos) (local.get $end))))
+      (local.set $pos (local.get $end))
+      (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
+      (br $ranges)))
+    ;; Backtick runs and the longest run are bounded by the backtick bytes.
+    (global.set ${tickRuns} (global.get ${tickBytes}))
+    (global.set ${tickMax} (global.get ${tickBytes}))`,
   );
   const end = global("inlineEnd", () => wat`(mut i64) (i64.const 0)`);
   const style = global("inlineStyle", () => wat`(mut i32) (i32.const 0)`);
@@ -187,8 +224,6 @@ export function inlineAtoms(
     delimiterCount,
     openCount,
     closeCount,
-    bangCount,
-    atomCount,
     tickBytes,
     tickRuns,
     tickMax,
