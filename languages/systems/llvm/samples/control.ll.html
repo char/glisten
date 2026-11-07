@@ -1,0 +1,16 @@
+<g-k>declare</g-k> <g-t>i32</g-t> <g-f>@work</g-f><g-pb>(</g-pb><g-t>ptr</g-t><g-pb>)</g-pb>
+
+<g-k>define</g-k> <g-t>i32</g-t> <g-f>@choose</g-f><g-pb>(</g-pb><g-t>ptr</g-t> <g-v>%p</g-v><g-pd>,</g-pd> <g-t>i1</g-t> <g-v>%test</g-v><g-pb>)</g-pb> <g-pb>{</g-pb>
+<g-l>entry</g-l><g-pd>:</g-pd>
+  <g-k>br</g-k> <g-t>i1</g-t> <g-v>%test</g-v><g-pd>,</g-pd> <g-t>label</g-t> <g-v>%yes</g-v><g-pd>,</g-pd> <g-t>label</g-t> <g-v>%no</g-v>
+<g-l>yes</g-l><g-pd>:</g-pd>
+  <g-v>%v</g-v> <g-o>=</g-o> <g-k>call</g-k> <g-t>i32</g-t> <g-f>@work</g-f><g-pb>(</g-pb><g-t>ptr</g-t> <g-v>%p</g-v><g-pb>)</g-pb><g-pd>,</g-pd> <g-at>!dbg</g-at> <g-at>!2</g-at>
+  <g-k>br</g-k> <g-t>label</g-t> <g-v>%done</g-v>
+<g-l>no</g-l><g-pd>:</g-pd>
+  <g-k>br</g-k> <g-t>label</g-t> <g-v>%done</g-v>
+<g-l>done</g-l><g-pd>:</g-pd>
+  <g-v>%r</g-v> <g-o>=</g-o> <g-k>phi</g-k> <g-t>i32</g-t> <g-pb>[</g-pb> <g-v>%v</g-v><g-pd>,</g-pd> <g-v>%yes</g-v> <g-pb>]</g-pb><g-pd>,</g-pd> <g-pb>[</g-pb> <g-n>0</g-n><g-pd>,</g-pd> <g-v>%no</g-v> <g-pb>]</g-pb>
+  <g-k>ret</g-k> <g-t>i32</g-t> <g-v>%r</g-v>
+<g-pb>}</g-pb>
+<g-at>!2</g-at> <g-o>=</g-o> <g-at>!DILocation</g-at><g-pb>(</g-pb><g-l>line</g-l><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-l>column</g-l><g-pd>:</g-pd> <g-n>2</g-n><g-pd>,</g-pd> <g-l>scope</g-l><g-pd>:</g-pd> <g-at>!0</g-at><g-pb>)</g-pb>
+<g-at>!named</g-at> <g-o>=</g-o> <g-ps>!</g-ps><g-pb>{</g-pb><g-at>!2</g-at><g-pb>}</g-pb>

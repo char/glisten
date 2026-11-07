@@ -1,0 +1,49 @@
+<g-c>; Identifiers, unusual types and literal forms</g-c>
+<g-v>%"a</g-v><g-se>\22</g-se><g-v>b"</g-v> <g-o>=</g-o> <g-k>type</g-k> <g-pb>&lt;{</g-pb> <g-t>i128</g-t><g-pd>,</g-pd> <g-pb>&lt;</g-pb><g-n>4</g-n> <g-k>x</g-k> <g-t>i32</g-t><g-pb>&gt;</g-pb><g-pd>,</g-pd> <g-t>ptr</g-t> <g-pb>}&gt;</g-pb>
+<g-v>$group</g-v> <g-o>=</g-o> <g-k>comdat</g-k> <g-k>any</g-k>
+<g-v>@1</g-v> <g-o>=</g-o> <g-k>global</g-k> <g-t>i256</g-t> <g-n>0</g-n>
+<g-v>@"strange name"</g-v> <g-o>=</g-o> <g-k>private</g-k> <g-k>constant</g-k> <g-pb>[</g-pb><g-n>3</g-n> <g-k>x</g-k> <g-t>i8</g-t><g-pb>]</g-pb> <g-s>c"</g-s><g-se>\FF\00</g-se><g-s>a"</g-s>
+<g-v>@numbers</g-v> <g-o>=</g-o> <g-k>global</g-k> <g-pb>[</g-pb><g-n>5</g-n> <g-k>x</g-k> <g-t>double</g-t><g-pb>]</g-pb> <g-pb>[</g-pb><g-t>double</g-t> <g-n>0x3FF0000000000000</g-n><g-pd>,</g-pd> <g-t>double</g-t> <g-n>0xK3FFF8000000000000000</g-n><g-pd>,</g-pd> <g-t>double</g-t> <g-n>0xL00000000000000003FFF000000000000</g-n><g-pd>,</g-pd> <g-t>double</g-t> <g-n>0xH3C00</g-n><g-pd>,</g-pd> <g-t>double</g-t> <g-n>0xR3F80</g-n><g-pb>]</g-pb>
+<g-k>define</g-k> <g-t>void</g-t> <g-f>@test</g-f><g-pb>()</g-pb> <g-pb>{</g-pb>
+<g-l>0</g-l><g-pd>:</g-pd>
+  <g-v>%1</g-v> <g-o>=</g-o> <g-k>getelementptr</g-k> <g-k>inbounds</g-k> <g-pb>[</g-pb><g-n>3</g-n> <g-k>x</g-k> <g-t>i8</g-t><g-pb>]</g-pb><g-pd>,</g-pd> <g-t>ptr</g-t> <g-v>@"strange name"</g-v><g-pd>,</g-pd> <g-t>i64</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>i64</g-t> <g-n>1</g-n>
+  <g-v>%2</g-v> <g-o>=</g-o> <g-k>icmp</g-k> <g-k>eq</g-k> <g-t>ptr</g-t> <g-v>%1</g-v><g-pd>,</g-pd> <g-cb>null</g-cb>
+  <g-k>ret</g-k> <g-t>void</g-t>
+<g-pb>}</g-pb>
+
+<g-k>declare</g-k> <g-k>swifttailcc</g-k> <g-t>void</g-t> <g-f>@swift</g-f><g-pb>()</g-pb> <g-at>#1</g-at>
+<g-k>declare</g-k> <g-k>spir_func</g-k> <g-t>void</g-t> <g-f>@device</g-f><g-pb>()</g-pb> <g-at>#2</g-at>
+<g-k>define</g-k> <g-k>amdgpu_kernel</g-k> <g-t>void</g-t> <g-f>@kernel</g-f><g-pb>()</g-pb> <g-at>#3</g-at> <g-pb>{</g-pb>
+  <g-k>ret</g-k> <g-t>void</g-t>
+<g-pb>}</g-pb>
+<g-k>attributes</g-k> <g-at>#1</g-at> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>nocallback</g-k> <g-k>nosync</g-k> <g-k>ssp</g-k> <g-k>memory</g-k><g-pb>(</g-pb><g-k>read</g-k><g-pb>)</g-pb> <g-pb>}</g-pb>
+<g-k>attributes</g-k> <g-at>#2</g-at> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>sspstrong</g-k> <g-k>memory</g-k><g-pb>(</g-pb><g-k>write</g-k><g-pb>)</g-pb> <g-pb>}</g-pb>
+<g-k>attributes</g-k> <g-at>#3</g-at> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>sspreq</g-k> <g-k>memory</g-k><g-pb>(</g-pb><g-k>readwrite</g-k><g-pb>)</g-pb> <g-k>vscale_range</g-k><g-pb>(</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>4</g-n><g-pb>)</g-pb> <g-pb>}</g-pb>
+
+<g-k>declare</g-k> <g-t>i32</g-t> <g-f>@personality</g-f><g-pb>(</g-pb>...<g-pb>)</g-pb>
+<g-k>declare</g-k> <g-t>void</g-t> <g-f>@maythrow</g-f><g-pb>()</g-pb>
+<g-k>define</g-k> <g-t>void</g-t> <g-f>@exceptional</g-f><g-pb>()</g-pb> <g-k>personality</g-k> <g-t>ptr</g-t> <g-v>@personality</g-v> <g-pb>{</g-pb>
+<g-l>entry</g-l><g-pd>:</g-pd>
+  <g-k>invoke</g-k> <g-t>void</g-t> <g-f>@maythrow</g-f><g-pb>()</g-pb> <g-k>to</g-k> <g-t>label</g-t> <g-v>%ok</g-v> <g-k>unwind</g-k> <g-t>label</g-t> <g-v>%unwind</g-v>
+<g-l>ok</g-l><g-pd>:</g-pd>
+  <g-k>ret</g-k> <g-t>void</g-t>
+<g-l>unwind</g-l><g-pd>:</g-pd>
+  <g-v>%pad</g-v> <g-o>=</g-o> <g-k>cleanuppad</g-k> <g-k>within</g-k> <g-cb>none</g-cb> <g-pb>[]</g-pb>
+  <g-k>cleanupret</g-k> <g-k>from</g-k> <g-v>%pad</g-v> <g-k>unwind</g-k> <g-k>to</g-k> <g-k>caller</g-k>
+<g-pb>}</g-pb>
+
+<g-k>define</g-k> <g-t>void</g-t> <g-f>@landing</g-f><g-pb>()</g-pb> <g-k>personality</g-k> <g-t>ptr</g-t> <g-v>@personality</g-v> <g-pb>{</g-pb>
+<g-l>entry</g-l><g-pd>:</g-pd>
+  <g-k>invoke</g-k> <g-t>void</g-t> <g-f>@maythrow</g-f><g-pb>()</g-pb> <g-k>to</g-k> <g-t>label</g-t> <g-v>%ok</g-v> <g-k>unwind</g-k> <g-t>label</g-t> <g-v>%unwind</g-v>
+<g-l>ok</g-l><g-pd>:</g-pd>
+  <g-k>ret</g-k> <g-t>void</g-t>
+<g-l>unwind</g-l><g-pd>:</g-pd>
+  <g-v>%lp</g-v> <g-o>=</g-o> <g-k>landingpad</g-k> <g-pb>{</g-pb> <g-t>ptr</g-t><g-pd>,</g-pd> <g-t>i32</g-t> <g-pb>}</g-pb> <g-k>cleanup</g-k>
+  <g-k>resume</g-k> <g-pb>{</g-pb> <g-t>ptr</g-t><g-pd>,</g-pd> <g-t>i32</g-t> <g-pb>}</g-pb> <g-v>%lp</g-v>
+<g-pb>}</g-pb>
+
+<g-k>declare</g-k> <g-t>token</g-t> <g-f>@llvm.experimental.gc.statepoint.p0</g-f><g-pb>(</g-pb><g-t>i64</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> <g-t>ptr</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> ...<g-pb>)</g-pb>
+<g-k>define</g-k> <g-t>void</g-t> <g-f>@safepoint</g-f><g-pb>()</g-pb> <g-k>gc</g-k> <g-s>"statepoint-example"</g-s> <g-pb>{</g-pb>
+  <g-v>%tok</g-v> <g-o>=</g-o> <g-k>call</g-k> <g-t>token</g-t> <g-pb>(</g-pb><g-t>i64</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> <g-t>ptr</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> <g-t>i32</g-t><g-pd>,</g-pd> ...<g-pb>)</g-pb> <g-f>@llvm.experimental.gc.statepoint.p0</g-f><g-pb>(</g-pb><g-t>i64</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>i32</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>ptr</g-t> <g-k>elementtype</g-k><g-pb>(</g-pb><g-t>void</g-t> <g-pb>())</g-pb> <g-cb>undef</g-cb><g-pd>,</g-pd> <g-t>i32</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>i32</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>i32</g-t> <g-n>0</g-n><g-pd>,</g-pd> <g-t>i32</g-t> <g-n>0</g-n><g-pb>)</g-pb>
+  <g-k>ret</g-k> <g-t>void</g-t>
+<g-pb>}</g-pb>

@@ -1,0 +1,11 @@
+<g-c>; A small module</g-c>
+<g-k>source_filename</g-k> <g-o>=</g-o> <g-s>"sum.c"</g-s>
+<g-k>target</g-k> <g-k>triple</g-k> <g-o>=</g-o> <g-s>"x86_64-unknown-linux-gnu"</g-s>
+<g-v>@message</g-v> <g-o>=</g-o> <g-k>private</g-k> <g-k>constant</g-k> <g-pb>[</g-pb><g-n>4</g-n> <g-k>x</g-k> <g-t>i8</g-t><g-pb>]</g-pb> <g-s>c"hi</g-s><g-se>\0A\00</g-se><g-s>"</g-s><g-pd>,</g-pd> <g-k>align</g-k> <g-n>1</g-n>
+
+<g-k>define</g-k> <g-k>dso_local</g-k> <g-t>i32</g-t> <g-f>@sum</g-f><g-pb>(</g-pb><g-t>i32</g-t> <g-v>%a</g-v><g-pd>,</g-pd> <g-t>i32</g-t> <g-v>%b</g-v><g-pb>)</g-pb> <g-at>#0</g-at> <g-pb>{</g-pb>
+<g-l>entry</g-l><g-pd>:</g-pd>
+  <g-v>%result</g-v> <g-o>=</g-o> <g-k>add</g-k> <g-k>nsw</g-k> <g-t>i32</g-t> <g-v>%a</g-v><g-pd>,</g-pd> <g-v>%b</g-v>
+  <g-k>ret</g-k> <g-t>i32</g-t> <g-v>%result</g-v>
+<g-pb>}</g-pb>
+<g-k>attributes</g-k> <g-at>#0</g-at> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>nounwind</g-k> <g-pb>}</g-pb>
