@@ -33,6 +33,7 @@ import { kind, styled, styleId } from "./styles.ts";
 import { referenceDefinition } from "./reference.ts";
 import { htmlEnd, htmlStart } from "./html.ts";
 import { taskCheck } from "./task.ts";
+import { tableCellEnd, tableDelimiter, tableHeader } from "./table.ts";
 import {
   coalesce,
   emitSegment,
@@ -86,6 +87,17 @@ export function blocks(workPerByte = 16384) {
     taskStart = local("taskStart"),
     taskEnd = local("taskEnd"),
     taskByte = local("taskByte"),
+    table = local("table"),
+    tableAt = local("tableAt"),
+    tableCell = local("tableCell"),
+    tableEnd = local("tableEnd"),
+    tableBase = local("tableBase"),
+    tableDivider = local("tableDivider"),
+    tableHead = local("tableHead"),
+    rowStart = local("rowStart"),
+    rowEnd = local("rowEnd"),
+    rowNext = local("rowNext"),
+    rowLazy = local("rowLazy"),
     collecting = local("collecting"),
     queueMark = local("queueMark"),
     queueLimit = local("queueLimit"),
@@ -147,6 +159,9 @@ export function blocks(workPerByte = 16384) {
   const scratch = paragraphScratch(charge);
   const logical = logicalRanges(scratch.address, charge);
   const task = taskCheck(logical);
+  const cellEnd = tableCellEnd(charge),
+    headerCells = tableHeader(charge),
+    delimiterCells = tableDelimiter(charge);
   const definition = referenceDefinition(logical);
   const inline = inlineAtoms(logical, scratch, charge);
   const resource = inlineResource(logical, definition.destination, definition.title);
@@ -301,6 +316,14 @@ export function blocks(workPerByte = 16384) {
             ${replayTo(wat`(local.get ${taskEnd})`, styleId("punctuation.special"))}
             (local.set ${definitionCursor} (local.get ${taskEnd}))))))
         (local.set ${taskCandidate} (i32.const 0))
+        ${inlineReplay(wat`(i32.const ${title ? styleId("text.title") : styleId("plain")})`)}
+        ${drain(title)}
+        (global.set ${scratch.used} (i32.const 0))
+        (local.set ${collecting} (i32.const 0))))`;
+  }
+  /** Resolve inline content from `definitionCursor` to `queueMark`, replaying it over `base`. */
+  function inlineReplay(base: Part) {
+    return wat`
         (local.set ${inlineCursor} (call ${inline.next} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark})))
         (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
           (call ${inline.countSpecial} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark}))
@@ -339,7 +362,7 @@ export function blocks(workPerByte = 16384) {
         (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
             (call ${emphasis.build} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark}) (local.get ${out}))
             (local.set ${attentionEvent} (global.get ${emphasis.first}))
-            (local.set ${attentionStyle} (i32.const ${title ? styleId("text.title") : styleId("plain")}))
+            (local.set ${attentionStyle} ${base})
             (block $attentionDone (loop $attention
               (br_if $attentionDone (i32.eqz (local.get ${attentionEvent})))
               (local.set ${attentionStart} (i32.wrap_i64 ${event.get(eventAt, "start")}))
@@ -398,7 +421,11 @@ export function blocks(workPerByte = 16384) {
                   ${replayTo(wat`(i64.extend_i32_u (local.get ${attentionEnd}))`, inlineStyle, true)}))))))
               (local.set ${attentionEvent} ${event.get(eventAt, "next")})
               (br $attention)))
-            ))
+            ))`;
+  }
+  /** Emit the queue's remaining entries with their own styles. */
+  function drain(title: boolean) {
+    return wat`
         (block $queueDone (loop $queue
           (call ${charge} (i64.const 1))
           (br_if $queueDone (i32.ge_u (local.get ${queueIndex}) (local.get ${queueLimit})))
@@ -413,10 +440,38 @@ export function blocks(workPerByte = 16384) {
           (if (i32.eq (local.get ${queueStyle}) (i32.const ${kind.leading})) (then (local.set ${queueStyle} ${styled("plain")})))
           ${coalesce(span, queueEnd, queueStyle, writers.emit)}
           (local.set ${queueIndex} (i32.add (local.get ${queueIndex}) (i32.const ${queued.size})))
-          (br $queue)))
-        (global.set ${scratch.used} (i32.const 0))
-        (local.set ${collecting} (i32.const 0))))`;
+          (br $queue)))`;
   }
+  /** A table cell is its own inline content: queue it alone, and resolve it over `base`. */
+  function resolveCell(cellStart: Local, cellEnd: Local, base: Local) {
+    return wat`
+        (local.set ${collecting} (i32.const 1))
+        (local.set ${queuePos} (local.get ${cellStart}))
+        (call ${scratch.append} (local.get ${out}) (local.get ${cellEnd}) (local.get ${base}))
+        (local.set ${queueMark} (global.get ${scratch.used}))
+        (local.set ${queueIndex} (i32.const 0))
+        (local.set ${queueLimit} (global.get ${scratch.used}))
+        (global.set ${inline.ready} (i32.const 0))
+        (local.set ${definitionCursor} (call ${logical.normalize} (i64.extend_i32_u (local.get ${queuePos})) (local.get ${queueMark})))
+        ${inlineReplay(wat`(local.get ${base})`)}
+        ${drain(false)}
+        (global.set ${scratch.used} (i32.const 0))
+        (local.set ${collecting} (i32.const 0))`;
+  }
+  /** Set `runValue` if the line opens a fence. */
+  function fenceAhead() {
+    return wat`
+              (local.set ${runValue} (i32.const 0))
+              (local.set ${fence} (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
+              (if (i64.ne (local.get ${fence}) (i64.const -1)) (then
+                (local.set ${fenceStart} (i32.wrap_i64 (i64.shr_u (local.get ${fence}) (i64.const 32))))
+                (local.set ${fenceEnd} (i32.wrap_i64 (local.get ${fence})))
+                (if (i32.and (i32.le_u (i32.add (local.get ${virtualIndent}) (i32.sub (local.get ${fenceStart}) (local.get ${pos}))) (i32.const 3))
+                  (i32.or (i32.ne (i32.load8_u (i32.add (local.get ${input}) (local.get ${fenceStart}))) (i32.const 96))
+                    (i32.eq (call ${backtick} (local.get ${input}) (local.get ${fenceEnd}) (local.get ${lineEnd})) (local.get ${lineEnd}))))
+                  (then (local.set ${runValue} (i32.const 1))))))`;
+  }
+
   function containers() {
     return wat`
         (local.set ${containerColumn} (i32.const 0))
@@ -437,15 +492,7 @@ export function blocks(workPerByte = 16384) {
               (local.set ${containerIndex} (i32.add (local.get ${containerIndex}) (i32.const 1)))
               (br ${stackLoop})))
             (if (i32.and (i32.eqz (local.get ${mode})) (local.get ${paragraph})) (then
-              (local.set ${runValue} (i32.const 0))
-              (local.set ${fence} (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
-              (if (i64.ne (local.get ${fence}) (i64.const -1)) (then
-                (local.set ${fenceStart} (i32.wrap_i64 (i64.shr_u (local.get ${fence}) (i64.const 32))))
-                (local.set ${fenceEnd} (i32.wrap_i64 (local.get ${fence})))
-                (if (i32.and (i32.le_u (i32.add (local.get ${virtualIndent}) (i32.sub (local.get ${fenceStart}) (local.get ${pos}))) (i32.const 3))
-                  (i32.or (i32.ne (i32.load8_u (i32.add (local.get ${input}) (local.get ${fenceStart}))) (i32.const 96))
-                    (i32.eq (call ${backtick} (local.get ${input}) (local.get ${fenceEnd}) (local.get ${lineEnd})) (local.get ${lineEnd}))))
-                  (then (local.set ${runValue} (i32.const 1))))))
+              ${fenceAhead()}
               (if (i32.and (i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
                 (i32.and (i64.eq (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
                   (local.get ${containerColumn}) (i32.eq (local.get ${frame}) (i32.const 1))) (i64.const -1))
@@ -464,6 +511,7 @@ export function blocks(workPerByte = 16384) {
               (local.set ${hostCurrent} (i32.const -1))))
             (local.set ${mode} (i32.const 0))
             (local.set ${paragraph} (i32.const 0))
+            (local.set ${table} (i32.const 0))
             (br ${stackDone})))
           (local.set ${prefixEnd} (i32.wrap_i64 (local.get ${prefix})))
           (local.set ${previousColumn} (local.get ${containerColumn}))
@@ -535,6 +583,7 @@ export function blocks(workPerByte = 16384) {
             ${coalesce(span, prefixEnd, style, writers.emit)}
             (local.set ${pos} (local.get ${prefixEnd}))
             (local.set ${paragraph} (i32.const 0))
+            (local.set ${table} (i32.const 0))
             (br ${openLoop})))))
     `;
   }
@@ -721,6 +770,120 @@ export function blocks(workPerByte = 16384) {
     `;
   }
 
+  /** Skip at most three spaces of indentation, or leave `tableAt` on one. */
+  function indentation(from: Local, columns: Part) {
+    return wat`
+        (local.set ${tableAt} (local.get ${from}))
+        (block $indented (loop $indent
+          (br_if $indented (i32.ge_u (i32.add ${columns} (i32.sub (local.get ${tableAt}) (local.get ${from}))) (i32.const 3)))
+          (br_if $indented (i32.ne (i32.load8_u (i32.add (local.get ${input}) (local.get ${tableAt}))) (i32.const 32)))
+          (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))
+          (br $indent)))`;
+  }
+  const spaceAt = (at: Local) => wat`(i32.or
+    (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${at}))) (i32.const 32))
+    (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${at}))) (i32.const 9)))`;
+  const withoutReturn = (from: Local, end: Local) => wat`(i32.sub (local.get ${end})
+    (i32.and (i32.gt_u (local.get ${end}) (local.get ${from}))
+      (i32.eq (i32.load8_u (i32.add (local.get ${input}) (i32.sub (local.get ${end}) (i32.const 1)))) (i32.const 13))))`;
+
+  /**
+   * GFM tables. A delimiter row turns the paragraph's last line into a header with as
+   * many cells; body rows follow until a blank line or another block starts. Each cell
+   * is its own inline content.
+   */
+  function tables() {
+    return wat`
+        (local.set ${tableHead} (i32.const 0))
+        (local.set ${tableEnd} ${withoutReturn(pos, lineEnd)})
+        (if (local.get ${table}) (then
+          ${fenceAhead()}
+          (if (i32.or (i32.or (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))
+              (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))
+            (i32.or (i32.or (local.get ${runValue})
+                (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))
+              (i32.or (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))
+                (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))))
+            (then (local.set ${table} (i32.const 0)))
+            (else
+              (local.set ${tableBase} ${styled("plain")})
+              (local.set ${tableDivider} ${styled("punctuation.delimiter")})
+              (local.set ${tableAt} (local.get ${pos}))))))
+        (if (i32.and (i32.and (local.get ${paragraph}) (i32.eqz (local.get ${mode})))
+          (i32.eqz (i32.or (local.get ${lazy}) (local.get ${rowLazy})))) (then
+          ${indentation(pos, wat`(local.get ${virtualIndent})`)}
+          (if (i32.eqz ${spaceAt(tableAt)}) (then
+            (local.set ${tableCell} (call ${delimiterCells} (local.get ${input}) (local.get ${tableAt}) (local.get ${tableEnd})))
+            (if (local.get ${tableCell}) (then
+              ${indentation(rowStart, wat`(i32.const 0)`)}
+              (local.set ${rowEnd} ${withoutReturn(rowStart, rowEnd)})
+              (if (i32.and (i32.eqz ${spaceAt(tableAt)})
+                (i32.eq (call ${headerCells} (local.get ${input}) (local.get ${tableAt}) (local.get ${rowEnd})) (local.get ${tableCell}))) (then
+                ;; Resolve the paragraph before the header line, whose queue entry may continue into it.
+                (local.set ${queueIndex} (i32.const 0))
+                (block $found (loop $seek
+                  (call ${charge} (i64.const 1))
+                  (br_if $found (i32.ge_u (local.get ${queueIndex}) (global.get ${scratch.used})))
+                  (br_if $found (i32.gt_u ${queued.get(queueAt, "end")} (local.get ${rowStart})))
+                  (local.set ${queueIndex} (i32.add (local.get ${queueIndex}) (i32.const ${queued.size})))
+                  (br $seek)))
+                (if (i32.lt_u (local.get ${queueIndex}) (global.get ${scratch.used})) (then
+                  (if (i32.lt_u (if (result i32) (local.get ${queueIndex})
+                      (then ${queued.get(inScratch(wat`(i32.sub (local.get ${queueIndex}) (i32.const ${queued.size}))`), "end")})
+                      (else (local.get ${paragraphStart})))
+                    (local.get ${rowStart})) (then
+                    ${queued.set(queueAt, "end", wat`(local.get ${rowStart})`)}
+                    (local.set ${queueIndex} (i32.add (local.get ${queueIndex}) (i32.const ${queued.size})))))))
+                (global.set ${scratch.used} (local.get ${queueIndex}))
+                (local.set ${queueMark} (local.get ${queueIndex}))
+                ${resolve(false)}
+                (local.set ${paragraph} (i32.const 0))
+                (local.set ${tableHead} (i32.const 1))
+                (local.set ${tableBase} ${styled("text.title")})
+                (local.set ${tableDivider} ${styled("text.title")})
+                (local.set ${tableAt} (local.get ${rowStart}))
+                (local.set ${tableEnd} (local.get ${rowEnd}))))))))))
+        (if (i32.or (local.get ${tableHead}) (local.get ${table})) (then
+          (local.set ${cursor} (local.get ${tableAt}))
+          (block $leading (loop $space
+            (br_if $leading (i32.ge_u (local.get ${tableAt}) (local.get ${tableEnd})))
+            (br_if $leading (i32.eqz ${spaceAt(tableAt)}))
+            (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))
+            (br $space)))
+          (if (i32.gt_u (local.get ${tableAt}) (local.get ${cursor})) (then
+            (local.set ${style} ${styled("plain")})
+            ${coalesce(span, tableAt, style, writers.emit)}))
+          (block $row (loop $cells
+            (br_if $row (i32.ge_u (local.get ${tableAt}) (local.get ${tableEnd})))
+            (if (i32.eq (i32.load8_u (i32.add (local.get ${input}) (local.get ${tableAt}))) (i32.const 124))
+              (then
+                (local.set ${tableAt} (i32.add (local.get ${tableAt}) (i32.const 1)))
+                ${coalesce(span, tableAt, tableDivider, writers.emit)})
+              (else
+                (local.set ${tableCell} (call ${cellEnd} (local.get ${input}) (local.get ${tableAt}) (local.get ${tableEnd})))
+                ${resolveCell(tableAt, tableCell, tableBase)}
+                (local.set ${tableAt} (local.get ${tableCell}))))
+            (br $cells)))
+          (if (local.get ${tableHead})
+            (then
+              (local.set ${style} ${styled("text.title")})
+              ${coalesce(span, rowNext, style, writers.emit)}
+              (if (i32.gt_u (local.get ${pos}) (local.get ${rowNext})) (then
+                (local.set ${style} ${styled("punctuation.special")})
+                ${coalesce(span, pos, style, writers.emit)}))
+              (local.set ${tableEnd} ${withoutReturn(pos, lineEnd)})
+              (local.set ${style} ${styled("punctuation.delimiter")})
+              ${coalesce(span, tableEnd, style, writers.emit)}
+              (local.set ${table} (i32.const 1)))
+            (else (local.set ${tableAt} (local.get ${tableEnd}))))
+          (if (i32.lt_u (local.get ${tableEnd}) (local.get ${next})) (then
+            (local.set ${style} ${styled("plain")})
+            ${coalesce(span, next, style, writers.emit)}))
+          (local.set ${pos} (local.get ${next}))
+          (br ${line})))
+    `;
+  }
+
   function setextHeading() {
     return wat`
       (if (i32.and (local.get ${paragraph}) ${underline}) (then
@@ -785,6 +948,10 @@ export function blocks(workPerByte = 16384) {
                     (local.set ${style} (i32.const ${kind.leading}))
                     ${append(cursor, style)}
                     (local.set ${style} ${styled("plain")})))))
+                (local.set ${rowStart} (local.get ${pos}))
+                (local.set ${rowEnd} (local.get ${lineEnd}))
+                (local.set ${rowNext} (local.get ${next}))
+                (local.set ${rowLazy} (local.get ${lazy}))
                 (local.set ${paragraph} (i32.const 1))
                 (local.set ${collecting} (i32.const 1))))))
         (if (i32.lt_u (local.get ${pos}) (local.get ${lineEnd})) (then
@@ -808,7 +975,10 @@ export function blocks(workPerByte = 16384) {
     (local ${pendingAddress} i32) (local ${host} i32) (local ${hostId} i32)
     (local ${hostDepth} i32) (local ${hostLast} i32) (local ${hostCurrent} i32)
     (local ${depth} i32) (local ${openAction} i32) (local ${openStart} i32) (local ${openEnd} i32)
-    (local ${paragraph} i32) (local ${openedList} i32) (local ${taskCandidate} i32) (local ${taskStart} i64) (local ${taskEnd} i64) (local ${taskByte} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
+    (local ${paragraph} i32) (local ${openedList} i32) (local ${taskCandidate} i32) (local ${taskStart} i64) (local ${taskEnd} i64) (local ${taskByte} i32)
+    (local ${table} i32) (local ${tableAt} i32) (local ${tableCell} i32) (local ${tableEnd} i32)
+    (local ${tableBase} i32) (local ${tableDivider} i32) (local ${tableHead} i32)
+    (local ${rowStart} i32) (local ${rowEnd} i32) (local ${rowNext} i32) (local ${rowLazy} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)
     (local ${inlineCursor} i64) (local ${inlineStyle} i32)
@@ -844,6 +1014,7 @@ export function blocks(workPerByte = 16384) {
       (local.set ${mode} (i32.const 0))
       (local.set ${depth} (i32.const 0))
       (local.set ${paragraph} (i32.const 0))
+      (local.set ${table} (i32.const 0))
       (local.set ${collecting} (i32.const 0))
       (global.set ${fuel} (i64.add (i64.const 64)
         (i64.mul (i64.extend_i32_u (i32.sub (local.get ${limit}) (local.get ${pos}))) (i64.const ${workPerByte}))))
@@ -865,6 +1036,7 @@ export function blocks(workPerByte = 16384) {
         ${frontMatter()}
         ${fencedBody()}
         ${htmlBody()}
+        ${tables()}
         ${setextHeading()}
         ${indentedAndThematic()}
         ${fenceOpening()}
