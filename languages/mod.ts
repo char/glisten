@@ -48,6 +48,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   graphql: () => import("./query/graphql/grammar.ts"),
   groovy: () => import("./managed/groovy/grammar.ts"),
   handlebars: () => import("./web/handlebars/grammar.ts"),
+  hare: () => import("./systems/hare/grammar.ts"),
   haskell: () => import("./functional/haskell/grammar.ts"),
   hcl: () => import("./config/hcl/grammar.ts"),
   hlsl: () => import("./shaders/hlsl/grammar.ts"),

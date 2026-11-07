@@ -1,0 +1,9 @@
+<g-at>@symbol</g-at><g-pb>(</g-pb><g-s>"hare_example"</g-s><g-pb>)</g-pb> <g-k>export</g-k> <g-k>fn</g-k> <g-f>example</g-f><g-pb>(</g-pb><g-v>xs</g-v><g-pd>:</g-pd> <g-pb>[]</g-pb><g-t>u8</g-t><g-pd>,</g-pd> <g-v>p</g-v><g-pd>:</g-pd> <g-k>nullable</g-k> <g-o>*</g-o><g-t>int</g-t><g-pb>)</g-pb> <g-pb>(</g-pb><g-t>str</g-t> <g-o>|</g-o> <g-k>void</g-k><g-pb>)</g-pb> <g-o>=</g-o> <g-pb>{</g-pb>
+	<g-k>for</g-k> <g-pb>(</g-pb><g-k>let</g-k> <g-v>i</g-v> <g-o>=</g-o> <g-n>0z</g-n><g-pd>;</g-pd> <g-v>i</g-v> <g-o>&lt;</g-o> <g-k>len</g-k><g-pb>(</g-pb><g-v>xs</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-v>i</g-v> <g-o>+=</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-pb>{</g-pb>
+		<g-k>if</g-k> <g-pb>(</g-pb><g-v>xs</g-v><g-pb>[</g-pb><g-v>i</g-v><g-pb>]</g-pb> <g-o>==</g-o> <g-n>0xffu8</g-n><g-pb>)</g-pb> <g-k>break</g-k><g-pd>;</g-pd>
+	<g-pb>}</g-pb><g-pd>;</g-pd>
+	<g-k>return</g-k> <g-s>`raw text`</g-s><g-pd>;</g-pd>
+<g-pb>}</g-pb><g-pd>;</g-pd>
+
+<g-k>type</g-k> <g-v>item</g-v> <g-o>=</g-o> <g-k>struct</g-k> <g-pb>{</g-pb> <g-v>value</g-v><g-pd>:</g-pd> <g-t>int</g-t><g-pd>,</g-pd> <g-v>next</g-v><g-pd>:</g-pd> <g-k>nullable</g-k> <g-o>*</g-o><g-v>item</g-v> <g-pb>}</g-pb><g-pd>;</g-pd>
+<g-at>@test</g-at> <g-k>fn</g-k> <g-f>check</g-f><g-pb>()</g-pb> <g-k>void</g-k> <g-o>=</g-o> <g-pb>{</g-pb> <g-k>assert</g-k><g-pb>(</g-pb><g-cb>true</g-cb><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb><g-pd>;</g-pd>

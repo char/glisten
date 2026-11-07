@@ -1,0 +1,11 @@
+<g-c>// comment "not a string"</g-c>
+<g-k>let</g-k> <g-v>escaped</g-v> <g-o>=</g-o> <g-s>"quote: </g-s><g-se>\"</g-se><g-s> hex: </g-s><g-se>\x41</g-se><g-s> unicode: </g-s><g-se>\u03bb</g-se><g-s> </g-s><g-se>\U0001f600</g-se><g-s>"</g-s><g-pd>;</g-pd>
+<g-k>let</g-k> <g-v>raw</g-v> <g-o>=</g-o> <g-s>`literal \n
+still raw`</g-s><g-pd>;</g-pd>
+<g-k>let</g-k> <g-v>runes</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-s>'a'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\n</g-se><g-s>'</g-s><g-pd>,</g-pd> <g-s>'</g-s><g-se>\u03bb</g-se><g-s>'</g-s><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>let</g-k> <g-v>nums</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>1u8</g-n><g-pd>,</g-pd> <g-n>2z</g-n><g-pd>,</g-pd> <g-n>1e3f32</g-n><g-pd>,</g-pd> <g-n>0xCA_FE</g-n><g-pd>,</g-pd> <g-n>0o77</g-n><g-pd>,</g-pd> <g-n>0b10_01</g-n><g-pd>,</g-pd> <g-n>3.14f64</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+<g-k>let</g-k> <g-v>choices</g-v><g-pd>:</g-pd> <g-pb>(</g-pb><g-t>int</g-t> <g-o>|</g-o> <g-t>str</g-t><g-pb>)</g-pb><g-o>!</g-o> <g-o>=</g-o> <g-v>call</g-v><g-pd>::</g-pd><g-f>work</g-f><g-pb>()</g-pb><g-o>?</g-o><g-pd>;</g-pd>
+<g-c>// word boundaries</g-c>
+<g-k>let</g-k> <g-v>iffy</g-v> <g-o>=</g-o> <g-v>true_value</g-v><g-pd>;</g-pd> <g-k>let</g-k> <g-v>integer</g-v> <g-o>=</g-o> <g-n>12</g-n><g-pd>;</g-pd>
+<g-k>let</g-k> <g-v>multiline</g-v> <g-o>=</g-o> <g-s>"first
+second"</g-s><g-pd>;</g-pd>
