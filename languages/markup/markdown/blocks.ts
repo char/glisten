@@ -32,6 +32,7 @@ import {
 import { kind, styled, styleId } from "./styles.ts";
 import { referenceDefinition } from "./reference.ts";
 import { htmlEnd, htmlStart } from "./html.ts";
+import { taskCheck } from "./task.ts";
 import {
   coalesce,
   emitSegment,
@@ -80,6 +81,11 @@ export function blocks(workPerByte = 16384) {
     openStart = local("openStart"),
     openEnd = local("openEnd");
   const paragraph = local("paragraph"),
+    openedList = local("openedList"),
+    taskCandidate = local("taskCandidate"),
+    taskStart = local("taskStart"),
+    taskEnd = local("taskEnd"),
+    taskByte = local("taskByte"),
     collecting = local("collecting"),
     queueMark = local("queueMark"),
     queueLimit = local("queueLimit"),
@@ -140,6 +146,7 @@ export function blocks(workPerByte = 16384) {
   const scan = stopScan("lineEnd", [10, 13], false);
   const scratch = paragraphScratch(charge);
   const logical = logicalRanges(scratch.address, charge);
+  const task = taskCheck(logical);
   const definition = referenceDefinition(logical);
   const inline = inlineAtoms(logical, scratch, charge);
   const resource = inlineResource(logical, definition.destination, definition.title);
@@ -280,6 +287,20 @@ export function blocks(workPerByte = 16384) {
         (local.set ${queueLimit} (global.get ${scratch.used}))
         (global.set ${inline.ready} (i32.const 0))
         ${replayDefinitions()}
+        (if (i32.and (i32.const ${title ? 0 : 1}) (local.get ${taskCandidate})) (then
+          (local.set ${taskStart} (local.get ${definitionCursor}))
+          (if (i64.ne (local.get ${definitionCursor}) (call ${logical.normalize} (i64.extend_i32_u (local.get ${paragraphStart})) (local.get ${queueMark}))) (then
+            (block $taskIndentDone (loop $taskIndent
+              (local.set ${taskByte} (call ${logical.peek} (local.get ${input}) (local.get ${taskStart}) (local.get ${queueMark})))
+              (br_if $taskIndentDone (i32.and (i32.ne (local.get ${taskByte}) (i32.const 32)) (i32.ne (local.get ${taskByte}) (i32.const 9))))
+              (local.set ${taskStart} (call ${logical.advance} (local.get ${taskStart}) (local.get ${queueMark})))
+              (br $taskIndent)))))
+          (local.set ${taskEnd} (call ${task} (local.get ${input}) (local.get ${taskStart}) (local.get ${queueMark})))
+          (if (i64.ne (local.get ${taskEnd}) (i64.const -1)) (then
+            ${replayTo(wat`(local.get ${taskStart})`, styleId("plain"), true)}
+            ${replayTo(wat`(local.get ${taskEnd})`, styleId("punctuation.special"))}
+            (local.set ${definitionCursor} (local.get ${taskEnd}))))))
+        (local.set ${taskCandidate} (i32.const 0))
         (local.set ${inlineCursor} (call ${inline.next} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark})))
         (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
           (call ${inline.countSpecial} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark}))
@@ -491,6 +512,7 @@ export function blocks(workPerByte = 16384) {
             (call ${charge} (i64.const 16))
             (if (i32.ge_u (local.get ${depth}) (i32.const 128)) (then (call ${fail})))
             (local.set ${frame} (i32.wrap_i64 (i64.shr_u (local.get ${prefix}) (i64.const 32))))
+            (local.set ${openedList} (i32.ne (local.get ${frame}) (i32.const 1)))
             (if (i32.ne (local.get ${frame}) (i32.const 1)) (then
               (local.set ${frame} (i32.add (local.get ${frame}) (i32.shl (local.get ${virtualIndent}) (i32.const 1))))))
             (i32.store (i32.add (global.get $base) (i32.add (i32.const 32) (i32.shl (local.get ${depth}) (i32.const 2)))) (local.get ${frame}))
@@ -750,6 +772,7 @@ export function blocks(workPerByte = 16384) {
                 (local.set ${pos} (local.get ${lineEnd})))
               (else
                 (if (i32.eqz (local.get ${paragraph})) (then
+                  (local.set ${taskCandidate} (local.get ${openedList}))
                   (local.set ${paragraphStart} (local.get ${pos}))
                   (local.set ${collecting} (i32.const 1))
                   (local.set ${cursor} (local.get ${pos}))
@@ -785,7 +808,7 @@ export function blocks(workPerByte = 16384) {
     (local ${pendingAddress} i32) (local ${host} i32) (local ${hostId} i32)
     (local ${hostDepth} i32) (local ${hostLast} i32) (local ${hostCurrent} i32)
     (local ${depth} i32) (local ${openAction} i32) (local ${openStart} i32) (local ${openEnd} i32)
-    (local ${paragraph} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
+    (local ${paragraph} i32) (local ${openedList} i32) (local ${taskCandidate} i32) (local ${taskStart} i64) (local ${taskEnd} i64) (local ${taskByte} i32) (local ${collecting} i32) (local ${queueMark} i32) (local ${queueLimit} i32) (local ${queueIndex} i32)
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)
     (local ${inlineCursor} i64) (local ${inlineStyle} i32)
@@ -827,6 +850,7 @@ export function blocks(workPerByte = 16384) {
       (call ${charge} (i64.extend_i32_u (i32.sub (local.get ${limit}) (local.get ${pos}))))
       (block ${documentDone} (loop ${line}
         (br_if ${documentDone} (i32.ge_u (local.get ${pos}) (local.get ${limit})))
+        (local.set ${openedList} (i32.const 0))
         (local.set ${queueMark} (global.get ${scratch.used}))
         (local.set ${lineEnd} (call ${scan} (local.get ${input}) (local.get ${pos}) (local.get ${limit})))
         (if (i32.and (i32.lt_u (i32.add (local.get ${lineEnd}) (i32.const 1)) (local.get ${limit}))
