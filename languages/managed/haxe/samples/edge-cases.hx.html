@@ -1,0 +1,12 @@
+<g-k>class</g-k> <g-t>Edges</g-t> <g-pb>{</g-pb>
+  <g-k>static</g-k> <g-k>function</g-k> <g-f>test</g-f><g-pb>(</g-pb><g-v>x</g-v><g-pd>:</g-pd><g-t>Int</g-t><g-pb>)</g-pb> <g-pb>{</g-pb>
+    <g-k>var</g-k> <g-v>a</g-v> <g-o>=</g-o> <g-s>'</g-s><g-ps>${</g-ps><g-pb>{</g-pb> <g-v>value</g-v><g-pd>:</g-pd> <g-pb>{</g-pb> <g-v>n</g-v><g-pd>:</g-pd> <g-v>x</g-v> <g-pb>}</g-pb> <g-pb>}</g-pb><g-pd>.</g-pd><g-v>value</g-v><g-pd>.</g-pd><g-v>n</g-v><g-ps>}</g-ps><g-s> </g-s><g-ps>$x</g-ps><g-s>'</g-s><g-pd>;</g-pd>
+    <g-k>var</g-k> <g-v>b</g-v> <g-o>=</g-o> <g-s>"not ${x} or $x"</g-s><g-pd>;</g-pd>
+    <g-k>var</g-k> <g-v>c</g-v> <g-o>=</g-o> <g-s>'escaped </g-s><g-se>\$</g-se><g-s>x and </g-s><g-se>$$</g-se><g-s>x and </g-s><g-se>\'</g-se><g-s> quote'</g-s><g-pd>;</g-pd>
+    <g-k>var</g-k> <g-v>ratio</g-v> <g-o>=</g-o> <g-v>x</g-v> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd> <g-k>var</g-k> <g-v>re</g-v> <g-o>=</g-o> <g-s>~/[a</g-s><g-se>\/</g-se><g-s>]+/gi</g-s><g-pd>;</g-pd>
+    <g-k>var</g-k> <g-v>values</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>0xFF</g-n><g-pd>,</g-pd> <g-n>1e3</g-n><g-pd>,</g-pd> <g-n>1_000</g-n><g-pd>,</g-pd> <g-n>23i32</g-n><g-pd>,</g-pd> <g-n>4u32</g-n><g-pd>,</g-pd> <g-n>5i64</g-n><g-pd>,</g-pd> <g-n>1.0f64</g-n><g-pd>,</g-pd> <g-n>0</g-n><g-o>...</g-o><g-n>3</g-n><g-pb>]</g-pb><g-pd>;</g-pd>
+    <g-at>@author</g-at><g-pb>(</g-pb><g-s>"someone"</g-s><g-pb>)</g-pb> <g-f>trace</g-f><g-pb>(</g-pb><g-k>macro</g-k> <g-ps>$v</g-ps><g-pb>{</g-pb><g-v>x</g-v><g-pb>})</g-pb><g-pd>;</g-pd>
+    <g-c>// #if not a directive</g-c>
+    <g-c>/* ${notInterpolation} */</g-c>
+  <g-pb>}</g-pb>
+<g-pb>}</g-pb>

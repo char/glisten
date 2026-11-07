@@ -50,6 +50,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   handlebars: () => import("./web/handlebars/grammar.ts"),
   hare: () => import("./systems/hare/grammar.ts"),
   haskell: () => import("./functional/haskell/grammar.ts"),
+  haxe: () => import("./managed/haxe/grammar.ts"),
   hcl: () => import("./config/hcl/grammar.ts"),
   hlsl: () => import("./shaders/hlsl/grammar.ts"),
   html: () => import("./web/html/grammar.ts"),

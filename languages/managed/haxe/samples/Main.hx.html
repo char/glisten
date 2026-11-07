@@ -1,0 +1,14 @@
+<g-k>package</g-k> <g-v>demo</g-v><g-pd>;</g-pd>
+<g-k>import</g-k> <g-v>haxe</g-v><g-pd>.</g-pd><g-v>ds</g-v><g-pd>.</g-pd><g-t>StringMap</g-t><g-pd>;</g-pd>
+<g-k>using</g-k> <g-t>StringTools</g-t><g-pd>;</g-pd>
+
+<g-at>@:keep</g-at>
+<g-k>class</g-k> <g-t>Main</g-t> <g-k>implements</g-k> <g-t>Runnable</g-t> <g-pb>{</g-pb>
+  <g-k>public</g-k> <g-k>static</g-k> <g-k>function</g-k> <g-f>main</g-f><g-pb>()</g-pb><g-pd>:</g-pd><g-t>Void</g-t> <g-pb>{</g-pb>
+    <g-k>var</g-k> <g-v>name</g-v> <g-o>=</g-o> <g-s>"world"</g-s><g-pd>;</g-pd>
+    <g-f>trace</g-f><g-pb>(</g-pb><g-s>'Hello </g-s><g-ps>${</g-ps><g-v>name</g-v><g-pd>.</g-pd><g-f>toUpperCase</g-f><g-pb>()</g-pb><g-ps>}</g-ps><g-s> </g-s><g-ps>$name</g-ps><g-s>'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+    <g-k>var</g-k> <g-v>matches</g-v> <g-o>=</g-o> <g-s>~/h[ae]llo</g-s><g-se>\/</g-se><g-s>world/gi</g-s><g-pd>;</g-pd>
+    <g-k>for</g-k> <g-pb>(</g-pb><g-v>i</g-v> <g-k>in</g-k> <g-n>0</g-n><g-o>...</g-o><g-n>3</g-n><g-pb>)</g-pb> <g-f>trace</g-f><g-pb>(</g-pb><g-v>i</g-v><g-pb>)</g-pb><g-pd>;</g-pd>
+  <g-pb>}</g-pb>
+  <g-k>public</g-k> <g-k>function</g-k> <g-f>run</g-f><g-pb>()</g-pb><g-pd>:</g-pd><g-t>Void</g-t> <g-pb>{}</g-pb>
+<g-pb>}</g-pb>

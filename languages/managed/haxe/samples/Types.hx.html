@@ -1,0 +1,16 @@
+<g-k>package</g-k> <g-v>example</g-v><g-pd>;</g-pd>
+
+<g-c>/** A plain documentation comment. */</g-c>
+<g-at>@:native</g-at><g-pb>(</g-pb><g-s>"demo.Result"</g-s><g-pb>)</g-pb>
+<g-k>enum</g-k> <g-t>Result</g-t><g-o>&lt;</g-o><g-t>T</g-t><g-o>&gt;</g-o> <g-pb>{</g-pb> <g-f>Ok</g-f><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd><g-t>T</g-t><g-pb>)</g-pb><g-pd>;</g-pd> <g-f>Error</g-f><g-pb>(</g-pb><g-v>message</g-v><g-pd>:</g-pd><g-t>String</g-t><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>typedef</g-k> <g-t>Callback</g-t> <g-o>=</g-o> <g-pb>(</g-pb><g-t>Int</g-t><g-pb>)</g-pb> <g-o>-&gt;</g-o> <g-t>String</g-t><g-pd>;</g-pd>
+<g-k>abstract</g-k> <g-t>Id</g-t><g-pb>(</g-pb><g-t>Int</g-t><g-pb>)</g-pb> <g-k>from</g-k> <g-t>Int</g-t> <g-k>to</g-k> <g-t>Int</g-t> <g-pb>{</g-pb>
+  <g-k>public</g-k> <g-k>inline</g-k> <g-k>function</g-k> <g-k>new</g-k><g-pb>(</g-pb><g-v>value</g-v><g-pd>:</g-pd><g-t>Int</g-t><g-pb>)</g-pb> <g-cb>this</g-cb> <g-o>=</g-o> <g-v>value</g-v><g-pd>;</g-pd>
+<g-pb>}</g-pb>
+<g-k>#if</g-k> <g-v>js</g-v>
+<g-k>extern</g-k> <g-k>class</g-k> <g-t>Platform</g-t> <g-pb>{</g-pb> <g-k>static</g-k> <g-k>function</g-k> <g-f>run</g-f><g-pb>()</g-pb><g-pd>:</g-pd><g-t>Void</g-t><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>#elseif</g-k> <g-v>sys</g-v>
+<g-k>class</g-k> <g-t>Platform</g-t> <g-pb>{</g-pb> <g-k>static</g-k> <g-k>function</g-k> <g-f>run</g-f><g-pb>()</g-pb> <g-f>trace</g-f><g-pb>(</g-pb><g-s>"sys"</g-s><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>#else</g-k>
+<g-k>class</g-k> <g-t>Platform</g-t> <g-pb>{}</g-pb>
+<g-k>#end</g-k>
