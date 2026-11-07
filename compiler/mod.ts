@@ -1,4 +1,28 @@
 import { ABI } from "#/abi/constants.ts";
+import {
+  global,
+  local,
+  print,
+  wat as fragment,
+  type Def,
+  type Fragment,
+  type Local,
+} from "#/testing/wat/mod.ts";
+import {
+  charEnd,
+  coalesce,
+  emitGroup,
+  emitPending,
+  emitSegment,
+  fail,
+  flushSpan,
+  openInjection,
+  rangesOf,
+  recordWriters,
+  sealHost,
+  status,
+  stopScan,
+} from "./runtime.ts";
 import { lowerMatcher, lowerShapeEffect, targetAssignment } from "./registry.ts";
 import { lowerBranch } from "./arm_effect.ts";
 import type { LowerContext } from "./matcher.ts";
@@ -14,7 +38,7 @@ import {
 } from "#/grammar/mod.ts";
 import { analyzeGrammar } from "#/grammar/analysis.ts";
 import { maxDepth, maxTransitions } from "#/grammar/limits.ts";
-import { emitRaw, lowerInjectionActions } from "./injection.ts";
+import { lowerInjectionActions } from "./injection.ts";
 import { columnFunction } from "./column.ts";
 import { previousCharFunction } from "./boundary.ts";
 import { lowerWordSelection, wordFunctions } from "./word.ts";
@@ -517,24 +541,58 @@ export function compile(
       `${arms.map((arm) => armCode(arm, bytes, shared)).join("\n")}\n(br $nomatch)`,
   );
   const shapeList = [...shapes.values()];
-  const emitOpen = `(if (local.get $host) (then (call $fail)))
-      (if (i32.ge_u (global.get $injections) (i32.const 536870912)) (then (call $fail)))
-      (if (i32.and (i32.ge_s (local.get $pending) (i32.const 0)) (i32.eq (local.get $pendingAddress) (i32.const -1))) (then
-        (local.set $pendingAddress (local.get $out))
-        (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))
-      (local.set $hostId (global.get $injections))
-      (global.set $injections (i32.add (global.get $injections) (i32.const 1)))
-      (if (i32.eq (local.get $openAction) (i32.const 1))
-        (then
-          (local.set $out (call $emitRaw (local.get $out) (i32.const 0) (i32.or (i32.const -536870912) (local.get $hostId))))
-          (local.set $out (call $emitRaw (local.get $out) (local.get $openStart) (local.get $openEnd))))
-        (else
-          (local.set $out (call $emitRaw (local.get $out) (local.get $openStart) (i32.or (i32.const -1073741824) (local.get $hostId))))))
-      (local.set $host (i32.const 1))
-      (local.set $hostDepth (local.get $depth))
-      (local.set $hostLast (i32.const -1))
-      (local.set $hostCurrent (i32.const -1))
-      (local.set $openAction (i32.const 0))`;
+  const records = recordWriters({
+    base: fragment`(global.get $base)`,
+    fail,
+    reserveOutput: scratch ? (end) => fragment`(call $specReserveOutput ${end})` : undefined,
+  });
+  const injections = global(
+    "injections",
+    () => fragment`(export "injections") (mut i32) (i32.const 0)`,
+  );
+  const groups = global("groups", () => fragment`(export "groups") (mut i32) (i32.const 0)`);
+  const handles = {
+    out: local("out"),
+    pending: local("pending"),
+    pendingEnd: local("pendingEnd"),
+    pendingAddress: local("pendingAddress"),
+    host: local("host"),
+    hostId: local("hostId"),
+    hostDepth: local("hostDepth"),
+    hostLast: local("hostLast"),
+    hostCurrent: local("hostCurrent"),
+    depth: local("depth"),
+    openAction: local("openAction"),
+    openStart: local("openStart"),
+    openEnd: local("openEnd"),
+    next: local("next"),
+    style: local("style"),
+    wrapStyle: local("wrapStyle"),
+    wrapStart: local("wrapStart"),
+  };
+  const bindings = new Map(Object.entries(handles).map(([name, handle]) => [handle, name]));
+  const renderInline = (body: Fragment) => inline(body, bindings);
+  const simpleSpan = {
+    out: handles.out,
+    pendingStyle: handles.pending,
+    pendingEnd: handles.pendingEnd,
+  };
+  const injectedSpan = { ...simpleSpan, pendingAddress: handles.pendingAddress };
+  const injectionState = {
+    span: injectedSpan,
+    host: handles.host,
+    hostId: handles.hostId,
+    hostDepth: handles.hostDepth,
+    hostLast: handles.hostLast,
+    hostCurrent: handles.hostCurrent,
+    depth: handles.depth,
+    openAction: handles.openAction,
+    openStart: handles.openStart,
+    openEnd: handles.openEnd,
+  };
+  const end = handles.next;
+  const style = handles.style;
+  const emitOpen = renderInline(openInjection(injectionState, { ...records, fail, injections }));
   const shapeCode = shapeList.map(({ ops, transition, shared }) => {
     let currentShared: boolean | undefined = shared;
     const pushed: (boolean | undefined)[] = [];
@@ -627,7 +685,9 @@ export function compile(
 
   const scanDefs = [...scans].map(([key, name]) => {
     const [kind, bytes] = key.split(":");
-    return scanFunction(name, bytes ? bytes.split(",").map(Number) : [], kind === "h");
+    return definition(
+      stopScan(name.slice(1), bytes ? bytes.split(",").map(Number) : [], kind === "h"),
+    );
   });
   const locals = [
     ...Array.from({ length: saves }, (_, i) => `(local $q${i} i32)`),
@@ -635,32 +695,12 @@ export function compile(
     ...[...prefix.caches.values()].map((name) => `(local ${name} i32) (local ${name}Start i32)`),
   ].join(" ");
 
-  const spanPaint = hasInjections
-    ? `(if (i32.ne (local.get $pending) (local.get $style)) (then
-      (if (i32.and (i32.ge_s (local.get $pending) (i32.const 0)) (i32.eq (local.get $pendingAddress) (i32.const -1))) (then
-        (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))
-      (local.set $pendingAddress (i32.const -1))
-      (local.set $pending (local.get $style))))
-    (local.set $pendingEnd (local.get $next))
-    (if (i32.ne (local.get $pendingAddress) (i32.const -1)) (then
-      (i32.store (local.get $pendingAddress) (local.get $next))))`
-    : `(if (i32.ne (local.get $pending) (local.get $style)) (then
-    (if (i32.ge_s (local.get $pending) (i32.const 0)) (then
-      (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))
-    (local.set $pending (local.get $style))))
-    (local.set $pendingEnd (local.get $next))`;
+  const spanPaint = renderInline(
+    coalesce(hasInjections ? injectedSpan : simpleSpan, end, style, records.emit),
+  );
   const outputPaint = hasInjections
     ? `(if (i32.and (local.get $host) (i32.eqz (local.get $parentPaint))) (then
-    (if (i32.and (i32.ge_s (local.get $pending) (i32.const 0)) (i32.eq (local.get $pendingAddress) (i32.const -1))) (then
-      (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))
-    (local.set $pending (i32.const -1))
-    (local.set $pendingAddress (i32.const -1))
-    (if (i32.ne (local.get $hostCurrent) (i32.const -1))
-      (then (i32.store (local.get $hostCurrent) (local.get $next)))
-      (else
-        (local.set $hostCurrent (local.get $out))
-        (local.set $hostLast (local.get $out))
-        (local.set $out (call $emitRaw (local.get $out) (local.get $next) (i32.or (i32.const -2147483648) (local.get $hostId)))))))
+    ${renderInline(emitSegment(injectionState, end, records))})
     (else ${spanPaint}))
     (local.set $parentPaint (i32.const 0))
     (if (local.get $openAction) (then ${emitOpen}))`
@@ -670,27 +710,20 @@ export function compile(
   (import "env" "memory" (memory 1))
   (import "env" "base" (global $base i32))
   (global $records (export "records") (mut i32) (i32.const 0))
-  (global $injections (export "injections") (mut i32) (i32.const 0))
-  ${hasWrap ? '(global $groups (export "groups") (mut i32) (i32.const 0))' : ""}
-  (global $status (export "status") (mut i32) (i32.const 0))
-  (func $fail (global.set $status (i32.const 1)) (unreachable))
+  ${definition(injections)}
+  ${hasWrap ? definition(groups) : ""}
+  ${definition(status)}
+  ${definition(fail)}
   ${scratch ? speculationScratch : ""}
   ${hasSpeculation ? speculationFunctions : ""}
   ${hasSpeculation && hasInjections ? speculationOutputFunctions : ""}
-  ${emitFunction(scratch)}
+  ${definition(records.emit)}
   ${
     hasInjections || hasWrap
-      ? `${emitRaw(scratch)}${
-          hasInjections
-            ? `
-  (func $sealHost (param $last i32)
-    (if (i32.ne (local.get $last) (i32.const -1)) (then
-      (i32.store offset=4 (local.get $last) (i32.or (i32.load offset=4 (local.get $last)) (i32.const 536870912))))))`
-            : ""
-        }`
+      ? `${definition(records.emitRaw)}${hasInjections ? `\n  ${definition(sealHost)}` : ""}`
       : ""
   }
-  ${charEndFunction}${hasPreviousChar ? `\n  ${previousCharFunction}` : ""}
+  ${definition(charEnd)}${hasPreviousChar ? `\n  ${previousCharFunction}` : ""}
   ${
     hasContainers
       ? `${crossesLineFunction}
@@ -817,19 +850,30 @@ export function compile(
         }
         ${
           hasWrap
-            ? `(if (i32.and (i32.ge_s (local.get $wrapStyle) (i32.const 0)) (i32.lt_u (local.get $wrapStart) (local.get $next))) (then
-          (if ${hasInjections ? "(i32.and (i32.ge_s (local.get $pending) (i32.const 0)) (i32.eq (local.get $pendingAddress) (i32.const -1)))" : "(i32.ge_s (local.get $pending) (i32.const 0))"} (then
-            (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))
-          (local.set $pending (i32.const -1))
-          ${hasInjections ? "(local.set $pendingAddress (i32.const -1)) (local.set $hostCurrent (i32.const -1))" : ""}
-          (local.set $out (call $emitRaw (local.get $out) (local.get $wrapStart)
-            (i32.or (i32.const 1073741824) (i32.load16_u (i32.add (global.get $base) (i32.shl (local.get $wrapStyle) (i32.const 1)))))))
-          (global.set $groups (i32.add (global.get $groups) (i32.const 1)))))`
+            ? renderInline(
+                emitGroup(
+                  hasInjections
+                    ? {
+                        span: injectedSpan,
+                        hostCurrent: handles.hostCurrent,
+                        wrapStyle: handles.wrapStyle,
+                        wrapStart: handles.wrapStart,
+                      }
+                    : {
+                        span: simpleSpan,
+                        wrapStyle: handles.wrapStyle,
+                        wrapStart: handles.wrapStart,
+                      },
+                  end,
+                  fragment`(global.get $base)`,
+                  { ...records, groups },
+                ),
+              )
             : ""
         }
         (local.set $pos (local.get $next))
         (br $token)))
-      ${hasInjections ? "(if (i32.and (i32.ge_s (local.get $pending) (i32.const 0)) (i32.eq (local.get $pendingAddress) (i32.const -1))) (then (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))\n      (if (local.get $host) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0))))" : hasWrap ? "(if (i32.ge_s (local.get $pending) (i32.const 0)) (then (local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))))" : "(local.set $out (call $emit (local.get $out) (local.get $pendingEnd) (local.get $pending)))"}
+      ${hasInjections ? `${renderInline(flushSpan(injectedSpan, records.emit))}\n      (if (local.get $host) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0))))` : hasWrap ? renderInline(flushSpan(simpleSpan, records.emit)) : renderInline(emitPending(simpleSpan, records.emit))}
       (local.set $documents (i32.add (local.get $documents) (i32.const 8)))
       (local.set $count (i32.sub (local.get $count) (i32.const 1)))
       (br $document)))
@@ -838,102 +882,22 @@ export function compile(
   return { wat, manifest };
 }
 
-/** Inclusive runs of consecutive bytes. */
-function rangesOf(bytes: number[]): [number, number][] {
-  const ranges: [number, number][] = [];
-  for (const byte of bytes) {
-    const last = ranges.at(-1);
-    if (last && last[1] === byte - 1) last[1] = byte;
-    else ranges.push([byte, byte]);
-  }
-  return ranges;
+function inline(body: Fragment, bindings: ReadonlyMap<Local, string>): string {
+  return body.chunks
+    .map((part) => {
+      if (typeof part === "string") return part;
+      if (part.type === "fragment") return inline(part, bindings);
+      if (part.type === "def") return `$${part.name}`;
+      if (part.type === "local") {
+        const name = bindings.get(part);
+        if (name === undefined) throw new Error("Unbound compiler inline local");
+        return `$${name}`;
+      }
+      throw new Error("Compiler inline templates cannot introduce labels");
+    })
+    .join("");
 }
 
-// lowerings-paint: separate stores in one outlined, checked emitter.
-const emitFunction = (
-  scratch: boolean,
-) => `(func $emit (param $out i32) (param $end i32) (param $style i32) (result i32)
-    (local $need i64) (local $available i64)
-    (local.set $need (i64.add (i64.extend_i32_u (local.get $out)) (i64.const 8)))
-    (if (i64.gt_u (local.get $need) (i64.const 4294967295)) (then (call $fail)))
-    ${scratch ? "(call $specReserveOutput (local.get $need))" : ""}
-    (local.set $available (i64.shl (i64.extend_i32_u (memory.size)) (i64.const 16)))
-    (if (i64.gt_u (local.get $need) (local.get $available)) (then
-      (if (i32.eq (memory.grow (i32.wrap_i64 (i64.shr_u (i64.add (i64.sub (local.get $need) (local.get $available)) (i64.const 65535)) (i64.const 16)))) (i32.const -1))
-        (then (call $fail)))))
-    (i32.store (local.get $out) (local.get $end))
-    (i32.store offset=4 (local.get $out) (i32.load16_u (i32.add (global.get $base) (i32.shl (local.get $style) (i32.const 1)))))
-    (i32.add (local.get $out) (i32.const 8)))`;
-
-const charEndFunction = `(func $charEnd (param $input i32) (param $p i32) (param $limit i32) (result i32)
-    (local $b i32) (local $width i32) (local $end i32)
-    (local.set $b (i32.load8_u (i32.add (local.get $input) (local.get $p))))
-    (local.set $width (if (result i32) (i32.le_u (i32.sub (local.get $b) (i32.const 192)) (i32.const 31)) (then (i32.const 2))
-      (else (if (result i32) (i32.le_u (i32.sub (local.get $b) (i32.const 224)) (i32.const 15)) (then (i32.const 3))
-      (else (if (result i32) (i32.le_u (i32.sub (local.get $b) (i32.const 240)) (i32.const 7)) (then (i32.const 4)) (else (i32.const 1))))))))
-    (local.set $end (i32.add (local.get $p) (i32.const 1)))
-    (block $done (loop $more
-      (br_if $done (i32.or (i32.ge_u (local.get $end) (local.get $limit)) (i32.ge_u (i32.sub (local.get $end) (local.get $p)) (local.get $width))))
-      (br_if $done (i32.gt_u (i32.sub (i32.load8_u (i32.add (local.get $input) (local.get $end))) (i32.const 128)) (i32.const 63)))
-      (local.set $end (i32.add (local.get $end) (i32.const 1))) (br $more)))
-    (local.get $end))`;
-
-/** A segment-bounded SIMD scan to ASCII stop bytes and, optionally, any high byte. */
-function scanFunction(name: string, bytes: number[], high: boolean): string {
-  // lowerings-scan: splat compares up to eight stop bytes, nibble tables beyond.
-  const asciiVector =
-    bytes.length === 0
-      ? ""
-      : bytes.length <= 8
-        ? bytes
-            .map((b) => `(i8x16.eq (local.get $chunk) (i8x16.splat (i32.const ${b})))`)
-            .reduce((a, b) => `(v128.or ${a} ${b})`)
-        : (() => {
-            const lo = Array(16).fill(0);
-            const hi = Array(16).fill(0);
-            for (const b of bytes) {
-              lo[b & 15] |= 1 << (b >> 4);
-              hi[b >> 4] = 1 << (b >> 4);
-            }
-            return `(i8x16.ne (v128.and
-            (i8x16.swizzle (v128.const i8x16 ${lo.join(" ")}) (v128.and (local.get $chunk) (i8x16.splat (i32.const 15))))
-            (i8x16.swizzle (v128.const i8x16 ${hi.join(" ")}) (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) (i8x16.splat (i32.const 15)))))
-            (i8x16.splat (i32.const 0)))`;
-          })();
-  const asciiScalar = rangesOf(bytes)
-    .map(([lo, hi]) =>
-      lo === hi
-        ? `(i32.eq (local.get $b) (i32.const ${lo}))`
-        : `(i32.le_u (i32.sub (local.get $b) (i32.const ${lo})) (i32.const ${hi - lo}))`,
-    )
-    .reduce((a, b) => (a ? `(i32.or ${a} ${b})` : b), "");
-  const vectorHigh = `(i8x16.lt_s (local.get $chunk) (i8x16.splat (i32.const 0)))`;
-  const vector = high
-    ? asciiVector
-      ? `(v128.or ${asciiVector} ${vectorHigh})`
-      : vectorHigh
-    : asciiVector;
-  const scalarHigh = `(i32.ge_u (local.get $b) (i32.const 128))`;
-  const scalar = high
-    ? asciiScalar
-      ? `(i32.or ${asciiScalar} ${scalarHigh})`
-      : scalarHigh
-    : asciiScalar;
-  return `(func ${name} (param $input i32) (param $pos i32) (param $end i32) (result i32)
-    (local $chunk v128) (local $mask i32) (local $b i32)
-    (block $done
-      (block $tail (loop $vectors
-        (br_if $tail (i32.lt_u (i32.sub (local.get $end) (local.get $pos)) (i32.const 16)))
-        (local.set $chunk (v128.load (i32.add (local.get $input) (local.get $pos))))
-        (local.set $mask (i8x16.bitmask ${vector}))
-        (if (local.get $mask) (then (local.set $pos (i32.add (local.get $pos) (i32.ctz (local.get $mask)))) (br $done)))
-        (local.set $pos (i32.add (local.get $pos) (i32.const 16)))
-        (br $vectors)))
-      (loop $scalar
-        (br_if $done (i32.ge_u (local.get $pos) (local.get $end)))
-        (local.set $b (i32.load8_u (i32.add (local.get $input) (local.get $pos))))
-        (br_if $done ${scalar})
-        (local.set $pos (i32.add (local.get $pos) (i32.const 1)))
-        (br $scalar)))
-    (local.get $pos))`;
+function definition(def: Def): string {
+  return `(${def.kind} $${def.name} ${print(def.body())})`;
 }

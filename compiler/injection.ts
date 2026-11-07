@@ -5,22 +5,6 @@ export function lowerInjectionEffect(effect: Effect, context: ArmEffectContext):
   context.injections.push(...lowerInjectionActions([effect], context.rangeSlots, context.embeds));
 }
 
-/** Lower a checked raw ABI record store. */
-export const emitRaw = (
-  speculationScratch: boolean,
-) => `(func $emitRaw (param $out i32) (param $a i32) (param $b i32) (result i32)
-  (local $need i64) (local $available i64)
-  (local.set $need (i64.add (i64.extend_i32_u (local.get $out)) (i64.const 8)))
-  (if (i64.gt_u (local.get $need) (i64.const 4294967295)) (then (call $fail)))
-  ${speculationScratch ? "(call $specReserveOutput (local.get $need))" : ""}
-  (local.set $available (i64.shl (i64.extend_i32_u (memory.size)) (i64.const 16)))
-  (if (i64.gt_u (local.get $need) (local.get $available)) (then
-    (if (i32.eq (memory.grow (i32.wrap_i64 (i64.shr_u (i64.add (i64.sub (local.get $need) (local.get $available)) (i64.const 65535)) (i64.const 16)))) (i32.const -1))
-      (then (call $fail)))))
-  (i32.store (local.get $out) (local.get $a))
-  (i32.store offset=4 (local.get $out) (local.get $b))
-  (i32.add (local.get $out) (i32.const 8)))`;
-
 export function lowerInjectionActions(
   effects: readonly Effect[],
   rangeSlots: Map<string, number>,
