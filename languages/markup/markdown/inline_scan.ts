@@ -7,9 +7,10 @@ export function inlineScan(
   address: Def,
   charge?: Def,
   stops = "\n\r!&*<>@HW[\\]_`hw~",
+  name = "inlineScan",
 ) {
   const scan = stopScan(
-    "inlineStop",
+    `${name}Stop`,
     [...stops].map((char) => char.charCodeAt(0)),
     false,
   );
@@ -17,7 +18,7 @@ export function inlineScan(
     ? wat`(call ${charge} (i64.extend_i32_u (i32.sub (local.get $end) (local.get $pos))))`
     : wat``;
   return func(
-    "inlineScan",
+    name,
     () => wat`
     (param $input i32) (param $cursor i64) (param $limit i32) (result i64)
     (local $index i32) (local $pos i32) (local $end i32)

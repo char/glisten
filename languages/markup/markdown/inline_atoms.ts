@@ -12,6 +12,45 @@ export function inlineAtoms(
   charge: Def,
 ) {
   const scan = inlineScan(ranges, scratch.address, charge, "!&*<[\\]_`~");
+  // Also stops at "." after "www", ":" after "http"/"https", and "@" after atext: the
+  // places where a literal autolink can be recognized by looking back.
+  const candidates = inlineScan(
+    ranges,
+    scratch.address,
+    charge,
+    "!&*.:<@[\\]_`~",
+    "inlineCandidates",
+  );
+  const lower = (offset: number) =>
+    wat`(i32.or (i32.load8_u (i32.add (local.get $at) (i32.const ${offset}))) (i32.const 32))`;
+  const next = func(
+    "inlineNext",
+    () => wat`
+    (param $input i32) (param $cursor i64) (param $limit i32) (result i64)
+    (local $byte i32) (local $pos i32) (local $at i32)
+    (block $found (loop $more
+      (local.set $cursor (call ${candidates} (local.get $input) (local.get $cursor) (local.get $limit)))
+      (local.set $byte (call ${ranges.peek} (local.get $input) (local.get $cursor) (local.get $limit)))
+      (local.set $pos (i32.wrap_i64 (local.get $cursor)))
+      (local.set $at (i32.add (local.get $input) (local.get $pos)))
+      (br_if $found (i32.and (i32.ne (local.get $byte) (i32.const 46))
+        (i32.and (i32.ne (local.get $byte) (i32.const 58)) (i32.ne (local.get $byte) (i32.const 64)))))
+      (br_if $found (i32.and (i32.eq (local.get $byte) (i32.const 46)) (i32.ge_u (local.get $pos) (i32.const 3))
+        (i32.and (i32.eq ${lower(-3)} (i32.const 119))
+          (i32.and (i32.eq ${lower(-2)} (i32.const 119)) (i32.eq ${lower(-1)} (i32.const 119))))))
+      (br_if $found (i32.and (i32.eq (local.get $byte) (i32.const 58)) (i32.ge_u (local.get $pos) (i32.const 4))
+        (i32.or (i32.eq (i32.or (i32.load (i32.sub (local.get $at) (i32.const 4))) (i32.const 0x20202020)) (i32.const 0x70747468))
+          (i32.and (i32.ge_u (local.get $pos) (i32.const 5))
+            (i32.and (i32.eq ${lower(-1)} (i32.const 115))
+              (i32.eq (i32.or (i32.load (i32.sub (local.get $at) (i32.const 5))) (i32.const 0x20202020)) (i32.const 0x70747468)))))))
+      (br_if $found (i32.and (i32.eq (local.get $byte) (i32.const 64)) (i32.ge_u (local.get $pos) (i32.const 1))
+        (i32.or (i32.le_u (i32.sub ${lower(-1)} (i32.const 97)) (i32.const 25))
+          (i32.or (i32.le_u (i32.sub (i32.load8_u (i32.sub (local.get $at) (i32.const 1))) (i32.const 43)) (i32.const 14))
+            (i32.eq (i32.load8_u (i32.sub (local.get $at) (i32.const 1))) (i32.const 95))))))
+      (local.set $cursor (call ${ranges.advance} (local.get $cursor) (local.get $limit)))
+      (br $more)))
+    (local.get $cursor)`,
+  );
   const autolink = angleAutolink(ranges);
   const index = backtickIndex(ranges, scratch, scan, charge);
   const backticks = global("inlineBackticks", () => wat`(mut i32) (i32.const 0)`);
@@ -45,7 +84,7 @@ export function inlineAtoms(
     (global.set ${tickBytes} (i32.const 0)) (global.set ${tickRuns} (i32.const 0))
     (global.set ${tickMax} (i32.const 0))
     (block $done (loop $more
-      (local.set $cursor (call ${scan} (local.get $input) (local.get $cursor) (local.get $limit)))
+      (local.set $cursor (call ${next} (local.get $input) (local.get $cursor) (local.get $limit)))
       (local.set $byte (call ${ranges.peek} (local.get $input) (local.get $cursor) (local.get $limit)))
       (br_if $done (i32.eq (local.get $byte) (i32.const -1)))
       (if (i32.eq (local.get $byte) (i32.const 96)) (then
@@ -153,7 +192,7 @@ export function inlineAtoms(
     (i64.const -1)`,
   );
   return {
-    next: scan,
+    next,
     countSpecial,
     specialCount,
     delimiterCount,

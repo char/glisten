@@ -13,7 +13,8 @@ import {
   unicodeWhitespace,
 } from "./unicode.ts";
 import { logicalUtf8 } from "./utf8.ts";
-import { kind } from "./styles.ts";
+import { literalAutolinks } from "./literal_autolinks.ts";
+import { kind, styled } from "./styles.ts";
 
 export function attention(
   ranges: ReturnType<typeof logicalRanges>,
@@ -24,10 +25,9 @@ export function attention(
   charge: Def,
 ) {
   const unicode = logicalUtf8(ranges, scratch.address, charge);
-  const flanking = delimiterFlanking(
-    unicodePunctuation(wat`(i32.add (global.get $base) (i32.const 544))`),
-    unicodeWhitespace(),
-  );
+  const punctuation = unicodePunctuation(wat`(i32.add (global.get $base) (i32.const 544))`);
+  const flanking = delimiterFlanking(punctuation, unicodeWhitespace());
+  const autolinks = literalAutolinks(ranges, unicode, punctuation, charge);
   const resolve = delimiterSuffixResolver(charge, delimiterResolver(charge, delimiterMatch()));
   const first = global("attentionFirst", () => wat`(mut i32) (i32.const 0)`);
   const nodes = global("attentionNodes", () => wat`(mut i32) (i32.const 0)`);
@@ -47,6 +47,9 @@ export function attention(
     ${event.set(get("address"), "style", get("eventStyle"))}
     ${event.set(get("address"), "start", get("eventStart"))}
     ${event.set(get("address"), "end", get("eventEnd"))}
+    (if (i32.and (i32.ne (local.get $eventStyle) (i32.const ${kind.inlineText}))
+      (i32.ne (local.get $eventStyle) (i32.const ${kind.delimiterRun})))
+      (then (local.set $floor (i32.wrap_i64 (local.get $eventEnd)))))
     (local.set $last (local.get $event))`;
   const build = func(
     "buildAttention",
@@ -59,8 +62,10 @@ export function attention(
     (local $matches i32) (local $pair i32) (local $i i32)
     (local $depth i32) (local $brackets i32) (local $linkCount i32) (local $next i64) (local $linkAddress i32)
     (local $openHead i32) (local $closeHead i32) (local $tail i32) (local $entry i32)
+    (local $floor i32) (local $autolink i64)
     (global.set ${first} (i32.const 0))
     (call ${links.reset})
+    (call ${autolinks.reset})
     (global.set ${nodes} (global.get ${inline.runs}))
     (local.set $cursor (local.get $start))
     (local.set $gap (local.get $start))
@@ -74,6 +79,44 @@ export function attention(
         (br $collected)))
       (local.set $byte (call ${ranges.peek} (local.get $input) (local.get $cursor) (local.get $limit)))
       (local.set $after (call ${ranges.advance} (local.get $cursor) (local.get $limit)))
+      (if (i32.or (i32.eq (local.get $byte) (i32.const 46))
+        (i32.or (i32.eq (local.get $byte) (i32.const 58)) (i32.eq (local.get $byte) (i32.const 64)))) (then
+        ;; Literal autolinks aren't recognized inside a possible link label.
+        (local.set $autolink (i64.const -1))
+        (if (i32.eqz (global.get ${links.head})) (then
+          (local.set $autolink (call ${autolinks.candidate} (local.get $input) (local.get $cursor)
+            (local.get $floor) (local.get $start) (local.get $limit)))))
+        (if (i64.eq (local.get $autolink) (i64.const -1)) (then
+          (local.set $cursor (local.get $after)) (br $collect)))
+        ;; Text and underscore runs before the stop may belong to the autolink: retract them.
+        (local.set $atom (global.get ${autolinks.start}))
+        (block $retracted (loop $retract
+          (br_if $retracted (i32.eqz (local.get $eventCount)))
+          (local.set $address (i32.add (global.get ${scratch.address})
+            ${event.at(wat`(global.get ${inline.events})`, wat`(i32.sub (local.get $eventCount) (i32.const 1))`)}))
+          (br_if $retracted (i32.le_u (i32.wrap_i64 ${event.get(get("address"), "end")}) (i32.wrap_i64 (local.get $atom))))
+          (if (i32.eq ${event.get(get("address"), "style")} (i32.const ${kind.delimiterRun})) (then
+            (local.set $count (i32.sub (local.get $count) (i32.const 1)))
+            (local.set $depth (i32.sub (local.get $depth) (i32.const 1)))))
+          (local.set $gap ${event.get(get("address"), "start")})
+          (local.set $eventCount (i32.sub (local.get $eventCount) (i32.const 1)))
+          (br $retract)))
+        (local.set $last (if (result i32) (local.get $eventCount)
+          (then ${event.at(wat`(global.get ${inline.events})`, wat`(i32.sub (local.get $eventCount) (i32.const 1))`)})
+          (else (i32.const 0))))
+        (if (local.get $last)
+          (then ${event.set(inScratch("last"), "next", wat`(i32.const 0)`)})
+          (else (global.set ${first} (i32.const 0))))
+        (if (i32.lt_u (i32.wrap_i64 (local.get $gap)) (i32.wrap_i64 (local.get $atom))) (then
+          (local.set $eventStart (local.get $gap)) (local.set $eventEnd (local.get $atom))
+          (local.set $eventStyle (i32.const ${kind.inlineText}))
+          ${appendEvent()}))
+        (local.set $eventStart (local.get $atom)) (local.set $eventEnd (local.get $autolink))
+        (local.set $eventStyle ${styled("text.uri")})
+        ${appendEvent()}
+        (local.set $cursor (local.get $autolink))
+        (local.set $gap (local.get $cursor))
+        (br $collect)))
       (if (i32.or (i32.or (i32.eq (local.get $byte) (i32.const 91)) (i32.eq (local.get $byte) (i32.const 93)))
         (i32.and (i32.eq (local.get $byte) (i32.const 33))
           (i32.eq (call ${ranges.peek} (local.get $input) (local.get $after) (local.get $limit)) (i32.const 91))))

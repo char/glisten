@@ -73,5 +73,5 @@ export function bracketStack(
     (if (i32.eqz (local.get $image)) (then (global.set ${generation} (i32.add (global.get ${generation}) (i32.const 1)))))
     (local.get $next)`,
   );
-  return { reset, push, close, opener, image, form, entry, delimiterBottom };
+  return { reset, push, close, head, opener, image, form, entry, delimiterBottom };
 }

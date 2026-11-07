@@ -10,6 +10,7 @@ Read [the manual](https://example.org/guide "A title") or
 [the local page](../notes/intro.md). An ![icon](images/cup.png "Cup")
 may accompany [a reference][manual], [a collapsed reference][], or [manual].
 Visit <https://example.org/a?b=c> or email <tea@example.org>.
+Bare links work too: www.example.org/menu, https://example.org/a_(b)., and tea@example.org.
 Inline <kbd>Ctrl</kbd> and <!-- a note --> are HTML.
 
 [manual]: https://example.org/manual "Manual"
