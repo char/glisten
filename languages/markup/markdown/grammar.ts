@@ -233,6 +233,8 @@ const tableCell = [
   optional(literal(":")),
   bytes(" \t", { min: 0 }),
 ];
+// GFM approximations for highlighting: setext pipes retain delimiter styling,
+// table column counts are unchecked, and inline spans can cross cell pipes.
 const tableDelimiter = [
   indent,
   lookahead(optional(bytes(tableNoPipe)), literal("|")),

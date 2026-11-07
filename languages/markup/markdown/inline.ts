@@ -225,6 +225,7 @@ export const inlineAtoms = [
     literal(">"),
     paint("text.uri"),
   ),
+  // Named entities are recognized by shape, not checked against the HTML entity list.
   on(
     "&",
     literal("&"),
