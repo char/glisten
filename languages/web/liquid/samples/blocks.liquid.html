@@ -1,0 +1,13 @@
+<g-ps>{%</g-ps> <g-k>liquid</g-k>
+  <g-k>comment</g-k><g-c>
+    {{ hidden }}
+    endcommentary
+  </g-c><g-k>endcomment</g-k>
+  <g-k>raw</g-k>
+    {{ untouched }}
+  <g-k>endraw</g-k>
+  <g-k>if</g-k> <g-v>include</g-v><g-pd>.</g-pd><g-vm>enabled</g-vm> <g-o>and</g-o> <g-v>product</g-v><g-pd>.</g-pd><g-vm>available</g-vm>
+    <g-k>echo</g-k> <g-v>product</g-v><g-pd>.</g-pd><g-vm>title</g-vm> <g-o>|</g-o> <g-f>escape</g-f>
+  <g-k>endif</g-k>
+<g-ps>%}</g-ps>
+<g-ps>{{</g-ps> <g-v>outside</g-v> <g-ps>}}</g-ps>

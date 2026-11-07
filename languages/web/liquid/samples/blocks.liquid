@@ -1,0 +1,13 @@
+{% liquid
+  comment
+    {{ hidden }}
+    endcommentary
+  endcomment
+  raw
+    {{ untouched }}
+  endraw
+  if include.enabled and product.available
+    echo product.title | escape
+  endif
+%}
+{{ outside }}

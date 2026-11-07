@@ -73,6 +73,7 @@ export const languages: Readonly<Record<string, () => Promise<{ default: Languag
   lean: () => import("./proof/lean/grammar.ts"),
   less: () => import("./web/less/grammar.ts"),
   llvm: () => import("./systems/llvm/grammar.ts"),
+  liquid: () => import("./web/liquid/grammar.ts"),
   lua: () => import("./scripting/lua/grammar.ts"),
   make: () => import("./build/make/grammar.ts"),
   markdown: () => import("./markup/markdown/grammar.ts"),

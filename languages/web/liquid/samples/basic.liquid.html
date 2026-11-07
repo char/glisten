@@ -1,0 +1,12 @@
+&lt;div&gt;<g-ps>{{</g-ps> <g-v>product</g-v><g-pd>.</g-pd><g-vm>title</g-vm> <g-o>|</g-o> <g-f>escape</g-f> <g-ps>}}</g-ps>&lt;/div&gt;
+<g-ps>{%-</g-ps> <g-k>if</g-k> <g-v>product</g-v><g-pd>.</g-pd><g-vm>tags</g-vm> <g-o>contains</g-o> <g-s>"sale"</g-s> <g-o>and</g-o> <g-v>product</g-v><g-pd>.</g-pd><g-vm>available</g-vm> <g-ps>-%}</g-ps>
+  <g-ps>{%</g-ps> <g-k>for</g-k> <g-v>i</g-v> <g-o>in</g-o> <g-pb>(</g-pb><g-n>1</g-n><g-o>..</g-o><g-n>5</g-n><g-pb>)</g-pb> <g-ps>%}{{</g-ps> <g-v>i</g-v> <g-ps>}}{%</g-ps> <g-k>endfor</g-k> <g-ps>%}</g-ps>
+<g-ps>{%-</g-ps> <g-k>endif</g-k> <g-ps>-%}</g-ps>
+<g-ps>{%</g-ps> <g-k>raw</g-k> <g-ps>%}</g-ps>{{ untouched }}<g-ps>{% endraw %}</g-ps>
+<g-ps>{%</g-ps> <g-k>comment</g-k> <g-ps>%}</g-ps><g-c>{{ ignored }}</g-c><g-ps>{% endcomment %}</g-ps>
+<g-ps>{%</g-ps> <g-k>liquid</g-k>
+  <g-k>assign</g-k> <g-v>title</g-v> <g-o>=</g-o> <g-v>product</g-v><g-pd>.</g-pd><g-vm>title</g-vm> <g-o>|</g-o> <g-f>upcase</g-f>
+  <g-c># This is a comment</g-c>
+  <g-k>echo</g-k> <g-v>title</g-v>
+<g-ps>%}</g-ps>
+<g-ps>{%</g-ps> <g-c># inline comment </g-c><g-ps>%}</g-ps>

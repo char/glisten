@@ -1,0 +1,12 @@
+<div>{{ product.title | escape }}</div>
+{%- if product.tags contains "sale" and product.available -%}
+  {% for i in (1..5) %}{{ i }}{% endfor %}
+{%- endif -%}
+{% raw %}{{ untouched }}{% endraw %}
+{% comment %}{{ ignored }}{% endcomment %}
+{% liquid
+  assign title = product.title | upcase
+  # This is a comment
+  echo title
+%}
+{% # inline comment %}
