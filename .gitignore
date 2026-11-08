@@ -4,4 +4,4 @@
 /.cache/
 /result
 /result-*
-/rust/target/
+/target/

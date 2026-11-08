@@ -1,4 +1,4 @@
-import catalog from "./dist/languages.json" with { type: "json" };
+import catalog from "./_generated/languages.json" with { type: "json" };
 
 type Matches = Map<string, string | null>;
 const filenames: Matches = new Map();

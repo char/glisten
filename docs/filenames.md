@@ -44,13 +44,15 @@ Each grammar declares its own `extensions` (without leading dots) and exact
 `filenames`, alongside its name and aliases. The compiler copies these fields
 into the Wasm manifest. Hand-written Wasm languages declare them in their manifest.
 
-`avril task build` generates `dist/languages.json` from those manifests before
-bundling the standalone API. There is no separately maintained file-type table.
+`avril task build` generates the checked-in `_generated/languages.json` and its
+`dist/languages.json` copy from those manifests before bundling the standalone
+API. There is no separately maintained file-type table.
 Both standalone APIs embed that generated metadata, so lookup does not depend
 on which Wasm modules are available or registered at runtime.
 
-Run the build before type-checking or testing the source API, or compiling the
-Rust crate: they consume the generated catalog. The bundled `dist/filename.js`
-is self-contained and needs neither the JSON file nor Wasm files at runtime.
+Rebuild and commit the catalog when language metadata changes. The source API
+and Rust crate consume the checked-in catalog, so they work in a fresh checkout.
+The bundled `dist/filename.js` is self-contained and needs neither the JSON file
+nor Wasm files at runtime.
 Custom modules may include the optional manifest fields, but do not change the
 bundled lookup catalog.

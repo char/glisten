@@ -104,7 +104,7 @@ fn injection_names_can_cross_source_gaps() {
         &[[0, 7 << 29], [0, 4], [4, 0], [8, 5 << 29]],
     );
     let json = Language::new(
-        &std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../dist/json.wasm")).unwrap(),
+        &std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/dist/json.wasm")).unwrap(),
     )
     .unwrap();
     let mut host = Highlighter::new().unwrap();

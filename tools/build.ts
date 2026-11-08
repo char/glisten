@@ -25,7 +25,12 @@ const catalog = built.map(({ manifest }) => ({
   extensions: manifest.extensions ?? [],
   filenames: manifest.filenames ?? [],
 }));
-await writeTextFile("dist/languages.json", JSON.stringify(catalog, null, 2) + "\n");
+const catalogJson = JSON.stringify(catalog) + "\n";
+await mkdirs("_generated");
+await Promise.all([
+  writeTextFile("_generated/languages.json", catalogJson),
+  writeTextFile("dist/languages.json", catalogJson),
+]);
 for (const [source, output] of [
   ["host/mod.ts", "dist/host.js"],
   ["filename.ts", "dist/filename.js"],

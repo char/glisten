@@ -7,7 +7,7 @@ use glisten::{Error, Highlighter, Language};
 fn languages() -> &'static Vec<Language> {
     static LANGUAGES: OnceLock<Vec<Language>> = OnceLock::new();
     LANGUAGES.get_or_init(|| {
-        let dist = Path::new(env!("CARGO_MANIFEST_DIR")).join("../dist");
+        let dist = Path::new(env!("CARGO_MANIFEST_DIR")).join("dist");
         let mut paths = fs::read_dir(dist)
             .expect("run `avril task build` first")
             .map(|entry| entry.unwrap().path())
@@ -39,7 +39,7 @@ fn highlighter() -> Highlighter {
 #[test]
 fn matches_language_snapshots() {
     let mut host = highlighter();
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../languages");
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("languages");
     let mut count = 0;
     for entry in walkdir::WalkDir::new(root) {
         let path = entry.unwrap().into_path();

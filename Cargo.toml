@@ -4,6 +4,17 @@ version = "0.1.0"
 edition = "2024"
 publish = false
 
+[lib]
+path = "rust/src/lib.rs"
+
+[[test]]
+name = "composition"
+path = "rust/tests/composition.rs"
+
+[[test]]
+name = "host"
+path = "rust/tests/host.rs"
+
 [dependencies]
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
