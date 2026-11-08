@@ -4,8 +4,8 @@ import type { SourceRange } from "./documents.ts";
 import type { Callee, CallContext, CallResult } from "./engine.ts";
 import { ResourceError } from "./memory.ts";
 
-/** Reused layout for a child call over one contiguous document. */
-const single = new Uint32Array(2);
+/** Reused range for a child call over one contiguous document. */
+const singleDocument = new Uint32Array(2);
 
 /** Invoke a callee on contiguous documents and map its records onto source pieces. */
 export function callJoined(
@@ -14,17 +14,17 @@ export function callJoined(
   segments: Uint32Array,
   checks = false,
 ): { result: CallResult; context: CallContext } {
-  let split = false;
+  let hasSplitDocuments = false;
   for (let i = 2; i < segments.length; i += 3)
-    if (segments[i] !== (segment.starts | segment.ends)) split = true;
-  if (!split) {
+    if (segments[i] !== (segment.starts | segment.ends)) hasSplitDocuments = true;
+  if (!hasSplitDocuments) {
     // Callees consume their documents during the call, so the common one-document
     // case reuses a buffer rather than allocating per call.
     let documents: Uint32Array;
     if (segments.length === 3) {
-      single[0] = segments[0]!;
-      single[1] = segments[1]!;
-      documents = single;
+      singleDocument[0] = segments[0]!;
+      singleDocument[1] = segments[1]!;
+      documents = singleDocument;
     } else documents = segmentRanges(segments);
     const result = callee.call(context, documents);
     if (checks && result.status === "ok")
@@ -47,86 +47,86 @@ export function callJoined(
     if (error instanceof ResourceError) return { result: { status: "resource" }, context };
     throw error;
   }
-  const layout = batch.ranges;
-  const result = callee.call(batch.context, layout);
+  const documentRanges = batch.ranges;
+  const result = callee.call(batch.context, documentRanges);
   if (result.status === "resource") return { result, context: batch.context };
   const words = result.records();
-  if (checks) checkRecords(words, layout, result.injections);
+  if (checks) checkRecords(words, documentRanges, result.injections);
   if (!result.groups) {
     // Each piece boundary can split at most one consuming record.
     const output = new Uint32Array(words.length + segments.length * 2);
-    let used = 0;
-    let doc = 0;
-    let piece = 0;
-    let base = layout[0]!;
-    let position = base;
-    let part = documents[0]![0]!;
-    let limit = base + part.end - part.start;
+    let wordsWritten = 0;
+    let documentIndex = 0;
+    let pieceIndex = 0;
+    let pieceBase = documentRanges[0]!;
+    let joinedPosition = pieceBase;
+    let sourcePiece = documents[0]![0]!;
+    let pieceLimit = pieceBase + sourcePiece.end - sourcePiece.start;
     for (let i = 0; i < words.length; i += 2) {
       const end = words[i]!;
       const word = words[i + 1]!;
       const kind = word >>> record.kindShift;
       if (kind === record.kind.opensStatic || kind === record.kind.opensNamed) {
-        output[used++] = end;
-        output[used++] = word;
+        output[wordsWritten++] = end;
+        output[wordsWritten++] = word;
         if (kind === record.kind.opensNamed) {
           const nameStart = words[i + 2]!;
           const nameEnd = words[i + 3]!;
-          let owner = Math.min(doc, documents.length - 1);
+          let owner = Math.min(documentIndex, documents.length - 1);
           if (
-            position === layout[doc * 2 + 1] &&
-            doc + 1 < documents.length &&
-            nameStart >= layout[(doc + 1) * 2]! &&
-            nameEnd <= layout[(doc + 1) * 2 + 1]!
+            joinedPosition === documentRanges[documentIndex * 2 + 1] &&
+            documentIndex + 1 < documents.length &&
+            nameStart >= documentRanges[(documentIndex + 1) * 2]! &&
+            nameEnd <= documentRanges[(documentIndex + 1) * 2 + 1]!
           )
             owner++;
-          const start = layout[owner * 2]!;
-          const stop = layout[owner * 2 + 1]!;
+          const start = documentRanges[owner * 2]!;
+          const stop = documentRanges[owner * 2 + 1]!;
           const name =
             start <= nameStart && nameStart < nameEnd && nameEnd <= stop
               ? batch.maps[owner]!.mapRange(nameStart - start, nameEnd - start)
               : [];
-          output[used++] = name.length === 1 ? name[0]!.start : nameStart;
-          output[used++] = name.length === 1 ? name[0]!.end : nameEnd;
+          output[wordsWritten++] = name.length === 1 ? name[0]!.start : nameStart;
+          output[wordsWritten++] = name.length === 1 ? name[0]!.end : nameEnd;
           i += 2;
         }
         continue;
       }
-      if (position === layout[doc * 2 + 1]) {
-        doc++;
-        piece = 0;
-        base = layout[doc * 2]!;
-        position = base;
-        part = documents[doc]![0]!;
-        limit = base + part.end - part.start;
+      if (joinedPosition === documentRanges[documentIndex * 2 + 1]) {
+        documentIndex++;
+        pieceIndex = 0;
+        pieceBase = documentRanges[documentIndex * 2]!;
+        joinedPosition = pieceBase;
+        sourcePiece = documents[documentIndex]![0]!;
+        pieceLimit = pieceBase + sourcePiece.end - sourcePiece.start;
       }
-      while (position < end) {
-        if (position === limit) {
-          base = limit;
-          part = documents[doc]![++piece]!;
-          limit = base + part.end - part.start;
+      while (joinedPosition < end) {
+        if (joinedPosition === pieceLimit) {
+          pieceBase = pieceLimit;
+          sourcePiece = documents[documentIndex]![++pieceIndex]!;
+          pieceLimit = pieceBase + sourcePiece.end - sourcePiece.start;
         }
-        const next = Math.min(end, limit);
-        const start = part.start + position - base;
-        const mappedEnd = part.start + next - base;
+        const next = Math.min(end, pieceLimit);
+        const start = sourcePiece.start + joinedPosition - pieceBase;
+        const mappedEnd = sourcePiece.start + next - pieceBase;
         const mappedWord =
           kind === record.kind.segmentCloses && next < end ? word & ~(1 << record.kindShift) : word;
         if (
           kind === record.kind.span &&
-          used >= 2 &&
-          output[used - 1] === mappedWord &&
-          output[used - 2] === start &&
-          start !== part.start
+          wordsWritten >= 2 &&
+          output[wordsWritten - 1] === mappedWord &&
+          output[wordsWritten - 2] === start &&
+          start !== sourcePiece.start
         )
-          output[used - 2] = mappedEnd;
+          output[wordsWritten - 2] = mappedEnd;
         else {
-          output[used++] = mappedEnd;
-          output[used++] = mappedWord;
+          output[wordsWritten++] = mappedEnd;
+          output[wordsWritten++] = mappedWord;
         }
-        position = next;
+        joinedPosition = next;
       }
     }
-    const records = output.subarray(0, used);
+    const records = output.subarray(0, wordsWritten);
     return {
       result: { status: "ok", injections: result.injections, groups: 0, records: () => records },
       context: batch.context,
@@ -136,10 +136,15 @@ export function callJoined(
   // then insert each fragment after the mapped record ending at that boundary.
   const mapped: number[] = [];
   const endpoints: Map<number, number>[] = [];
-  const pendingGroups: { doc: number; end: number; start: number; word: number; value?: string }[] =
-    [];
-  let doc = 0;
-  let position = layout[0]!;
+  const pendingGroups: {
+    documentIndex: number;
+    end: number;
+    start: number;
+    word: number;
+    value?: string;
+  }[] = [];
+  let documentIndex = 0;
+  let joinedPosition = documentRanges[0]!;
   for (let i = 0; i < words.length; i += 2) {
     const end = words[i]!;
     const word = words[i + 1]!;
@@ -148,21 +153,21 @@ export function callJoined(
       kind !== record.kind.group &&
       kind !== record.kind.opensStatic &&
       kind !== record.kind.opensNamed &&
-      position === layout[doc * 2 + 1]
+      joinedPosition === documentRanges[documentIndex * 2 + 1]
     ) {
-      doc++;
-      position = layout[doc * 2] ?? position;
+      documentIndex++;
+      joinedPosition = documentRanges[documentIndex * 2] ?? joinedPosition;
     }
     if (kind === record.kind.group) {
-      const start = layout[doc * 2]!;
-      const ranges = batch.maps[doc]!.mapRange(end - start, position - start);
+      const start = documentRanges[documentIndex * 2]!;
+      const ranges = batch.maps[documentIndex]!.mapRange(end - start, joinedPosition - start);
       const value =
         ranges.length > 1
-          ? new TextDecoder().decode(batch.context.source().subarray(end, position))
+          ? new TextDecoder().decode(batch.context.source().subarray(end, joinedPosition))
           : undefined;
       for (const range of ranges)
         pendingGroups.push({
-          doc,
+          documentIndex,
           end: range.end,
           start: range.start,
           word,
@@ -176,15 +181,15 @@ export function callJoined(
         // A name within one piece maps to the source; one spanning a gap stays in the joined
         // input, which every joined context still exposes after the original source.
         const [nameStart, nameEnd] = [words[i + 2]!, words[i + 3]!];
-        let owner = Math.min(doc, documents.length - 1);
+        let owner = Math.min(documentIndex, documents.length - 1);
         if (
-          position === layout[doc * 2 + 1] &&
-          doc + 1 < documents.length &&
-          nameStart >= layout[(doc + 1) * 2]! &&
-          nameEnd <= layout[(doc + 1) * 2 + 1]!
+          joinedPosition === documentRanges[documentIndex * 2 + 1] &&
+          documentIndex + 1 < documents.length &&
+          nameStart >= documentRanges[(documentIndex + 1) * 2]! &&
+          nameEnd <= documentRanges[(documentIndex + 1) * 2 + 1]!
         )
           owner++;
-        const [start, end] = [layout[owner * 2]!, layout[owner * 2 + 1]!];
+        const [start, end] = [documentRanges[owner * 2]!, documentRanges[owner * 2 + 1]!];
         const name =
           start <= nameStart && nameStart < nameEnd && nameEnd <= end
             ? batch.maps[owner]!.mapRange(nameStart - start, nameEnd - start)
@@ -195,17 +200,17 @@ export function callJoined(
       }
       continue;
     }
-    const start = layout[doc * 2]!;
-    const ranges = batch.maps[doc]!.mapRange(position - start, end - start);
+    const start = documentRanges[documentIndex * 2]!;
+    const ranges = batch.maps[documentIndex]!.mapRange(joinedPosition - start, end - start);
     for (const [index, range] of ranges.entries()) {
       const mappedWord =
         kind === record.kind.segmentCloses && index < ranges.length - 1
           ? word & ~(1 << record.kindShift)
           : word;
       mapped.push(range.end, mappedWord);
-      (endpoints[doc] ??= new Map()).set(range.end, mapped.length);
+      (endpoints[documentIndex] ??= new Map()).set(range.end, mapped.length);
     }
-    position = end;
+    joinedPosition = end;
   }
   if (!pendingGroups.length) {
     const records = Uint32Array.from(mapped);
@@ -216,7 +221,7 @@ export function callJoined(
   }
   const inserts = new Map<number, typeof pendingGroups>();
   for (const group of pendingGroups) {
-    const at = endpoints[group.doc]?.get(group.end);
+    const at = endpoints[group.documentIndex]?.get(group.end);
     if (at === undefined) throw new Error("Group fragment has no matching tiling boundary");
     const list = inserts.get(at) ?? [];
     list.push(group);

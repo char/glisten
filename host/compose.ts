@@ -7,8 +7,8 @@ import { group, recordRanges, scan, Scratch, writeBatches } from "./planning.ts"
 import { Styles } from "./styles.ts";
 import { callJoined, segmentRanges } from "./joined.ts";
 
-/** The single whole-document layout every root call passes to its module. */
-const whole = new Uint32Array(2);
+/** Reused whole-document range passed to each root call. */
+const rootDocument = new Uint32Array(2);
 
 /** A successful span tiling, or a resource failure. */
 export type Result =
@@ -21,7 +21,7 @@ export type Result =
     }
   | { status: "resource" };
 
-class Failure extends Error {}
+class ResourceFailure extends Error {}
 
 export type ComposeOptions = {
   names: Names<Callee>;
@@ -68,10 +68,11 @@ export function compose(language: string, context: CallContext, options: Compose
       spans: new Uint32Array([length, missingStyle]),
       missing: [language],
     };
-  whole[0] = 0;
-  whole[1] = length;
-  const result = root.call(context, whole);
-  if (checks && result.status === "ok") checkRecords(result.records(), whole, result.injections);
+  rootDocument[0] = 0;
+  rootDocument[1] = length;
+  const result = root.call(context, rootDocument);
+  if (checks && result.status === "ok")
+    checkRecords(result.records(), rootDocument, result.injections);
   if (result.status === "resource") return { status: "resource" };
   if (!result.injections && !((result.groups ?? 0) > 0)) {
     const records = result.records();
@@ -85,7 +86,7 @@ export function compose(language: string, context: CallContext, options: Compose
 }
 
 /** Planning state shared by one composition walk. */
-type Walk = {
+type PlanWalk = {
   readonly context: CallContext;
   readonly names: Names<Callee>;
   readonly missing: Set<string>;
@@ -94,13 +95,18 @@ type Walk = {
   singleSegments: boolean;
 };
 
-function plan(walk: Walk, callee: Callee, segments: Uint32Array, rootResult?: CallResult): Call {
+function planCall(
+  walk: PlanWalk,
+  callee: Callee,
+  segments: Uint32Array,
+  rootResult?: CallResult,
+): Call {
   const { names, missing, scratch, checks } = walk;
   const joined = rootResult
     ? { result: rootResult, context: walk.context }
     : callJoined(callee, walk.context, segments, checks);
   const result = joined.result;
-  if (result.status === "resource") throw new Failure();
+  if (result.status === "resource") throw new ResourceFailure();
   const words = result.records();
   if (checks) checkRecords(words, segmentRanges(segments), result.injections);
   const hasGroups = (result.groups ?? 0) > 0;
@@ -138,14 +144,15 @@ function plan(walk: Walk, callee: Callee, segments: Uint32Array, rootResult?: Ca
     linkChildren: planned.linkChildren,
     linkRanges: planned.linkRanges,
   };
-  for (const batch of planned.batches) call.children.push(plan(walk, batch.target, batch.segments));
+  for (const batch of planned.batches)
+    call.children.push(planCall(walk, batch.target, batch.segments));
   return call;
 }
 
 // A descendant may grow shared Wasm memory, detaching all earlier views.
-function refresh(call: Call): void {
+function refreshRecordViews(call: Call): void {
   call.words = call.result.records();
-  for (const child of call.children) refresh(child);
+  for (const child of call.children) refreshRecordViews(child);
 }
 
 function composeChildren(
@@ -158,7 +165,7 @@ function composeChildren(
   const { names, missingStyle, checks } = options;
   const scratch = options.scratch ?? new Scratch();
   const mark = scratch.mark();
-  const walk: Walk = {
+  const walk: PlanWalk = {
     context,
     names,
     missing: new Set(),
@@ -168,7 +175,7 @@ function composeChildren(
   };
 
   try {
-    const tree = plan(
+    const tree = planCall(
       walk,
       root,
       new Uint32Array([0, length, segment.starts | segment.ends]),
@@ -178,7 +185,7 @@ function composeChildren(
       const extracted = extractGroups(tree.result, tree.words, options.copySpans !== false);
       return { status: "ok", missing: [], ...extracted };
     }
-    refresh(tree);
+    refreshRecordViews(tree);
     const spans = scratch.output(mark);
     if (
       walk.singleSegments &&
@@ -212,7 +219,7 @@ function composeChildren(
       result.values = ordered.map((entry) => entry.value);
     return result;
   } catch (error) {
-    if (error instanceof Failure) return { status: "resource" };
+    if (error instanceof ResourceFailure) return { status: "resource" };
     throw error;
   } finally {
     scratch.release(mark);

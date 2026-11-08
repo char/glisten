@@ -161,11 +161,12 @@ export function scan(
       position = end;
       continue;
     }
-    const afterOpen = i + (kind === record.kind.opensNamed ? 4 : 2);
+    // An open followed by a group belongs to the current range, even at its end.
+    const nextRecord = i + (kind === record.kind.opensNamed ? 4 : 2);
     const groupAfterOpen =
       (kind === record.kind.opensStatic || kind === record.kind.opensNamed) &&
-      afterOpen + 1 < words.length &&
-      words[afterOpen + 1]! >>> record.kindShift === record.kind.group;
+      nextRecord + 1 < words.length &&
+      words[nextRecord + 1]! >>> record.kindShift === record.kind.group;
     if (kind !== record.kind.group && !groupAfterOpen && position === segments[current * 3 + 1])
       finishRange(i);
     if (kind === record.kind.group) {
@@ -295,14 +296,14 @@ export function writeBatches(scan: Frame, result: Frame): Frame {
     const offset = i * 4;
     const id = scan.data[offset]!;
     if (!scan.targets[id]) continue;
-    const group = result.groups[id]!;
-    const index = result.offsets[id]!++;
-    const segments = result.batches[group]!.segments;
-    segments[index * 3] = scan.data[offset + 1]!;
-    segments[index * 3 + 1] = scan.data[offset + 2]!;
-    segments[index * 3 + 2] = scan.data[offset + 3]!;
-    linkChildren[i] = group;
-    linkRanges[i] = index;
+    const batchIndex = result.groups[id]!;
+    const segmentIndex = result.offsets[id]!++;
+    const segments = result.batches[batchIndex]!.segments;
+    segments[segmentIndex * 3] = scan.data[offset + 1]!;
+    segments[segmentIndex * 3 + 1] = scan.data[offset + 2]!;
+    segments[segmentIndex * 3 + 2] = scan.data[offset + 3]!;
+    linkChildren[i] = batchIndex;
+    linkRanges[i] = segmentIndex;
   }
   result.linkChildren = linkChildren;
   result.linkRanges = linkRanges;
