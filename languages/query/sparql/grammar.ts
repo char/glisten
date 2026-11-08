@@ -43,7 +43,7 @@ const localTail = choice(
   [literal("."), lookahead(bytes(".", { min: 0 }), choice([byte(union(pn, ":"))], [escapeName]))],
 );
 const prefixed = [
-  optional(byte(base), repeat(byte(union(pn, "."))), previousNotIn(".")),
+  optional(byte(base), bytes(union(pn, "."), { min: 0 }), previousNotIn(".")),
   literal(":"),
   optional(localFirst, repeat(localTail)),
 ];
