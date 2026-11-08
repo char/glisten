@@ -15,6 +15,6 @@ export class Names<T> {
   }
 
   get(name: string): T | undefined {
-    return this.entries.get(asciiLower(name));
+    return this.entries.get(name) ?? this.entries.get(asciiLower(name));
   }
 }

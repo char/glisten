@@ -32,9 +32,7 @@ export function emitSingles(call: Call, spans: Spans, missingStyle: number): voi
         const child = call.children[childIndex]!;
         const offset = call.linkRanges![ordinal]! * 3;
         const start = child.ranges[offset]!;
-        const end = child.ranges[offset + 1]!;
-        if (end === start + 2) spans.push(child.words[start]!, child.words[start + 1]!);
-        else spans.append(child.words, start, end);
+        spans.append(child.words, start, child.ranges[offset + 1]!);
       }
       ordinal++;
     } else if (kind === record.kind.opensNamed) i += 2;
@@ -53,37 +51,29 @@ export function emit(
   values: (string | undefined)[],
 ): void {
   const words = call.words;
-  if (!call.result.injections && !call.hasGroups) {
-    spans.append(words, start, end);
-    return;
-  }
   for (let i = start; i < end; i += 2) {
-    const recordEnd = words[i]!;
     const word = words[i + 1]!;
     const kind = word >>> record.kindShift;
-    if (kind === record.kind.group) {
-      groups.push(recordEnd, spans.end, word & record.styleMask);
-      values.push(call.result.groupValues?.get(i));
-    } else if (kind === record.kind.span) {
+    if (kind === record.kind.span) {
       const first = i;
       while (i + 2 < end && words[i + 3]! >>> record.kindShift === record.kind.span) i += 2;
       spans.append(words, first, i + 2);
+    } else if (kind === record.kind.group) {
+      groups.push(words[i]!, spans.end, word & record.styleMask);
+      values.push(call.result.groupValues?.get(i));
     } else if (kind === record.kind.segment || kind === record.kind.segmentCloses) {
       const childIndex = call.linkChildren?.[ordinal] ?? -1;
-      if (childIndex >= 0) {
+      if (childIndex < 0) spans.push(words[i]!, missingStyle);
+      else {
         const child = call.children[childIndex]!;
         const offset = call.linkRanges![ordinal]! * 3;
-        emit(
-          child,
-          child.ranges[offset]!,
-          child.ranges[offset + 1]!,
-          child.ranges[offset + 2]!,
-          spans,
-          missingStyle,
-          groups,
-          values,
-        );
-      } else spans.push(recordEnd, missingStyle);
+        const from = child.ranges[offset]!;
+        const to = child.ranges[offset + 1]!;
+        // A leaf child's records are already a tiling, so splice them without recursing.
+        if (child.result.injections || child.hasGroups)
+          emit(child, from, to, child.ranges[offset + 2]!, spans, missingStyle, groups, values);
+        else spans.append(child.words, from, to);
+      }
       ordinal++;
     } else if (kind === record.kind.opensNamed) i += 2;
   }

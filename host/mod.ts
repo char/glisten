@@ -1,5 +1,5 @@
 import { AbiError } from "#/abi/mod.ts";
-import { compose, type Result } from "./compose.ts";
+import { compose, type ComposeOptions, type Result } from "./compose.ts";
 import { Engine, type CallContext } from "./engine.ts";
 import { Arena, defaultMemoryLimitBytes, ResourceError } from "./memory.ts";
 import { Names } from "./names.ts";
@@ -20,6 +20,8 @@ export class Highlighter {
   private readonly renderer: Renderer;
   private readonly engines: Engine[] = [];
   private readonly missingStyle: number;
+  private readonly copying: ComposeOptions;
+  private readonly borrowing: ComposeOptions;
   private readonly checks: boolean;
   private disposed = false;
 
@@ -30,6 +32,14 @@ export class Highlighter {
     this.renderer = new Renderer(this.arena);
     this.missingStyle = this.registry.id(options.missingStyle ?? "plain");
     this.checks = options.checks ?? false;
+    const shared = {
+      names: this.names,
+      missingStyle: this.missingStyle,
+      checks: this.checks,
+      scratch: this.scratch,
+    };
+    this.copying = { ...shared, copySpans: true };
+    this.borrowing = { ...shared, copySpans: false };
   }
 
   /** Canonical language names in registration order. */
@@ -84,13 +94,7 @@ export class Highlighter {
   }
 
   private process(language: string, context: CallContext, copySpans = true): Result {
-    return compose(language, context, {
-      names: this.names,
-      missingStyle: this.missingStyle,
-      checks: this.checks,
-      scratch: this.scratch,
-      copySpans,
-    });
+    return compose(language, context, copySpans ? this.copying : this.borrowing);
   }
 
   /** Mark this host unusable; its memory is released when it becomes unreachable. */

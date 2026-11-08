@@ -5,7 +5,10 @@ import { extractGroups } from "./extract_groups.ts";
 import { Names } from "./names.ts";
 import { group, recordRanges, scan, Scratch, writeBatches } from "./planning.ts";
 import { Styles } from "./styles.ts";
-import { callJoined, callWhole, segmentRanges } from "./joined.ts";
+import { callJoined, segmentRanges } from "./joined.ts";
+
+/** The single whole-document layout every root call passes to its module. */
+const whole = new Uint32Array(2);
 
 /** A successful span tiling, or a resource failure. */
 export type Result =
@@ -20,7 +23,7 @@ export type Result =
 
 class Failure extends Error {}
 
-type ComposeOptions = {
+export type ComposeOptions = {
   names: Names<Callee>;
   missingStyle: number;
   checks: boolean;
@@ -65,7 +68,10 @@ export function compose(language: string, context: CallContext, options: Compose
       spans: new Uint32Array([length, missingStyle]),
       missing: [language],
     };
-  const result = callWhole(root, context, length, checks);
+  whole[0] = 0;
+  whole[1] = length;
+  const result = root.call(context, whole);
+  if (checks && result.status === "ok") checkRecords(result.records(), whole, result.injections);
   if (result.status === "resource") return { status: "resource" };
   if (!result.injections && !((result.groups ?? 0) > 0)) {
     const records = result.records();
@@ -78,6 +84,70 @@ export function compose(language: string, context: CallContext, options: Compose
   return composeChildren(root, result, context, length, options);
 }
 
+/** Planning state shared by one composition walk. */
+type Walk = {
+  readonly context: CallContext;
+  readonly names: Names<Callee>;
+  readonly missing: Set<string>;
+  readonly scratch: Scratch;
+  readonly checks: boolean;
+  singleSegments: boolean;
+};
+
+function plan(walk: Walk, callee: Callee, segments: Uint32Array, rootResult?: CallResult): Call {
+  const { names, missing, scratch, checks } = walk;
+  const joined = rootResult
+    ? { result: rootResult, context: walk.context }
+    : callJoined(callee, walk.context, segments, checks);
+  const result = joined.result;
+  if (result.status === "resource") throw new Failure();
+  const words = result.records();
+  if (checks) checkRecords(words, segmentRanges(segments), result.injections);
+  const hasGroups = (result.groups ?? 0) > 0;
+  const frame = scratch.next();
+  if (!result.injections) {
+    return {
+      result,
+      words,
+      ranges: rootResult && hasGroups ? new Uint32Array() : recordRanges(words, segments, frame),
+      children: [],
+      hasGroups,
+    };
+  }
+  const scanned = scan(
+    words,
+    segments,
+    result.injections,
+    callee,
+    joined.context,
+    names,
+    missing,
+    frame,
+    rootResult !== undefined && !hasGroups,
+  );
+  if (rootResult)
+    walk.singleSegments = scanned.singleSegments && scanned.length === result.injections;
+  const grouped = group(scanned);
+  const planned = writeBatches(scanned, grouped);
+  const call: Call = {
+    result,
+    words,
+    ranges: scanned.ranges,
+    children: [],
+    hasGroups,
+    linkChildren: planned.linkChildren,
+    linkRanges: planned.linkRanges,
+  };
+  for (const batch of planned.batches) call.children.push(plan(walk, batch.target, batch.segments));
+  return call;
+}
+
+// A descendant may grow shared Wasm memory, detaching all earlier views.
+function refresh(call: Call): void {
+  call.words = call.result.records();
+  for (const child of call.children) refresh(child);
+}
+
 function composeChildren(
   root: Callee,
   rootResult: Extract<CallResult, { status: "ok" }>,
@@ -88,63 +158,22 @@ function composeChildren(
   const { names, missingStyle, checks } = options;
   const scratch = options.scratch ?? new Scratch();
   const mark = scratch.mark();
-  const missing = new Set<string>();
-  let singleSegments = false;
-
-  function plan(callee: Callee, segments: Uint32Array, rootCall = false): Call {
-    const joined = rootCall
-      ? { result: rootResult, context }
-      : callJoined(callee, context, segments, checks);
-    const result = joined.result;
-    if (result.status === "resource") throw new Failure();
-    const words = result.records();
-    if (checks) checkRecords(words, segmentRanges(segments), result.injections);
-    const hasGroups = (result.groups ?? 0) > 0;
-    const frame = scratch.next();
-    if (!result.injections) {
-      return {
-        result,
-        words,
-        ranges: rootCall && hasGroups ? new Uint32Array() : recordRanges(words, segments, frame),
-        children: [],
-        hasGroups,
-      };
-    }
-    const scanned = scan(
-      words,
-      segments,
-      result.injections,
-      callee,
-      joined.context,
-      names,
-      missing,
-      frame,
-      rootCall && !hasGroups,
-    );
-    if (rootCall) singleSegments = scanned.singleSegments && scanned.length === result.injections;
-    const grouped = group(scanned);
-    const planned = writeBatches(scanned, grouped);
-    const call: Call = {
-      result,
-      words,
-      ranges: scanned.ranges,
-      children: [],
-      hasGroups,
-      linkChildren: planned.linkChildren,
-      linkRanges: planned.linkRanges,
-    };
-    for (const batch of planned.batches) call.children.push(plan(batch.target, batch.segments));
-    return call;
-  }
-
-  // A descendant may grow shared Wasm memory, detaching all earlier views.
-  function refresh(call: Call): void {
-    call.words = call.result.records();
-    for (const child of call.children) refresh(child);
-  }
+  const walk: Walk = {
+    context,
+    names,
+    missing: new Set(),
+    scratch,
+    checks,
+    singleSegments: false,
+  };
 
   try {
-    const tree = plan(root, new Uint32Array([0, length, segment.starts | segment.ends]), true);
+    const tree = plan(
+      walk,
+      root,
+      new Uint32Array([0, length, segment.starts | segment.ends]),
+      rootResult,
+    );
     if (!tree.result.injections) {
       const extracted = extractGroups(tree.result, tree.words, options.copySpans !== false);
       return { status: "ok", missing: [], ...extracted };
@@ -152,14 +181,14 @@ function composeChildren(
     refresh(tree);
     const spans = scratch.output(mark);
     if (
-      singleSegments &&
+      walk.singleSegments &&
       tree.children.every((child) => !child.result.injections && !child.hasGroups)
     ) {
       emitSingles(tree, spans, missingStyle);
       return {
         status: "ok",
         spans: spans.finish(options.copySpans !== false),
-        missing: [...missing],
+        missing: [...walk.missing],
       };
     }
     const groups: number[] = [];
@@ -176,7 +205,7 @@ function composeChildren(
     return {
       status: "ok",
       spans: spans.finish(options.copySpans !== false),
-      missing: [...missing],
+      missing: [...walk.missing],
       ...(ordered.length
         ? { groups: Uint32Array.from(ordered.flatMap((entry) => entry.group)) }
         : {}),

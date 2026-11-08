@@ -4,21 +4,8 @@ import type { SourceRange } from "./documents.ts";
 import type { Callee, CallContext, CallResult } from "./engine.ts";
 import { ResourceError } from "./memory.ts";
 
+/** Reused layout for a child call over one contiguous document. */
 const single = new Uint32Array(2);
-
-/** Invoke a callee on one whole document without allocating a segment layout. */
-export function callWhole(
-  callee: Callee,
-  context: CallContext,
-  length: number,
-  checks = false,
-): CallResult {
-  single[0] = 0;
-  single[1] = length;
-  const result = callee.call(context, single);
-  if (checks && result.status === "ok") checkRecords(result.records(), single, result.injections);
-  return result;
-}
 
 /** Invoke a callee on contiguous documents and map its records onto source pieces. */
 export function callJoined(
@@ -33,10 +20,12 @@ export function callJoined(
   if (!split) {
     // Callees consume their documents during the call, so the common one-document
     // case reuses a buffer rather than allocating per call.
-    const documents =
-      segments.length === 3
-        ? single.fill(segments[0]!, 0, 1).fill(segments[1]!, 1)
-        : segmentRanges(segments);
+    let documents: Uint32Array;
+    if (segments.length === 3) {
+      single[0] = segments[0]!;
+      single[1] = segments[1]!;
+      documents = single;
+    } else documents = segmentRanges(segments);
     const result = callee.call(context, documents);
     if (checks && result.status === "ok")
       checkRecords(result.records(), documents, result.injections);

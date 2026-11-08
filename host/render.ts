@@ -48,7 +48,7 @@ export class Renderer {
       let table = this.arena.allocateArea(capacity * 32);
       if (table === 0) table = this.arena.allocateArea(capacity * 32);
       const groupTable = this.arena.allocateArea(capacity * 16);
-      const bytes = new Uint8Array(this.arena.memory.buffer);
+      const bytes = new Uint8Array(this.arena.buffer);
       bytes.fill(0, table, table + capacity * 32);
       bytes.fill(0, groupTable, groupTable + capacity * 16);
       if (this.table) {
@@ -68,17 +68,17 @@ export class Renderer {
       let closePointer = 0;
       if (open.length > 8) {
         openPointer = this.arena.allocateArea(open.length);
-        new Uint8Array(this.arena.memory.buffer, openPointer, open.length).set(open);
+        new Uint8Array(this.arena.buffer, openPointer, open.length).set(open);
       }
       if (close.length > 8) {
         closePointer = this.arena.allocateArea(close.length);
-        new Uint8Array(this.arena.memory.buffer, closePointer, close.length).set(close);
+        new Uint8Array(this.arena.buffer, closePointer, close.length).set(close);
       }
       const entry = this.table + id * 32;
-      const bytes = new Uint8Array(this.arena.memory.buffer);
+      const bytes = new Uint8Array(this.arena.buffer);
       if (open.length <= 8) bytes.set(open, entry);
       if (close.length <= 8) bytes.set(close, entry + 8);
-      const view = new DataView(this.arena.memory.buffer);
+      const view = new DataView(this.arena.buffer);
       view.setUint32(entry + 16, open.length, true);
       view.setUint32(entry + 20, close.length, true);
       view.setUint32(entry + 24, openPointer, true);
@@ -88,8 +88,8 @@ export class Renderer {
         attribute === undefined ? `<g-${tag}` : `<g-${tag} ${attribute}="`,
       );
       const prefixPointer = this.arena.allocateArea(prefix.length);
-      new Uint8Array(this.arena.memory.buffer, prefixPointer, prefix.length).set(prefix);
-      new Uint32Array(this.arena.memory.buffer, this.groupTable + id * 16, 3).set([
+      new Uint8Array(this.arena.buffer, prefixPointer, prefix.length).set(prefix);
+      new Uint32Array(this.arena.buffer, this.groupTable + id * 16, 3).set([
         prefixPointer,
         prefix.length,
         attribute === undefined ? 0 : 1,
@@ -116,11 +116,11 @@ export class Renderer {
     const input = context.placement!.input;
     const count = spans.length / 2;
     const bytes = spans.byteLength;
-    const inArena = spans.buffer === this.arena.memory.buffer;
+    const inArena = spans.buffer === this.arena.buffer;
     let records = spans.byteOffset;
     if (!inArena) {
       records = this.arena.allocate(bytes);
-      new Uint32Array(this.arena.memory.buffer, records, spans.length).set(spans);
+      new Uint32Array(this.arena.buffer, records, spans.length).set(spans);
     }
     // Inline tag stores can write up to seven bytes beyond the logical end.
     let bound = length * 5 + count * this.maxTagBytes + 8;
@@ -139,18 +139,22 @@ export class Renderer {
         let pointer = input + groups[i]!;
         if (value) {
           pointer = this.arena.allocate(value.length, 1);
-          new Uint8Array(this.arena.memory.buffer, pointer, value.length).set(value);
+          new Uint8Array(this.arena.buffer, pointer, value.length).set(value);
         }
         const valueLength = value?.length ?? groups[i + 1]! - groups[i]!;
-        const words = new Uint32Array(this.arena.memory.buffer, layout + visible * 20, 5);
-        words.set([groups[i]!, groups[i + 1]!, style, pointer, valueLength]);
+        const words = new Uint32Array(this.arena.buffer, layout + visible * 20, 5);
+        words[0] = groups[i]!;
+        words[1] = groups[i + 1]!;
+        words[2] = style;
+        words[3] = pointer;
+        words[4] = valueLength;
         visible++;
         // The group's tags, its escaped value, and one span element split at each boundary.
         bound += prefix + 2 + valueLength * 6 + this.maxTagBytes * 3;
       }
     }
     if (bound > 0xffff_ffff) throw new ResourceError("Rendered output is too large");
-    const stack = this.arena.allocate(visible * 4);
+    const stack = visible ? this.arena.allocate(visible * 4) : 0;
     const output = this.arena.allocate(bound);
     const written = visible
       ? this.renderGroupsWasm(
@@ -165,6 +169,6 @@ export class Renderer {
           stack,
         )
       : this.renderWasm(input, records, count, this.table, output);
-    return this.decoder.decode(new Uint8Array(this.arena.memory.buffer, output, written));
+    return this.decoder.decode(new Uint8Array(this.arena.buffer, output, written));
   }
 }

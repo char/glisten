@@ -50,31 +50,27 @@ export class Engine implements Callee {
 
   /** Install the module-style to host-style mapping in the module's area. */
   useStyles(map: Uint16Array): void {
-    new Uint16Array(this.arena.memory.buffer, this.base + this.manifest.styleMap, map.length).set(
-      map,
-    );
+    new Uint16Array(this.arena.buffer, this.base + this.manifest.styleMap, map.length).set(map);
   }
 
   /** Invoke the module with documents in shared memory and preserve its record area. */
   call(context: CallContext, documents: Uint32Array): CallResult {
     const placement = context.placement;
-    if (!placement || placement.arena !== this.arena)
+    const arena = this.arena;
+    if (!placement || placement.arena !== arena)
       throw new Error("Engine requires its shared arena and prepared input");
-    if (
-      documents.length === 2 &&
-      documents[0] === documents[1] &&
-      documents[0]! <= context.source().length
-    ) {
+    const source = context.source();
+    if (documents.length === 2 && documents[0] === documents[1] && documents[0]! <= source.length) {
       const records = new Uint32Array();
       return { status: "ok", records: () => records, injections: 0, groups: 0 };
     }
     let documentAddress: number;
     let output: number;
     try {
-      documentAddress = this.arena.allocate(documents.byteLength);
-      new Uint32Array(this.arena.memory.buffer, documentAddress, documents.length).set(documents);
-      output = this.arena.outputStart();
-      this.arena.ensure(output);
+      documentAddress = arena.allocate(documents.byteLength);
+      new Uint32Array(arena.buffer, documentAddress, documents.length).set(documents);
+      output = arena.outputStart();
+      arena.ensure(output);
     } catch (error) {
       if (error instanceof ResourceError) return { status: "resource" };
       throw error;
@@ -84,7 +80,7 @@ export class Engine implements Callee {
     try {
       code = this.exports.highlight(
         placement.input,
-        context.source().length,
+        source.length,
         documentAddress,
         documents.length / 2,
         output,
@@ -96,23 +92,28 @@ export class Engine implements Callee {
       )
         throw error;
       code = status.resource;
+    } finally {
+      arena.refresh();
     }
     if (code === status.resource) return { status: "resource" };
     if (code !== status.ok) throw new Error(`Unknown module status ${code}`);
     const count = Number(this.exports.records.value) >>> 0;
     try {
-      if (this.exports.scratchRequired)
-        this.arena.ensure(Number(this.exports.scratchRequired.value));
-      this.arena.commitOutput(output + count * record.bytes);
+      if (this.exports.scratchRequired) arena.ensure(Number(this.exports.scratchRequired.value));
+      arena.commitOutput(output + count * record.bytes);
     } catch (error) {
       if (error instanceof ResourceError) return { status: "resource" };
       throw error;
     }
+    let view: Uint32Array | undefined;
     return {
       status: "ok",
       injections: Number(this.exports.injections.value) >>> 0,
       groups: this.exports.groups ? Number(this.exports.groups.value) >>> 0 : 0,
-      records: () => new Uint32Array(this.arena.memory.buffer, output, count * 2),
+      records: () =>
+        view === undefined || view.buffer !== arena.buffer
+          ? (view = new Uint32Array(arena.buffer, output, count * 2))
+          : view,
     };
   }
 }
