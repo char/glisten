@@ -23,7 +23,7 @@ export function puppetStateOffset(manifest: Manifest): number {
   return Math.ceil((manifest.styleMap + manifest.styles.length * 2) / 8) * 8;
 }
 
-/** Read the last invocation saved by a puppet; received contains ABI segment triples. */
+/** Read the last invocation saved by a puppet; received contains ABI document pairs. */
 export function readPuppetState(
   memory: WebAssembly.Memory,
   base: number,
@@ -87,7 +87,9 @@ export async function puppet(
               (i32.const ${memory.pageBytes - 1}))
             (i32.const ${memory.pageBytes})))
         (if (i32.eq (memory.grow (local.get ${pages})) (i32.const -1))
-          (then (global.set ${status} (i32.const 1)) (unreachable)))))`,
+          (then
+            (global.set ${status} (i32.const 1))
+            (unreachable)))))`,
   );
   const statements: Fragment[] = script.map((entry, callIndex) => {
     const writes: Fragment[] = [];
@@ -95,12 +97,12 @@ export async function puppet(
     for (const item of entry.records) {
       const words = encode([item]);
       for (let i = 0; i < words.length; i++) {
-        const value =
-          i === 1 && (item.kind === "span" || item.kind === "group")
-            ? item.kind === "group"
-              ? wat`(i32.or (i32.const 1073741824) (i32.load16_u offset=${complete.styleMap + item.style * 2} (global.get $base)))`
-              : wat`(i32.load16_u offset=${complete.styleMap + item.style * 2} (global.get $base))`
-            : wat`(i32.const ${words[i]!})`;
+        let value = wat`(i32.const ${words[i]!})`;
+        if (i === 1 && (item.kind === "span" || item.kind === "group")) {
+          const styleOffset = complete.styleMap + item.style * 2;
+          const style = wat`(i32.load16_u offset=${styleOffset} (global.get $base))`;
+          value = item.kind === "group" ? wat`(i32.or (i32.const 1073741824) ${style})` : style;
+        }
         writes.push(wat`(i32.store offset=${offset} (local.get ${output}) ${value})`);
         offset += 4;
       }
@@ -109,19 +111,25 @@ export async function puppet(
       typeof entry.outcome === "object"
         ? wat`
       (if (i32.eq (memory.grow (i32.const ${entry.outcome.grow})) (i32.const -1))
-        (then (global.set ${status} (i32.const 1)) (unreachable)))`
+        (then
+          (global.set ${status} (i32.const 1))
+          (unreachable)))`
         : wat``;
     const outcome =
       entry.outcome === "resource"
-        ? wat`(global.set ${status} (i32.const 1)) (unreachable)`
+        ? wat`
+          (global.set ${status} (i32.const 1))
+          (unreachable)`
         : entry.outcome === "trap"
           ? wat`(unreachable)`
           : wat``;
+    const groupCount = entry.records.filter((item) => item.kind === "group").length;
+    const setGroups = hasGroups ? wat`(global.set ${groups} (i32.const ${groupCount}))` : wat``;
     return wat`
       (if (i32.eq (local.get ${index}) (i32.const ${callIndex}))
         (then
           (global.set ${injections} (i32.const ${entry.injections}))
-          ${hasGroups ? wat`(global.set ${groups} (i32.const ${entry.records.filter((item) => item.kind === "group").length}))` : wat``}
+          ${setGroups}
           ${grow}
           ${outcome}
           (call ${ensure} (i32.add (local.get ${output}) (i32.const ${offset})))
@@ -129,6 +137,9 @@ export async function puppet(
           (global.set ${records} (i32.const ${offset / record.bytes}))
           (return (i32.const 0))))`;
   });
+  const scriptIndex = options.repeat
+    ? wat`(i32.rem_u (global.get ${calls}) (i32.const ${script.length}))`
+    : wat`(global.get ${calls})`;
   const highlight = func(
     "highlight",
     () => wat`
@@ -141,7 +152,7 @@ export async function puppet(
     (result i32)
     (local ${index} i32)
     (global.set ${status} (i32.const 0))
-    (local.set ${index} ${options.repeat ? wat`(i32.rem_u (global.get ${calls}) (i32.const ${script.length}))` : wat`(global.get ${calls})`})
+    (local.set ${index} ${scriptIndex})
     (global.set ${calls} (i32.add (global.get ${calls}) (i32.const 1)))
     (i32.store offset=${state} (global.get $base) (local.get ${count}))
     (i32.store offset=${state + 4} (global.get $base) (local.get ${input}))

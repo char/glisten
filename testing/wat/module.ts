@@ -22,7 +22,8 @@ export function module(options: {
     for (const ref of references(body)) visit(ref);
   }
   for (const root of options.exports) visit(root);
-  const headers = [...(options.imports ?? []), ...(options.memory ? [options.memory] : [])];
+  const headers = [...(options.imports ?? [])];
+  if (options.memory) headers.push(options.memory);
   for (const header of headers) for (const ref of references(header)) visit(ref);
   const printer = new Printer(new Set(names.keys()));
   const parts = headers.map((header) => printer.render(header));

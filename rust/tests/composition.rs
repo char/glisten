@@ -22,7 +22,7 @@ fn language(
         let kind = word >> 29;
         let encoded = if !name_record && (kind == 0 || kind == 2) {
             format!(
-                "(i32.or (i32.const {}) (i32.load16_u (i32.add (global.get $base) (i32.const {}))))",
+                "(i32.or (i32.const {})\n                (i32.load16_u (i32.add (global.get $base) (i32.const {}))))",
                 word & !0x1fff_ffff,
                 (word & 0xffff) * 2
             )
@@ -30,7 +30,11 @@ fn language(
             format!("(i32.const {word})")
         };
         name_record = !name_record && kind == 7;
-        stores.push_str(&format!("(i32.store offset={} (local.get $out) (i32.const {value})) (i32.store offset={} (local.get $out) {encoded})", i * 8, i * 8 + 4));
+        stores.push_str(&format!(
+            "(i32.store offset={} (local.get $out) (i32.const {value}))\n            (i32.store offset={} (local.get $out) {encoded})\n            ",
+            i * 8,
+            i * 8 + 4,
+        ));
     }
     let injections = records.iter().filter(|[_, word]| word >> 29 >= 6).count();
     let groups = records.iter().filter(|[_, word]| word >> 29 == 2).count();
@@ -44,7 +48,7 @@ fn language(
         (global (export "groups") (mut i32) (i32.const {groups}))
         (global (export "status") (mut i32) (i32.const 0))
         (func (export "highlight") (param i32 i32 i32 i32) (param $out i32) (result i32)
-            {stores} (i32.const 0)))"#,
+            {stores}(i32.const 0)))"#,
         count = records.len()
     ))
     .unwrap();
