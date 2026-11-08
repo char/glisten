@@ -136,6 +136,7 @@ const heredoc = on(
   pushState("heredocHeader"),
 );
 const body: Arm[] = [
+  on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
   token("#[", "punctuation.special", pushState("attribute")),
   token("//", "comment", pushState("lineComment")),
   token("#", "comment", pushState("lineComment")),
