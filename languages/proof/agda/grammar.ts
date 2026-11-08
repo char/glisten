@@ -43,12 +43,12 @@ const unicodeSpace = choice(
   [literal("\u205f")],
   [literal("\u3000")],
 );
-const nameChar = choice(
-  [byte(asciiName)],
+const nameChars = choice(
+  [bytes(asciiName)],
   [lookahead(byte(high)), notLookahead(unicodeSpace), character()],
 );
-const name = [nameChar, repeat(nameChar)];
-const boundary = notLookahead(nameChar);
+const name = [nameChars, repeat(nameChars)];
+const boundary = notLookahead(nameChars);
 const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const digits = (set = digit) => [bytes(set), repeat(literal("_"), bytes(set))];
@@ -144,6 +144,7 @@ export default defineGrammar({
     root: {
       style: "plain",
       arms: [
+        on(" \t\v\f", bytes(" \t\v\f"), paint("plain")),
         on("\r\n", byte("\r\n"), paint("plain"), setState("bol")),
         pragma,
         hole,
