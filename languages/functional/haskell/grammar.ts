@@ -30,21 +30,29 @@ const high = byteSet({ ranges: [[128, 255]] });
 const start = union(lower, upper, high);
 const rest = union(start, digit, "'");
 const symbol = "!#$%&*+./<=>?@\\^|-~:";
-const white = " \t\r\n\f\v";
+const whitespace = " \t\r\n\f\v";
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
-const keywords =
-  "module where import qualified as hiding data newtype type family class instance deriving stock anyclass via let in case of if then else do mdo forall pattern infix infixl infixr foreign export safe unsafe interruptible default role nominal representational phantom rec proc static group by using".split(
-    " ",
-  );
+const keywords = `
+  module where import qualified as hiding data newtype type family class instance deriving stock
+  anyclass via let in case of if then else do mdo forall pattern infix infixl infixr foreign
+  export safe unsafe interruptible default role nominal representational phantom rec proc static
+  group by using
+`
+  .trim()
+  .split(/\s+/);
 const ident = [byte(start), bytes(rest, { min: 0 })];
+const namedEscapes = `
+  NUL SOH STX ETX EOT ENQ ACK BEL DLE DC1 DC2 DC3 DC4 NAK SYN ETB CAN SUB ESC DEL BS HT LF VT FF
+  CR SO SI EM FS GS RS US SP
+`
+  .trim()
+  .split(/\s+/);
 const escapeBody = choice(
   [literal("x"), bytes(union(digit, range("a", "f"), range("A", "F")))],
   [literal("o"), bytes("01234567")],
   [bytes(digit)],
   [literal("^"), byte(range("@", "_"))],
-  ..."NUL SOH STX ETX EOT ENQ ACK BEL DLE DC1 DC2 DC3 DC4 NAK SYN ETB CAN SUB ESC DEL BS HT LF VT FF CR SO SI EM FS GS RS US SP"
-    .split(" ")
-    .map((text) => [literal(text)]),
+  ...namedEscapes.map((text) => [literal(text)]),
   [byte("abfnrtv\\\"'")],
 );
 
@@ -110,7 +118,7 @@ export default defineGrammar({
           lower,
           byte(lower),
           bytes(rest, { min: 0 }),
-          lookahead(bytes(white, { min: 0 }), literal("::")),
+          lookahead(bytes(whitespace, { min: 0 }), literal("::")),
           paint("function"),
         ),
         on(
@@ -147,7 +155,7 @@ export default defineGrammar({
     string: {
       style: "string",
       arms: [
-        on("\\", literal("\\"), bytes(white), literal("\\"), paint("string.escape")),
+        on("\\", literal("\\"), bytes(whitespace), literal("\\"), paint("string.escape")),
         on("\\", literal("\\"), choice([literal("&")], [escapeBody]), paint("string.escape")),
         token('"', "string", popState()),
         redispatch("\r\n", popState()),

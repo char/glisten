@@ -86,7 +86,7 @@ function states(suffix: string, escape: string): Record<string, State> {
   const end = token("\n", "plain", setState(root));
   const flag = on("-", literal("--"), byte(letter), bytes(word, { min: 0 }), paint("attribute"));
   const equals = token("=", "operator");
-  const runArms = (heredoc: boolean) => [
+  const runArms = (context: "run" | "command") => [
     continuation,
     end,
     on(
@@ -100,7 +100,7 @@ function states(suffix: string, escape: string): Record<string, State> {
     on(" \t", bytes(" \t"), lookahead(literal("[")), paint("plain"), setState(json)),
     // Embedded and multiple heredocs require shell-aware tokenization, not just a delimiter queue.
     // A continuation before RUN flags or the heredoc opener starts Bash injection too early.
-    ...(heredoc
+    ...(context === "run"
       ? [
           on(
             " \t",
@@ -156,13 +156,13 @@ function states(suffix: string, escape: string): Record<string, State> {
     ],
   });
   // Delimiters longer than the 256-byte shell capture cannot be recognized.
-  const bodyState = (strip: boolean): State => ({
+  const bodyState = (indentation: "literal" | "strip-tabs"): State => ({
     style: "plain",
     arms: [
       on(
         all,
         lineStart(),
-        ...(strip ? [bytes("\t", { min: 0 })] : []),
+        ...(indentation === "strip-tabs" ? [bytes("\t", { min: 0 })] : []),
         shell.captured(),
         optional(literal("\r")),
         lineEnd(),
@@ -172,6 +172,9 @@ function states(suffix: string, escape: string): Record<string, State> {
       ),
     ],
   });
+  const escapeDirective = [byte("eE"), byte("sS"), byte("cC"), byte("aA"), byte("pP"), byte("eE")];
+  const syntaxDirective = [byte("sS"), byte("yY"), byte("nN"), byte("tT"), byte("aA"), byte("xX")];
+  const checkDirective = [byte("cC"), byte("hH"), byte("eE"), byte("cC"), byte("kK")];
   return {
     // Repeated directive keys and invalid syntax/check values are not distinguished here.
     [start]: {
@@ -183,7 +186,7 @@ function states(suffix: string, escape: string): Record<string, State> {
           bytes(" \t", { min: 0 }),
           literal("#"),
           bytes(" \t", { min: 0 }),
-          ...Array.from("escape", (c) => byte(c + c.toUpperCase())),
+          ...escapeDirective,
           bytes(" \t", { min: 0 }),
           literal("="),
           bytes(" \t", { min: 0 }),
@@ -199,7 +202,7 @@ function states(suffix: string, escape: string): Record<string, State> {
           bytes(" \t", { min: 0 }),
           literal("#"),
           bytes(" \t", { min: 0 }),
-          ...Array.from("escape", (c) => byte(c + c.toUpperCase())),
+          ...escapeDirective,
           bytes(" \t", { min: 0 }),
           literal("="),
           bytes(" \t", { min: 0 }),
@@ -215,9 +218,7 @@ function states(suffix: string, escape: string): Record<string, State> {
           bytes(" \t", { min: 0 }),
           literal("#"),
           bytes(" \t", { min: 0 }),
-          choice(
-            ...["syntax", "check"].map((key) => Array.from(key, (c) => byte(c + c.toUpperCase()))),
-          ),
+          choice(syntaxDirective, checkDirective),
           bytes(" \t", { min: 0 }),
           literal("="),
           bytes(nonLine),
@@ -312,8 +313,8 @@ function states(suffix: string, escape: string): Record<string, State> {
       ],
     },
     [stage]: { style: "label", arms: [continuation, end, ...variables] },
-    [run]: { style: "plain", arms: runArms(true) },
-    [command]: { style: "plain", arms: runArms(false) },
+    [run]: { style: "plain", arms: runArms("run") },
+    [command]: { style: "plain", arms: runArms("command") },
     [flagEquals]: {
       style: "plain",
       arms: [token("=", "operator", setState(flagValue)), end],
@@ -388,8 +389,8 @@ function states(suffix: string, escape: string): Record<string, State> {
     },
     [heredocHeader]: headerState(heredocBody),
     [heredocStripHeader]: headerState(heredocStripBody),
-    [heredocBody]: bodyState(false),
-    [heredocStripBody]: bodyState(true),
+    [heredocBody]: bodyState("literal"),
+    [heredocStripBody]: bodyState("strip-tabs"),
     [expansion]: {
       style: "string",
       arms: [

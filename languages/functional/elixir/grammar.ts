@@ -34,11 +34,19 @@ const rest = union(start, digit);
 const name = [byte(start), bytes(rest, { min: 0 }), optional(byte("?!"))];
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const digits = (set = digit) => [byte(set), repeat(optional(literal("_")), byte(set))];
-const keywords =
-  "after alias and case catch cond def defdelegate defexception defguard defguardp defimpl defmacro defmacrop defmodule defoverridable defp defprotocol defstruct do else end fn for if import in not or quote raise receive require rescue reraise super throw try unless unquote unquote_splicing use when with".split(
-    " ",
-  );
-const defining = "def defp defmacro defmacrop defguard defguardp defdelegate".split(" ");
+const keywords = `
+  after alias and case catch cond def defdelegate defexception defguard defguardp defimpl defmacro
+  defmacrop defmodule defoverridable defp defprotocol defstruct do else end fn for if import in
+  not or quote raise receive require rescue reraise super throw try unless unquote
+  unquote_splicing use when with
+`
+  .trim()
+  .split(/\s+/);
+const defining = `
+  def defp defmacro defmacrop defguard defguardp defdelegate
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...defining.map((text) => ({ text, then: [paint("keyword"), pushState("definition")] })),
   ...keywordTable(
@@ -202,7 +210,7 @@ const code = [
     "**",
     "..",
     "\\\\",
-  ].map((s) => token(s, "operator")),
+  ].map((operator) => token(operator, "operator")),
   token("<<", "punctuation.bracket"),
   token(">>", "punctuation.bracket"),
   token("&", "operator", pushState("capture")),

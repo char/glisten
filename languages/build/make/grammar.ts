@@ -36,25 +36,22 @@ const letter = union(range("a", "z"), range("A", "Z"), "_");
 const name = union(letter, range("0", "9"), ".-/");
 const horizontal = " \t";
 const prefix = slot.run("recipePrefix");
-const functions =
-  "abspath addprefix addsuffix and basename call dir error eval file filter filter-out findstring firstword flavor foreach guile if info join lastword let notdir or origin patsubst realpath shell sort strip subst suffix value warning wildcard word wordlist words".split(
-    " ",
-  );
+const functions = `
+  abspath addprefix addsuffix and basename call dir error eval file filter filter-out findstring
+  firstword flavor foreach guile if info join lastword let notdir or origin patsubst realpath
+  shell sort strip subst suffix value warning wildcard word wordlist words
+`
+  .trim()
+  .split(/\s+/);
 const modifiers = ["override", "export", "unexport", "private"];
-const directives = [
-  "ifeq",
-  "ifneq",
-  "ifdef",
-  "ifndef",
-  "else",
-  "endif",
-  "include",
-  "-include",
-  "sinclude",
-  "undefine",
-  "vpath",
-];
-const operators = choice(...["::=", ":=", "?=", "+=", "!=", "="].map((s) => [literal(s)]));
+const directives = `
+  ifeq ifneq ifdef ifndef else endif include -include sinclude undefine vpath
+`
+  .trim()
+  .split(/\s+/);
+const operators = choice(
+  ...["::=", ":=", "?=", "+=", "!=", "="].map((operator) => [literal(operator)]),
+);
 const continueLine = on(
   "\\",
   literal("\\"),
@@ -64,16 +61,19 @@ const continueLine = on(
 );
 const escapedHash = token("\\#", "string.escape");
 
-function expansions(injected: boolean): Record<string, State> {
-  const gap = injected ? [hostPrefix()] : [];
-  const s = injected ? "Shell" : "Make";
+type ExpansionContext = "shell" | "make";
+type RecipePrefix = "custom" | "tab";
+
+function expansions(context: ExpansionContext): Record<string, State> {
+  const gap = context === "shell" ? [hostPrefix()] : [];
+  const suffix = context === "shell" ? "Shell" : "Make";
   const open = (delimiter: "(" | "{") =>
     on(
       "$",
       literal("$" + delimiter),
       ...gap,
       paint("punctuation.special"),
-      pushState(`exp${s}${delimiter === "(" ? "Round" : "Brace"}Start`),
+      pushState(`exp${suffix}${delimiter === "(" ? "Round" : "Brace"}Start`),
     );
   const inner = [
     open("("),
@@ -85,7 +85,7 @@ function expansions(injected: boolean): Record<string, State> {
     ["Round", ")", "("],
     ["Brace", "}", "{"],
   ] as const) {
-    const base = `exp${s}${key}`;
+    const base = `exp${suffix}${key}`;
     result[`${base}Start`] = {
       style: "variable",
       arms: [
@@ -127,18 +127,30 @@ function expansions(injected: boolean): Record<string, State> {
   }
   return result;
 }
-function variables(injected: boolean) {
-  const gap = injected ? [hostPrefix()] : [];
-  const s = injected ? "Shell" : "Make";
+function variables(context: ExpansionContext) {
+  const gap = context === "shell" ? [hostPrefix()] : [];
+  const suffix = context === "shell" ? "Shell" : "Make";
   return [
-    ...(injected ? [token("$$", "plain")] : [token("$$", "string.escape")]),
-    on("$", literal("$("), ...gap, paint("punctuation.special"), pushState(`exp${s}RoundStart`)),
-    on("$", literal("${"), ...gap, paint("punctuation.special"), pushState(`exp${s}BraceStart`)),
+    token("$$", context === "shell" ? "plain" : "string.escape"),
+    on(
+      "$",
+      literal("$("),
+      ...gap,
+      paint("punctuation.special"),
+      pushState(`exp${suffix}RoundStart`),
+    ),
+    on(
+      "$",
+      literal("${"),
+      ...gap,
+      paint("punctuation.special"),
+      pushState(`exp${suffix}BraceStart`),
+    ),
     on("$", literal("$"), byte(except(all, "({$\r\n")), ...gap, paint("variable")),
   ];
 }
-function mode(custom: boolean): Record<string, State> {
-  const suffix = custom ? "Custom" : "Tab";
+function mode(prefixMode: RecipePrefix): Record<string, State> {
+  const suffix = prefixMode === "custom" ? "Custom" : "Tab";
   const line = `line${suffix}`;
   const pending = `pending${suffix}`;
   const rule = `rule${suffix}`;
@@ -147,10 +159,10 @@ function mode(custom: boolean): Record<string, State> {
   const continued = `continued${suffix}`;
   const definition = `definition${suffix}`;
   const head = `head${suffix}`;
-  const lineArms = (canRecipe: boolean) => [
-    ...(canRecipe
+  const lineArms = (context: "pending" | "ordinary") => [
+    ...(context === "pending"
       ? [
-          custom
+          prefixMode === "custom"
             ? on(
                 all,
                 lineStart(),
@@ -197,7 +209,10 @@ function mode(custom: boolean): Record<string, State> {
           ...modifiers.map((text) => ({ text, then: [paint("keyword")] })),
           ...directives.map((text) => ({
             text,
-            then: [paint("keyword"), setState(`directive${canRecipe ? "Pending" : ""}${suffix}`)],
+            then: [
+              paint("keyword"),
+              setState(`directive${context === "pending" ? "Pending" : ""}${suffix}`),
+            ],
           })),
         ],
         [paint("label"), setState(head)],
@@ -206,14 +221,14 @@ function mode(custom: boolean): Record<string, State> {
     redispatch(all, setState(head)),
   ];
   return {
-    [line]: { style: "plain", arms: lineArms(false) },
-    [pending]: { style: "plain", arms: lineArms(true) },
+    [line]: { style: "plain", arms: lineArms("ordinary") },
+    [pending]: { style: "plain", arms: lineArms("pending") },
     [head]: {
       style: "label",
       arms: [
         on(" \t", bytes(horizontal), paint("plain")),
         token("%", "punctuation.special"),
-        ...variables(false),
+        ...variables("make"),
         escapedHash,
         continueLine,
         token("#", "comment", pushState("comment")),
@@ -225,7 +240,7 @@ function mode(custom: boolean): Record<string, State> {
     [rule]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         escapedHash,
         continueLine,
         token("#", "comment", pushState("comment")),
@@ -259,7 +274,7 @@ function mode(custom: boolean): Record<string, State> {
     [`assignment${suffix}`]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         escapedHash,
         continueLine,
         on("=:+?!", operators, paint("operator")),
@@ -270,7 +285,7 @@ function mode(custom: boolean): Record<string, State> {
     [`directive${suffix}`]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         escapedHash,
         continueLine,
         token("#", "comment", pushState("comment")),
@@ -280,7 +295,7 @@ function mode(custom: boolean): Record<string, State> {
     [`directivePending${suffix}`]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         escapedHash,
         continueLine,
         token("#", "comment", pushState("comment")),
@@ -290,7 +305,7 @@ function mode(custom: boolean): Record<string, State> {
     [`defineName${suffix}`]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         on(name, bytes(name), paint("variable")),
         on("=:+?!", operators, paint("operator")),
         token("#", "comment", pushState("comment")),
@@ -318,13 +333,13 @@ function mode(custom: boolean): Record<string, State> {
           paint("keyword"),
           pushState(`nestedDefineName${suffix}`),
         ),
-        ...variables(false),
+        ...variables("make"),
       ],
     },
     [`nestedDefineName${suffix}`]: {
       style: "plain",
       arms: [
-        ...variables(false),
+        ...variables("make"),
         on(name, bytes(name), paint("variable")),
         on("=:+?!", operators, paint("operator")),
         token("\n", "plain", setState(`nestedDefinition${suffix}`)),
@@ -351,7 +366,7 @@ function mode(custom: boolean): Record<string, State> {
           paint("keyword"),
           pushState(`nestedDefineName${suffix}`),
         ),
-        ...variables(false),
+        ...variables("make"),
       ],
     },
     [`prefixAssign${suffix}`]: {
@@ -389,7 +404,7 @@ function mode(custom: boolean): Record<string, State> {
     [recipe]: {
       style: "plain",
       arms: [
-        ...variables(true),
+        ...variables("shell"),
         on(
           "\\",
           literal("\\"),
@@ -404,7 +419,7 @@ function mode(custom: boolean): Record<string, State> {
     [continued]: {
       style: "plain",
       arms: [
-        ...(custom
+        ...(prefixMode === "custom"
           ? [
               on(
                 all,
@@ -436,10 +451,10 @@ function mode(custom: boolean): Record<string, State> {
 // Make expansions are parent spans omitted from the joined Bash document; $$ is
 // passed to Bash unchanged rather than rewritten to the dollar produced by make.
 const states: Record<string, State> = {
-  ...mode(false),
-  ...mode(true),
-  ...expansions(false),
-  ...expansions(true),
+  ...mode("tab"),
+  ...mode("custom"),
+  ...expansions("make"),
+  ...expansions("shell"),
   comment: { style: "comment", arms: [redispatch("\n", popState())] },
 };
 export default defineGrammar({

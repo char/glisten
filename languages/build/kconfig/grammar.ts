@@ -28,38 +28,13 @@ const all = byteSet({ ranges: [[0, 255]] });
 const word = union(range("a", "z"), range("A", "Z"), range("0", "9"), "_-");
 const nonspace = except(all, " \t\r\n");
 const indent = slot.column("helpIndent");
-const keywords = [
-  "mainmenu",
-  "config",
-  "configdefault",
-  "menuconfig",
-  "choice",
-  "endchoice",
-  "menu",
-  "endmenu",
-  "if",
-  "endif",
-  "source",
-  "rsource",
-  "osource",
-  "orsource",
-  "comment",
-  "prompt",
-  "default",
-  "depends",
-  "on",
-  "select",
-  "imply",
-  "range",
-  "visible",
-  "optional",
-  "modules",
-  "def_bool",
-  "def_tristate",
-  "def_int",
-  "def_hex",
-  "def_string",
-];
+const keywords = `
+  mainmenu config configdefault menuconfig choice endchoice menu endmenu if endif source rsource
+  osource orsource comment prompt default depends on select imply range visible optional modules
+  def_bool def_tristate def_int def_hex def_string
+`
+  .trim()
+  .split(/\s+/);
 const types = ["bool", "boolean", "tristate", "int", "hex", "string"];
 const expansion = token("$(", "punctuation.special", pushState("macro"));
 const escape = on("\\", literal("\\"), character(), paint("string.escape"));
@@ -88,12 +63,18 @@ const expressionWord = on(
     [paint("variable")],
   ),
 );
+const lineContinuation = on(
+  "\\",
+  literal("\\"),
+  choice([literal("\r\n")], [literal("\n")]),
+  paint("string.escape"),
+);
 const code = [
   token("#", "comment", pushState("comment")),
   expansion,
   token('"', "string", pushState("doubleString")),
   token("'", "string", pushState("singleString")),
-  on("\\", literal("\\"), choice([literal("\r\n")], [literal("\n")]), paint("string.escape")),
+  lineContinuation,
   token("&&", "operator"),
   token("||", "operator"),
   token("!=", "operator"),
@@ -147,11 +128,7 @@ export default defineGrammar({
     },
     assignmentValue: {
       style: "string",
-      arms: [
-        expansion,
-        on("\\", literal("\\"), choice([literal("\r\n")], [literal("\n")]), paint("string.escape")),
-        token("\n", "plain", setState("root")),
-      ],
+      arms: [expansion, lineContinuation, token("\n", "plain", setState("root"))],
     },
     comment: { style: "comment", arms: [redispatch("\n", popState())] },
     doubleString: {

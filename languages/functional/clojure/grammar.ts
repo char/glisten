@@ -28,10 +28,18 @@ const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const atom = except(all, " \t\r\n\f,()[]{}\";'`~@^\\");
 const whitespace = " \t\r\n\f,";
-const keywords =
-  "def defonce defn defn- defmacro defmulti defmethod defprotocol defrecord deftype definterface defstruct fn fn* let let* letfn loop loop* recur if if-not if-let if-some when when-not when-let when-some do ns in-ns require import quote var throw try catch finally new set! monitor-enter monitor-exit case cond condp and or for doseq dotimes binding with-open with-redefs lazy-seq future comment assert declare gen-class reify proxy extend-type extend-protocol -> ->> some-> some->> as-> doto ..".split(
-    " ",
-  );
+const keywords = `
+  def defonce defn defn- defmacro defmulti defmethod defprotocol defrecord deftype definterface
+  defstruct fn fn* let let* letfn loop loop* recur if if-not if-let if-some when when-not when-let
+  when-some do ns in-ns require import quote var throw try catch finally new set! monitor-enter
+  monitor-exit case cond condp and or for doseq dotimes binding with-open with-redefs lazy-seq
+  future comment assert declare gen-class reify proxy extend-type extend-protocol -> ->> some->
+  some->> as-> doto ..
+`
+  .trim()
+  .split(/\s+/);
+const specialNumbers = ["##Inf", "##-Inf", "##NaN"];
+const functionDefinitions = ["defn", "defn-", "defmacro"];
 const comments = [token(";", "comment", pushState("lineComment"))];
 const number = on(
   union(digit, "+-"),
@@ -61,9 +69,7 @@ const forms = [
   token("#?@", "punctuation.special"),
   token("#?", "punctuation.special"),
   token("#'", "punctuation.special"),
-  ...["##Inf", "##-Inf", "##NaN"].map((value) =>
-    on("#", literal(value), notNext(atom), paint("number")),
-  ),
+  ...specialNumbers.map((value) => on("#", literal(value), notNext(atom), paint("number"))),
   on("#", literal("#"), bytes(atom), paint("punctuation.special")),
   token("(", "punctuation.bracket", pushState("listHead")),
   token("[", "punctuation.bracket", pushState("square")),
@@ -110,12 +116,12 @@ export default defineGrammar({
           bytes(atom),
           classify(
             [
-              ...["defn", "defn-", "defmacro"].map((text) => ({
+              ...functionDefinitions.map((text) => ({
                 text,
                 then: [paint("keyword"), setState("functionName")],
               })),
               ...keywords
-                .filter((x) => !["defn", "defn-", "defmacro"].includes(x))
+                .filter((text) => !functionDefinitions.includes(text))
                 .map((text) => ({ text, then: [paint("keyword"), setState("list")] })),
               ...["nil", "true", "false"].map((text) => ({
                 text,
@@ -180,7 +186,7 @@ export default defineGrammar({
         token('"', "comment", setState("discardString")),
         token("#{", "comment", setState("discardCurly")),
         token("#(", "comment", setState("discardList")),
-        ...["##Inf", "##-Inf", "##NaN"].map((value) =>
+        ...specialNumbers.map((value) =>
           on("#", literal(value), notNext(atom), paint("comment"), popState()),
         ),
         on("#", literal("#"), bytes(atom), paint("comment")),

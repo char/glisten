@@ -28,7 +28,11 @@ const start = union("_", range("a", "z"), range("A", "Z"));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const keywords = keywordTable(
-  "if elif else endif foreach endforeach and or not in continue break".split(" "),
+  `
+    if elif else endif foreach endforeach and or not in continue break
+  `
+    .trim()
+    .split(/\s+/),
   "keyword",
 );
 const cases = [
@@ -60,7 +64,7 @@ const singleArms = [
 // Call and keyword-argument lookahead does not cross comments or continuations.
 // Format substitutions are recognized in source, not after decoding escapes;
 // escape values and continuation-line syntax are not validated.
-const syntax = (call: boolean) => [
+const syntax = (context: "expression" | "call") => [
   token("#", "comment", pushState("comment")),
   token("f'''", "string", pushState("formatMultiline")),
   token("f'", "string", pushState("formatSingle")),
@@ -83,7 +87,7 @@ const syntax = (call: boolean) => [
     lookahead(whitespace, literal("(")),
     classify(cases, [paint("function"), pushState("callOpen")]),
   ),
-  ...(call
+  ...(context === "call"
     ? [
         on(
           start,
@@ -109,7 +113,7 @@ export default defineGrammar({
   name: "meson",
   initial: "root",
   states: {
-    root: { style: "plain", arms: syntax(false) },
+    root: { style: "plain", arms: syntax("expression") },
     callOpen: {
       style: "plain",
       arms: [
@@ -119,23 +123,23 @@ export default defineGrammar({
     },
     call: {
       style: "plain",
-      arms: [token(")", "punctuation.bracket", popState()), ...syntax(true)],
+      arms: [token(")", "punctuation.bracket", popState()), ...syntax("call")],
     },
     parentheses: {
       style: "plain",
-      arms: [token(")", "punctuation.bracket", popState()), ...syntax(false)],
+      arms: [token(")", "punctuation.bracket", popState()), ...syntax("expression")],
     },
     array: {
       style: "plain",
-      arms: [token("]", "punctuation.bracket", popState()), ...syntax(false)],
+      arms: [token("]", "punctuation.bracket", popState()), ...syntax("expression")],
     },
     dictionary: {
       style: "plain",
-      arms: [token("}", "punctuation.bracket", popState()), ...syntax(false)],
+      arms: [token("}", "punctuation.bracket", popState()), ...syntax("expression")],
     },
     ternary: {
       style: "plain",
-      arms: [token(":", "punctuation.delimiter", popState()), ...syntax(false)],
+      arms: [token(":", "punctuation.delimiter", popState()), ...syntax("expression")],
     },
     foreachNames: {
       style: "plain",

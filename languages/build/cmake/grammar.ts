@@ -29,14 +29,20 @@ import {
 const start = union("_", range("a", "z"), range("A", "Z"));
 const word = union(start, range("0", "9"));
 const level = slot.run("bracketLevel");
-const control =
-  "if elseif else endif foreach endforeach while endwhile function endfunction macro endmacro block endblock".split(
-    " ",
-  );
-const conditions =
-  "AND OR NOT COMMAND POLICY TARGET TEST DEFINED EXISTS IS_NEWER_THAN IS_READABLE IS_WRITABLE IS_EXECUTABLE IS_DIRECTORY IS_SYMLINK IS_ABSOLUTE IN_LIST MATCHES LESS GREATER EQUAL LESS_EQUAL GREATER_EQUAL STRLESS STRGREATER STREQUAL STRLESS_EQUAL STRGREATER_EQUAL VERSION_LESS VERSION_GREATER VERSION_EQUAL VERSION_LESS_EQUAL VERSION_GREATER_EQUAL PATH_EQUAL".split(
-    " ",
-  );
+const control = `
+  if elseif else endif foreach endforeach while endwhile function endfunction macro endmacro block
+  endblock
+`
+  .trim()
+  .split(/\s+/);
+const conditions = `
+  AND OR NOT COMMAND POLICY TARGET TEST DEFINED EXISTS IS_NEWER_THAN IS_READABLE IS_WRITABLE
+  IS_EXECUTABLE IS_DIRECTORY IS_SYMLINK IS_ABSOLUTE IN_LIST MATCHES LESS GREATER EQUAL LESS_EQUAL
+  GREATER_EQUAL STRLESS STRGREATER STREQUAL STRLESS_EQUAL STRGREATER_EQUAL VERSION_LESS
+  VERSION_GREATER VERSION_EQUAL VERSION_LESS_EQUAL VERSION_GREATER_EQUAL PATH_EQUAL
+`
+  .trim()
+  .split(/\s+/);
 const commandCases = [
   ...["if", "elseif", "while"].map((text) => ({
     text,
@@ -47,7 +53,7 @@ const commandCases = [
     then: [paint("keyword"), pushState("definitionOpen")],
   })),
   ...control
-    .filter((s) => !["if", "elseif", "while", "function", "macro"].includes(s))
+    .filter((text) => !["if", "elseif", "while", "function", "macro"].includes(text))
     .map((text) => ({ text, then: [paint("keyword"), pushState("commandOpen")] })),
 ];
 const bracketOpen = (prefix: string, style: "string" | "comment", state: string) =>
@@ -70,7 +76,9 @@ const brackets = [
   token("[[", "string", pushState("bracketString0")),
 ];
 const expansion = [
-  ...["${", "$ENV{", "$CACHE{"].map((s) => token(s, "punctuation.special", pushState("variable"))),
+  ...["${", "$ENV{", "$CACHE{"].map((opener) =>
+    token(opener, "punctuation.special", pushState("variable")),
+  ),
   token("$<", "punctuation.special", pushState("generator")),
 ];
 const escape = on("\\", literal("\\"), character(), paint("string.escape"));

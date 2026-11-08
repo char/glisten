@@ -38,11 +38,16 @@ const rest = union(lower, upper, digit, "_@", high);
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const digits = [byte(digit), repeat(optional(literal("_")), byte(digit))];
 const atom = [byte(atomStart), bytes(rest, { min: 0 })];
-const keywords =
-  "after begin case catch cond end fun if let maybe of receive try when else andalso orelse".split(
-    " ",
-  );
-const operators = "and or xor not div rem band bor bxor bnot bsl bsr".split(" ");
+const keywords = `
+  after begin case catch cond end fun if let maybe of receive try when else andalso orelse
+`
+  .trim()
+  .split(/\s+/);
+const operators = `
+  and or xor not div rem band bor bxor bnot bsl bsr
+`
+  .trim()
+  .split(/\s+/);
 const atomCases = [...keywordTable(keywords, "keyword"), ...keywordTable(operators, "operator")];
 const quotes = slot.run("tripleQuotes");
 const escaped = choice(
@@ -182,7 +187,7 @@ export default defineGrammar({
           "..",
           "?=",
           "&&",
-        ].map((s) => token(s, "operator")),
+        ].map((operator) => token(operator, "operator")),
         token("<<", "punctuation.bracket"),
         token(">>", "punctuation.bracket"),
         token(oneOf("+-*/=<>!|"), "operator"),

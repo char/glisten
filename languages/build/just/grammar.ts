@@ -37,12 +37,17 @@ const ident = [byte(alpha), bytes(name, { min: 0 })];
 const hex = union(range("0", "9"), range("a", "f"), range("A", "F"));
 const nonBlank = except(all, " \t\r\n");
 
-function expression(embedded: boolean, other: Style = "variable"): Arm[] {
-  const prefix = (): Effect[] => (embedded ? [hostPrefix()] : []);
-  const suffix = embedded ? "Inner" : "Outer";
+type ExpressionContext = "embedded" | "standalone";
+
+function expression(
+  context: ExpressionContext,
+  other: "variable" | "function" | "attribute" = "variable",
+): Arm[] {
+  const prefix = (): Effect[] => (context === "embedded" ? [hostPrefix()] : []);
+  const suffix = context === "embedded" ? "Inner" : "Outer";
   const emit = (text: string, style: Style, ...effects: Effect[]) =>
     on(text[0]!, literal(text), ...prefix(), paint(style), ...effects);
-  const classifyName = [
+  const nameCases = [
     ...["if", "else", "set", "shell", "export", "alias", "import", "mod"].map((text) => ({
       text,
       then: [...prefix(), paint("keyword")],
@@ -60,8 +65,8 @@ function expression(embedded: boolean, other: Style = "variable"): Arm[] {
     emit("'", "string", pushState(`raw${suffix}`)),
     emit('"', "string", pushState(`cooked${suffix}`)),
     emit("`", "string", pushState(`command${suffix}`)),
-    ...[":=", "==", "!=", "=~", "&&", "||", "++"].map((op) => emit(op, "operator")),
-    ...["+", "-", "*", "/", "=", "?", "$", "@", ":"].map((op) => emit(op, "operator")),
+    ...[":=", "==", "!=", "=~", "&&", "||", "++"].map((operator) => emit(operator, "operator")),
+    ...["+", "-", "*", "/", "=", "?", "$", "@", ":"].map((operator) => emit(operator, "operator")),
     ...["(", ")", "[", "]", "{", "}"].map((bracket) => emit(bracket, "punctuation.bracket")),
     emit(",", "punctuation.delimiter"),
     on(
@@ -71,15 +76,15 @@ function expression(embedded: boolean, other: Style = "variable"): Arm[] {
       ...prefix(),
       paint(other === "attribute" ? "attribute" : "function"),
     ),
-    on(alpha, ...ident, classify(classifyName, [...prefix(), paint(other)])),
+    on(alpha, ...ident, classify(nameCases, [...prefix(), paint(other)])),
     on(" \t\r", bytes(" \t\r"), ...prefix(), paint("plain")),
-    ...(embedded ? [on(all, character(), hostPrefix(), paint("plain"))] : []),
+    ...(context === "embedded" ? [on(all, character(), hostPrefix(), paint("plain"))] : []),
   ];
 }
 
-function strings(embedded: boolean): Record<string, State> {
-  const suffix = embedded ? "Inner" : "Outer";
-  const prefix = (): Effect[] => (embedded ? [hostPrefix()] : []);
+function strings(context: ExpressionContext): Record<string, State> {
+  const suffix = context === "embedded" ? "Inner" : "Outer";
+  const prefix = (): Effect[] => (context === "embedded" ? [hostPrefix()] : []);
   const close = (text: string) =>
     on(text[0]!, literal(text), ...prefix(), paint("string"), popState());
   const escaped = on(
@@ -94,7 +99,8 @@ function strings(embedded: boolean): Record<string, State> {
     ...prefix(),
     paint("string.escape"),
   );
-  const fallback = embedded ? [on(all, character(), hostPrefix(), paint("string"))] : [];
+  const fallback =
+    context === "embedded" ? [on(all, character(), hostPrefix(), paint("string"))] : [];
   return {
     [`raw${suffix}`]: { style: "string", arms: [close("'"), ...fallback] },
     [`cooked${suffix}`]: { style: "string", arms: [escaped, close('"'), ...fallback] },
@@ -105,8 +111,8 @@ function strings(embedded: boolean): Record<string, State> {
   };
 }
 
-const outer = expression(false);
-const inner = expression(true);
+const outer = expression("standalone");
+const inner = expression("embedded");
 const outerGroups = [
   token("(", "punctuation.bracket", pushState("outerParen")),
   token("[", "punctuation.bracket", pushState("outerBracket")),
@@ -117,20 +123,22 @@ const innerGroups = [
   on("[", literal("["), hostPrefix(), paint("punctuation.bracket"), pushState("innerBracket")),
   on("{", literal("{"), hostPrefix(), paint("punctuation.bracket"), pushState("innerBrace")),
 ];
-function group(close: string, embedded: boolean): State {
+function group(close: string, context: ExpressionContext): State {
   return {
     style: "plain",
     arms: [
       on(
         close,
         literal(close),
-        ...(embedded ? [hostPrefix()] : []),
+        ...(context === "embedded" ? [hostPrefix()] : []),
         paint("punctuation.bracket"),
         popState(),
       ),
-      ...(embedded ? innerGroups : outerGroups),
-      ...(embedded ? [] : [token("#", "comment", pushState("comment")), token("\n", "plain")]),
-      ...(embedded ? inner : outer),
+      ...(context === "embedded" ? innerGroups : outerGroups),
+      ...(context === "embedded"
+        ? []
+        : [token("#", "comment", pushState("comment")), token("\n", "plain")]),
+      ...(context === "embedded" ? inner : outer),
     ],
   };
 }
@@ -202,7 +210,7 @@ export default defineGrammar({
       arms: [
         token("]", "punctuation.bracket", setState("root")),
         token("\n", "plain", setState("root")),
-        ...expression(false, "attribute"),
+        ...expression("standalone", "attribute"),
       ],
     },
     header: {
@@ -222,16 +230,16 @@ export default defineGrammar({
         token("#", "comment", pushState("comment")),
         token("\n", "plain", setState("bodyPending")),
         token("(", "punctuation.bracket", pushState("dependencyName")),
-        ...expression(false, "function"),
+        ...expression("standalone", "function"),
       ],
     },
     dependencyName: {
       style: "plain",
       arms: [on(alpha, ...ident, paint("function"), setState("outerParen"))],
     },
-    outerParen: group(")", false),
-    outerBracket: group("]", false),
-    outerBrace: group("}", false),
+    outerParen: group(")", "standalone"),
+    outerBracket: group("]", "standalone"),
+    outerBrace: group("}", "standalone"),
     bodyPending: {
       style: "plain",
       arms: [
@@ -321,11 +329,11 @@ export default defineGrammar({
         ...inner,
       ],
     },
-    innerParen: group(")", true),
-    innerBracket: group("]", true),
-    innerBrace: group("}", true),
+    innerParen: group(")", "embedded"),
+    innerBracket: group("]", "embedded"),
+    innerBrace: group("}", "embedded"),
     comment: { style: "comment", arms: [redispatch("\n", popState())] },
-    ...strings(false),
-    ...strings(true),
+    ...strings("standalone"),
+    ...strings("embedded"),
   },
 });

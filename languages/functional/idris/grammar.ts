@@ -34,21 +34,31 @@ const high = byteSet({ ranges: [[128, 255]] });
 const start = union(lower, upper, "_", high);
 const rest = union(start, digit, "'");
 const name = [byte(start), bytes(rest, { min: 0 })];
-const op = "!#$%&*+./<=>?@\\^|-~:";
+const operator = "!#$%&*+./<=>?@\\^|-~:";
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const digits = (set = digit) => [bytes(set), repeat(literal("_"), bytes(set))];
 const hashes = slot.run("raw-hashes", { scope: "frame" });
-const keywords =
-  "module import as public export private data record constructor interface implementation where let in case of if then else do with rewrite impossible total partial covering mutual namespace parameters using auto default failing infix infixl infixr prefix implicit proof forall typebind autobind open".split(
-    " ",
-  );
-const modifiers = new Set("public export private total partial covering".split(" "));
+const keywords = `
+  module import as public export private data record constructor interface implementation where
+  let in case of if then else do with rewrite impossible total partial covering mutual namespace
+  parameters using auto default failing infix infixl infixr prefix implicit proof forall typebind
+  autobind open
+`
+  .trim()
+  .split(/\s+/);
+const modifiers = new Set(
+  `
+  public export private total partial covering
+`
+    .trim()
+    .split(/\s+/),
+);
 const words = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["Type", "Type0"], "type"),
   ...keywordTable(["True", "False"], "constant.builtin"),
 ];
-const bolWords = words.map(({ text, then }) => ({
+const lineStartWords = words.map(({ text, then }) => ({
   text,
   then: modifiers.has(text) ? then : [...then, setState("root")],
 }));
@@ -124,7 +134,7 @@ const number = on(
   ),
   paint("number"),
 );
-const symbols = ["→", "←", "⇒", "⇐", "λ", "∀"].map((s) => token(s, "operator"));
+const symbols = ["→", "←", "⇒", "⇐", "λ", "∀"].map((symbol) => token(symbol, "operator"));
 const code = [
   lineComment,
   docComment,
@@ -142,7 +152,7 @@ const code = [
   token(oneOf(",;`"), "punctuation.delimiter"),
   on(upper, ...name, classify(words, [paint("type")])),
   on(start, ...name, classify(words, [paint("variable")])),
-  on(op, bytes(op), paint("operator")),
+  on(operator, bytes(operator), paint("operator")),
 ];
 // Raw hash counts are frame-scoped so strings nested in interpolations cannot overwrite them.
 export default defineGrammar({
@@ -161,14 +171,14 @@ export default defineGrammar({
         on(
           start,
           ...name,
-          lookahead(bytes(" \t", { min: 0 }), literal(":"), notNext(op)),
+          lookahead(bytes(" \t", { min: 0 }), literal(":"), notNext(operator)),
           classify(
             words.map(({ text, then }) => ({ text, then: [...then, setState("root")] })),
             [paint("function"), setState("root")],
           ),
         ),
-        on(upper, ...name, classify(bolWords, [paint("type"), setState("root")])),
-        on(start, ...name, classify(bolWords, [paint("variable"), setState("root")])),
+        on(upper, ...name, classify(lineStartWords, [paint("type"), setState("root")])),
+        on(start, ...name, classify(lineStartWords, [paint("variable"), setState("root")])),
       ],
       otherwise: [setState("root")],
     },

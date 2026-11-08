@@ -37,19 +37,27 @@ const decimal = bytes(union(digit, "_"));
 const word = (text: string) => [literal(text), notNext(rest)];
 const operators = "!%&*+-./<=>?@^|~:";
 const opPart = choice([byte(except(operators, "/"))], [literal("/"), notNext("/")]);
-const keywords =
-  "abstract and as assert base begin class default delegate do done downcast downto elif else end exception extern false finally fixed for fun function global if in inherit inline interface internal lazy let match member module mutable namespace new not null of open or override private public rec return sig static struct then to true try type upcast use val void when while with yield".split(
-    " ",
-  );
+const keywords = `
+  abstract and as assert base begin class default delegate do done downcast downto elif else end
+  exception extern false finally fixed for fun function global if in inherit inline interface
+  internal lazy let match member module mutable namespace new not null of open or override private
+  public rec return sig static struct then to true try type upcast use val void when while with
+  yield
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(
-    "bool byte sbyte int int8 int16 int32 int64 uint uint16 uint32 uint64 nativeint unativeint float float32 double decimal string char unit obj bigint".split(
-      " ",
-    ),
+    `
+  bool byte sbyte int int8 int16 int32 int64 uint uint16 uint32 uint64 nativeint unativeint float
+  float32 double decimal string char unit obj bigint
+`
+      .trim()
+      .split(/\s+/),
     "type",
   ),
   ...keywordTable(
-    keywords.filter((w) => w !== "true" && w !== "false" && w !== "null"),
+    keywords.filter((word) => word !== "true" && word !== "false" && word !== "null"),
     "keyword",
   ),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
@@ -107,7 +115,7 @@ const code: Arm[] = [
   token("(*", "comment", pushState("blockComment")),
   token("[<", "punctuation.bracket", pushState("attribute")),
   on("#", literal("#"), ...ident, paint("keyword")),
-  ...Array.from({ length: 8 }, (_, i) => 8 - i).map((n) =>
+  ...[8, 7, 6, 5, 4, 3, 2, 1].map((n) =>
     on(
       "$",
       previousNotIn("$"),

@@ -30,90 +30,32 @@ const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const alphanumeric = union(digit, range("a", "z"), range("A", "Z"));
 const symbolEnd = union(atom, "\\");
-const definitions = ["defun", "defmacro", "defsubst", "cl-defun", "cl-defmacro", "cl-defsubst"];
-const keywords = [
-  "and",
-  "or",
-  "if",
-  "when",
-  "unless",
-  "cond",
-  "let",
-  "let*",
-  "while",
-  "progn",
-  "prog1",
-  "prog2",
-  "quote",
-  "function",
-  "lambda",
-  "interactive",
-  "catch",
-  "throw",
-  "condition-case",
-  "condition-case-unless-debug",
-  "unwind-protect",
-  "setq",
-  "setq-default",
-  "setf",
-  "cl-setf",
-  "pcase",
-  "pcase-let",
-  "pcase-let*",
-  "pcase-lambda",
-  "defvar",
-  "defconst",
-  "defcustom",
-  "defgroup",
-  "defface",
-  "define-minor-mode",
-  "define-derived-mode",
-  "define-globalized-minor-mode",
-  "define-keymap",
-  "define-error",
-  "cl-defstruct",
-  "cl-defgeneric",
-  "cl-defmethod",
-  "cl-labels",
-  "cl-flet",
-  "cl-loop",
-  "cl-block",
-  "cl-return-from",
-  "cl-case",
-  "cl-typecase",
-  "use-package",
-  "save-excursion",
-  "save-current-buffer",
-  "save-restriction",
-  "save-match-data",
-  "with-current-buffer",
-  "with-temp-buffer",
-  "with-temp-file",
-  "with-current-buffer-window",
-  "with-selected-window",
-  "with-silent-modifications",
-  "with-demoted-errors",
-  "with-eval-after-load",
-  "eval-and-compile",
-  "eval-when-compile",
-  "dolist",
-  "dotimes",
-  "push",
-  "pop",
-  "declare",
-  "declare-function",
-  "autoload",
-  "provide",
-  "require",
-  "ignore-errors",
-];
-const word = (head = false) =>
+const definitions = `
+  defun defmacro defsubst cl-defun cl-defmacro cl-defsubst
+`
+  .trim()
+  .split(/\s+/);
+const keywords = `
+  and or if when unless cond let let* while progn prog1 prog2 quote function lambda interactive
+  catch throw condition-case condition-case-unless-debug unwind-protect setq setq-default setf
+  cl-setf pcase pcase-let pcase-let* pcase-lambda defvar defconst defcustom defgroup defface
+  define-minor-mode define-derived-mode define-globalized-minor-mode define-keymap define-error
+  cl-defstruct cl-defgeneric cl-defmethod cl-labels cl-flet cl-loop cl-block cl-return-from
+  cl-case cl-typecase use-package save-excursion save-current-buffer save-restriction
+  save-match-data with-current-buffer with-temp-buffer with-temp-file with-current-buffer-window
+  with-selected-window with-silent-modifications with-demoted-errors with-eval-after-load
+  eval-and-compile eval-when-compile dolist dotimes push pop declare declare-function autoload
+  provide require ignore-errors
+`
+  .trim()
+  .split(/\s+/);
+const word = (context: "head" | "list" = "list") =>
   on(
     atom,
     bytes(atom),
     notNext("\\"),
     classify(
-      head
+      context === "head"
         ? [
             ...definitions.map((text) => ({
               text,
@@ -129,7 +71,10 @@ const word = (head = false) =>
             })),
           ]
         : keywordTable(["nil", "t"], "constant.builtin"),
-      [paint(head ? "function" : "variable"), ...(head ? [setState("list")] : [])],
+      [
+        paint(context === "head" ? "function" : "variable"),
+        ...(context === "head" ? [setState("list")] : []),
+      ],
     ),
   );
 const comments = [
@@ -158,7 +103,7 @@ const escape = choice(
   [repeat(modifier), literal("\\"), character()],
   [repeat(modifier), character()],
 );
-const number = (head = false) => {
+const number = (context: "head" | "list" = "list") => {
   const exponent = choice(
     [byte("eE"), optional(byte("+-")), bytes(digit)],
     [byte("eE"), byte("+-"), choice([literal("INF")], [literal("NaN")])],
@@ -192,7 +137,7 @@ const number = (head = false) => {
       [optional(byte("+-")), decimal, notNext(symbolEnd)],
     ),
     paint("number"),
-    ...(head ? [setState("list")] : []),
+    ...(context === "head" ? [setState("list")] : []),
   );
 };
 const reader = [
@@ -248,9 +193,9 @@ export default defineGrammar({
         ...comments,
         on(" \t\r\n\v\f", bytes(" \t\r\n\v\f"), paint("plain")),
         token(")", "punctuation.bracket", popState()),
-        number(true),
+        number("head"),
         redispatch("#:?'`\",([\\", setState("list")),
-        word(true),
+        word("head"),
         on(atom, bytes(atom), paint("variable"), setState("list")),
       ],
       otherwise: [setState("list")],

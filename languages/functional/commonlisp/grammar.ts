@@ -29,182 +29,32 @@ const atom = except(all, " \t\r\n\v\f()\";'`,|\\");
 const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const alphaNumeric = union(digit, range("a", "z"), range("A", "Z"));
-const keywords = [
-  "block",
-  "catch",
-  "eval-when",
-  "flet",
-  "function",
-  "go",
-  "if",
-  "labels",
-  "let",
-  "let*",
-  "load-time-value",
-  "locally",
-  "macrolet",
-  "multiple-value-call",
-  "multiple-value-prog1",
-  "progn",
-  "progv",
-  "quote",
-  "return-from",
-  "setq",
-  "symbol-macrolet",
-  "tagbody",
-  "the",
-  "throw",
-  "unwind-protect",
-  "lambda",
-  "cond",
-  "case",
-  "ecase",
-  "ccase",
-  "typecase",
-  "etypecase",
-  "ctypecase",
-  "when",
-  "unless",
-  "and",
-  "or",
-  "prog",
-  "prog*",
-  "prog1",
-  "prog2",
-  "return",
-  "do",
-  "do*",
-  "dolist",
-  "dotimes",
-  "do-symbols",
-  "do-external-symbols",
-  "do-all-symbols",
-  "defvar",
-  "defparameter",
-  "defconstant",
-  "defclass",
-  "define-condition",
-  "defpackage",
-  "in-package",
-  "deftype",
-  "defstruct",
-  "defsetf",
-  "define-modify-macro",
-  "define-symbol-macro",
-  "define-method-combination",
-  "handler-case",
-  "handler-bind",
-  "restart-case",
-  "restart-bind",
-  "ignore-errors",
-  "unwind-protect",
-  "multiple-value-bind",
-  "multiple-value-setq",
-  "multiple-value-list",
-  "nth-value",
-  "destructuring-bind",
-  "with-open-file",
-  "with-open-stream",
-  "with-input-from-string",
-  "with-output-to-string",
-  "with-accessors",
-  "with-slots",
-  "with-standard-io-syntax",
-  "with-hash-table-iterator",
-  "with-package-iterator",
-  "with-simple-restart",
-  "with-compilation-unit",
-  "with-condition-restarts",
-  "setf",
-  "psetf",
-  "psetq",
-  "rotatef",
-  "shiftf",
-  "remf",
-  "check-type",
-  "assert",
-  "time",
-  "step",
-  "incf",
-  "decf",
-  "push",
-  "pop",
-  "pushnew",
-  "declare",
-  "declaim",
-  "proclaim",
-  "eval-when",
-  "otherwise",
-  "t",
-  "nil",
-];
-const unique = [...new Set(keywords.filter((word) => word !== "t" && word !== "nil"))];
-const definitions = [
-  "defun",
-  "defmacro",
-  "defgeneric",
-  "defmethod",
-  "define-compiler-macro",
-  "define-setf-expander",
-];
-const loopWords = [
-  "for",
-  "as",
-  "in",
-  "on",
-  "across",
-  "of-type",
-  "from",
-  "upfrom",
-  "downfrom",
-  "to",
-  "upto",
-  "downto",
-  "below",
-  "above",
-  "by",
-  "being",
-  "each",
-  "the",
-  "using",
-  "hash-key",
-  "hash-keys",
-  "hash-value",
-  "hash-values",
-  "with",
-  "initially",
-  "finally",
-  "do",
-  "doing",
-  "return",
-  "collect",
-  "collecting",
-  "append",
-  "appending",
-  "nconc",
-  "nconcing",
-  "count",
-  "counting",
-  "sum",
-  "summing",
-  "maximize",
-  "maximizing",
-  "minimize",
-  "minimizing",
-  "into",
-  "if",
-  "when",
-  "unless",
-  "else",
-  "end",
-  "while",
-  "until",
-  "repeat",
-  "always",
-  "never",
-  "thereis",
-  "and",
-];
+const keywords = `
+  block catch eval-when flet function go if labels let let* load-time-value locally macrolet
+  multiple-value-call multiple-value-prog1 progn progv quote return-from setq symbol-macrolet
+  tagbody the throw unwind-protect lambda cond case ecase ccase typecase etypecase ctypecase when
+  unless and or prog prog* prog1 prog2 return do do* dolist dotimes do-symbols do-external-symbols
+  do-all-symbols defvar defparameter defconstant defclass define-condition defpackage in-package
+  deftype defstruct defsetf define-modify-macro define-symbol-macro define-method-combination
+  handler-case handler-bind restart-case restart-bind ignore-errors unwind-protect multiple-value-bind multiple-value-setq multiple-value-list nth-value destructuring-bind with-open-file with-open-stream with-input-from-string with-output-to-string with-accessors with-slots with-standard-io-syntax with-hash-table-iterator with-package-iterator with-simple-restart with-compilation-unit with-condition-restarts setf psetf psetq rotatef shiftf remf check-type assert
+  time step incf decf push pop pushnew declare declaim proclaim eval-when otherwise t nil
+`
+  .trim()
+  .split(/\s+/);
+const uniqueKeywords = [...new Set(keywords.filter((word) => word !== "t" && word !== "nil"))];
+const definitions = `
+  defun defmacro defgeneric defmethod define-compiler-macro define-setf-expander
+`
+  .trim()
+  .split(/\s+/);
+const loopWords = `
+  for as in on across of-type from upfrom downfrom to upto downto below above by being each the
+  using hash-key hash-keys hash-value hash-values with initially finally do doing return collect
+  collecting append appending nconc nconcing count counting sum summing maximize maximizing
+  minimize minimizing into if when unless else end while until repeat always never thereis and
+`
+  .trim()
+  .split(/\s+/);
 const symbolEnd = union(atom, "|\\");
 const featureName = repeat(
   choice(
@@ -217,20 +67,20 @@ const featureName = repeat(
     ],
   ),
 );
-const word = (head = false, loop = false) =>
+const word = (context: "head" | "list" | "loop" = "list") =>
   on(
     atom,
     bytes(atom),
     notNext("|\\"),
     classify(
-      head
+      context === "head"
         ? [
             ...definitions.map((text) => ({
               text,
               then: [paint("keyword"), setState("definitionName")],
             })),
             { text: "loop", then: [paint("keyword"), setState("loop")] },
-            ...keywordTable(unique, "keyword").map(({ text, then }) => ({
+            ...keywordTable(uniqueKeywords, "keyword").map(({ text, then }) => ({
               text,
               then: [...then, setState("list")],
             })),
@@ -240,10 +90,13 @@ const word = (head = false, loop = false) =>
             })),
           ]
         : [
-            ...(loop ? keywordTable(loopWords, "keyword") : []),
+            ...(context === "loop" ? keywordTable(loopWords, "keyword") : []),
             ...keywordTable(["t", "nil"], "constant.builtin"),
           ],
-      [paint(head ? "function" : "variable"), ...(head ? [setState("list")] : [])],
+      [
+        paint(context === "head" ? "function" : "variable"),
+        ...(context === "head" ? [setState("list")] : []),
+      ],
       { caseless: true },
     ),
   );
@@ -251,7 +104,7 @@ const comments = [
   token("#|", "comment", pushState("blockComment")),
   token(";", "comment", pushState("lineComment")),
 ];
-const number = (head = false) => {
+const number = (context: "head" | "list" = "list") => {
   const exponent = choice([byte("eEsSfFdDlL"), optional(byte("+-")), bytes(digit)]);
   const real = choice(
     [bytes(digit), literal("/"), bytes(digit)],
@@ -285,7 +138,7 @@ const number = (head = false) => {
       [optional(byte("+-")), real, notNext(symbolEnd)],
     ),
     paint("number"),
-    ...(head ? [setState("list")] : []),
+    ...(context === "head" ? [setState("list")] : []),
   );
 };
 // Character names and code points are colored without validating their repertoire.
@@ -341,9 +194,9 @@ export default defineGrammar({
         token("#-", "punctuation.special", pushState("feature")),
         on(" \t\r\n\v\f", bytes(" \t\r\n\v\f"), paint("plain")),
         token(")", "punctuation.bracket", popState()),
-        number(true),
+        number("head"),
         redispatch("#:'`\",(|\\", setState("list")),
-        word(true),
+        word("head"),
         on(atom, bytes(atom), paint("variable"), setState("list")),
       ],
       otherwise: [setState("list")],
@@ -367,7 +220,7 @@ export default defineGrammar({
           ),
         ),
         ...reader,
-        word(false, true),
+        word("loop"),
         on(atom, bytes(atom), paint("variable")),
       ],
     },

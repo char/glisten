@@ -28,8 +28,9 @@ const expansion = [
   on("$", literal("${"), bytes(name), literal("}"), paint("variable")),
   on("$", literal("$"), bytes(simpleName), paint("variable")),
 ];
-const keyword = (word: string, next: string) =>
-  on(word[0]!, literal(word), notNext(name), paint("keyword"), setState(next));
+const keyword = (word: string, nextState: string) =>
+  on(word[0]!, literal(word), notNext(name), paint("keyword"), setState(nextState));
+const endLine = token("\n", "plain", setState("root"));
 
 export default defineGrammar({
   name: "ninja",
@@ -56,29 +57,23 @@ export default defineGrammar({
       arms: [
         on(name, bytes(name), paint("property"), setState("binding")),
         token("#", "comment", pushState("comment")),
-        token("\n", "plain", setState("root")),
+        endLine,
       ],
     },
     ruleName: {
       style: "plain",
-      arms: [
-        on(name, bytes(name), paint("function"), setState("lineEnd")),
-        token("\n", "plain", setState("root")),
-      ],
+      arms: [on(name, bytes(name), paint("function"), setState("lineEnd")), endLine],
     },
     poolName: {
       style: "plain",
-      arms: [
-        on(name, bytes(name), paint("type"), setState("lineEnd")),
-        token("\n", "plain", setState("root")),
-      ],
+      arms: [on(name, bytes(name), paint("type"), setState("lineEnd")), endLine],
     },
-    lineEnd: { style: "plain", arms: [token("\n", "plain", setState("root"))] },
+    lineEnd: { style: "plain", arms: [endLine] },
     binding: {
       style: "plain",
-      arms: [token("=", "operator", setState("value")), token("\n", "plain", setState("root"))],
+      arms: [token("=", "operator", setState("value")), endLine],
     },
-    value: { style: "string", arms: [...expansion, token("\n", "plain", setState("root"))] },
+    value: { style: "string", arms: [...expansion, endLine] },
     buildOutputs: {
       style: "string",
       arms: [
@@ -86,15 +81,12 @@ export default defineGrammar({
         token(":", "punctuation.delimiter", setState("buildRule")),
         token("|", "operator"),
         on(" \r", bytes(" \r"), paint("plain")),
-        token("\n", "plain", setState("root")),
+        endLine,
       ],
     },
     buildRule: {
       style: "plain",
-      arms: [
-        on(name, bytes(name), paint("function"), setState("buildInputs")),
-        token("\n", "plain", setState("root")),
-      ],
+      arms: [on(name, bytes(name), paint("function"), setState("buildInputs")), endLine],
     },
     buildInputs: {
       style: "string",
@@ -104,16 +96,12 @@ export default defineGrammar({
         token("|@", "operator"),
         token("|", "operator"),
         on(" \r", bytes(" \r"), paint("plain")),
-        token("\n", "plain", setState("root")),
+        endLine,
       ],
     },
     paths: {
       style: "string",
-      arms: [
-        ...expansion,
-        on(" \r", bytes(" \r"), paint("plain")),
-        token("\n", "plain", setState("root")),
-      ],
+      arms: [...expansion, on(" \r", bytes(" \r"), paint("plain")), endLine],
     },
     comment: { style: "comment", arms: [redispatch("\n", popState())] },
   },

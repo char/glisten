@@ -29,10 +29,12 @@ const high = byteSet({ ranges: [[128, 255]] });
 const rest = union(lower, upper, digit, "_", high);
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const name = [byte(lower), bytes(rest, { min: 0 })];
-const keywords =
-  "as case effect else exposing if import in infix left let module non of port right then type alias where".split(
-    " ",
-  );
+const keywords = `
+  as case effect else exposing if import in infix left let module non of port right then type alias
+  where
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["True", "False"], "constant.builtin"),

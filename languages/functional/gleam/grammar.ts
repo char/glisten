@@ -31,7 +31,11 @@ const digits = (set = digit) => [byte(set), repeat(optional(literal("_")), byte(
 const word = [byte(lower), bytes(rest, { min: 0 })];
 const words = [
   ...keywordTable(
-    "as assert case const echo external fn if import let opaque panic pub todo type use".split(" "),
+    `
+      as assert case const echo external fn if import let opaque panic pub todo type use
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(["True", "False", "Nil"], "constant.builtin"),
@@ -106,7 +110,7 @@ export default defineGrammar({
           "/.",
           "<.",
           ">.",
-        ].map((s) => token(s, "operator")),
+        ].map((operator) => token(operator, "operator")),
         token("<<", "punctuation.bracket"),
         token(">>", "punctuation.bracket"),
         token(oneOf("+-*/%!=<>|"), "operator"),

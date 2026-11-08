@@ -40,27 +40,21 @@ const escapeBody = choice(
   [character()],
 );
 const escape = on("\\", literal("\\"), escapeBody, paint("string.escape"));
-const keywords =
-  "and as assert async await catch constraint downto else exception export external for if in include lazy let module mutable of open private rec switch to try type unpack when while with".split(
-    " ",
-  );
+const keywords = `
+  and as assert async await catch constraint downto else exception export external for if in
+  include lazy let module mutable of open private rec switch to try type unpack when while with
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["true", "false"], "constant.builtin"),
   ...keywordTable(
-    [
-      "int",
-      "float",
-      "string",
-      "char",
-      "bool",
-      "unit",
-      "array",
-      "list",
-      "option",
-      "result",
-      "promise",
-    ],
+    `
+      int float string char bool unit array list option result promise
+    `
+      .trim()
+      .split(/\s+/),
     "type",
   ),
 ].map(({ text, then }) => ({
@@ -152,9 +146,9 @@ const code: Arm[] = [
     classify(words, [paint("function"), pushState("afterIdentifier")]),
   ),
   on(first, ...name, classify(words, [paint("variable"), pushState("afterIdentifier")])),
-  ...["...", ".."].map((s) => token(s, "punctuation.special")),
+  ...["...", ".."].map((punctuation) => token(punctuation, "punctuation.special")),
   ...["+.", "-.", "*.", "/.", "++", "->", "|>", "|||", "||", "~~~", "=>", ":=", ":>", "+="].map(
-    (s) => token(s, "operator"),
+    (operator) => token(operator, "operator"),
   ),
   token(".", "punctuation.delimiter", pushState("member")),
   token("{", "punctuation.bracket", pushState("block")),

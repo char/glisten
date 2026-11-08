@@ -30,7 +30,7 @@ const digit = range("0", "9");
 const start = union("_", range("a", "z"), range("A", "Z"));
 const rest = union("_'-", range("a", "z"), range("A", "Z"), range("0", "9"));
 const alpha = union(range("a", "z"), range("A", "Z"));
-const scheme = union("+-.", range("a", "z"), range("A", "Z"), range("0", "9"));
+const uriScheme = union("+-.", range("a", "z"), range("A", "Z"), range("0", "9"));
 const pathPart = union("._+-", range("a", "z"), range("A", "Z"), range("0", "9"));
 const uriPart = union("%/?:@&=+$,-_.!~*'", range("a", "z"), range("A", "Z"), range("0", "9"));
 
@@ -43,13 +43,13 @@ const trivia = [
   token("#", "comment", pushState("lineComment")),
   token("/*", "comment", pushState("blockComment")),
 ];
-const ident = [byte(start), bytes(rest, { min: 0 })];
+const identifier = [byte(start), bytes(rest, { min: 0 })];
 const member = paint("variable.member");
 const builtin = paint("constant.builtin");
 const keyword = paint("keyword");
 const keywords = ["if", "then", "else", "in", "rec", "or"];
 const constants = ["true", "false", "null"];
-const exprWords = (context: "expression" | "let") =>
+const expressionWords = (context: "expression" | "let") =>
   classify(
     [
       ...keywordTable(keywords, "keyword", (text) =>
@@ -67,7 +67,7 @@ const exprWords = (context: "expression" | "let") =>
 const expression = ({ context = "expression" }: { context?: "expression" | "let" } = {}): Arm[] => [
   token("#", "comment", pushState("lineComment")),
   token("/*", "comment", pushState("blockComment")),
-  on(alpha, cachedPrefix("uri", alpha, scheme, literal(":"), bytes(uriPart)), paint("text.uri")),
+  on(alpha, cachedPrefix("uri", alpha, uriScheme, literal(":"), bytes(uriPart)), paint("text.uri")),
   on(
     "<",
     literal("<"),
@@ -103,7 +103,7 @@ const expression = ({ context = "expression" }: { context?: "expression" | "let"
     ),
     paint("number"),
   ),
-  on(start, ...ident, exprWords(context)),
+  on(start, ...identifier, expressionWords(context)),
   ...["->", "//", "++", "==", "!=", "<=", ">=", "&&", "||"].map((text) =>
     on(text[0]!, literal(text), paint("operator")),
   ),
@@ -139,7 +139,7 @@ const bindingStart = (context: "let" | "braces") =>
   );
 const afterSemicolon = ({ context }: { context: "let" | "braces" }): Arm[] => [
   ...trivia,
-  on(start, ...ident, bindingStart(context)),
+  on(start, ...identifier, bindingStart(context)),
   token('"', "string", setState(context), pushState("binding"), pushState("double")),
   token(
     "${",
@@ -172,7 +172,7 @@ export default defineGrammar({
       style: "plain",
       arms: [
         ...trivia,
-        on(start, ...ident, braceCandidate),
+        on(start, ...identifier, braceCandidate),
         token('"', "string", setState("braceDynamic"), pushState("double")),
         token("${", "punctuation.special", setState("braceDynamic"), pushState("interpolation")),
       ],
@@ -228,7 +228,7 @@ export default defineGrammar({
       style: "plain",
       arms: [
         ...trivia,
-        on(start, ...ident, letInitial),
+        on(start, ...identifier, letInitial),
         token('"', "string", setState("binding"), pushState("double")),
         token("${", "punctuation.special", setState("binding"), pushState("interpolation")),
       ],
@@ -247,7 +247,7 @@ export default defineGrammar({
       style: "plain",
       arms: [
         ...trivia,
-        on(start, ...ident, member),
+        on(start, ...identifier, member),
         token('"', "string", popState(), pushState("double")),
         token("${", "punctuation.special", popState(), pushState("interpolation")),
       ],
@@ -258,7 +258,7 @@ export default defineGrammar({
       arms: [
         ...trivia,
         token("(", "punctuation.bracket", pushState("parentheses")),
-        on(start, ...ident, member),
+        on(start, ...identifier, member),
         token('"', "string", pushState("double")),
         token("${", "punctuation.special", pushState("interpolation")),
       ],

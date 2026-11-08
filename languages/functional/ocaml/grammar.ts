@@ -32,12 +32,15 @@ const lower = union("_", range("a", "z"), byteSet({ ranges: [[128, 255]] }));
 const start = union(lower, range("A", "Z"));
 const rest = union(start, digit, "'");
 const ident = [byte(start), bytes(rest, { min: 0 })];
-const quotedId = union("_", range("a", "z"), byteSet({ ranges: [[128, 255]] }));
+const quotedIdentifier = union("_", range("a", "z"), byteSet({ ranges: [[128, 255]] }));
 const operator = "!$%&*+-./:<=>?@^|~#";
-const keywords =
-  "and as assert begin class constraint do done downto effect else end exception external for fun function functor if in include inherit initializer lazy let match method module mutable new nonrec object of open private rec sig struct then to try type val virtual when while with".split(
-    " ",
-  );
+const keywords = `
+  and as assert begin class constraint do done downto effect else end exception external for fun
+  function functor if in include inherit initializer lazy let match method module mutable new
+  nonrec object of open private rec sig struct then to try type val virtual when while with
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["true", "false"], "constant.builtin"),
@@ -65,7 +68,7 @@ const rawStart = (style: "string" | "comment", head: string) =>
   on(
     "{",
     literal("{"),
-    lookahead(bytes(quotedId, { min: 0 }), literal("|")),
+    lookahead(bytes(quotedIdentifier, { min: 0 }), literal("|")),
     paint(style),
     shell.captureReset(),
     pushState(head),
@@ -176,7 +179,7 @@ export default defineGrammar({
     rawHead: {
       style: "string",
       arms: [
-        on(quotedId, bytes(quotedId), paint("string"), shell.captureAppend()),
+        on(quotedIdentifier, bytes(quotedIdentifier), paint("string"), shell.captureAppend()),
         token("|", "string", setState("raw")),
       ],
     },
@@ -187,7 +190,7 @@ export default defineGrammar({
     commentRawHead: {
       style: "comment",
       arms: [
-        on(quotedId, bytes(quotedId), paint("comment"), shell.captureAppend()),
+        on(quotedIdentifier, bytes(quotedIdentifier), paint("comment"), shell.captureAppend()),
         token("|", "comment", setState("commentRaw")),
       ],
     },
