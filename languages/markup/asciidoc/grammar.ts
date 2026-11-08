@@ -159,8 +159,8 @@ states.headerTitle = {
   arms: [token("\n", "plain", setState("headerAuthor")), token("\r", "plain")],
 };
 const blankHeader = [
-  on("\r", lineStart(), literal("\r\n"), paint("plain"), setState("root")),
-  on("\n", lineStart(), literal("\n"), paint("plain"), setState("root")),
+  on("\r", lineStart(), literal("\r\n"), paint("plain"), setState("lineStart")),
+  on("\n", lineStart(), literal("\n"), paint("plain"), setState("lineStart")),
   token("\r", "plain"),
   token("\n", "plain"),
   attribute,
@@ -179,7 +179,7 @@ states.headerAuthor = {
   arms: [
     ...blankHeader,
     revision,
-    redispatch("=[/*", lookahead(lineStart()), setState("root")),
+    redispatch("=[/*", lookahead(lineStart()), setState("lineStart")),
     on(nonLine, lineStart(), bytes(nonLine), paint("label"), setState("headerRevision")),
     ...inline,
   ],
@@ -189,13 +189,17 @@ states.headerRevision = {
   arms: [
     ...blankHeader,
     revision,
-    redispatch(nonLine, lookahead(lineStart()), setState("root")),
+    redispatch(nonLine, lookahead(lineStart()), setState("lineStart")),
     ...inline,
   ],
 };
 states.headerAttrs = {
   style: "plain",
-  arms: [...blankHeader, redispatch(nonLine, lookahead(lineStart()), setState("root")), ...inline],
+  arms: [
+    ...blankHeader,
+    redispatch(nonLine, lookahead(lineStart()), setState("lineStart")),
+    ...inline,
+  ],
 };
 states.preambleAttr = { style: "plain", arms: [redispatch("\r\n", popState()), ...inline] };
 states.lineComment = { style: "comment", arms: [redispatch("\r\n", popState())] };
@@ -408,7 +412,23 @@ for (const [mark, kind] of [
 ] as const) {
   states[`block${kind}`] = { style: "plain", arms: [lineClose(mark), ...lines, ...inline] };
 }
-states.root = { style: "plain", arms: [underlinedHeading, ...lines, ...inline] };
+// The line-start rules dispatch on nearly every byte, so they are tried in their own state
+// once per line; the text state's fallback is then free to scan prose runs.
+const continuing = (arm: Arm): Arm =>
+  arm.then.some(
+    (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
+  )
+    ? arm
+    : { ...arm, then: [...arm.then, setState("root")] };
+states.lineStart = {
+  style: "plain",
+  arms: [underlinedHeading, ...lines].map(continuing),
+  otherwise: [setState("root")],
+};
+states.root = {
+  style: "plain",
+  arms: [token("\n", "plain", setState("lineStart")), ...inline],
+};
 states.preamble = {
   style: "plain",
   arms: [
@@ -447,7 +467,7 @@ states.preamble = {
     token("\r", "plain"),
     token("\n", "plain"),
   ],
-  otherwise: [setState("root")],
+  otherwise: [setState("lineStart")],
 };
 export default defineGrammar({
   name: "asciidoc",
