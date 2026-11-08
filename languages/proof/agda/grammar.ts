@@ -84,10 +84,14 @@ const lineComment = on("-", literal("--"), boundary, paint("comment"), pushState
 const blockComment = token("{-", "comment", pushState("blockComment"));
 const pragma = token("{-#", "keyword", pushState("pragma"));
 const hole = token("{!", "constant.builtin", pushState("hole"));
-const keywords =
-  "module open import using hiding renaming to public data record field constructor eta-equality no-eta-equality where with rewrite let in postulate primitive abstract private instance mutual infix infixl infixr syntax pattern macro quote quoteTerm unquote unquoteDecl unquoteDef tactic variable opaque unfolding forall codata coinductive inductive interleaved overlap do".split(
-    " ",
-  );
+const keywords = `
+  module open import using hiding renaming to public data record field constructor eta-equality
+  no-eta-equality where with rewrite let in postulate primitive abstract private instance mutual
+  infix infixl infixr syntax pattern macro quote quoteTerm unquote unquoteDecl unquoteDef tactic
+  variable opaque unfolding forall codata coinductive inductive interleaved overlap do
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable([":", "=", "→", "->", "λ", "\\", "∀", "|"], "operator"),

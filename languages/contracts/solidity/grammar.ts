@@ -34,10 +34,17 @@ const word = (text: string) => [literal(text), notNext(rest)];
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
 const operators = "!%&*+-/:<=>?^|~";
 const opPart = choice([byte(except(operators, "/"))], [literal("/"), notNext("/*")]);
-const keywords =
-  "abstract after alias anonymous apply auto bool break case catch constant constructor continue copyof default define delete do else emit enum error event external fallback false final for from function if immutable implements import in indexed inline interface internal is library let macro mapping match modifier mutable new null of override partial payable pragma private public pure receive relocatable return returns revert sealed sizeof solidity static storage struct supports switch this throw true try type typeof unchecked using var view virtual while memory calldata transient assembly".split(
-    " ",
-  );
+const keywords = `
+  abstract after alias anonymous apply auto bool break case catch constant constructor continue
+  copyof default define delete do else emit enum error event external fallback false final for
+  from function if immutable implements import in indexed inline interface internal is library let
+  macro mapping match modifier mutable new null of override partial payable pragma private public
+  pure receive relocatable return returns revert sealed sizeof solidity static storage struct
+  supports switch this throw true try type typeof unchecked using var view virtual while memory
+  calldata transient assembly
+`
+  .trim()
+  .split(/\s+/);
 const types = [
   "address",
   "bool",
@@ -65,29 +72,32 @@ const words = [
     "constant.builtin",
   ),
   ...keywordTable(
-    [
-      "require",
-      "assert",
-      "keccak256",
-      "sha256",
-      "ripemd160",
-      "ecrecover",
-      "addmod",
-      "mulmod",
-      "gasleft",
-      "selfdestruct",
-      "blockhash",
-    ],
+    `
+      require assert keccak256 sha256 ripemd160 ecrecover addmod mulmod gasleft selfdestruct
+      blockhash
+    `
+      .trim()
+      .split(/\s+/),
     "function",
   ),
 ];
-const yulKeywords = "let function if switch case default for break continue leave true false".split(
-  " ",
-);
-const yulBuiltins =
-  "stop add sub mul div sdiv mod smod exp not lt gt slt sgt eq iszero and or xor byte shl shr sar addmod mulmod signextend keccak256 pop mload mstore mstore8 sload sstore tload tstore msize gas address balance selfbalance caller callvalue calldataload calldatasize calldatacopy codesize codecopy extcodesize extcodecopy returndatasize returndatacopy extcodehash create create2 call callcode delegatecall staticcall return revert selfdestruct invalid log0 log1 log2 log3 log4 chainid origin gasprice blockhash coinbase timestamp number difficulty prevrandao gaslimit basefee blobbasefee blobhash pc datasize dataoffset datacopy setimmutable loadimmutable memoryguard".split(
-    " ",
-  );
+const yulKeywords = `
+  let function if switch case default for break continue leave true false
+`
+  .trim()
+  .split(/\s+/);
+const yulBuiltins = `
+  stop add sub mul div sdiv mod smod exp not lt gt slt sgt eq iszero and or xor byte shl shr sar
+  addmod mulmod signextend keccak256 pop mload mstore mstore8 sload sstore tload tstore msize gas
+  address balance selfbalance caller callvalue calldataload calldatasize calldatacopy codesize
+  codecopy extcodesize extcodecopy returndatasize returndatacopy extcodehash create create2 call
+  callcode delegatecall staticcall return revert selfdestruct invalid log0 log1 log2 log3 log4
+  chainid origin gasprice blockhash coinbase timestamp number difficulty prevrandao gaslimit
+  basefee blobbasefee blobhash pc datasize dataoffset datacopy setimmutable loadimmutable
+  memoryguard
+`
+  .trim()
+  .split(/\s+/);
 const yulWords = [
   ...keywordTable(yulKeywords, "keyword"),
   ...keywordTable(yulBuiltins, "function"),

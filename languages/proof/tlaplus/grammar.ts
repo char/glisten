@@ -29,14 +29,20 @@ const rest = union(letter, digit);
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const white = " \t\r\n\f";
 const ident = [byte(letter), bytes(rest, { min: 0 })];
-const keywords =
-  "ACTION ASSUME ASSUMPTION AXIOM BY CASE CHOOSE CONSTANT CONSTANTS COROLLARY DEF DEFINE DEFS DOMAIN ELSE ENABLED EXCEPT EXTENDS HAVE HIDE IF IN INSTANCE LAMBDA LEMMA LET LOCAL MODULE NEW OBVIOUS OMITTED ONLY OTHER PICK PROOF PROPOSITION PROVE QED RECURSIVE STATE SUBSET SUFFICES TAKE TEMPORAL THEN THEOREM UNCHANGED UNION USE VARIABLE VARIABLES WITH WITNESS".split(
-    " ",
-  );
-const pcalKeywords =
-  "algorithm assert await begin call define do either else elsif end fair goto if macro or print procedure process return skip then variable variables when while with".split(
-    " ",
-  );
+const keywords = `
+  ACTION ASSUME ASSUMPTION AXIOM BY CASE CHOOSE CONSTANT CONSTANTS COROLLARY DEF DEFINE DEFS
+  DOMAIN ELSE ENABLED EXCEPT EXTENDS HAVE HIDE IF IN INSTANCE LAMBDA LEMMA LET LOCAL MODULE NEW
+  OBVIOUS OMITTED ONLY OTHER PICK PROOF PROPOSITION PROVE QED RECURSIVE STATE SUBSET SUFFICES TAKE
+  TEMPORAL THEN THEOREM UNCHANGED UNION USE VARIABLE VARIABLES WITH WITNESS
+`
+  .trim()
+  .split(/\s+/);
+const pcalKeywords = `
+  algorithm assert await begin call define do either else elsif end fair goto if macro or print
+  procedure process return skip then variable variables when while with
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["TRUE", "FALSE"], "constant.builtin"),

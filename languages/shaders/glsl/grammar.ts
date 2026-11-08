@@ -6,9 +6,13 @@ const glslExtension: CExtension = ({ rest, ident }) => ({
   aliases: ["vert", "frag"],
   keywords: (keywords) => {
     keywords.push(
-      ..."in out inout uniform buffer shared layout flat smooth noperspective highp mediump lowp precision invariant centroid sample patch coherent readonly writeonly subroutine attribute varying precise discard".split(
-        " ",
-      ),
+      ...`
+        in out inout uniform buffer shared layout flat smooth noperspective highp mediump lowp
+        precision invariant centroid sample patch coherent readonly writeonly subroutine attribute
+        varying precise discard
+      `
+        .trim()
+        .split(/\s+/),
     );
   },
   types: (types) => {
@@ -22,19 +26,12 @@ const glslExtension: CExtension = ({ rest, ident }) => ({
         [2, 3, 4].flatMap((n) => [`${prefix}${n}`, ...[2, 3, 4].map((m) => `${prefix}${n}x${m}`)]),
       ),
       ...["", "i", "u"].flatMap((prefix) =>
-        [
-          "1D",
-          "2D",
-          "3D",
-          "Cube",
-          "2DRect",
-          "1DArray",
-          "2DArray",
-          "CubeArray",
-          "Buffer",
-          "2DMS",
-          "2DMSArray",
-        ].flatMap((dim) => [`${prefix}sampler${dim}`, `${prefix}image${dim}`]),
+        `
+          1D 2D 3D Cube 2DRect 1DArray 2DArray CubeArray Buffer 2DMS 2DMSArray
+        `
+          .trim()
+          .split(/\s+/)
+          .flatMap((dim) => [`${prefix}sampler${dim}`, `${prefix}image${dim}`]),
       ),
       ...["1D", "2D", "Cube", "2DRect", "1DArray", "2DArray", "CubeArray"].map(
         (dim) => `sampler${dim}Shadow`,

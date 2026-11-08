@@ -37,11 +37,20 @@ const symbols = "#$&*+-./:<=>?@\\^~";
 const name = [byte(atomStart), bytes(rest, { min: 0 })];
 const digits = (set = digit) => [byte(set), repeat(optional(literal("_")), byte(set))];
 const words = [
-  ...keywordTable("is mod rem div rdiv xor not".split(" "), "operator"),
   ...keywordTable(
-    "dynamic multifile discontiguous meta_predicate module_transparent thread_local public".split(
-      " ",
-    ),
+    `
+    is mod rem div rdiv xor not
+  `
+      .trim()
+      .split(/\s+/),
+    "operator",
+  ),
+  ...keywordTable(
+    `
+      dynamic multifile discontiguous meta_predicate module_transparent thread_local public
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(["true", "false", "fail", "repeat"], "constant.builtin"),

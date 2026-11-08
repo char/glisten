@@ -27,14 +27,25 @@ const rest = union(start, digit, "_");
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const digits = union(digit, "_");
 const hex = union(digits, range("a", "f"), range("A", "F"));
-const keywords =
-  `abs access after alias all and architecture array assert assume assume_guarantee attribute begin block body buffer bus case component configuration constant context cover default disconnect downto else elsif end entity exit fairness file for force function generate generic group guarded if impure in inertial inout is label library linkage literal loop map mod nand new next nor not null of on open or others out package parameter port postponed procedure process property protected private pure range record register reject release rem report restrict restrict_guarantee return rol ror select sequence severity shared signal sla sll sra srl strong subtype then to transport type unaffected units until use variable view vmode vpkg vprop vunit wait when while with xnor xor`.split(
-    /\s+/,
-  );
-const types =
-  `bit bit_vector boolean character integer natural positive real string time std_logic std_ulogic std_logic_vector std_ulogic_vector signed unsigned`.split(
-    /\s+/,
-  );
+const keywords = `
+  abs access after alias all and architecture array assert assume assume_guarantee attribute begin
+  block body buffer bus case component configuration constant context cover default disconnect
+  downto else elsif end entity exit fairness file for force function generate generic group
+  guarded if impure in inertial inout is label library linkage literal loop map mod nand new next
+  nor not null of on open or others out package parameter port postponed procedure process
+  property protected private pure range record register reject release rem report restrict
+  restrict_guarantee return rol ror select sequence severity shared signal sla sll sra srl strong
+  subtype then to transport type unaffected units until use variable view vmode vpkg vprop vunit
+  wait when while with xnor xor
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bit bit_vector boolean character integer natural positive real string time std_logic std_ulogic
+  std_logic_vector std_ulogic_vector signed unsigned
+`
+  .trim()
+  .split(/\s+/);
 const wordCases = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(types, "type").map((item) => ({

@@ -28,7 +28,7 @@ const gap = bytes(" \t\r\n", { min: 0 });
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const words = [
   ...keywordTable(
-    "permit forbid when unless if then else in has like template".split(" "),
+    `permit forbid when unless if then else in has like template`.trim().split(/\s+/),
     "keyword",
   ),
   ...keywordTable(["true", "false"], "constant.builtin"),

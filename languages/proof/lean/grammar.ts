@@ -78,91 +78,23 @@ const ident = [
   repeat(choice([bytes(asciiRest)], unicodeName)),
   optional(byte("?!"), notNext("=")),
 ];
-const keywords = [
-  "where",
-  "deriving",
-  "namespace",
-  "section",
-  "end",
-  "open",
-  "export",
-  "variable",
-  "variables",
-  "universe",
-  "universes",
-  "import",
-  "fun",
-  "let",
-  "have",
-  "show",
-  "from",
-  "calc",
-  "match",
-  "with",
-  "if",
-  "then",
-  "else",
-  "do",
-  "for",
-  "in",
-  "return",
-  "extends",
-  "private",
-  "protected",
-  "noncomputable",
-  "unsafe",
-  "partial",
-  "mutual",
-  "termination_by",
-  "decreasing_by",
-  "macro",
-  "syntax",
-  "notation",
-  "infix",
-  "infixl",
-  "infixr",
-  "prefix",
-  "postfix",
-  "attribute",
-  "set_option",
-  "example",
-];
+const keywords = `
+  where deriving namespace section end open export variable variables universe universes import
+  fun let have show from calc match with if then else do for in return extends private protected
+  noncomputable unsafe partial mutual termination_by decreasing_by macro syntax notation infix
+  infixl infixr prefix postfix attribute set_option example
+`
+  .trim()
+  .split(/\s+/);
 const declarations = ["def", "theorem", "lemma", "abbrev", "axiom", "opaque", "constant"];
 const types = ["structure", "class", "inductive"];
-const tactics = [
-  "intro",
-  "intros",
-  "simp",
-  "simp_all",
-  "rw",
-  "rfl",
-  "exact",
-  "apply",
-  "induction",
-  "cases",
-  "omega",
-  "aesop",
-  "assumption",
-  "trivial",
-  "constructor",
-  "refine",
-  "have",
-  "show",
-  "decide",
-  "norm_num",
-  "linarith",
-  "ring",
-  "unfold",
-  "dsimp",
-  "change",
-  "contradiction",
-  "obtain",
-  "rcases",
-  "ext",
-  "funext",
-  "exists",
-  "use",
-];
+const tactics = `
+  intro intros simp simp_all rw rfl exact apply induction cases omega aesop assumption trivial
+  constructor refine have show decide norm_num linarith ring unfold dsimp change contradiction
+  obtain rcases ext funext exists use
+`
+  .trim()
+  .split(/\s+/);
 const tacticColumn = slot.column("tactic");
 const all = byteSet({ ranges: [[0, 255]] });
 const hex = union(digit, range("a", "f"), range("A", "F"));
@@ -177,6 +109,12 @@ const number = [
     ],
   ),
 ];
+const bracketOpeners = [
+  ["⟨", "angle"],
+  ["(", "paren"],
+  ["[", "bracket"],
+  ["{", "brace"],
+] as const;
 const braces = [
   ["paren", ")"],
   ["bracket", "]"],
@@ -240,13 +178,8 @@ function codeToken(): Arm[] {
     token("«", "variable", popState(), pushState("quotedName")),
     on(digit, ...number, paint("number"), popState()),
     token("λ", "keyword", popState()),
-    ...["⟨", "(", "[", "{"].map((s, i) =>
-      token(
-        s,
-        "punctuation.bracket",
-        popState(),
-        pushState(["angle", "paren", "bracket", "brace"][i]!),
-      ),
+    ...bracketOpeners.map(([open, state]) =>
+      token(open, "punctuation.bracket", popState(), pushState(state)),
     ),
     ...operators
       .filter((op) => !["λ", "⟨", "⟩", "«", "»"].includes(op))
@@ -276,18 +209,18 @@ type TacticPhase = "start" | "body" | "case";
 const tacticState = (context: TacticContext, phase: TacticPhase) => `tactic_${context}_${phase}`;
 const tacticGuard = (context: TacticContext, phase: TacticPhase) =>
   `tacticGuard_${context}_${phase}`;
-const firstTactic = (inside: boolean) => (inside ? "tacticFirstInside" : "tacticFirst");
+const firstTactic = (context: TacticContext) =>
+  context === "block" ? "tacticFirst" : "tacticFirstInside";
 
 const nameEnd = notLookahead(choice([byte(asciiRest)], unicodeName, [byte("?!"), notNext("=")]));
 
 function tacticCode(context: TacticContext, phase: TacticPhase): Arm[] {
-  const inside = context !== "block";
   const startState = tacticState(context, "start");
   const close =
     context in tacticBrackets ? tacticBrackets[context as keyof typeof tacticBrackets] : "";
   const begin = [
     setState(tacticGuard(context, "body")),
-    pushState(firstTactic(inside)),
+    pushState(firstTactic(context)),
     saveColumn(tacticColumn),
   ];
   return [
@@ -329,14 +262,7 @@ function tacticCode(context: TacticContext, phase: TacticPhase): Arm[] {
       : [token("=>", "operator", setState(startState))]),
     token("<;>", "operator", setState(startState)),
     token(";", "punctuation.delimiter", setState(startState)),
-    ...(
-      [
-        ["⟨", "angle"],
-        ["(", "paren"],
-        ["[", "bracket"],
-        ["{", "brace"],
-      ] as const
-    ).map(([open, name]) =>
+    ...bracketOpeners.map(([open, name]) =>
       token(
         open,
         "punctuation.bracket",
@@ -415,8 +341,8 @@ states.tacticTokenStart = {
   ],
   otherwise: [setState("codeToken")],
 };
-for (const inside of [false, true]) {
-  const first = firstTactic(inside);
+for (const context of ["block", "inside"] as const) {
+  const first = firstTactic(context);
   const pendingComment = `${first}Comment`;
   states[first] = {
     style: "plain",
@@ -424,7 +350,7 @@ for (const inside of [false, true]) {
       on(" \t\r\n", bytes(" \t\r\n"), paint("plain"), saveColumn(tacticColumn)),
       token("--", "comment", pushState("lineComment")),
       token("/-", "comment", setState(pendingComment)),
-      redispatch(all, setState(tacticState(inside ? "inside" : "block", "start"))),
+      redispatch(all, setState(tacticState(context, "start"))),
     ],
   };
   states[pendingComment] = {

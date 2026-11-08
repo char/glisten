@@ -27,10 +27,18 @@ const rest = union(first, digit);
 const name = [byte(first), bytes(rest, { min: 0 })];
 const gap = bytes(" \t\r\n", { min: 0 });
 const hex = union(digit, range("a", "f"), range("A", "F"));
+const policyVariables = keywordTable(["principal", "resource", "context"], "variable");
 const words = [
-  ...keywordTable("namespace entity type in appliesTo attributes tags enum".split(" "), "keyword"),
+  ...keywordTable(
+    `
+    namespace entity type in appliesTo attributes tags enum
+  `
+      .trim()
+      .split(/\s+/),
+    "keyword",
+  ),
   ...keywordTable(["true", "false"], "constant.builtin"),
-  ...keywordTable(["principal", "resource", "context"], "variable"),
+  ...policyVariables,
 ];
 const comment = token("//", "comment", pushState("comment"));
 
@@ -49,9 +57,7 @@ export default defineGrammar({
           first,
           ...name,
           lookahead(gap, optional(literal("?"), gap), literal(":"), notNext(":")),
-          classify(keywordTable(["principal", "resource", "context"], "variable"), [
-            paint("property"),
-          ]),
+          classify(policyVariables, [paint("property")]),
         ),
         on("a", literal("action"), notNext(rest), paint("keyword"), pushState("actionNames")),
         on(first, ...name, classify(words, [paint("type")])),

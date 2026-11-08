@@ -26,7 +26,11 @@ const digit = range("0", "9");
 const first = union("_", range("a", "z"), range("A", "Z"));
 const rest = union(first, digit);
 const name = [byte(first), bytes(rest, { min: 0 })];
-const keywords = "package import as default else if contains in every some not with".split(" ");
+const keywords = `
+  package import as default else if contains in every some not with
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),

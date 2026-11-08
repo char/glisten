@@ -124,80 +124,29 @@ const types: readonly (readonly [string, string])[] = [
   ["treemap-beta", "generic"],
 ];
 const keywords: Record<string, string[]> = {
-  flow: [
-    "subgraph",
-    "end",
-    "classDef",
-    "class",
-    "style",
-    "linkStyle",
-    "click",
-    "direction",
-    "default",
-    "TD",
-    "TB",
-    "BT",
-    "RL",
-    "LR",
-  ],
-  sequence: [
-    "participant",
-    "actor",
-    "as",
-    "activate",
-    "deactivate",
-    "loop",
-    "alt",
-    "else",
-    "opt",
-    "par",
-    "and",
-    "critical",
-    "option",
-    "break",
-    "rect",
-    "end",
-    "Note",
-    "over",
-    "right",
-    "left",
-    "of",
-    "autonumber",
-    "box",
-    "create",
-    "destroy",
-  ],
-  class: [
-    "class",
-    "namespace",
-    "end",
-    "direction",
-    "note",
-    "for",
-    "state",
-    "as",
-    "link",
-    "click",
-    "callback",
-  ],
+  flow: `
+    subgraph end classDef class style linkStyle click direction default TD TB BT RL LR
+  `
+    .trim()
+    .split(/\s+/),
+  sequence: `
+    participant actor as activate deactivate loop alt else opt par and critical option break rect
+    end Note over right left of autonumber box create destroy
+  `
+    .trim()
+    .split(/\s+/),
+  class: `
+    class namespace end direction note for state as link click callback
+  `
+    .trim()
+    .split(/\s+/),
   er: ["direction", "title"],
-  generic: [
-    "title",
-    "section",
-    "dateFormat",
-    "axisFormat",
-    "excludes",
-    "includes",
-    "todayMarker",
-    "tickInterval",
-    "accTitle",
-    "accDescr",
-    "direction",
-    "end",
-    "showData",
-    "x-axis",
-    "y-axis",
-  ],
+  generic: `
+    title section dateFormat axisFormat excludes includes todayMarker tickInterval accTitle
+    accDescr direction end showData x-axis y-axis
+  `
+    .trim()
+    .split(/\s+/),
 };
 const arrows = [
   "<<-->>",
@@ -285,39 +234,32 @@ for (const [mode, words] of Object.entries(keywords)) {
   const selected = words.map((text) =>
     on(text[0]!, literal(text), notNext(word), paint("keyword")),
   );
-  states[mode] = {
-    style: "plain",
-    arms: [
-      ...common,
-      ...selected,
-      ...(mode === "flow"
-        ? [
-            on(
-              "-",
-              literal("--"),
-              lookahead(bytes(" \t")),
-              paint("operator"),
-              pushState("arrowText"),
-            ),
-          ]
-        : []),
-      ...edgeArms,
-      ...(mode === "flow"
-        ? [
-            token("[", "punctuation.bracket", pushState("squareLabel")),
-            token("(", "punctuation.bracket", pushState("roundLabel")),
-            token("{", "punctuation.bracket", pushState("braceLabel")),
-            token("|", "punctuation.special", pushState("edgeLabel")),
-            token(">", "punctuation.bracket", pushState("squareLabel")),
-          ]
-        : []),
-      ...(mode === "sequence" ? [token(":", "punctuation.delimiter", pushState("lineLabel"))] : []),
-      ...["[", "]", "(", ")", "{", "}"].map((text) => token(text, "punctuation.bracket")),
-      ...[":", ",", ";"].map((text) => token(text, "punctuation.delimiter")),
-      ...["+", "-", "#", "~", "=", "*", "|"].map((text) => token(text, "operator")),
-      names,
-    ],
-  };
+  const arms = [...common, ...selected];
+  if (mode === "flow") {
+    arms.push(
+      on("-", literal("--"), lookahead(bytes(" \t")), paint("operator"), pushState("arrowText")),
+    );
+  }
+  arms.push(...edgeArms);
+  if (mode === "flow") {
+    arms.push(
+      token("[", "punctuation.bracket", pushState("squareLabel")),
+      token("(", "punctuation.bracket", pushState("roundLabel")),
+      token("{", "punctuation.bracket", pushState("braceLabel")),
+      token("|", "punctuation.special", pushState("edgeLabel")),
+      token(">", "punctuation.bracket", pushState("squareLabel")),
+    );
+  }
+  if (mode === "sequence") {
+    arms.push(token(":", "punctuation.delimiter", pushState("lineLabel")));
+  }
+  arms.push(
+    ...["[", "]", "(", ")", "{", "}"].map((text) => token(text, "punctuation.bracket")),
+    ...[":", ",", ";"].map((text) => token(text, "punctuation.delimiter")),
+    ...["+", "-", "#", "~", "=", "*", "|"].map((text) => token(text, "operator")),
+    names,
+  );
+  states[mode] = { style: "plain", arms };
 }
 for (const [name, end] of [
   ["squareLabel", "]"],

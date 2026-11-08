@@ -34,14 +34,35 @@ const all = byteSet({ ranges: [[0, 255]] });
 const nonSpace = except(all, " \t\r\n\f\v");
 const digits = union(digit, "_");
 const basedDigits = union(digit, range("a", "f"), range("A", "F"), "xXzZ?_");
-const keywords =
-  `accept_on alias always always_comb always_ff always_latch and assert assign assume automatic before begin bind bins binsof break buf bufif0 bufif1 case casex casez cell checker clocking cmos config const constraint context continue cover covergroup coverpoint cross deassign default defparam design disable dist do edge else end endcase endchecker endclass endclocking endconfig endfunction endgenerate endgroup endinterface endmodule endpackage endprimitive endprogram endproperty endspecify endsequence endtable endtask enum event eventually expect export extends extern final first_match for force foreach forever fork forkjoin function generate genvar global highz0 highz1 if iff ifnone ignore_bins illegal_bins implements implies import incdir include initial inout input inside instance interconnect intersect join join_any join_none large let liblist library local localparam macromodule matches medium modport module nand negedge nettype new nexttime nmos nor noshowcancelled null not notif0 notif1 or output package packed parameter pmos posedge primitive priority program property protected pull0 pull1 pulldown pullup pulsestyle_onevent pulsestyle_ondetect pure rand randc randcase randsequence rcmos ref reject_on release repeat restrict return rnmos rpmos rtran rtranif0 rtranif1 s_always s_eventually s_nexttime s_until s_until_with scalared sequence showcancelled signed small soft solve specify specparam static strong strong0 strong1 super supply0 supply1 sync_accept_on sync_reject_on table tagged task this throughout timeprecision timeunit tran tranif0 tranif1 tri tri0 tri1 triand trior trireg type typedef union unique unique0 unsigned until until_with untyped use uwire var vectored virtual wait wait_order wand weak weak0 weak1 while wildcard wire with within wor xnor xor`.split(
-    /\s+/,
-  );
-const types =
-  `bit byte chandle int integer logic longint shortint shortreal real realtime reg string time void`.split(
-    /\s+/,
-  );
+const keywords = `
+  accept_on alias always always_comb always_ff always_latch and assert assign assume automatic
+  before begin bind bins binsof break buf bufif0 bufif1 case casex casez cell checker clocking
+  cmos config const constraint context continue cover covergroup coverpoint cross deassign default
+  defparam design disable dist do edge else end endcase endchecker endclass endclocking endconfig
+  endfunction endgenerate endgroup endinterface endmodule endpackage endprimitive endprogram
+  endproperty endspecify endsequence endtable endtask enum event eventually expect export extends
+  extern final first_match for force foreach forever fork forkjoin function generate genvar global
+  highz0 highz1 if iff ifnone ignore_bins illegal_bins implements implies import incdir include
+  initial inout input inside instance interconnect intersect join join_any join_none large let
+  liblist library local localparam macromodule matches medium modport module nand negedge nettype
+  new nexttime nmos nor noshowcancelled null not notif0 notif1 or output package packed parameter
+  pmos posedge primitive priority program property protected pull0 pull1 pulldown pullup
+  pulsestyle_onevent pulsestyle_ondetect pure rand randc randcase randsequence rcmos ref reject_on
+  release repeat restrict return rnmos rpmos rtran rtranif0 rtranif1 s_always s_eventually
+  s_nexttime s_until s_until_with scalared sequence showcancelled signed small soft solve specify
+  specparam static strong strong0 strong1 super supply0 supply1 sync_accept_on sync_reject_on
+  table tagged task this throughout timeprecision timeunit tran tranif0 tranif1 tri tri0 tri1
+  triand trior trireg type typedef union unique unique0 unsigned until until_with untyped use
+  uwire var vectored virtual wait wait_order wand weak weak0 weak1 while wildcard wire with within
+  wor xnor xor
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bit byte chandle int integer logic longint shortint shortreal real realtime reg string time void
+`
+  .trim()
+  .split(/\s+/);
 const typeWords = new Set(types);
 const declarationWords = [
   "module",
@@ -66,9 +87,13 @@ const keywordCases = [
   ...keywordTable([...typeWords], "type"),
 ];
 const directives = new Set(
-  `begin_keywords celldefine default_nettype define else elsif end_keywords endcelldefine endif ifdef ifndef include line nounconnected_drive pragma resetall timescale unconnected_drive undef undefineall`.split(
-    /\s+/,
-  ),
+  `
+  begin_keywords celldefine default_nettype define else elsif end_keywords endcelldefine endif
+  ifdef ifndef include line nounconnected_drive pragma resetall timescale unconnected_drive undef
+  undefineall
+`
+    .trim()
+    .split(/\s+/),
 );
 const directiveCases = [...directives].map((text) => ({
   text: `\`${text}`,

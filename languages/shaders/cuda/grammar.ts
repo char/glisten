@@ -34,17 +34,23 @@ const cudaExtension: CExtension = (base) => {
     keywords: (words) => {
       cpp.keywords?.(words);
       words.push(
-        ..."__global__ __device__ __host__ __shared__ __constant__ __managed__ __restrict__ __forceinline__ __launch_bounds__".split(
-          " ",
-        ),
+        ...`
+          __global__ __device__ __host__ __shared__ __constant__ __managed__ __restrict__
+          __forceinline__ __launch_bounds__
+        `
+          .trim()
+          .split(/\s+/),
       );
     },
     types: (words) => {
       cpp.types?.(words);
       words.push(
         "dim3",
-        ..."char uchar short ushort int uint long ulong longlong ulonglong float double"
-          .split(" ")
+        ...`
+          char uchar short ushort int uint long ulong longlong ulonglong float double
+        `
+          .trim()
+          .split(/\s+/)
           .flatMap((name) => [1, 2, 3, 4].map((n) => `${name}${n}`)),
       );
     },

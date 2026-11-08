@@ -61,11 +61,17 @@ const number = on(
   optional(choice([bytes(alpha)], [literal("%")])),
   paint("number"),
 );
-const keywords =
-  "let set show import include if else for in while break continue return context as not and or with".split(
-    " ",
-  );
-const constants = "none auto true false".split(" ");
+const keywords = `
+  let set show import include if else for in while break continue return context as not and or
+  with
+`
+  .trim()
+  .split(/\s+/);
+const constants = `
+  none auto true false
+`
+  .trim()
+  .split(/\s+/);
 const words: Arm[] = [
   ...keywords.map((word) => on(word[0]!, literal(word), notNext(identifier), paint("keyword"))),
   ...constants.map((word) =>
@@ -164,18 +170,27 @@ states.controlAfter = {
 states.codeHead = {
   style: "plain",
   arms: [
-    ..."let set show import include return context"
-      .split(" ")
+    ...`
+      let set show import include return context
+    `
+      .trim()
+      .split(/\s+/)
       .map((word) =>
         on(word[0]!, literal(word), notNext(identifier), paint("keyword"), setState("statement")),
       ),
-    ..."if for while else"
-      .split(" ")
+    ...`
+      if for while else
+    `
+      .trim()
+      .split(/\s+/)
       .map((word) =>
         on(word[0]!, literal(word), notNext(identifier), paint("keyword"), setState("control")),
       ),
-    ..."break continue"
-      .split(" ")
+    ...`
+      break continue
+    `
+      .trim()
+      .split(/\s+/)
       .map((word) =>
         on(word[0]!, literal(word), notNext(identifier), paint("keyword"), setState("chain")),
       ),

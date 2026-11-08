@@ -67,24 +67,12 @@ const literalQuoteArms = [
 ];
 const comment = token("<!--", "comment", pushState("comment"));
 const processing = token("<?", "punctuation.bracket", pushState("piTarget"));
-const dtdWords = [
-  "ENTITY",
-  "NOTATION",
-  "SYSTEM",
-  "PUBLIC",
-  "NDATA",
-  "EMPTY",
-  "ANY",
-  "CDATA",
-  "ID",
-  "IDREF",
-  "IDREFS",
-  "ENTITIES",
-  "NMTOKEN",
-  "NMTOKENS",
-  "INCLUDE",
-  "IGNORE",
-];
+const dtdWords = `
+  ENTITY NOTATION SYSTEM PUBLIC NDATA EMPTY ANY CDATA ID IDREF IDREFS ENTITIES NMTOKEN NMTOKENS
+  INCLUDE IGNORE
+`
+  .trim()
+  .split(/\s+/);
 const dtdWord = on(
   nameStart,
   ...name,

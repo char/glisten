@@ -27,17 +27,23 @@ const hlslExtension: CExtension = (base) => {
     keywords: (keywords) => {
       cpp.keywords?.(keywords);
       keywords.push(
-        ..."in out inout uniform groupshared precise nointerpolation linear centroid sample noperspective row_major column_major globallycoherent cbuffer tbuffer discard shared snorm unorm".split(
-          " ",
-        ),
+        ...`
+          in out inout uniform groupshared precise nointerpolation linear centroid sample
+          noperspective row_major column_major globallycoherent cbuffer tbuffer discard shared
+          snorm unorm
+        `
+          .trim()
+          .split(/\s+/),
       );
     },
     types: (types) => {
       cpp.types?.(types);
-      const scalars =
-        "bool int uint dword half float double min16float min10float min16int min12int min16uint int16_t uint16_t int32_t uint32_t int64_t uint64_t float16_t float32_t float64_t".split(
-          " ",
-        );
+      const scalars = `
+        bool int uint dword half float double min16float min10float min16int min12int min16uint
+        int16_t uint16_t int32_t uint32_t int64_t uint64_t float16_t float32_t float64_t
+      `
+        .trim()
+        .split(/\s+/);
       types.push(
         ...scalars.filter((type) => !types.includes(type)),
         ...scalars.flatMap((type) =>
@@ -48,9 +54,20 @@ const hlslExtension: CExtension = (base) => {
         ),
       );
       types.push(
-        ..."vector matrix Texture1D Texture1DArray Texture2D Texture2DArray Texture2DMS Texture2DMSArray Texture3D TextureCube TextureCubeArray RWTexture1D RWTexture1DArray RWTexture2D RWTexture2DArray RWTexture3D Buffer RWBuffer StructuredBuffer RWStructuredBuffer AppendStructuredBuffer ConsumeStructuredBuffer ByteAddressBuffer RWByteAddressBuffer ConstantBuffer SamplerState SamplerComparisonState RasterizerOrderedBuffer RasterizerOrderedByteAddressBuffer RasterizerOrderedStructuredBuffer RasterizerOrderedTexture1D RasterizerOrderedTexture1DArray RasterizerOrderedTexture2D RasterizerOrderedTexture2DArray RasterizerOrderedTexture3D RaytracingAccelerationStructure".split(
-          " ",
-        ),
+        ...`
+          vector matrix Texture1D Texture1DArray Texture2D Texture2DArray Texture2DMS
+          Texture2DMSArray Texture3D TextureCube TextureCubeArray RWTexture1D RWTexture1DArray
+          RWTexture2D RWTexture2DArray RWTexture3D Buffer RWBuffer StructuredBuffer
+          RWStructuredBuffer AppendStructuredBuffer ConsumeStructuredBuffer ByteAddressBuffer
+          RWByteAddressBuffer ConstantBuffer SamplerState SamplerComparisonState
+          RasterizerOrderedBuffer RasterizerOrderedByteAddressBuffer
+          RasterizerOrderedStructuredBuffer RasterizerOrderedTexture1D
+          RasterizerOrderedTexture1DArray RasterizerOrderedTexture2D
+          RasterizerOrderedTexture2DArray RasterizerOrderedTexture3D
+          RaytracingAccelerationStructure
+        `
+          .trim()
+          .split(/\s+/),
       );
     },
     beforeStrings: [
@@ -61,8 +78,13 @@ const hlslExtension: CExtension = (base) => {
         lookahead(
           bytes(" \t", { min: 0 }),
           choice(
-            ..."numthreads unroll loop branch flatten fastopt allow_uav_condition shader maxvertexcount domain partitioning outputtopology outputcontrolpoints patchconstantfunc earlydepthstencil wavesize"
-              .split(" ")
+            ...`
+              numthreads unroll loop branch flatten fastopt allow_uav_condition shader
+              maxvertexcount domain partitioning outputtopology outputcontrolpoints
+              patchconstantfunc earlydepthstencil wavesize
+            `
+              .trim()
+              .split(/\s+/)
               .map((word) => [literal(word)]),
           ),
           notNext(rest),
