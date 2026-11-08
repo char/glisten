@@ -86,6 +86,7 @@ const keywords = [
   "as",
 ];
 const valueKeywords = ["true", "false", "null", "undefined", "this"];
+const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const expressionKeywords = new Set([
   "await",
   "case",
@@ -178,46 +179,56 @@ function code(
   const value = context + "Value";
   const after = context + "After";
   const mayStart = position !== "After";
+  const typed = types
+    ? [
+        { text: "type", then: [paint("keyword"), setState(value), pushState("tsAliasName")] },
+        {
+          text: "interface",
+          then: [paint("keyword"), setState(value), pushState("tsInterfaceName")],
+        },
+        ...["enum", "namespace", "module"].map((text) => ({
+          text,
+          then: [
+            paint("keyword"),
+            setState(value),
+            pushState(text === "enum" ? "tsDeclName" : "tsNamespaceName"),
+          ],
+        })),
+        { text: "satisfies", then: [paint("keyword"), setState(after), pushState("tsType")] },
+        {
+          text: "implements",
+          then: [paint("keyword"), setState(after), pushState("tsHeritage")],
+        },
+        ...keywordTable(
+          [
+            "declare",
+            "abstract",
+            "public",
+            "private",
+            "protected",
+            "readonly",
+            "override",
+            "keyof",
+            "infer",
+            "asserts",
+          ],
+          "keyword",
+        ),
+      ]
+    : [];
+  // An identifier that begins with a byte no reserved word of this variant begins with cannot
+  // be one, so it skips the word lookup.
+  const reserved = [...typed.map(({ text }) => text), ...keywords, ...valueKeywords];
+  const freeLetters = [...alphabet]
+    .filter((letter) => !reserved.some((text) => text.startsWith(letter)))
+    .join("");
+  const freeStart = union(upper, "_$", freeLetters, byteSet({ ranges: [[128, 255]] }));
+  const reservedStart = except(range("a", "z"), freeLetters);
+  const callAhead = lookahead(bytes(" \t\r\n", { min: 0 }), literal("("));
   const words = (style: "variable" | "function") =>
     classify(
       [
-        ...(types
-          ? [
-              { text: "type", then: [paint("keyword"), setState(value), pushState("tsAliasName")] },
-              {
-                text: "interface",
-                then: [paint("keyword"), setState(value), pushState("tsInterfaceName")],
-              },
-              ...["enum", "namespace", "module"].map((text) => ({
-                text,
-                then: [
-                  paint("keyword"),
-                  setState(value),
-                  pushState(text === "enum" ? "tsDeclName" : "tsNamespaceName"),
-                ],
-              })),
-              { text: "satisfies", then: [paint("keyword"), setState(after), pushState("tsType")] },
-              {
-                text: "implements",
-                then: [paint("keyword"), setState(after), pushState("tsHeritage")],
-              },
-              ...keywordTable(
-                [
-                  "declare",
-                  "abstract",
-                  "public",
-                  "private",
-                  "protected",
-                  "readonly",
-                  "override",
-                  "keyof",
-                  "infer",
-                  "asserts",
-                ],
-                "keyword",
-              ),
-            ]
-          : []),
+        ...typed,
         ...keywordTable(valueKeywords, "constant.builtin", () => [setState(after)]),
         ...keywords
           .filter(
@@ -349,7 +360,8 @@ function code(
           ),
         ]
       : []),
-    on(start, ...ident, lookahead(bytes(" \t\r\n", { min: 0 }), literal("(")), words("function")),
+    on(freeStart, ...ident, callAhead, paint("function"), setState(after)),
+    on(reservedStart, ...ident, callAhead, words("function")),
     on(
       upper,
       byte(upper),
@@ -358,7 +370,8 @@ function code(
       paint("constant.builtin"),
       setState(after),
     ),
-    on(start, ...ident, words("variable")),
+    on(freeStart, ...ident, paint("variable"), setState(after)),
+    on(reservedStart, ...ident, words("variable")),
     token("?.", "operator", setState(after), pushState("field")),
     token("...", "operator", setState(value)),
     token(".", "operator", setState(after), pushState("field")),
