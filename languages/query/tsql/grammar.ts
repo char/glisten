@@ -26,9 +26,13 @@ const tsql: SqlExtension = ({ start, rest, hex }) => {
     aliases: [],
     keywords: (words) =>
       words.push(
-        ..."declare try catch while break continue matched exec output top merge print raiserror throw use proc with nolock identity pivot unpivot apply over partition row_number offset fetch next rows only transaction tran save trigger inserted deleted".split(
-          " ",
-        ),
+        ...`
+          declare try catch while break continue matched exec output top merge print raiserror throw
+          use proc with nolock identity pivot unpivot apply over partition row_number offset fetch
+          next rows only transaction tran save trigger inserted deleted
+        `
+          .trim()
+          .split(/\s+/),
       ),
     types: (words) =>
       words.push(

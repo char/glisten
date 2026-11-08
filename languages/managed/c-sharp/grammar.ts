@@ -39,14 +39,21 @@ const ident = [byte(start), bytes(rest, { min: 0 })];
 const whitespace = " \t\r\n";
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
 const quotes = Array.from({ length: 4 }, (_, i) => slot.run(`rawQuotes${i}`));
-const keywords =
-  "abstract as base break case catch checked class const continue default delegate do else enum event explicit extern finally fixed for foreach goto if implicit in interface internal is lock namespace new operator out override params private protected public readonly ref return sealed sizeof stackalloc static struct switch this throw try typeof unchecked unsafe using virtual volatile while".split(
-    " ",
-  );
-const types =
-  "bool byte char decimal double float int long object sbyte short string uint ulong ushort void dynamic nint nuint".split(
-    " ",
-  );
+const keywords = `
+  abstract as base break case catch checked class const continue default delegate do else enum
+  event explicit extern finally fixed for foreach goto if implicit in interface internal is
+  lock namespace new operator out override params private protected public readonly ref return
+  sealed sizeof stackalloc static struct switch this throw try typeof unchecked unsafe using
+  virtual volatile while
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+    bool byte char decimal double float int long object sbyte short string uint ulong ushort
+    void dynamic nint nuint
+  `
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(
     keywords.filter((word) => word !== "new"),
@@ -351,9 +358,11 @@ const states: Record<string, State> = {
         ...ident,
         classify(
           keywordTable(
-            "if elif else endif define undef warning error line region endregion pragma nullable".split(
-              " ",
-            ),
+            `
+              if elif else endif define undef warning error line region endregion pragma nullable
+            `
+              .trim()
+              .split(/\s+/),
             "keyword",
           ),
           [paint("plain")],

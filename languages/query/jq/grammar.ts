@@ -35,7 +35,11 @@ const words = [
   { text: "import", then: [paint("keyword"), pushState("importPath")] },
   ...["label", "break"].map((text) => ({ text, then: [paint("keyword"), pushState("labelName")] })),
   ...keywordTable(
-    "as module include if then elif else end try catch reduce foreach and or".split(" "),
+    `
+      as module include if then elif else end try catch reduce foreach and or
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),

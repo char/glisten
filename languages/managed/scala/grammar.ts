@@ -40,10 +40,13 @@ const operatorPart = choice([byte(except(operators, "/"))], [literal("/"), notNe
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const decimal = bytes(union(digit, "_"));
 const exponent = [byte("eE"), optional(byte("+-")), decimal];
-const hard =
-  "abstract case catch class def do else extends final finally for forSome if implicit import lazy match new object override package private protected return sealed super this throw trait try type val var while with yield".split(
-    " ",
-  );
+const hard = `
+  abstract case catch class def do else extends final finally for forSome if implicit import
+  lazy match new object override package private protected return sealed super this throw
+  trait try type val var while with yield
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(hard, "keyword"),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
@@ -93,17 +96,21 @@ const code = [
   ),
   on("e", ...word("enum"), lookahead(space, ...ident), paint("keyword"), pushState("typeName")),
   // Soft keywords use local spelling: they can be missed or mistaken for ordinary identifiers.
-  ...["opaque", "inline", "transparent", "open", "infix"].map((text) =>
-    on(text[0]!, ...word(text), lookahead(space, ...ident), paint("keyword")),
-  ),
-  ...["given", "using", "derives", "export", "end"].map((text) =>
-    on(
-      text[0]!,
-      ...word(text),
-      lookahead(space, choice([byte(start)], [byte("[(_")])),
-      paint("keyword"),
+  ...`opaque inline transparent open infix`
+    .trim()
+    .split(/\s+/)
+    .map((text) => on(text[0]!, ...word(text), lookahead(space, ...ident), paint("keyword"))),
+  ...`given using derives export end`
+    .trim()
+    .split(/\s+/)
+    .map((text) =>
+      on(
+        text[0]!,
+        ...word(text),
+        lookahead(space, choice([byte(start)], [byte("[(_")])),
+        paint("keyword"),
+      ),
     ),
-  ),
   on("e", ...word("extension"), lookahead(gap, byte("([")), paint("keyword")),
   on("t", ...word("then"), lookahead(choice([space], [byte("{")])), paint("keyword")),
   on(upper, ...ident, classify(words, [paint("type")])),

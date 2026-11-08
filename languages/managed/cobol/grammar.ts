@@ -27,14 +27,42 @@ const line = except(all, "\r\n");
 const digit = range("0", "9");
 const letter = union(range("a", "z"), range("A", "Z"));
 const name = union(letter, digit, "-_");
-const keywords =
-  `accept access add address advancing after all alphabet alphabetic alphabetic-lower alphabetic-upper alphanumeric also alternate and are area areas ascending assign at author before binary block by call cancel cd cf ch character characters class close cobol code code-set collating column comma common communication compute configuration contains content continue control controls copy corr corresponding count currency data date date-compiled date-written day day-of-week de debug debugging decimal-point declaratives delete delimited delimiter depending descending destination detail disable display divide division down duplicates dynamic else end end-accept end-add end-call end-compute end-delete end-display end-divide end-evaluate end-if end-multiply end-perform end-read end-return end-rewrite end-search end-start end-string end-subtract end-unstring end-write entry environment eop equal error evaluate every exception exit extend external false fd file file-control filler final first for from function generate giving global goback greater group heading high-value high-values i-o identification if in index indexed initialize input input-output inspect into invalid is justification justified key label last leading left length less linage line lines link linkage local-storage lock memory merge mode module modules more move multiple multiply native negative next no not null nulls number numeric object-computer occurs of off omitted on open optional or order organization other output overflow perform plus pointer position positive printing procedure procedures program program-id quote quotes random read record records recursive redef redefines reel reference references relative release remainder removal renames replacing report reporting reports rerun reserve reset return returning reverse rewinding rewrite right rounded run same sd search section security select sentence sequential set sign size sort sort-merge source source-computer special-names standard standard-1 standard-2 start status stop string subtract sum suppress symbolic sync synchronized table tallying tape terminal test than then through thru time times to top trailing true type unit until unstring up upon usage use using value values varying when with words working-storage write zero zeroes zeros space spaces low-value low-values`.split(
-    /\s+/,
-  );
-const constants =
-  `zero zeroes zeros space spaces high-value high-values low-value low-values quote quotes null nulls true false`.split(
-    /\s+/,
-  );
+const keywords = `
+  accept access add address advancing after all alphabet alphabetic alphabetic-lower
+  alphabetic-upper alphanumeric also alternate and are area areas ascending assign at author
+  before binary block by call cancel cd cf ch character characters class close cobol code
+  code-set collating column comma common communication compute configuration contains content
+  continue control controls copy corr corresponding count currency data date date-compiled
+  date-written day day-of-week de debug debugging decimal-point declaratives delete delimited
+  delimiter depending descending destination detail disable display divide division down
+  duplicates dynamic else end end-accept end-add end-call end-compute end-delete end-display
+  end-divide end-evaluate end-if end-multiply end-perform end-read end-return end-rewrite
+  end-search end-start end-string end-subtract end-unstring end-write entry environment eop
+  equal error evaluate every exception exit extend external false fd file file-control filler
+  final first for from function generate giving global goback greater group heading high-value
+  high-values i-o identification if in index indexed initialize input input-output inspect
+  into invalid is justification justified key label last leading left length less linage line
+  lines link linkage local-storage lock memory merge mode module modules more move multiple
+  multiply native negative next no not null nulls number numeric object-computer occurs of off
+  omitted on open optional or order organization other output overflow perform plus pointer
+  position positive printing procedure procedures program program-id quote quotes random read
+  record records recursive redef redefines reel reference references relative release
+  remainder removal renames replacing report reporting reports rerun reserve reset return
+  returning reverse rewinding rewrite right rounded run same sd search section security select
+  sentence sequential set sign size sort sort-merge source source-computer special-names
+  standard standard-1 standard-2 start status stop string subtract sum suppress symbolic sync
+  synchronized table tallying tape terminal test than then through thru time times to top
+  trailing true type unit until unstring up upon usage use using value values varying when
+  with words working-storage write zero zeroes zeros space spaces low-value low-values
+`
+  .trim()
+  .split(/\s+/);
+const constants = `
+    zero zeroes zeros space spaces high-value high-values low-value low-values quote quotes
+    null nulls true false
+  `
+  .trim()
+  .split(/\s+/);
 const words = keywordTable(
   [
     ...keywords.filter((word) => !constants.includes(word) && word !== "function"),
@@ -72,7 +100,11 @@ const wordCases = (picture: string, functionState: string) => [
   ...words,
   ...values,
 ];
-function code(fixed: boolean, areaA = false) {
+type CodeArea = "fixedAreaA" | "fixedCode" | "freeCode";
+
+function code(area: CodeArea) {
+  const fixed = area !== "freeCode";
+  const areaA = area === "fixedAreaA";
   const next = fixed ? "fixedSequence" : "freeCode";
   const picture = fixed ? "fixedPicture" : "freePicture";
   const functionState = fixed ? "fixedFunction" : "freeFunction";
@@ -163,9 +195,9 @@ export default defineGrammar({
         on(line, byte(line), paint("plain"), setState("fixedAreaA")),
       ],
     },
-    fixedAreaA: { style: "plain", arms: code(true, true) },
-    fixedCode: { style: "plain", arms: code(true) },
-    freeCode: { style: "plain", arms: code(false) },
+    fixedAreaA: { style: "plain", arms: code("fixedAreaA") },
+    fixedCode: { style: "plain", arms: code("fixedCode") },
+    freeCode: { style: "plain", arms: code("freeCode") },
     fixedFunction: {
       style: "plain",
       arms: [

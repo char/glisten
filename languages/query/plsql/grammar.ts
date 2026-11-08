@@ -30,15 +30,22 @@ const plsql: SqlExtension = ({ start, rest, name }) => {
     aliases: [],
     keywords: (words) =>
       words.push(
-        ..."declare exception package body cursor loop raise pragma elsif exit bulk collect forall in out nocopy record subtype constant reverse return returning autonomous_transaction open close is begin end spool".split(
-          " ",
-        ),
+        ...`
+          declare exception package body cursor loop raise pragma elsif exit bulk collect forall in
+          out nocopy record subtype constant reverse return returning autonomous_transaction open
+          close is begin end spool
+        `
+          .trim()
+          .split(/\s+/),
       ),
     types: (words) =>
       words.push(
-        ..."varchar2 nvarchar2 number pls_integer binary_integer simple_integer rowid urowid clob nclob bfile sys_refcursor".split(
-          " ",
-        ),
+        ...`
+          varchar2 nvarchar2 number pls_integer binary_integer simple_integer rowid urowid clob
+          nclob bfile sys_refcursor
+        `
+          .trim()
+          .split(/\s+/),
       ),
     createHeadCases: [
       { text: "package", then: [paint("keyword"), setState("plsqlPackageHead")] },

@@ -29,12 +29,20 @@ const hex = union(digit, range("a", "f"), range("A", "F"));
 const start = union("_$", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
-const keywords =
-  "abstract as assert break case catch class const continue def default do else enum extends final finally for goto if implements import in instanceof interface native new package permits private protected public return sealed static strictfp super switch synchronized this threadsafe throw throws trait transient try var volatile while".split(
-    " ",
-  );
+const keywords = `
+  abstract as assert break case catch class const continue def default do else enum extends
+  final finally for goto if implements import in instanceof interface native new package
+  permits private protected public return sealed static strictfp super switch synchronized
+  this threadsafe throw throws trait transient try var volatile while
+`
+  .trim()
+  .split(/\s+/);
 const expressionKeywords = new Set(
-  "as assert case def do else for if in instanceof new return throw var while".split(" "),
+  `
+    as assert case def do else for if in instanceof new return throw var while
+  `
+    .trim()
+    .split(/\s+/),
 );
 const types = "boolean byte char double float int long short void".split(" ");
 const constants = ["true", "false", "null"];
@@ -69,11 +77,15 @@ function code(context: Context, position: Position) {
   ];
   const word = (style: "variable" | "function" | "property", next = after) =>
     classify(cases, [paint(style), setState(next)]);
+  const closing = {
+    root: [],
+    interpolation: [token("}", "punctuation.special", popState())],
+    block: [token("}", "punctuation.bracket", popState())],
+    paren: [token(")", "punctuation.bracket", popState())],
+    bracket: [token("]", "punctuation.bracket", popState())],
+  } satisfies Record<Context, ReturnType<typeof token>[]>;
   return [
-    ...(context === "interpolation" ? [token("}", "punctuation.special", popState())] : []),
-    ...(context === "block" ? [token("}", "punctuation.bracket", popState())] : []),
-    ...(context === "paren" ? [token(")", "punctuation.bracket", popState())] : []),
-    ...(context === "bracket" ? [token("]", "punctuation.bracket", popState())] : []),
+    ...closing[context],
     ...comments,
     token('"""', "string", setState(after), pushState("tripleDouble")),
     token("'''", "string", setState(after), pushState("tripleSingle")),

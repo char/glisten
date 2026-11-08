@@ -34,29 +34,12 @@ const decimalDigits = [byte(digit), repeat(optional(literal("_")), byte(digit))]
 const hexDigits = [byte(hexDigit), repeat(optional(literal("_")), byte(hexDigit))];
 const binaryDigits = [byte("01"), repeat(optional(literal("_")), byte("01"))];
 const octalDigits = [byte("01234567"), repeat(optional(literal("_")), byte("01234567"))];
-const keywords = [
-  "case",
-  "chan",
-  "const",
-  "default",
-  "defer",
-  "else",
-  "fallthrough",
-  "for",
-  "go",
-  "if",
-  "import",
-  "interface",
-  "map",
-  "package",
-  "range",
-  "return",
-  "select",
-  "struct",
-  "switch",
-  "type",
-  "var",
-];
+const keywords = `
+  case chan const default defer else fallthrough for go if import interface map package
+  range return select struct switch type var
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(keywords, "keyword"),
   ...["break", "continue", "goto"].map((text) => ({
@@ -65,54 +48,22 @@ const cases = [
   })),
   { text: "func", then: [paint("keyword"), pushState("functionHead")] },
   ...keywordTable(
-    [
-      "any",
-      "bool",
-      "byte",
-      "comparable",
-      "complex64",
-      "complex128",
-      "error",
-      "float32",
-      "float64",
-      "int",
-      "int8",
-      "int16",
-      "int32",
-      "int64",
-      "rune",
-      "string",
-      "uint",
-      "uint8",
-      "uint16",
-      "uint32",
-      "uint64",
-      "uintptr",
-    ],
+    `
+      any bool byte comparable complex64 complex128 error float32 float64 int int8 int16 int32
+      int64 rune string uint uint8 uint16 uint32 uint64 uintptr
+    `
+      .trim()
+      .split(/\s+/),
     "type",
   ),
   ...keywordTable(["true", "false", "iota", "nil"], "constant.builtin"),
   ...keywordTable(
-    [
-      "append",
-      "cap",
-      "clear",
-      "close",
-      "complex",
-      "copy",
-      "delete",
-      "imag",
-      "len",
-      "make",
-      "max",
-      "min",
-      "new",
-      "panic",
-      "print",
-      "println",
-      "real",
-      "recover",
-    ],
+    `
+      append cap clear close complex copy delete imag len make max min new panic print println
+      real recover
+    `
+      .trim()
+      .split(/\s+/),
     "function",
   ),
 ];
@@ -223,19 +174,10 @@ export default defineGrammar({
               [byte("{;")],
               [
                 choice(
-                  ...[
-                    "for",
-                    "switch",
-                    "select",
-                    "if",
-                    "goto",
-                    "break",
-                    "continue",
-                    "return",
-                    "go",
-                    "defer",
-                    "fallthrough",
-                  ].map((text) => [literal(text)]),
+                  ...`for switch select if goto break continue return go defer fallthrough`
+                    .trim()
+                    .split(/\s+/)
+                    .map((text) => [literal(text)]),
                 ),
                 notNext(rest),
               ],

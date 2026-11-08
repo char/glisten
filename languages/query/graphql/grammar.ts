@@ -67,10 +67,13 @@ const rootCases = [
     then: [paint("keyword"), setState("operation")],
   })),
   { text: "fragment", then: [paint("keyword"), setState("fragmentHead")] },
-  ...["schema", "type", "interface", "enum", "input", "extend"].map((text) => ({
-    text,
-    then: [paint("keyword"), setState("definitionHead")],
-  })),
+  ...`schema type interface enum input extend`
+    .trim()
+    .split(/\s+/)
+    .map((text) => ({
+      text,
+      then: [paint("keyword"), setState("definitionHead")],
+    })),
   { text: "directive", then: [paint("keyword"), setState("directiveDefinition")] },
   ...["scalar", "union", "on"].map((text) => ({
     text,

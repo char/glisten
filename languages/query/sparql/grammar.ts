@@ -67,14 +67,23 @@ const iriChar = except(
   byteSet({ ranges: [[0, 32]], bytes: [...new TextEncoder().encode('<>"{}|^`\\')] }),
 );
 const iri = [literal("<"), repeat(choice([byte(iriChar)], [uchar])), literal(">")];
-const keywords =
-  `base prefix select distinct reduced as construct describe ask from named where order by asc desc limit offset group having values undef optional graph service silent bind union minus filter not exists in load clear drop create add move copy to insert data delete with using default all into where separator`.split(
-    " ",
-  );
-const builtins =
-  `str lang langmatches datatype bound iri uri bnode rand abs ceil floor round concat substr strlen replace ucase lcase encode_for_uri contains strstarts strends strbefore strafter year month day hours minutes seconds timezone tz now uuid struuid md5 sha1 sha256 sha384 sha512 coalesce if strlang strdt sameterm isiri isuri isblank isliteral isnumeric regex count sum min max avg sample group_concat`.split(
-    " ",
-  );
+const keywords = `
+  base prefix select distinct reduced as construct describe ask from named where order by asc
+  desc limit offset group having values undef optional graph service silent bind union minus
+  filter not exists in load clear drop create add move copy to insert data delete with using
+  default all into where separator
+`
+  .trim()
+  .split(/\s+/);
+const builtins = `
+  str lang langmatches datatype bound iri uri bnode rand abs ceil floor round concat substr
+  strlen replace ucase lcase encode_for_uri contains strstarts strends strbefore strafter year
+  month day hours minutes seconds timezone tz now uuid struuid md5 sha1 sha256 sha384 sha512
+  coalesce if strlang strdt sameterm isiri isuri isblank isliteral isnumeric regex count sum
+  min max avg sample group_concat
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable([...new Set(keywords)], "keyword"),
   ...keywordTable(builtins, "function"),

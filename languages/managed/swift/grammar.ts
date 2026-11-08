@@ -38,10 +38,14 @@ const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const gap = bytes(" \t\r\n", { min: 0 });
 const hashes = slot.run("extendedHashes");
-const keywords =
-  "associatedtype class deinit enum extension fileprivate func import init inout internal let open operator private precedencegroup protocol public static struct subscript typealias var break case catch continue default defer do else fallthrough for guard if in repeat return switch throw where while as Any false is nil super self Self true try _".split(
-    " ",
-  );
+const keywords = `
+  associatedtype class deinit enum extension fileprivate func import init inout internal let
+  open operator private precedencegroup protocol public static struct subscript typealias var
+  break case catch continue default defer do else fallthrough for guard if in repeat return
+  switch throw where while as Any false is nil super self Self true try _
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   { text: "func", then: [paint("keyword"), pushState("functionName")] },
   ...keywordTable(
@@ -51,24 +55,27 @@ const words = [
   ...keywordTable(["true", "false", "nil"], "constant.builtin"),
 ];
 const contextual = [
-  ...["get", "set", "willSet", "didSet", "_read", "_modify"].map((word) =>
-    on(
-      word[0]!,
-      literal(word),
-      notNext(rest),
-      lookahead(
-        gap,
-        choice(
-          [literal("{")],
-          [literal("}")],
-          [literal("("), gap, ...ident, gap, literal(")"), gap, literal("{")],
-          [literal("async"), notNext(rest)],
-          [literal("throws"), notNext(rest)],
+  ...`get set willSet didSet _read _modify`
+    .trim()
+    .split(/\s+/)
+    .map((word) =>
+      on(
+        word[0]!,
+        literal(word),
+        notNext(rest),
+        lookahead(
+          gap,
+          choice(
+            [literal("{")],
+            [literal("}")],
+            [literal("("), gap, ...ident, gap, literal(")"), gap, literal("{")],
+            [literal("async"), notNext(rest)],
+            [literal("throws"), notNext(rest)],
+          ),
         ),
+        paint("keyword"),
       ),
-      paint("keyword"),
     ),
-  ),
   ...["some", "any"].map((word) =>
     on(
       word[0]!,
@@ -78,34 +85,33 @@ const contextual = [
       paint("keyword"),
     ),
   ),
-  ...[
-    "actor",
-    "mutating",
-    "nonmutating",
-    "override",
-    "convenience",
-    "lazy",
-    "weak",
-    "unowned",
-    "nonisolated",
-    "borrowing",
-    "consuming",
-    "isolated",
-    "distributed",
-    "final",
-    "required",
-  ].map((word) =>
-    on(word[0]!, literal(word), notNext(rest), lookahead(bytes(" \t"), ...ident), paint("keyword")),
-  ),
-  ...["async", "await", "throws", "rethrows", "consume", "sending"].map((word) =>
-    on(
-      word[0]!,
-      literal(word),
-      notNext(rest),
-      lookahead(gap, choice([byte("{(")], [byte(start)], [literal("->")])),
-      paint("keyword"),
+  ...`
+    actor mutating nonmutating override convenience lazy weak unowned nonisolated borrowing
+    consuming isolated distributed final required
+  `
+    .trim()
+    .split(/\s+/)
+    .map((word) =>
+      on(
+        word[0]!,
+        literal(word),
+        notNext(rest),
+        lookahead(bytes(" \t"), ...ident),
+        paint("keyword"),
+      ),
     ),
-  ),
+  ...`async await throws rethrows consume sending`
+    .trim()
+    .split(/\s+/)
+    .map((word) =>
+      on(
+        word[0]!,
+        literal(word),
+        notNext(rest),
+        lookahead(gap, choice([byte("{(")], [byte(start)], [literal("->")])),
+        paint("keyword"),
+      ),
+    ),
 ];
 const comments = [
   token("//", "comment", pushState("lineComment")),
@@ -162,16 +168,7 @@ const code = [
     ...ident,
     classify(
       keywordTable(
-        [
-          "#if",
-          "#elseif",
-          "#else",
-          "#endif",
-          "#available",
-          "#unavailable",
-          "#selector",
-          "#keyPath",
-        ],
+        `#if #elseif #else #endif #available #unavailable #selector #keyPath`.trim().split(/\s+/),
         "keyword",
       ),
       [paint("punctuation.special")],

@@ -35,34 +35,42 @@ const rest = union(start, digit);
 const ident = [byte(start), repeat(notLookahead(literal("’")), byte(rest))];
 const digits = union(digit, "_");
 const hex = union(digits, range("a", "f"), range("A", "F"));
-const keywords =
-  `addhandler addressof alias and andalso as async await byref byval call case catch class const continue declare default delegate dim directcast do each else elseif end enum erase error event exit finally for friend function get gettype getxmlnamespace global gosub goto handles if implements imports in inherits interface is isnot iterator key let lib like loop me mod module mustinherit mustoverride mybase myclass namespace narrowing new next not notinheritable notoverridable of off on operator option optional or orelse overloads overridable overrides paramarray partial private property protected public readonly redim rem removehandler resume return select set shadows shared static step stop structure sub synclock then throw to try trycast typeof using variant wend when while widening with withevents writeonly xor yield`.split(
-    /\s+/,
-  );
-const types =
-  `boolean byte char date decimal double integer long object sbyte short single string uinteger ulong ushort`.split(
-    /\s+/,
-  );
+const keywords = `
+  addhandler addressof alias and andalso as async await byref byval call case catch class
+  const continue declare default delegate dim directcast do each else elseif end enum erase
+  error event exit finally for friend function get gettype getxmlnamespace global gosub goto
+  handles if implements imports in inherits interface is isnot iterator key let lib like loop
+  me mod module mustinherit mustoverride mybase myclass namespace narrowing new next not
+  notinheritable notoverridable of off on operator option optional or orelse overloads
+  overridable overrides paramarray partial private property protected public readonly redim
+  rem removehandler resume return select set shadows shared static step stop structure sub
+  synclock then throw to try trycast typeof using variant wend when while widening with
+  withevents writeonly xor yield
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+    boolean byte char date decimal double integer long object sbyte short single string
+    uinteger ulong ushort
+  `
+  .trim()
+  .split(/\s+/);
 const declarationWords = ["sub", "function", "property", "operator"];
-const directives = [
-  "const",
-  "if",
-  "elseif",
-  "else",
-  "end",
-  "region",
-  "externalsource",
-  "externalchecksum",
-  "enable",
-  "disable",
-  "reference",
-  "r",
-  "load",
-];
-export const basicKeywords =
-  `and as byref byval call case class const dim do each else elseif end enum erase error event exit explicit for friend function get global gosub goto if in is let lib like loop me mod new next not on option optional or paramarray preserve private property public redim rem resume return select set static step stop sub then to type until variant wend while with withevents xor`.split(
-    /\s+/,
-  );
+const directives = `
+  const if elseif else end region externalsource externalchecksum enable disable reference
+  r load
+`
+  .trim()
+  .split(/\s+/);
+export const basicKeywords = `
+  and as byref byval call case class const dim do each else elseif end enum erase error event
+  exit explicit for friend function get global gosub goto if in is let lib like loop me mod
+  new next not on option optional or paramarray preserve private property public redim rem
+  resume return select set static step stop sub then to type until variant wend while with
+  withevents xor
+`
+  .trim()
+  .split(/\s+/);
 
 export type VbExtension = (base: {
   all: typeof all;
@@ -270,7 +278,7 @@ export function vb(extension?: VbExtension) {
                 ...keywordTable(
                   ext?.classic
                     ? ["byval", "byref", "optional", "paramarray"]
-                    : ["byval", "byref", "optional", "paramarray", "of"],
+                    : `byval byref optional paramarray of`.trim().split(/\s+/),
                   "keyword",
                 ),
                 ...languageTypes.map((text) => ({

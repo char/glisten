@@ -33,50 +33,14 @@ const dec = digits(digit);
 const hexd = digits(hex);
 const exp = [byte("eE"), optional(byte("+-")), ...dec];
 const binexp = [byte("pP"), optional(byte("+-")), ...dec];
-const keywords = [
-  "abstract",
-  "assert",
-  "break",
-  "case",
-  "catch",
-  "class",
-  "const",
-  "continue",
-  "default",
-  "do",
-  "else",
-  "enum",
-  "extends",
-  "final",
-  "finally",
-  "for",
-  "goto",
-  "if",
-  "implements",
-  "import",
-  "instanceof",
-  "interface",
-  "native",
-  "new",
-  "package",
-  "private",
-  "protected",
-  "public",
-  "return",
-  "static",
-  "strictfp",
-  "super",
-  "switch",
-  "synchronized",
-  "this",
-  "throw",
-  "throws",
-  "transient",
-  "try",
-  "volatile",
-  "while",
-  "_",
-];
+const keywords = `
+  abstract assert break case catch class const continue default do else enum extends final
+  finally for goto if implements import instanceof interface native new package private
+  protected public return static strictfp super switch synchronized this throw throws
+  transient try volatile while _
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(
     keywords.filter((word) => !["class", "interface", "for", "case"].includes(word)),
@@ -88,10 +52,7 @@ const cases = [
   })),
   { text: "for", then: [paint("keyword"), pushState("forHead")] },
   { text: "case", then: [paint("keyword"), pushState("caseHead")] },
-  ...keywordTable(
-    ["boolean", "byte", "char", "double", "float", "int", "long", "short", "void"],
-    "type",
-  ),
+  ...keywordTable(`boolean byte char double float int long short void`.trim().split(/\s+/), "type"),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
 ];
 const escape = on(

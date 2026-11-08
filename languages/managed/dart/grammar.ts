@@ -33,30 +33,26 @@ const ident = [byte(start), bytes(rest, { min: 0 })];
 const gap = bytes(" \t\r\n", { min: 0 });
 const space = bytes(" \t\r\n");
 const word = (value: string) => [literal(value), notNext(rest)];
-const hard =
-  "assert break case catch class const continue default do else enum extends false final finally for if in is new null rethrow return super switch this throw true try var void while with".split(
-    " ",
-  );
+const hard = `
+  assert break case catch class const continue default do else enum extends false final
+  finally for if in is new null rethrow return super switch this throw true try var void while
+  with
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(
     hard.filter((x) => !["true", "false", "null"].includes(x)),
     "keyword",
   ),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
-  ...keywordTable(["int", "double", "num", "bool", "dynamic"], "type"),
+  ...keywordTable(`int double num bool dynamic`.trim().split(/\s+/), "type"),
 ];
-const modifier = [
-  "abstract",
-  "base",
-  "covariant",
-  "external",
-  "factory",
-  "interface",
-  "late",
-  "required",
-  "sealed",
-  "static",
-];
+const modifier = `
+  abstract base covariant external factory interface late required sealed static
+`
+  .trim()
+  .split(/\s+/);
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const decimal = bytes(union(digit, "_"));
 const exponent = [byte("eE"), optional(byte("+-")), decimal];
@@ -124,23 +120,13 @@ const code = [
   ),
   on("l", ...word("library"), lookahead(gap, literal(";")), paint("keyword")),
   on("o", ...word("operator"), lookahead(space, byte("[]=+-*/%~<>&|^")), paint("keyword")),
-  ...[
-    "as",
-    "deferred",
-    "export",
-    "extension",
-    "hide",
-    "implements",
-    "import",
-    "library",
-    "mixin",
-    "on",
-    "operator",
-    "part",
-    "show",
-    "typedef",
-    "when",
-  ].map((value) => on(value[0]!, ...word(value), lookahead(space, ...ident), paint("keyword"))),
+  ...`
+    as deferred export extension hide implements import library mixin on operator part show
+    typedef when
+  `
+    .trim()
+    .split(/\s+/)
+    .map((value) => on(value[0]!, ...word(value), lookahead(space, ...ident), paint("keyword"))),
   on(upper, ...ident, classify(words, [paint("type")])),
   on("_", literal("_"), byte(upper), bytes(rest, { min: 0 }), paint("type")),
   on(start, ...ident, call, classify(words, [paint("function")])),

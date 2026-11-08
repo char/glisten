@@ -33,22 +33,49 @@ const start = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[1
 const rest = union(start, digit, "$");
 const tagRest = union(start, digit);
 const name = [byte(start), bytes(rest, { min: 0 })];
-const genericKeywords =
-  `add all alter always analyze and array as asc authorization auto_increment begin before between by cascade case cast check collate column comment commit concurrently conflict constraint copy create cross current_date current_time current_timestamp database default delete desc distinct do drop each else end except exclude exists execute explain extension false fetch filter for foreign from full function generated grant group having if ilike immutable in index inherits initially inner insert intersect into is join key language lateral leakproof left like limit materialized natural not nothing null nulls of off offset on or order outer over parallel partition policy primary procedure references recursive rename replace reset restrict returning returns revoke right role rollback row rows schema security select sequence set setof stored table temporary then to transaction trigger true truncate type union unique unsigned update using vacuum user value values view when where window with within without zone ordinality pragma attach detach autoincrement`.split(
-    " ",
-  );
-const genericTypes =
-  `bigint bigserial binary bit blob bool boolean bytea char character date datetime decimal double float int int2 int4 int8 integer interval json jsonb longblob longtext mediumblob mediumint mediumtext money nchar numeric nvarchar real regclass regtype serial serial2 serial4 serial8 smallint text time timestamp timestamptz timetz tinyblob tinyint tinytext uuid varbinary varbit varchar varying xml year`.split(
-    " ",
-  );
-const keywords =
-  `add all alter and as asc authorization begin before between by cascade case cast check collate column commit constraint create cross current_date current_time current_timestamp default delete desc distinct drop each else end except exists execute false fetch for foreign from full function grant group having if in index inner insert intersect into is join key left like natural not null of on or order outer over partition primary procedure references replace restrict revoke right rollback row rows schema select sequence set table temporary then to transaction trigger true truncate type union unique update user using value values view when where window with`.split(
-    " ",
-  );
-const types =
-  `bigint binary bit blob boolean char character date decimal double float int integer interval nchar numeric real smallint time timestamp varbinary varchar xml`.split(
-    " ",
-  );
+const genericKeywords = `
+  add all alter always analyze and array as asc authorization auto_increment begin before
+  between by cascade case cast check collate column comment commit concurrently conflict
+  constraint copy create cross current_date current_time current_timestamp database default
+  delete desc distinct do drop each else end except exclude exists execute explain extension
+  false fetch filter for foreign from full function generated grant group having if ilike
+  immutable in index inherits initially inner insert intersect into is join key language
+  lateral leakproof left like limit materialized natural not nothing null nulls of off offset
+  on or order outer over parallel partition policy primary procedure references recursive
+  rename replace reset restrict returning returns revoke right role rollback row rows schema
+  security select sequence set setof stored table temporary then to transaction trigger true
+  truncate type union unique unsigned update using vacuum user value values view when where
+  window with within without zone ordinality pragma attach detach autoincrement
+`
+  .trim()
+  .split(/\s+/);
+const genericTypes = `
+  bigint bigserial binary bit blob bool boolean bytea char character date datetime decimal
+  double float int int2 int4 int8 integer interval json jsonb longblob longtext mediumblob
+  mediumint mediumtext money nchar numeric nvarchar real regclass regtype serial serial2
+  serial4 serial8 smallint text time timestamp timestamptz timetz tinyblob tinyint tinytext
+  uuid varbinary varbit varchar varying xml year
+`
+  .trim()
+  .split(/\s+/);
+const keywords = `
+  add all alter and as asc authorization begin before between by cascade case cast check
+  collate column commit constraint create cross current_date current_time current_timestamp
+  default delete desc distinct drop each else end except exists execute false fetch for
+  foreign from full function grant group having if in index inner insert intersect into is
+  join key left like natural not null of on or order outer over partition primary procedure
+  references replace restrict revoke right rollback row rows schema select sequence set table
+  temporary then to transaction trigger true truncate type union unique update user using
+  value values view when where window with
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bigint binary bit blob boolean char character date decimal double float int integer interval
+  nchar numeric real smallint time timestamp varbinary varchar xml
+`
+  .trim()
+  .split(/\s+/);
 const relationKeywords = ["into", "table", "references"];
 export type SqlBase = ReturnType<typeof sqlBase>;
 export type SqlExtension = (base: SqlBase) => {
@@ -84,8 +111,8 @@ const genericSql: SqlExtension = () => ({
   name: "sql",
   aliases: ["postgresql", "postgres", "sqlite"],
   createOnWords: ["index", "trigger", "policy"],
-  createCloseWords: ["view", "database", "schema", "sequence", "extension", "cast"],
-  cteStopWords: ["function", "ordinality", "time", "check", "data"],
+  createCloseWords: `view database schema sequence extension cast`.trim().split(/\s+/),
+  cteStopWords: `function ordinality time check data`.trim().split(/\s+/),
   cteAsWords: ["not", "materialized"],
   keywords: (words) => words.splice(0, words.length, ...genericKeywords),
   types: (words) => words.splice(0, words.length, ...genericTypes),
@@ -203,10 +230,13 @@ export function sql(extension?: SqlExtension) {
             classify(
               [
                 ...(ext.createHeadCases ?? []),
-                ...["unique", "temporary", "temp", "or", "replace"].map((text) => ({
-                  text,
-                  then: [paint("keyword")],
-                })),
+                ...`unique temporary temp or replace`
+                  .trim()
+                  .split(/\s+/)
+                  .map((text) => ({
+                    text,
+                    then: [paint("keyword")],
+                  })),
                 ...(ext.createOnWords ?? ["index", "trigger"]).map((text) => ({
                   text,
                   then: [paint("keyword"), setState("createOn")],
@@ -342,7 +372,7 @@ export function sql(extension?: SqlExtension) {
             start,
             ...name,
             classify(
-              [...keywordTable(["if", "not", "exists", "only", "recursive"], "keyword")],
+              [...keywordTable(`if not exists only recursive`.trim().split(/\s+/), "keyword")],
               [paint("plain"), popState()],
               { caseless: true },
             ),

@@ -20,22 +20,10 @@ import { basicKeywords, type VbExtension } from "./grammar.ts";
 export function classic(name: "vba" | "vbscript"): VbExtension {
   return ({ digit, start, rest, ident }) => {
     const script = name === "vbscript";
-    const words = basicKeywords.filter((word) =>
-      script
-        ? ![
-            "as",
-            "enum",
-            "friend",
-            "global",
-            "gosub",
-            "goto",
-            "type",
-            "variant",
-            "withevents",
-            "static",
-          ].includes(word)
-        : !["class", "variant"].includes(word),
-    );
+    const excludedKeywords = script
+      ? `as enum friend global gosub goto type variant withevents static`.trim().split(/\s+/)
+      : ["class", "variant"];
+    const words = basicKeywords.filter((word) => !excludedKeywords.includes(word));
     const hex = union(digit, range("a", "f"), range("A", "F"));
     const suffix = "$%&!#@";
     const label = on(start, ...ident, lookahead(literal(":")), paint("label"));
@@ -47,55 +35,24 @@ export function classic(name: "vba" | "vbscript"): VbExtension {
         ...words,
         ...(script
           ? ["execute", "executeglobal", "eval"]
-          : [
-              "base",
-              "compare",
-              "declare",
-              "defbool",
-              "defbyte",
-              "defcur",
-              "defdate",
-              "defdbl",
-              "defint",
-              "deflng",
-              "defobj",
-              "defsng",
-              "defstr",
-              "defvar",
-              "implements",
-              "input",
-              "line",
-              "lock",
-              "lset",
-              "ptrsafe",
-              "raiseevent",
-              "rset",
-              "seek",
-              "shared",
-              "unlock",
-            ]),
+          : `
+            base compare declare defbool defbyte defcur defdate defdbl defint deflng defobj defsng
+            defstr defvar implements input line lock lset ptrsafe raiseevent rset seek shared unlock
+          `
+              .trim()
+              .split(/\s+/)),
       ],
       types: script
         ? []
-        : [
-            "boolean",
-            "byte",
-            "currency",
-            "date",
-            "decimal",
-            "double",
-            "integer",
-            "long",
-            "longlong",
-            "longptr",
-            "object",
-            "single",
-            "string",
-            "variant",
-          ],
+        : `
+          boolean byte currency date decimal double integer long longlong longptr object single
+          string variant
+        `
+            .trim()
+            .split(/\s+/),
       builtins: script ? ["wscript", "empty", "null"] : ["empty", "null"],
       declarationWords: ["sub", "function", "property"],
-      directives: ["const", "if", "elseif", "else", "end"],
+      directives: `const if elseif else end`.trim().split(/\s+/),
       number: on(
         "&0123456789",
         choice(
@@ -174,15 +131,11 @@ export function classic(name: "vba" | "vbscript"): VbExtension {
                   ...ident,
                   classify(
                     keywordTable(
-                      [
-                        "echo",
-                        "quit",
-                        "sleep",
-                        "createobject",
-                        "getobject",
-                        "connectobject",
-                        "disconnectobject",
-                      ],
+                      `
+                        echo quit sleep createobject getobject connectobject disconnectobject
+                      `
+                        .trim()
+                        .split(/\s+/),
                       "function",
                     ).map(({ text, then }) => ({ text, then: [...then, setState("code")] })),
                     [paint("variable.member"), setState("code")],

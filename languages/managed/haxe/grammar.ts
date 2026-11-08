@@ -37,63 +37,24 @@ const intSuffix = [optional(literal("_")), byte("iu"), ...integer, repeat(...int
 const floatSuffix = [optional(literal("_")), literal("f"), ...integer, repeat(...integer)];
 const exponent = [byte("eE"), optional(byte("+-")), ...decimal];
 const keywords = keywordTable(
-  [
-    "package",
-    "import",
-    "using",
-    "class",
-    "interface",
-    "enum",
-    "abstract",
-    "typedef",
-    "extends",
-    "implements",
-    "public",
-    "private",
-    "static",
-    "inline",
-    "override",
-    "dynamic",
-    "extern",
-    "final",
-    "macro",
-    "overload",
-    "function",
-    "var",
-    "if",
-    "else",
-    "switch",
-    "case",
-    "default",
-    "for",
-    "in",
-    "while",
-    "do",
-    "break",
-    "continue",
-    "return",
-    "throw",
-    "try",
-    "catch",
-    "untyped",
-    "cast",
-    "new",
-    "operator",
-    "from",
-    "to",
-    "as",
-    "is",
-  ],
+  `
+    package import using class interface enum abstract typedef extends implements public
+    private static inline override dynamic extern final macro overload function var if else
+    switch case default for in while do break continue return throw try catch untyped cast
+    new operator from to as is
+  `
+    .trim()
+    .split(/\s+/),
   "keyword",
 );
-const declarations = new Set(["class", "interface", "enum", "abstract", "typedef"]);
+const declarations = new Set(`class interface enum abstract typedef`.trim().split(/\s+/));
 const cases = [
   ...keywords.filter(({ text }) => !declarations.has(text)),
   ...[...declarations].map((text) => ({
     text,
     then: [paint("keyword"), pushState("typeName")],
   })),
-  ...keywordTable(["null", "true", "false", "this", "super"], "constant.builtin"),
+  ...keywordTable(`null true false this super`.trim().split(/\s+/), "constant.builtin"),
 ];
 const stringEscape = on(
   "\\",

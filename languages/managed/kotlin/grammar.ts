@@ -37,76 +37,22 @@ const decimal = digits(digit);
 const hex = digits(union(digit, range("a", "f"), range("A", "F")));
 const binary = digits("01");
 const exponent = [byte("eE"), optional(byte("+-")), ...decimal];
-const hard = [
-  "as",
-  "break",
-  "class",
-  "continue",
-  "do",
-  "else",
-  "for",
-  "fun",
-  "if",
-  "in",
-  "interface",
-  "is",
-  "object",
-  "package",
-  "import",
-  "return",
-  "super",
-  "this",
-  "throw",
-  "try",
-  "typealias",
-  "val",
-  "var",
-  "when",
-  "while",
-];
-const modifiers = [
-  "abstract",
-  "actual",
-  "annotation",
-  "companion",
-  "const",
-  "crossinline",
-  "data",
-  "enum",
-  "expect",
-  "external",
-  "final",
-  "infix",
-  "inline",
-  "inner",
-  "internal",
-  "lateinit",
-  "noinline",
-  "open",
-  "operator",
-  "override",
-  "private",
-  "protected",
-  "public",
-  "reified",
-  "sealed",
-  "suspend",
-  "tailrec",
-  "value",
-  "vararg",
-];
-const declarations = [
-  "class",
-  "interface",
-  "object",
-  "fun",
-  "val",
-  "var",
-  "constructor",
-  "typealias",
-  "get",
-  "set",
-];
+const hard = `
+  as break class continue do else for fun if in interface is object package import return
+  super this throw try typealias val var when while
+`
+  .trim()
+  .split(/\s+/);
+const modifiers = `
+  abstract actual annotation companion const crossinline data enum expect external final
+  infix inline inner internal lateinit noinline open operator override private protected
+  public reified sealed suspend tailrec value vararg
+`
+  .trim()
+  .split(/\s+/);
+const declarations = `class interface object fun val var constructor typealias get set`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(hard, "keyword"),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
@@ -138,17 +84,9 @@ const code = [
     "@",
     literal("@"),
     optional(
-      wordChoice([
-        "file",
-        "field",
-        "property",
-        "get",
-        "set",
-        "receiver",
-        "param",
-        "setparam",
-        "delegate",
-      ]),
+      wordChoice(
+        `file field property get set receiver param setparam delegate`.trim().split(/\s+/),
+      ),
       literal(":"),
     ),
     ...ident,
@@ -157,7 +95,7 @@ const code = [
   ),
   on(
     "bcrst",
-    wordChoice(["break", "continue", "return", "super", "this"]),
+    wordChoice(`break continue return super this`.trim().split(/\s+/)),
     literal("@"),
     paint("keyword"),
     pushState("label"),
