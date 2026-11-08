@@ -1,5 +1,6 @@
 import {
   type Arm,
+  type State,
   byte,
   bytes,
   cachedPrefix,
@@ -25,6 +26,7 @@ import {
   token,
   union,
 } from "#/grammar/mod.ts";
+import { shellBindings, shellFunctions, withShell } from "./shell.ts";
 
 const digit = range("0", "9");
 const start = union("_", range("a", "z"), range("A", "Z"));
@@ -56,6 +58,7 @@ const expressionWords = (context: "expression" | "let") =>
         text === "in" && context === "let" ? [popState()] : [],
       ),
       ...keywordTable(constants, "constant.builtin"),
+      ...shellFunctions,
       { text: "let", then: [keyword, pushState("let"), pushState("letStart")] },
       { text: "inherit", then: [keyword, pushState("inherit")] },
       { text: "with", then: [keyword, pushState("control")] },
@@ -87,7 +90,7 @@ const expression = ({ context = "expression" }: { context?: "expression" | "let"
   token('"', "string", pushState("double")),
   token("''", "string", pushState("indented")),
   token("${", "punctuation.special", pushState("interpolation")),
-  token("{", "punctuation.bracket", pushState("braces"), pushState("braceStart")),
+  token("{", "punctuation.bracket", pushState("braces"), pushState("bracesStart")),
   token("(", "punctuation.bracket", pushState("parentheses")),
   on(
     ".0123456789",
@@ -129,7 +132,7 @@ const letInitial = classify(
   ],
   [member, setState("binding")],
 );
-const bindingStart = (context: "let" | "braces") =>
+const bindingStart = (context: "let" | "braces" | "shellApplication") =>
   classify(
     [
       { text: "inherit", then: [keyword, setState(context), pushState("inherit")] },
@@ -137,8 +140,9 @@ const bindingStart = (context: "let" | "braces") =>
     ],
     [member, setState(context), pushState("binding")],
   );
-const afterSemicolon = ({ context }: { context: "let" | "braces" }): Arm[] => [
+const afterSemicolon = ({ context }: { context: "let" | "braces" | "shellApplication" }): Arm[] => [
   ...trivia,
+  ...shellBindings([setState(context)], context === "shellApplication"),
   on(start, ...identifier, bindingStart(context)),
   token('"', "string", setState(context), pushState("binding"), pushState("double")),
   token(
@@ -150,165 +154,183 @@ const afterSemicolon = ({ context }: { context: "let" | "braces" }): Arm[] => [
   ),
 ];
 
+const attrset = (context: "braces" | "shellApplication"): Record<string, State> => ({
+  [context]: {
+    style: "plain",
+    arms: [
+      token("}", "punctuation.bracket", popState()),
+      token(";", "punctuation.delimiter", setState(`${context}After`)),
+      ...expression(),
+    ],
+  },
+  [`${context}After`]: {
+    style: "plain",
+    arms: afterSemicolon({ context }),
+    otherwise: [setState(context)],
+  },
+  [`${context}Start`]: {
+    style: "plain",
+    arms: [
+      ...trivia,
+      ...shellBindings([popState()], context === "shellApplication"),
+      on(start, ...identifier, braceCandidate),
+      token('"', "string", setState("braceDynamic"), pushState("double")),
+      token("${", "punctuation.special", setState("braceDynamic"), pushState("interpolation")),
+    ],
+    otherwise: [popState()],
+  },
+});
+
 export default defineGrammar({
   initial: "root",
   name: "nix",
-  states: {
-    root: { style: "plain", arms: [token("}", "punctuation.bracket"), ...expression()] },
-    braces: {
-      style: "plain",
-      arms: [
-        token("}", "punctuation.bracket", popState()),
-        token(";", "punctuation.delimiter", setState("bracesAfter")),
-        ...expression(),
-      ],
+  states: withShell(
+    {
+      root: { style: "plain", arms: [token("}", "punctuation.bracket"), ...expression()] },
+      ...attrset("braces"),
+      ...attrset("shellApplication"),
+      braceCandidate: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          on(
+            ".",
+            literal("."),
+            patchRecord("variable.member"),
+            delimiter,
+            popState(),
+            pushState("binding"),
+            pushState("bindingPart"),
+          ),
+          on(
+            "=",
+            literal("="),
+            notNext("="),
+            patchRecord("variable.member"),
+            delimiter,
+            popState(),
+          ),
+        ],
+        otherwise: [popState()],
+      },
+      braceDynamic: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          token('"', "string", pushState("double")),
+          token("${", "punctuation.special", pushState("interpolation")),
+          token(
+            ".",
+            "punctuation.delimiter",
+            popState(),
+            pushState("binding"),
+            pushState("bindingPart"),
+          ),
+          on("=", literal("="), notNext("="), delimiter, popState()),
+        ],
+        otherwise: [popState()],
+      },
+      let: {
+        style: "plain",
+        arms: [
+          token(";", "punctuation.delimiter", setState("letAfter")),
+          ...expression({ context: "let" }),
+        ],
+      },
+      letAfter: {
+        style: "plain",
+        arms: afterSemicolon({ context: "let" }),
+        otherwise: [setState("let")],
+      },
+      letStart: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          ...shellBindings([popState()]),
+          on(start, ...identifier, letInitial),
+          token('"', "string", setState("binding"), pushState("double")),
+          token("${", "punctuation.special", setState("binding"), pushState("interpolation")),
+        ],
+        otherwise: [popState()],
+      },
+      binding: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          token(".", "punctuation.delimiter", pushState("bindingPart")),
+          on("=", literal("="), notNext("="), delimiter, popState()),
+        ],
+        otherwise: [popState()],
+      },
+      bindingPart: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          ...shellBindings([popState(), popState()]),
+          on(start, ...identifier, member),
+          token('"', "string", popState(), pushState("double")),
+          token("${", "punctuation.special", popState(), pushState("interpolation")),
+        ],
+        otherwise: [popState()],
+      },
+      inherit: {
+        style: "plain",
+        arms: [
+          ...trivia,
+          token("(", "punctuation.bracket", pushState("parentheses")),
+          on(start, ...identifier, member),
+          token('"', "string", pushState("double")),
+          token("${", "punctuation.special", pushState("interpolation")),
+        ],
+        otherwise: [popState()],
+      },
+      control: {
+        style: "plain",
+        arms: [token(";", "punctuation.delimiter", popState()), ...expression()],
+      },
+      parentheses: {
+        style: "plain",
+        arms: [token(")", "punctuation.bracket", popState()), ...expression()],
+      },
+      interpolation: {
+        style: "plain",
+        arms: [token("}", "punctuation.special", popState()), ...expression()],
+      },
+      double: {
+        style: "string",
+        arms: [
+          on("\\", literal("\\"), character(), paint("string.escape")),
+          token("$$", "string"),
+          token("${", "punctuation.special", pushState("interpolation")),
+          token('"', "string", popState()),
+        ],
+      },
+      indented: {
+        style: "string",
+        arms: [
+          token("'''", "string.escape"),
+          token("''$", "string.escape"),
+          on("'", literal("''\\"), character(), paint("string.escape")),
+          token("$$", "string"),
+          token("${", "punctuation.special", pushState("interpolation")),
+          token("''", "string", popState()),
+        ],
+      },
+      path: {
+        style: "plain",
+        arms: [
+          on(pathPart, bytes(pathPart), string),
+          on("/", literal("/"), notNext("/"), string),
+          token("${", "punctuation.special", pushState("interpolation")),
+        ],
+        otherwise: [popState()],
+      },
+      lineComment: { style: "comment", arms: [token("\n", "plain", popState())] },
+      blockComment: {
+        style: "comment",
+        arms: [token("*/", "comment", popState())],
+      },
     },
-    bracesAfter: {
-      style: "plain",
-      arms: afterSemicolon({ context: "braces" }),
-      otherwise: [setState("braces")],
-    },
-    braceStart: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        on(start, ...identifier, braceCandidate),
-        token('"', "string", setState("braceDynamic"), pushState("double")),
-        token("${", "punctuation.special", setState("braceDynamic"), pushState("interpolation")),
-      ],
-      otherwise: [popState()],
-    },
-    braceCandidate: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        on(
-          ".",
-          literal("."),
-          patchRecord("variable.member"),
-          delimiter,
-          popState(),
-          pushState("binding"),
-          pushState("bindingPart"),
-        ),
-        on("=", literal("="), notNext("="), patchRecord("variable.member"), delimiter, popState()),
-      ],
-      otherwise: [popState()],
-    },
-    braceDynamic: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        token('"', "string", pushState("double")),
-        token("${", "punctuation.special", pushState("interpolation")),
-        token(
-          ".",
-          "punctuation.delimiter",
-          popState(),
-          pushState("binding"),
-          pushState("bindingPart"),
-        ),
-        on("=", literal("="), notNext("="), delimiter, popState()),
-      ],
-      otherwise: [popState()],
-    },
-    let: {
-      style: "plain",
-      arms: [
-        token(";", "punctuation.delimiter", setState("letAfter")),
-        ...expression({ context: "let" }),
-      ],
-    },
-    letAfter: {
-      style: "plain",
-      arms: afterSemicolon({ context: "let" }),
-      otherwise: [setState("let")],
-    },
-    letStart: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        on(start, ...identifier, letInitial),
-        token('"', "string", setState("binding"), pushState("double")),
-        token("${", "punctuation.special", setState("binding"), pushState("interpolation")),
-      ],
-      otherwise: [popState()],
-    },
-    binding: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        token(".", "punctuation.delimiter", pushState("bindingPart")),
-        on("=", literal("="), notNext("="), delimiter, popState()),
-      ],
-      otherwise: [popState()],
-    },
-    bindingPart: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        on(start, ...identifier, member),
-        token('"', "string", popState(), pushState("double")),
-        token("${", "punctuation.special", popState(), pushState("interpolation")),
-      ],
-      otherwise: [popState()],
-    },
-    inherit: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        token("(", "punctuation.bracket", pushState("parentheses")),
-        on(start, ...identifier, member),
-        token('"', "string", pushState("double")),
-        token("${", "punctuation.special", pushState("interpolation")),
-      ],
-      otherwise: [popState()],
-    },
-    control: {
-      style: "plain",
-      arms: [token(";", "punctuation.delimiter", popState()), ...expression()],
-    },
-    parentheses: {
-      style: "plain",
-      arms: [token(")", "punctuation.bracket", popState()), ...expression()],
-    },
-    interpolation: {
-      style: "plain",
-      arms: [token("}", "punctuation.special", popState()), ...expression()],
-    },
-    double: {
-      style: "string",
-      arms: [
-        on("\\", literal("\\"), character(), paint("string.escape")),
-        token("$$", "string"),
-        token("${", "punctuation.special", pushState("interpolation")),
-        token('"', "string", popState()),
-      ],
-    },
-    indented: {
-      style: "string",
-      arms: [
-        token("'''", "string.escape"),
-        token("''$", "string.escape"),
-        on("'", literal("''\\"), character(), paint("string.escape")),
-        token("$$", "string"),
-        token("${", "punctuation.special", pushState("interpolation")),
-        token("''", "string", popState()),
-      ],
-    },
-    path: {
-      style: "plain",
-      arms: [
-        on(pathPart, bytes(pathPart), string),
-        on("/", literal("/"), notNext("/"), string),
-        token("${", "punctuation.special", pushState("interpolation")),
-      ],
-      otherwise: [popState()],
-    },
-    lineComment: { style: "comment", arms: [token("\n", "plain", popState())] },
-    blockComment: {
-      style: "comment",
-      arms: [token("*/", "comment", popState())],
-    },
-  },
+    trivia,
+  ),
 });

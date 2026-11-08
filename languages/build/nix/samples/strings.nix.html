@@ -21,13 +21,13 @@
   <g-vm>url</g-vm> <g-pd>=</g-pd> <g-tu>https://example.test/path?q=sky&amp;lang=en</g-tu><g-pd>;</g-pd>
   <g-vm>source</g-vm> <g-pd>=</g-pd> <g-tu>git+https://example.test/repo</g-tu><g-pd>;</g-pd>
 <g-k>in</g-k>
-<g-v>pkgs</g-v><g-pd>.</g-pd><g-v>writeShellScriptBin</g-v> <g-s>"observe"</g-s> <g-s>''
-  set -eu
-  mkdir -p "$HOME/sky"
-  echo </g-s><g-ps>${</g-ps><g-v>greeting</g-v><g-ps>}</g-ps><g-s>
-  echo </g-s><g-ps>${</g-ps><g-v>nested</g-v><g-ps>}</g-ps><g-s>
-  cat &lt;&lt;'EOF'
-  雪 and stars
+<g-v>pkgs</g-v><g-pd>.</g-pd><g-v>writeShellScriptBin</g-v> <g-s>"observe"</g-s> <g-s>''</g-s>
+  <g-cb>set</g-cb> -eu
+  <g-f>mkdir</g-f> -p <g-s>"</g-s><g-v>$HOME</g-v><g-s>/sky"</g-s>
+  <g-cb>echo</g-cb> <g-ps>${</g-ps><g-v>greeting</g-v><g-ps>}</g-ps>
+  <g-cb>echo</g-cb> <g-ps>${</g-ps><g-v>nested</g-v><g-ps>}</g-ps>
+  <g-f>cat</g-f> <g-o>&lt;&lt;</g-o><g-l>'EOF'</g-l>
+<g-s>  雪 and stars
   EOF
   </g-s><g-ps>${</g-ps><g-v>script</g-v><g-ps>}</g-ps><g-s>
 ''</g-s>

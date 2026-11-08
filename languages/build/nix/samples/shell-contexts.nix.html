@@ -1,0 +1,36 @@
+<g-pb>{</g-pb> <g-v>pkgs</g-v><g-pd>,</g-pd> <g-v>name</g-v> <g-o>?</g-o> <g-s>"world"</g-s><g-pd>,</g-pd> <g-pd>...</g-pd> <g-pb>}</g-pb><g-pd>:</g-pd>
+<g-k>let</g-k>
+  <g-vm>message</g-vm> <g-pd>=</g-pd> <g-s>"Hello, </g-s><g-ps>${</g-ps><g-v>name</g-v><g-ps>}</g-ps><g-s>"</g-s><g-pd>;</g-pd>
+  <g-vm>script</g-vm> <g-pd>=</g-pd> <g-v>pkgs</g-v><g-pd>.</g-pd><g-v>writeShellScript</g-v> <g-s>"greet"</g-s> <g-s>''</g-s>
+    <g-c># Bash with Nix interpolation inside a quoted string.</g-c>
+    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-ps>${</g-ps><g-v>message</g-v><g-ps>}</g-ps><g-s>: </g-s><g-v>$USER</g-v><g-s>"</g-s>
+    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-se>''</g-se><g-ps>${</g-ps><g-v>HOME</g-v><g-ps>}</g-ps><g-s>"</g-s>
+    <g-cb>echo</g-cb> <g-s>"</g-s><g-se>'</g-se><g-s>''quoted</g-s><g-se>'</g-se><g-s>''"</g-s>
+  <g-s>''</g-s><g-pd>;</g-pd>
+  <g-vm>package</g-vm> <g-pd>=</g-pd> <g-v>pkgs</g-v><g-pd>.</g-pd><g-v>runCommand</g-v> <g-s>"greeting"</g-s> <g-pb>{</g-pb> <g-vm>description</g-vm> <g-pd>=</g-pd> <g-s>"Not shell"</g-s><g-pd>;</g-pd> <g-pb>}</g-pb> <g-s>''</g-s>
+    <g-f>mkdir</g-f> -p <g-s>"</g-s><g-v>$out</g-v><g-s>/bin"</g-s>
+    <g-f>cp</g-f> <g-ps>${</g-ps><g-v>script</g-v><g-ps>}</g-ps> <g-s>"</g-s><g-v>$out</g-v><g-s>/bin/greet"</g-s>
+  <g-s>''</g-s><g-pd>;</g-pd>
+<g-k>in</g-k> <g-pb>{</g-pb>
+  <g-vm>shellHook</g-vm> <g-pd>=</g-pd> <g-s>''</g-s>
+    <g-cb>export</g-cb> GREETING=<g-s>"</g-s><g-ps>${</g-ps><g-v>message</g-v><g-ps>}</g-ps><g-s>"</g-s>
+    <g-cb>echo</g-cb> <g-s>"</g-s><g-v>$GREETING</g-v><g-s>"</g-s>
+  <g-s>''</g-s><g-pd>;</g-pd>
+  <g-vm>buildPhase</g-vm> <g-c>/* a Nix comment */</g-c> <g-pd>=</g-pd> <g-s>''</g-s>
+    <g-k>for</g-k> <g-v>file</g-v> <g-k>in</g-k> *.txt<g-o>;</g-o> <g-k>do</g-k>
+      <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$file</g-v><g-s>"</g-s>
+    <g-k>done</g-k>
+  <g-s>''</g-s><g-pd>;</g-pd>
+  <g-vm>nested</g-vm><g-pd>.</g-pd><g-vm>postInstall</g-vm> <g-pd>=</g-pd> <g-s>"</g-s><g-cb>echo</g-cb> <g-se>\</g-se><g-s>"</g-s><g-v>$out</g-v><g-se>\</g-se><g-s>""</g-s><g-pd>;</g-pd>
+  <g-s>"preCheck"</g-s> <g-pd>=</g-pd> <g-s>''</g-s><g-cb>echo</g-cb> checking<g-s>''</g-s><g-pd>;</g-pd>
+  <g-vm>application</g-vm> <g-pd>=</g-pd> <g-v>pkgs</g-v><g-pd>.</g-pd><g-v>writeShellApplication</g-v> <g-pb>{</g-pb>
+    <g-vm>name</g-vm> <g-pd>=</g-pd> <g-s>"say-hello"</g-s><g-pd>;</g-pd>
+    <g-vm>text</g-vm> <g-pd>=</g-pd> <g-s>''</g-s>
+      <g-cb>echo</g-cb> <g-s>"</g-s><g-ps>${</g-ps><g-k>if</g-k> <g-v>name</g-v> <g-o>==</g-o> <g-s>"world"</g-s> <g-k>then</g-k> <g-s>"Hello"</g-s> <g-k>else</g-k> <g-v>name</g-v><g-ps>}</g-ps><g-s>, </g-s><g-v>$USER</g-v><g-s>"</g-s>
+    <g-s>''</g-s><g-pd>;</g-pd>
+  <g-pb>}</g-pb><g-pd>;</g-pd>
+  <g-vm>description</g-vm> <g-pd>=</g-pd> <g-s>''
+    echo "$HOME" is ordinary text here.
+  ''</g-s><g-pd>;</g-pd>
+  <g-k>inherit</g-k> <g-vm>package</g-vm><g-pd>;</g-pd>
+<g-pb>}</g-pb>
