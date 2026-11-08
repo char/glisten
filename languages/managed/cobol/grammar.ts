@@ -46,6 +46,9 @@ const words = keywordTable(
 const values = keywordTable(constants, "constant.builtin");
 const bounded = (set: Parameters<typeof bytes>[0], fixed: boolean, min = 1, max?: number) =>
   bytes(set, { min, ...(max === undefined ? {} : { max }), ...(fixed ? { untilColumn: 72 } : {}) });
+// Whitespace needs no column bound: a byte at or past column 72 is plain anyway, so
+// stopping the run there only splits a span that coalescing rejoins.
+const spaces = (max?: number) => bytes(" \t", { min: 1, ...(max === undefined ? {} : { max }) });
 const phrase = (text: string) =>
   [...text].map((c) => (/[a-z]/.test(c) ? byte(c + c.toUpperCase()) : literal(c)));
 const fixedLimit = redispatch(line, columnAtLeast(72), setState("fixedIgnored"));
@@ -98,7 +101,7 @@ function code(fixed: boolean, areaA = false) {
           ),
         ]
       : [token("*>", "comment", setState("freeComment"))]),
-    on(" \t", bounded(" \t", fixed, 1, areaA ? 4 : undefined), paint("plain")),
+    on(" \t", spaces(areaA ? 4 : undefined), paint("plain")),
     token('"', "string", setState(`${stringState}Double`)),
     token("'", "string", setState(`${stringState}Single`)),
     ...(fixed && areaA
@@ -168,7 +171,7 @@ export default defineGrammar({
       arms: [
         fixedLimit,
         ...newline("fixedSequence"),
-        on(" \t", bounded(" \t", true), paint("plain")),
+        on(" \t", spaces(), paint("plain")),
         on(letter, bounded(name, true), paint("function"), setState("fixedCode")),
       ],
     },
@@ -185,7 +188,7 @@ export default defineGrammar({
       arms: [
         fixedLimit,
         ...newline("fixedSequence"),
-        on(" \t", bytes(" \t", { untilColumn: 72 }), paint("plain")),
+        on(" \t", spaces(), paint("plain")),
         on(
           "iI",
           bounded("iI", true, 1, 1),
