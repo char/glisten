@@ -28,8 +28,8 @@ const rest = union(nameByte, "?");
 const name = [byte(first), bytes(nameByte, { min: 0 }), optional(literal("?"))];
 const space = " \t\r\n";
 const cases = [
-  ...keywordTable(["true", "false", "nil", "null", "empty", "blank"], "constant.builtin"),
-  ...keywordTable(["contains", "and", "or", "in"], "operator"),
+  ...keywordTable(`true false nil null empty blank`.trim().split(/\s+/), "constant.builtin"),
+  ...keywordTable(`contains and or in`.trim().split(/\s+/), "operator"),
 ];
 const code = [
   token('"', "string", pushState("double")),

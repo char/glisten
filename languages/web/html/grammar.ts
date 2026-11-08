@@ -108,27 +108,38 @@ const typeValue = (value: string) => {
 };
 const jsTypes = [
   "",
-  "module",
-  "text/javascript",
-  "application/javascript",
-  "application/ecmascript",
-  "text/ecmascript",
-  "text/jscript",
-  "text/livescript",
-  "text/x-javascript",
-  "application/x-javascript",
-  "text/javascript1.0",
-  "text/javascript1.1",
-  "text/javascript1.2",
-  "text/javascript1.3",
-  "text/javascript1.4",
-  "text/javascript1.5",
+  ...`
+    module text/javascript application/javascript application/ecmascript text/ecmascript
+    text/jscript text/livescript text/x-javascript application/x-javascript text/javascript1.0
+    text/javascript1.1 text/javascript1.2 text/javascript1.3 text/javascript1.4 text/javascript1.5
+  `
+    .trim()
+    .split(/\s+/),
 ];
-const jsonTypes = ["application/json", "application/ld+json", "importmap", "speculationrules"];
-const events =
-  `onabort onafterprint onauxclick onbeforeinput onbeforematch onbeforeprint onbeforetoggle onbeforeunload onblur oncancel oncanplay oncanplaythrough onchange onclick onclose oncontextlost oncontextmenu oncontextrestored oncopy oncuechange oncut ondblclick ondrag ondragend ondragenter ondragleave ondragover ondragstart ondrop ondurationchange onemptied onended onerror onfocus onformdata onhashchange oninput oninvalid onkeydown onkeypress onkeyup onlanguagechange onload onloadeddata onloadedmetadata onloadstart onmessage onmessageerror onmousedown onmouseenter onmouseleave onmousemove onmouseout onmouseover onmouseup onoffline ononline onpagehide onpagereveal onpageshow onpageswap onpaste onpause onplay onplaying onpopstate onprogress onratechange onrejectionhandled onreset onresize onscroll onscrollend onsecuritypolicyviolation onseeked onseeking onselect onslotchange onstalled onstorage onsubmit onsuspend ontimeupdate ontoggle onunhandledrejection onunload onvolumechange onwaiting onwebkitanimationend onwebkitanimationiteration onwebkitanimationstart onwebkittransitionend onwheel onpointerover onpointerenter onpointerdown onpointermove onpointerrawupdate onpointerup onpointercancel onpointerout onpointerleave ongotpointercapture onlostpointercapture ontouchstart ontouchend ontouchmove ontouchcancel`.split(
-    " ",
-  );
+const jsonTypes = `
+  application/json application/ld+json importmap speculationrules
+`
+  .trim()
+  .split(/\s+/);
+const events = `
+  onabort onafterprint onauxclick onbeforeinput onbeforematch onbeforeprint onbeforetoggle
+  onbeforeunload onblur oncancel oncanplay oncanplaythrough onchange onclick onclose oncontextlost
+  oncontextmenu oncontextrestored oncopy oncuechange oncut ondblclick ondrag ondragend ondragenter
+  ondragleave ondragover ondragstart ondrop ondurationchange onemptied onended onerror onfocus
+  onformdata onhashchange oninput oninvalid onkeydown onkeypress onkeyup onlanguagechange onload
+  onloadeddata onloadedmetadata onloadstart onmessage onmessageerror onmousedown onmouseenter
+  onmouseleave onmousemove onmouseout onmouseover onmouseup onoffline ononline onpagehide
+  onpagereveal onpageshow onpageswap onpaste onpause onplay onplaying onpopstate onprogress
+  onratechange onrejectionhandled onreset onresize onscroll onscrollend onsecuritypolicyviolation
+  onseeked onseeking onselect onslotchange onstalled onstorage onsubmit onsuspend ontimeupdate
+  ontoggle onunhandledrejection onunload onvolumechange onwaiting onwebkitanimationend
+  onwebkitanimationiteration onwebkitanimationstart onwebkittransitionend onwheel onpointerover
+  onpointerenter onpointerdown onpointermove onpointerrawupdate onpointerup onpointercancel
+  onpointerout onpointerleave ongotpointercapture onlostpointercapture ontouchstart ontouchend
+  ontouchmove ontouchcancel
+`
+  .trim()
+  .split(/\s+/);
 const tagStates = [
   "normal",
   "script",

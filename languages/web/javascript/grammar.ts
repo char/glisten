@@ -42,70 +42,27 @@ const genericBody = (depth: number): ReturnType<typeof repeat> =>
     ),
   );
 const genericHead = [bytes(" \t", { min: 0 }), lookahead(...ident), genericBody(3), literal(">")];
-const keywords = [
-  "async",
-  "await",
-  "break",
-  "case",
-  "catch",
-  "class",
-  "const",
-  "continue",
-  "debugger",
-  "default",
-  "delete",
-  "do",
-  "else",
-  "export",
-  "extends",
-  "finally",
-  "for",
-  "function",
-  "if",
-  "import",
-  "in",
-  "instanceof",
-  "let",
-  "new",
-  "of",
-  "return",
-  "static",
-  "super",
-  "switch",
-  "throw",
-  "try",
-  "typeof",
-  "var",
-  "void",
-  "while",
-  "with",
-  "yield",
-  "get",
-  "set",
-  "from",
-  "as",
-];
-const valueKeywords = ["true", "false", "null", "undefined", "this"];
+const keywords = `
+  async await break case catch class const continue debugger default delete do else export extends
+  finally for function if import in instanceof let new of return static super switch throw try
+  typeof var void while with yield get set from as
+`
+  .trim()
+  .split(/\s+/);
+const valueKeywords = `
+  true false null undefined this
+`
+  .trim()
+  .split(/\s+/);
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
-const expressionKeywords = new Set([
-  "await",
-  "case",
-  "default",
-  "delete",
-  "do",
-  "else",
-  "in",
-  "instanceof",
-  "of",
-  "return",
-  "throw",
-  "typeof",
-  "void",
-  "yield",
-  "new",
-  "extends",
-  "class",
-]);
+const expressionKeywords = new Set(
+  `
+  await case default delete do else in instanceof of return throw typeof void yield new extends
+  class
+`
+    .trim()
+    .split(/\s+/),
+);
 const comments = [
   token("//", "comment", pushState("lineComment")),
   on(
@@ -200,18 +157,11 @@ function code(
           then: [paint("keyword"), setState(after), pushState("tsHeritage")],
         },
         ...keywordTable(
-          [
-            "declare",
-            "abstract",
-            "public",
-            "private",
-            "protected",
-            "readonly",
-            "override",
-            "keyof",
-            "infer",
-            "asserts",
-          ],
+          `
+            declare abstract public private protected readonly override keyof infer asserts
+          `
+            .trim()
+            .split(/\s+/),
           "keyword",
         ),
       ]
@@ -438,8 +388,8 @@ const typeName = (after: string) => ({
 
 const jsxNameRest = union(rest, "-:");
 const jsxName = [byte(start), bytes(jsxNameRest, { min: 0 })];
-const jsxNames = (open: boolean) => {
-  const next = open ? [setState("jsxAttributes")] : [];
+const jsxNames = (tag: "open" | "close") => {
+  const next = tag === "open" ? [setState("jsxAttributes")] : [];
   return [
     on(
       start,
@@ -457,7 +407,7 @@ const jsxNames = (open: boolean) => {
 const jsxStates = {
   jsxOpen: {
     style: "plain" as const,
-    arms: [token(">", "punctuation.bracket", setState("jsxChildren")), ...jsxNames(true)],
+    arms: [token(">", "punctuation.bracket", setState("jsxChildren")), ...jsxNames("open")],
   },
   jsxAttributes: {
     style: "plain" as const,
@@ -481,7 +431,7 @@ const jsxStates = {
   },
   jsxClose: {
     style: "plain" as const,
-    arms: [...jsxNames(false), token(">", "punctuation.bracket", popState())],
+    arms: [...jsxNames("close"), token(">", "punctuation.bracket", popState())],
   },
   jsxDouble: { style: "string" as const, arms: [token('"', "string", popState())] },
   jsxSingle: { style: "string" as const, arms: [token("'", "string", popState())] },
@@ -491,6 +441,18 @@ export function javascript({
   jsx = false,
   types = false,
 }: { jsx?: boolean; types?: boolean } = {}) {
+  const contexts = [
+    "root",
+    "brace",
+    "object",
+    "interpolation",
+    "paren",
+    "array",
+    "ternaryTrue",
+    "ternaryFalse",
+    ...(types ? ["tsClass" as const, "tsParen" as const] : []),
+    "controlParen",
+  ] as const;
   return defineGrammar<string>({
     name: types ? (jsx ? "tsx" : "typescript") : jsx ? "jsx" : "javascript",
     ...(types && !jsx
@@ -506,20 +468,7 @@ export function javascript({
         otherwise: [setState("rootStart")],
       },
       ...Object.fromEntries(
-        (
-          [
-            "root",
-            "brace",
-            "object",
-            "interpolation",
-            "paren",
-            "array",
-            "ternaryTrue",
-            "ternaryFalse",
-            ...(types ? ["tsClass" as const, "tsParen" as const] : []),
-            "controlParen" as const,
-          ] as const
-        ).flatMap((context) =>
+        contexts.flatMap((context) =>
           (["Start", "Value", "After"] as const).map((position) => [
             context + position,
             { style: "plain" as const, arms: code(context, position, jsx, types) },
@@ -649,20 +598,7 @@ export function javascript({
         otherwise: [popState()],
       },
       ...Object.fromEntries(
-        (
-          [
-            "root",
-            "brace",
-            "object",
-            "interpolation",
-            "paren",
-            "array",
-            "ternaryTrue",
-            "ternaryFalse",
-            ...(types ? ["tsClass" as const, "tsParen" as const] : []),
-            "controlParen" as const,
-          ] as const
-        ).map((context) => [context + "TypeName", typeName(context + "After")]),
+        contexts.map((context) => [context + "TypeName", typeName(context + "After")]),
       ),
       lineComment: { style: "comment", arms: [redispatch("\n\r", popState())] },
       blockComment: { style: "comment", arms: [token("*/", "comment", popState())] },

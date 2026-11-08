@@ -62,10 +62,10 @@ const number = (next: string) =>
   );
 const cases = [
   ...keywordTable(
-    "if else end range with define template block break continue".split(" "),
+    `if else end range with define template block break continue`.trim().split(/\s+/),
     "keyword",
   ),
-  ...keywordTable(["true", "false", "nil"], "constant.builtin"),
+  ...keywordTable(`true false nil`.trim().split(/\s+/), "constant.builtin"),
 ];
 const argumentStart = union(first, digit, ".$(\"'`+-");
 const code = (head: string, args: string, method: string, command: boolean) => [

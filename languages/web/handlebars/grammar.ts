@@ -36,7 +36,7 @@ const upper = range("A", "Z");
 const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const tagName = except(all, space + "/>='\"<{}");
-const attrName = except(all, space + "/>='\"<{}");
+const attrName = tagName;
 const path = except(all, space + "(){}'\"=|~");
 const name = except(path, ",");
 const reference = on(
@@ -141,22 +141,11 @@ states.rawBody = {
   ],
 };
 
-const keyword = [
-  "else",
-  "if",
-  "unless",
-  "each",
-  "with",
-  "as",
-  "yield",
-  "let",
-  "in-element",
-  "log",
-  "debugger",
-  "has-block",
-  "has-block-params",
-];
-const constants = ["true", "false", "null", "undefined"];
+const keyword = `else if unless each with as yield let in-element log debugger has-block
+  has-block-params`
+  .trim()
+  .split(/\s+/);
+const constants = `true false null undefined`.trim().split(/\s+/);
 const keywords = (next?: string) =>
   keyword.map((word) =>
     on(word[0]!, literal(word), notNext(path), paint("keyword"), ...(next ? [setState(next)] : [])),

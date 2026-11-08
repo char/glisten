@@ -57,21 +57,11 @@ const triviaMatch = repeat(
 const words = classify(
   [
     ...keywordTable(
-      [
-        "keyof",
-        "typeof",
-        "infer",
-        "extends",
-        "in",
-        "readonly",
-        "is",
-        "asserts",
-        "as",
-        "new",
-        "abstract",
-        "const",
-        "unique",
-      ],
+      `
+          keyof typeof infer extends in readonly is asserts as new abstract const unique
+        `
+        .trim()
+        .split(/\s+/),
       "keyword",
     ),
     ...keywordTable(["true", "false", "null", "undefined"], "constant.builtin"),
@@ -80,14 +70,17 @@ const words = classify(
 );
 
 function typeExpression(context: "root" | "angle" | "paren" | "array" | "object" | "template") {
+  const closing = {
+    root: redispatch(";,)=]}", popState()),
+    angle: token(">", "punctuation.bracket", popState()),
+    paren: token(")", "punctuation.bracket", popState()),
+    array: token("]", "punctuation.bracket", popState()),
+    object: token("}", "punctuation.bracket", popState()),
+    template: token("}", "punctuation.special", popState()),
+  }[context];
   return [
     token("=>", "operator"),
-    ...(context === "root" ? [redispatch(";,)=]}", popState())] : []),
-    ...(context === "angle" ? [token(">", "punctuation.bracket", popState())] : []),
-    ...(context === "paren" ? [token(")", "punctuation.bracket", popState())] : []),
-    ...(context === "array" ? [token("]", "punctuation.bracket", popState())] : []),
-    ...(context === "object" ? [token("}", "punctuation.bracket", popState())] : []),
-    ...(context === "template" ? [token("}", "punctuation.special", popState())] : []),
+    closing,
     ...comments,
     token('"', "string", pushState("double")),
     token("'", "string", pushState("single")),
@@ -113,25 +106,19 @@ function typeExpression(context: "root" | "angle" | "paren" | "array" | "object"
   ];
 }
 
-function returnType(after: boolean, arrow = false) {
+function returnType(position: "start" | "after", kind: "ordinary" | "arrow") {
+  const after = position === "after";
+  const arrow = kind === "arrow";
   const before = arrow ? "tsArrowReturnStart" : "tsReturnStart";
   const completed = arrow ? "tsArrowReturnAfter" : "tsReturnAfter";
   const returnWords = classify(
     [
       ...keywordTable(
-        [
-          "keyof",
-          "typeof",
-          "infer",
-          "extends",
-          "in",
-          "readonly",
-          "is",
-          "asserts",
-          "new",
-          "abstract",
-          "unique",
-        ],
+        `
+          keyof typeof infer extends in readonly is asserts new abstract unique
+        `
+          .trim()
+          .split(/\s+/),
         "keyword",
         () => [setState(before)],
       ),
@@ -144,7 +131,7 @@ function returnType(after: boolean, arrow = false) {
   return [
     ...trivia,
     ...(arrow ? [] : [token("=>", "operator", setState(before))]),
-    ...(after ? [redispatch("{;,)=]}", popState())] : [redispatch(";,)=]}", popState())]),
+    redispatch(after ? "{;,)=]}" : ";,)=]}", popState()),
     on(start, ...ident, returnWords),
     token('"', "string", setState(completed), pushState("double")),
     token("'", "string", setState(completed), pushState("single")),
@@ -327,10 +314,10 @@ export const typeStates = {
     ],
     otherwise: [popState()],
   },
-  tsReturnStart: { style: "plain" as const, arms: returnType(false) },
-  tsReturnAfter: { style: "plain" as const, arms: returnType(true) },
-  tsArrowReturnStart: { style: "plain" as const, arms: returnType(false, true) },
-  tsArrowReturnAfter: { style: "plain" as const, arms: returnType(true, true) },
+  tsReturnStart: { style: "plain" as const, arms: returnType("start", "ordinary") },
+  tsReturnAfter: { style: "plain" as const, arms: returnType("after", "ordinary") },
+  tsArrowReturnStart: { style: "plain" as const, arms: returnType("start", "arrow") },
+  tsArrowReturnAfter: { style: "plain" as const, arms: returnType("after", "arrow") },
   tsInterfaceName: {
     style: "plain" as const,
     arms: [...trivia, on(start, ...ident, paint("type"), setState("tsInterfaceHead"))],

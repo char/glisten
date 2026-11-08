@@ -92,12 +92,14 @@ const value = [
     paint("string"),
     wrap("constant.color", { from: "arm" }),
   ),
-  ...["default", "global", "important"].map((word) =>
-    on("!", literal("!"), literal(word), notNext(rest), paint("keyword")),
-  ),
-  ...["and", "or", "not", "in", "from", "through", "to"].map((word) =>
-    on(word[0]!, literal(word), notNext(rest), paint("operator")),
-  ),
+  ...`default global important`
+    .trim()
+    .split(/\s+/)
+    .map((word) => on("!", literal("!"), literal(word), notNext(rest), paint("keyword"))),
+  ...`and or not in from through to`
+    .trim()
+    .split(/\s+/)
+    .map((word) => on(word[0]!, literal(word), notNext(rest), paint("operator"))),
   on(first, ...name, lookahead(literal("(")), paint("function")),
   on(first, ...name, paint("plain")),
   token("(", "punctuation.bracket", pushState("paren")),
@@ -132,9 +134,12 @@ export default defineGrammar({
         ...comment,
         on("$", literal("$"), ...name, paint("variable"), setState("value")),
         on("@", literal("@extend"), notNext(rest), paint("keyword"), setState("selector")),
-        ...["@mixin", "@include", "@function"].map((word) =>
-          on("@", literal(word), notNext(rest), paint("keyword"), setState("callable")),
-        ),
+        ...`@mixin @include @function`
+          .trim()
+          .split(/\s+/)
+          .map((word) =>
+            on("@", literal(word), notNext(rest), paint("keyword"), setState("callable")),
+          ),
         on("@", literal("@"), ...name, paint("keyword"), setState("value")),
         on("=+", byte("=+"), lookahead(byte(first)), paint("keyword"), setState("callable")),
         on(

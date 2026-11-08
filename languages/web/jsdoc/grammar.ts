@@ -22,18 +22,17 @@ const identifier = union(letters, range("0", "9"), "$", byteSet({ ranges: [[128,
 const name = union(identifier, ".#~");
 const space = on(" \t", bytes(" \t"), paint("comment"));
 const newline = token("\n", "comment", setState("line"));
-const namedTags = [
-  "param",
-  "arg",
-  "argument",
-  "property",
-  "prop",
-  "typeParam",
-  "template",
-  "typedef",
-];
-const typedTags = ["return", "returns", "type", "throws", "throw", "this", "satisfies"];
-const tags = (names: string[], target: string) =>
+const namedTags = `
+  param arg argument property prop typeParam template typedef
+`
+  .trim()
+  .split(/\s+/);
+const typedTags = `
+  return returns type throws throw this satisfies
+`
+  .trim()
+  .split(/\s+/);
+const tagArms = (names: readonly string[], target: string) =>
   names.map((name) =>
     on("@", literal(`@${name}`), notNext(identifier), paint("keyword"), setState(target)),
   );
@@ -48,8 +47,8 @@ export default defineGrammar({
       arms: [
         space,
         token("*", "comment"),
-        ...tags(namedTags, "named"),
-        ...tags(typedTags, "typed"),
+        ...tagArms(namedTags, "named"),
+        ...tagArms(typedTags, "typed"),
         on(
           "@",
           literal("@"),

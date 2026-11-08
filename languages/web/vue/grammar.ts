@@ -223,7 +223,7 @@ for (const mode of ["javascript", "typescript"] as const) {
       ...tagArms(mode),
     ],
   };
-  const body = (isNested: boolean): State => ({
+  const body = (level: "top" | "nested"): State => ({
     style: "plain",
     arms: [
       comments,
@@ -239,7 +239,7 @@ for (const mode of ["javascript", "typescript"] as const) {
         literal("</"),
         names("template"),
         paint("punctuation.bracket"),
-        setState(`${isNested ? "nested" : "top"}TemplateCloseName_${mode}`),
+        setState(`${level}TemplateCloseName_${mode}`),
       ),
       on(
         "<",
@@ -265,8 +265,8 @@ for (const mode of ["javascript", "typescript"] as const) {
       reference(),
     ],
   });
-  states[template] = body(false);
-  states[nested] = body(true);
+  states[template] = body("top");
+  states[nested] = body("nested");
   states[`nestedTemplateName_${mode}`] = {
     style: "plain",
     arms: [on(name, bytes(name), paint("tag"), setState(`nestedTemplateTag_${mode}`))],

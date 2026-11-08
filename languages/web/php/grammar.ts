@@ -38,28 +38,23 @@ const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const white = " \t\r\n";
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
-const keywords =
-  "abstract and array as break callable case catch clone const continue declare default do echo else elseif enddeclare endfor endforeach endif endswitch endwhile eval exit extends final finally fn for foreach global goto if implements include include_once instanceof insteadof interface isset list match namespace new or print private protected public readonly require require_once return static switch throw trait try unset use var while xor yield from enum function class true false null self parent static".split(
-    " ",
-  );
+const keywords = `
+  abstract and array as break callable case catch clone const continue declare default do echo
+  else elseif enddeclare endfor endforeach endif endswitch endwhile eval exit extends final
+  finally fn for foreach global goto if implements include include_once instanceof insteadof
+  interface isset list match namespace new or print private protected public readonly require
+  require_once return static switch throw trait try unset use var while xor yield from enum
+  function class true false null self parent static
+`
+  .trim()
+  .split(/\s+/);
 const names = new Set(["function", "class", "interface", "trait", "enum"]);
-const builtinTypes = [
-  "int",
-  "integer",
-  "float",
-  "double",
-  "real",
-  "string",
-  "bool",
-  "boolean",
-  "object",
-  "mixed",
-  "void",
-  "never",
-  "iterable",
-  "resource",
-  "binary",
-];
+const builtinTypes = `
+  int integer float double real string bool boolean object mixed void never iterable resource
+  binary
+`
+  .trim()
+  .split(/\s+/);
 const words = [...new Set([...keywords, ...builtinTypes])].map((text) => ({
   text,
   then: [
@@ -78,7 +73,7 @@ const words = [...new Set([...keywords, ...builtinTypes])].map((text) => ({
   ],
 }));
 
-function omit(arm: Arm): Arm {
+function prefixHost(arm: Arm): Arm {
   if (arm.redispatch) return arm;
   const effect = arm.then[0];
   if (effect?.kind === "word")
@@ -95,7 +90,10 @@ function omit(arm: Arm): Arm {
   return { ...arm, then: [hostPrefix(), ...arm.then] };
 }
 function state(style: State["style"], arms: Arm[]): State {
-  return { style, arms: [...arms.map(omit), on(all, character(), hostPrefix(), paint(style))] };
+  return {
+    style,
+    arms: [...arms.map(prefixHost), on(all, character(), hostPrefix(), paint(style))],
+  };
 }
 const variable = [bytes("$"), ...ident];
 const stringVariable = [

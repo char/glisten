@@ -85,8 +85,10 @@ const genericHead = [
 ];
 
 // The parent must find the closing brace independently of the injected TSX lexer.
-for (const nested of [false, true])
-  for (const expected of [false, true]) {
+for (const context of ["expression", "nested"] as const)
+  for (const position of ["after", "start"] as const) {
+    const nested = context === "nested";
+    const expected = position === "start";
     const state = nested ? "inner" : "expr";
     const first = `${state}_start`,
       after = `${state}_after`;
@@ -103,18 +105,12 @@ for (const nested of [false, true])
         nested
           ? token("}", "plain", popState())
           : on("}", literal("}"), closeInjection(), paint("punctuation.special"), popState()),
-        ...[
-          "return",
-          "throw",
-          "typeof",
-          "void",
-          "delete",
-          "new",
-          "in",
-          "instanceof",
-          "yield",
-          "await",
-        ].map((w) => on(w[0]!, literal(w), notNext(word), paint("plain"), setState(first))),
+        ...`
+            return throw typeof void delete new in instanceof yield await
+          `
+          .trim()
+          .split(/\s+/)
+          .map((w) => on(w[0]!, literal(w), notNext(word), paint("plain"), setState(first))),
         ...(expected
           ? [
               on(
@@ -138,9 +134,9 @@ for (const nested of [false, true])
         on(digit, bytes(union(word, ".")), paint("plain"), setState(after)),
         token("++", "plain", setState(expected ? first : after)),
         token("--", "plain", setState(expected ? first : after)),
-        ...(expected
-          ? [token("/", "plain", setState(after), pushState("regex"))]
-          : [token("/", "plain", setState(first))]),
+        expected
+          ? token("/", "plain", setState(after), pushState("regex"))
+          : token("/", "plain", setState(first)),
         on(")]", byte(")]"), paint("plain"), setState(after)),
         on("([,;:?=!*%&|^~+-<>", byte("([,;:?=!*%&|^~+-<>"), paint("plain"), setState(first)),
       ],

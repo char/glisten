@@ -67,8 +67,10 @@ states.htmlComment = { style: "comment", arms: [token("-->", "comment", popState
 states.declaration = { style: "keyword", arms: [token(">", "keyword", popState())] };
 
 // The host tracks lexical boundaries while JavaScript styles the same bytes.
-for (const nested of [false, true])
-  for (const expected of [false, true]) {
+for (const context of ["expression", "nested"] as const)
+  for (const position of ["after", "start"] as const) {
+    const nested = context === "nested";
+    const expected = position === "start";
     const state = nested ? "inner" : "expr";
     const start = `${state}_start`,
       after = `${state}_after`;
@@ -83,25 +85,19 @@ for (const nested of [false, true])
       nested
         ? token("}", "plain", popState())
         : on("}", literal("}"), closeInjection(), paint("punctuation.special"), popState()),
-      ...[
-        "return",
-        "throw",
-        "typeof",
-        "void",
-        "delete",
-        "new",
-        "in",
-        "instanceof",
-        "yield",
-        "await",
-      ].map((w) => on(w[0]!, literal(w), notNext(word), paint("plain"), setState(start))),
+      ...`
+            return throw typeof void delete new in instanceof yield await
+          `
+        .trim()
+        .split(/\s+/)
+        .map((w) => on(w[0]!, literal(w), notNext(word), paint("plain"), setState(start))),
       on(union(alpha, identifierPunctuation), bytes(word), paint("plain"), setState(after)),
       on(digit, bytes(union(word, byteSet({ bytes: [46] }))), paint("plain"), setState(after)),
       token("++", "plain", setState(expected ? start : after)),
       token("--", "plain", setState(expected ? start : after)),
-      ...(expected
-        ? [token("/", "plain", setState(after), pushState("regex"))]
-        : [token("/", "plain", setState(start))]),
+      expected
+        ? token("/", "plain", setState(after), pushState("regex"))
+        : token("/", "plain", setState(start)),
       on(")]", byte(")]"), paint("plain"), setState(after)),
       on("([,;:?=!*%&|^~+-<>", byte("([,;:?=!*%&|^~+-<>"), paint("plain"), setState(start)),
     ];
