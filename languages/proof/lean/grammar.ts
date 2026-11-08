@@ -74,8 +74,8 @@ const operators = [
 const unicodeOp = choice(...operators.map((op) => [literal(op)]));
 const unicodeName = [lookahead(byte(high)), notLookahead(unicodeOp), character()];
 const ident = [
-  choice([byte(asciiStart)], unicodeName),
-  repeat(choice([byte(asciiRest)], unicodeName)),
+  choice([bytes(asciiStart)], unicodeName),
+  repeat(choice([bytes(asciiRest)], unicodeName)),
   optional(byte("?!"), notNext("=")),
 ];
 const keywords = [
