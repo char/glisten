@@ -7,6 +7,7 @@ import { Scratch } from "./planning.ts";
 import { Renderer } from "./render.ts";
 import { Styles } from "./styles.ts";
 
+export { languageFor } from "#/filename.ts";
 export { AbiError, Engine, ResourceError };
 export { composeWith, type Result } from "./compose.ts";
 export type { Callee, CallContext, CallResult } from "./engine.ts";

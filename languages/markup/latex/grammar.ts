@@ -138,6 +138,7 @@ const injected = (name: "minted" | "lstlisting"): State => ({
 // listings accepts an unbraced language=NAME in a flat option list.
 export default defineGrammar({
   name: "latex",
+  extensions: ["tex", "ltx", "sty", "cls"],
   aliases: ["tex"],
   initial: "root",
   states: {

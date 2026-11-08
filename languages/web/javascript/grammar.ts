@@ -628,4 +628,7 @@ export function javascript({
   });
 }
 
-export default javascript();
+export default {
+  ...javascript(),
+  extensions: ["js", "mjs", "cjs"],
+};

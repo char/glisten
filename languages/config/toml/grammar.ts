@@ -111,6 +111,8 @@ const escape = on(
 
 export default defineGrammar({
   name: "toml",
+  extensions: ["toml"],
+  filenames: ["Cargo.lock", "poetry.lock", "uv.lock", "Pipfile"],
   initial: "root",
   states: {
     root: {

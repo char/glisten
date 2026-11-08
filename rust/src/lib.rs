@@ -2,6 +2,7 @@
 //! Compiled [`Language`]s can be shared between threads; each thread owns a [`Highlighter`].
 
 mod compose;
+mod filename;
 mod render;
 mod runtime;
 
@@ -10,6 +11,7 @@ use std::ops::Range;
 
 use serde::Deserialize;
 
+pub use filename::language_for;
 pub use runtime::Language;
 
 pub type Result<T> = anyhow::Result<T>;
@@ -28,6 +30,10 @@ pub struct Manifest {
     pub abi: u32,
     pub language: String,
     pub aliases: Vec<String>,
+    #[serde(default)]
+    pub extensions: Vec<String>,
+    #[serde(default)]
+    pub filenames: Vec<String>,
     pub embeds: Vec<String>,
     pub styles: Vec<Style>,
     pub style_map: usize,

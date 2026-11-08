@@ -65,6 +65,7 @@ const expressionEnd = [setState("afterValue")];
 
 export default defineGrammar({
   name: "vhdl",
+  extensions: ["vhd", "vhdl"],
   aliases: ["vhd"],
   initial: "root",
   states: {

@@ -277,4 +277,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
   };
 };
 
-export default c(objcExtension);
+export default {
+  ...c(objcExtension),
+  extensions: ["m", "mm"],
+};

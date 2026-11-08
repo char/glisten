@@ -140,6 +140,7 @@ const code: Arm[] = [
 ];
 export default defineGrammar({
   name: "nim",
+  extensions: ["nim", "nims", "nimble"],
   aliases: ["nimrod"],
   initial: "root",
   states: {

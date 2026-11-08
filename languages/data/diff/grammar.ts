@@ -108,6 +108,7 @@ const mail = [
 
 export default defineGrammar({
   name: "diff",
+  extensions: ["diff", "patch"],
   aliases: ["patch"],
   initial: "root",
   states: {

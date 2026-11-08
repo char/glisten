@@ -37,6 +37,7 @@ const comment = token("//", "comment", pushState("comment"));
 
 export default defineGrammar({
   name: "cedar",
+  extensions: ["cedar"],
   initial: "root",
   states: {
     root: {

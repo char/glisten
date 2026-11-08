@@ -188,6 +188,7 @@ const docTag = on("@", literal("@"), ...ident, paint("attribute"));
 // Type names, call names and Yul builtin recognition are lexical rather than semantic.
 export default defineGrammar({
   name: "solidity",
+  extensions: ["sol"],
   aliases: ["sol"],
   initial: "root",
   states: {

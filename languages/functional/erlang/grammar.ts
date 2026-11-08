@@ -114,6 +114,8 @@ const closingTriple = on(
 // Triple-string indentation consistency is not validated; only spaces and tabs are recognized as delimiter-line whitespace.
 export default defineGrammar({
   name: "erlang",
+  extensions: ["erl", "hrl", "escript"],
+  filenames: ["rebar.config", "rebar.lock"],
   initial: "root",
   states: {
     root: {

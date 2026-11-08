@@ -90,6 +90,7 @@ const words = [
 
 export default defineGrammar({
   name: "wit",
+  extensions: ["wit"],
   aliases: ["wasm-interface"],
   initial: "root",
   states: {

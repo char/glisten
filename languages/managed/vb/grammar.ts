@@ -390,4 +390,7 @@ export function vb(extension?: VbExtension) {
   });
 }
 
-export default vb();
+export default {
+  ...vb(),
+  extensions: ["vb"],
+};

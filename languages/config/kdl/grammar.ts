@@ -185,6 +185,7 @@ const values = [
 ];
 export default defineGrammar({
   name: "kdl",
+  extensions: ["kdl"],
   aliases: ["kdl2"],
   initial: "root",
   states: {

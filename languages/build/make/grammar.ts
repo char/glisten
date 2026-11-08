@@ -459,6 +459,8 @@ const states: Record<string, State> = {
 };
 export default defineGrammar({
   name: "make",
+  extensions: ["mk", "mak"],
+  filenames: ["Makefile", "makefile", "GNUmakefile", "BSDmakefile"],
   aliases: ["makefile", "mk", "gnumake"],
   initial: "lineTab",
   states,

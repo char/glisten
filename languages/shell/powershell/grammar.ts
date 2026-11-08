@@ -365,6 +365,7 @@ const states: Record<string, State> = {
 
 export default defineGrammar({
   name: "powershell",
+  extensions: ["ps1", "psm1", "psd1"],
   aliases: ["ps1", "pwsh"],
   initial: "command",
   states,

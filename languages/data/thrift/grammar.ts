@@ -71,6 +71,7 @@ const fieldTypeCases = [
 
 export default defineGrammar({
   name: "thrift",
+  extensions: ["thrift"],
   initial: "root",
   states: {
     root: {

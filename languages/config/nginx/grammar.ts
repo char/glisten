@@ -87,6 +87,8 @@ const args = (block: string, wordState = "word") => [
 
 export default defineGrammar({
   name: "nginx",
+  extensions: ["nginx", "nginxconf"],
+  filenames: ["nginx.conf", "mime.types"],
   initial: "root",
   states: {
     // Block bodies share directive parsing, so unquoted map keys and MIME

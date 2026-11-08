@@ -103,6 +103,8 @@ const conditionWords = on(
 
 export default defineGrammar({
   name: "cmake",
+  extensions: ["cmake"],
+  filenames: ["CMakeLists.txt"],
   initial: "root",
   states: {
     root: {

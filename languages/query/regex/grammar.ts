@@ -74,6 +74,7 @@ const classArms = [
 // when a legacy pattern intended an unescaped literal opening bracket.
 export default defineGrammar({
   name: "regex",
+  extensions: ["regex", "regexp"],
   initial: "root",
   states: {
     root: { style: "string", arms: pattern },

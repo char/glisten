@@ -134,6 +134,7 @@ const code = [
 ];
 export default defineGrammar({
   name: "zig",
+  extensions: ["zig", "zon"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

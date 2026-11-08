@@ -138,4 +138,7 @@ const cudaExtension: CExtension = (base) => {
   };
 };
 
-export default c(cudaExtension);
+export default {
+  ...c(cudaExtension),
+  extensions: ["cu", "cuh"],
+};

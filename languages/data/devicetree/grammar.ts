@@ -86,6 +86,7 @@ const slashDirectives = `
 
 export default defineGrammar({
   name: "devicetree",
+  extensions: ["dts", "dtsi", "dtso"],
   aliases: ["dts", "dtsi", "device-tree"],
   initial: "root",
   states: {

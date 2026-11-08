@@ -432,6 +432,8 @@ function states(suffix: string, escape: string): Record<string, State> {
 
 export default defineGrammar({
   name: "dockerfile",
+  extensions: ["dockerfile", "containerfile"],
+  filenames: ["Dockerfile", "Containerfile"],
   aliases: ["docker", "containerfile"],
   initial: "start",
   states: {

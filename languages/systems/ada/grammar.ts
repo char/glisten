@@ -117,6 +117,7 @@ const syntax = [
 
 export default defineGrammar({
   name: "ada",
+  extensions: ["adb", "ads", "ada"],
   aliases: ["adb", "ads"],
   initial: "boundary",
   states: {

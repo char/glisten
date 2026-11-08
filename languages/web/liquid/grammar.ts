@@ -82,6 +82,7 @@ const specialClose = (word: string) =>
 // Like Jinja and Twig, surrounding template text is plain rather than HTML.
 export default defineGrammar<string>({
   name: "liquid",
+  extensions: ["liquid"],
   initial: "root",
   states: {
     root: {

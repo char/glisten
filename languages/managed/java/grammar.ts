@@ -164,6 +164,7 @@ const braces = (parent: "root" | "paren") => [
 ];
 export default defineGrammar({
   name: "java",
+  extensions: ["java"],
   initial: "statement",
   states: {
     root: {

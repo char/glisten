@@ -168,6 +168,10 @@ export type Grammar<Name extends string = string> = {
   readonly name: string;
   readonly initial: NoInfer<Name>;
   readonly aliases?: readonly string[];
+  /** Filename suffixes without leading dots, including compound extensions. */
+  readonly extensions?: readonly string[];
+  /** Exact, case-sensitive basenames that take precedence over extensions. */
+  readonly filenames?: readonly string[];
   /** Tab stops for physical columns (`saveColumn`, `indentTo`): 4 (the default) or 8. */
   readonly tabStop?: 4 | 8;
   /** Sweep live queued bodies at line starts, restoring this state on a footer. */

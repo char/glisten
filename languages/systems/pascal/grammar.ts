@@ -117,6 +117,7 @@ const code: Arm[] = [
 ];
 export default defineGrammar({
   name: "pascal",
+  extensions: ["pas", "pp", "p", "lpr"],
   aliases: ["delphi", "objectpascal"],
   initial: "root",
   states: {

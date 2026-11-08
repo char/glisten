@@ -130,6 +130,7 @@ const labelName = choice([literal("%%"), ...ident], [...ident], [bytes(digit)]);
 
 export default defineGrammar({
   name: "x86asm",
+  extensions: ["asm", "s", "S"],
   aliases: ["asm", "nasm"],
   initial: "statement",
   states: {

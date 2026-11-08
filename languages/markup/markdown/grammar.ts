@@ -9,6 +9,7 @@ import { punctuationBytes } from "./unicode.ts";
 const manifest: Manifest = {
   abi: ABI,
   language: "markdown",
+  extensions: ["md", "markdown", "mdown", "mkdn", "mdwn"],
   aliases: ["md"],
   embeds: Object.keys(embeds),
   styles: manifestStyles,

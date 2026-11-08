@@ -92,6 +92,8 @@ const code = [
 
 export default defineGrammar({
   name: "kconfig",
+  extensions: ["kconfig"],
+  filenames: ["Kconfig"],
   aliases: ["Kconfig", "kconf"],
   tabStop: 8,
   initial: "root",

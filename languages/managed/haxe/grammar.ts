@@ -116,6 +116,7 @@ const code = [
 
 export default defineGrammar({
   name: "haxe",
+  extensions: ["hx"],
   aliases: ["hx"],
   initial: "root",
   states: {

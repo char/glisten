@@ -147,6 +147,7 @@ const escape = (quote: string) =>
 // An invalid comment ending before its delimiter remains a comment until a valid closer.
 export default defineGrammar<string>({
   name: "gotmpl",
+  extensions: ["gotmpl", "gohtml", "tmpl"],
   aliases: ["go-template"],
   initial: "root",
   states: {

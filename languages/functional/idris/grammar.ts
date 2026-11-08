@@ -157,6 +157,7 @@ const code = [
 // Raw hash counts are frame-scoped so strings nested in interpolations cannot overwrite them.
 export default defineGrammar({
   name: "idris",
+  extensions: ["idr", "lidr"],
   aliases: ["idr", "idris2"],
   initial: "bol",
   states: {

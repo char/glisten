@@ -238,6 +238,7 @@ const code = [
 
 export default defineGrammar({
   name: "kotlin",
+  extensions: ["kt", "kts"],
   aliases: ["kt", "kts"],
   initial: "root",
   states: {

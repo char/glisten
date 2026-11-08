@@ -75,6 +75,7 @@ const escape = on("\\", literal("\\"), character(), paint("string.escape"));
 // and call styling is lexical rather than resolving builtins or shadowing.
 export default defineGrammar({
   name: "rego",
+  extensions: ["rego"],
   initial: "head",
   states: {
     head: {

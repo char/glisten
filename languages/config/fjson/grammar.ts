@@ -94,6 +94,8 @@ const values = ({ finish = [] }: { finish?: readonly Effect[] } = {}): Arm[] => 
 export default defineGrammar({
   initial: "root",
   name: "fjson",
+  extensions: ["fjson", "jsonc"],
+  filenames: ["avril.conf", "avril.lock", "tsconfig.json", "jsconfig.json", "deno.json"],
   aliases: ["jsonc"],
   states: {
     root: {

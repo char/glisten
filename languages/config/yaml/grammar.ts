@@ -316,6 +316,8 @@ const syntax = (kind: Indentation, context: CollectionContext = "block") => {
 };
 export default defineGrammar({
   name: "yaml",
+  extensions: ["yaml", "yml"],
+  filenames: [".clang-format", ".clang-tidy", ".yamllint"],
   aliases: ["yml"],
   initial: "line",
   states: {

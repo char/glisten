@@ -73,6 +73,7 @@ const quoteStates = (quote: string, style: "string" | "constant.builtin") => ({
 // Quoted or symbolic module qualification, operator-defined heads and Unicode character categories are not parsed.
 export default defineGrammar({
   name: "prolog",
+  extensions: ["pl", "pro", "prolog"],
   initial: "clauseStart",
   states: {
     clauseStart: {

@@ -249,4 +249,4 @@ Object.assign(states, {
     ],
   },
 });
-export default defineGrammar({ name: "matlab", initial: "rootStart", states });
+export default defineGrammar({ name: "matlab", extensions: ["m"], initial: "rootStart", states });

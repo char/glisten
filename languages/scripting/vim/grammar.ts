@@ -741,6 +741,8 @@ states.heredocBody = {
 
 export default defineGrammar({
   name: "vim",
+  extensions: ["vim"],
+  filenames: [".vimrc", ".gvimrc", "vimrc", "gvimrc"],
   aliases: ["vimscript", "viml"],
   initial: commandLine("legacy"),
   states,

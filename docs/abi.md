@@ -40,6 +40,8 @@ type Manifest = {
   abi: number; // §11
   language: string; // lower case
   aliases: string[]; // matched ignoring ASCII case
+  extensions?: string[]; // filename suffixes without a leading dot; metadata only
+  filenames?: string[]; // exact, case-sensitive basenames; metadata only
   embeds: string[]; // static embeds, by name (§9)
   styles: { name: string; tag?: string; attribute?: string }[]; // the styles its grammar paints, with
   // their HTML tags (§7); plain has none
@@ -48,6 +50,11 @@ type Manifest = {
   maxDepth: number; // frame capacity
 };
 ```
+
+Filename metadata is optional and does not affect execution or the ABI version.
+The compiler copies it from each grammar's `extensions` and `filenames` fields.
+The build projects language metadata from these manifests into `dist/languages.json`;
+see [filename lookup](filenames.md) for the standalone API and matching rules.
 
 ## 2. Memory
 

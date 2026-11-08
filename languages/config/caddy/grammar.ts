@@ -63,6 +63,8 @@ const quoted = [
 // Heredoc markers share the 256-byte capture limit; indentation is not validated.
 export default defineGrammar({
   name: "caddy",
+  extensions: ["caddy"],
+  filenames: ["Caddyfile"],
   aliases: ["caddyfile"],
   initial: "root",
   states: {

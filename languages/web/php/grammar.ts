@@ -355,4 +355,9 @@ const states: Record<string, State> = {
     ...interpolation.map((arm) => ({ ...arm, match: [shell.queueHas(1, 0), ...arm.match] })),
   ]),
 };
-export default defineGrammar({ name: "php", initial: "initial", states });
+export default defineGrammar({
+  name: "php",
+  extensions: ["php", "php3", "php4", "php5", "php7", "php8", "phtml"],
+  initial: "initial",
+  states,
+});

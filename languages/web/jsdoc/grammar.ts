@@ -39,6 +39,7 @@ const tagArms = (names: readonly string[], target: string) =>
 
 export default defineGrammar({
   name: "jsdoc",
+  extensions: ["jsdoc"],
   aliases: ["tsdoc"],
   initial: "line",
   states: {

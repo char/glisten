@@ -33,6 +33,30 @@ const indent = slot.column("key-indent-plus-one");
 // Tabs advance to four-column stops rather than configparser's character count.
 export default defineGrammar({
   name: "ini",
+  extensions: [
+    "ini",
+    "cfg",
+    "desktop",
+    "service",
+    "socket",
+    "target",
+    "timer",
+    "path",
+    "mount",
+    "automount",
+    "swap",
+    "slice",
+    "scope",
+  ],
+  filenames: [
+    ".gitconfig",
+    ".gitmodules",
+    ".editorconfig",
+    ".npmrc",
+    ".pylintrc",
+    ".flake8",
+    ".coveragerc",
+  ],
   aliases: ["cfg", "gitconfig", "systemd", "desktop"],
   initial: "root",
   states: {

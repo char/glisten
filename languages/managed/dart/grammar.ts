@@ -191,6 +191,7 @@ const interpolation = [
 // Numeric separator placement, Unicode identifier categories and escape validity are approximated.
 export default defineGrammar({
   name: "dart",
+  extensions: ["dart"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

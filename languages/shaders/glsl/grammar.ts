@@ -53,4 +53,7 @@ const glslExtension: CExtension = ({ rest, ident }) => ({
   ],
 });
 
-export default c(glslExtension);
+export default {
+  ...c(glslExtension),
+  extensions: ["glsl", "vert", "frag", "geom", "tesc", "tese", "comp"],
+};

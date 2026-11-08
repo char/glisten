@@ -598,4 +598,10 @@ states.attributeUnquoted = {
     reference,
   ],
 };
-export default defineGrammar({ name: "handlebars", aliases: ["hbs"], initial: "root", states });
+export default defineGrammar({
+  name: "handlebars",
+  extensions: ["hbs", "handlebars"],
+  aliases: ["hbs"],
+  initial: "root",
+  states,
+});

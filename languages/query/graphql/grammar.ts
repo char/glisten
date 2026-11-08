@@ -111,6 +111,7 @@ const definitionsContent = [
 
 export default defineGrammar({
   name: "graphql",
+  extensions: ["graphql", "gql", "graphqls"],
   aliases: ["gql"],
   initial: "root",
   states: {

@@ -221,6 +221,7 @@ const code = [
 
 export default defineGrammar({
   name: "elixir",
+  extensions: ["ex", "exs"],
   aliases: ["ex", "exs"],
   initial: "root",
   states: {

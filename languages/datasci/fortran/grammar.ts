@@ -171,4 +171,7 @@ export function fortran(extension: FortranExtension = { name: "fortran" }) {
   });
 }
 
-export default fortran();
+export default {
+  ...fortran(),
+  extensions: ["f90", "f95", "f03", "f08"],
+};

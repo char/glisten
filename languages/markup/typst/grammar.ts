@@ -447,4 +447,10 @@ states.strong = {
     ...markupAtoms,
   ],
 };
-export default defineGrammar({ name: "typst", aliases: ["typ"], initial: "root", states });
+export default defineGrammar({
+  name: "typst",
+  extensions: ["typ"],
+  aliases: ["typ"],
+  initial: "root",
+  states,
+});

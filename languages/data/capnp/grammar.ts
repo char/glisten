@@ -69,6 +69,7 @@ const words = [
 // comments between a name and its ordinal interrupt this classification.
 export default defineGrammar({
   name: "capnp",
+  extensions: ["capnp"],
   aliases: ["capnproto", "cap'nproto"],
   initial: "root",
   states: {

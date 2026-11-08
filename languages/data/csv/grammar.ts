@@ -57,4 +57,7 @@ export function delimited(name: string, separator: "," | "\t", quoted: boolean) 
   });
 }
 
-export default delimited("csv", ",", true);
+export default {
+  ...delimited("csv", ",", true),
+  extensions: ["csv"],
+};

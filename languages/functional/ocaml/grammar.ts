@@ -76,6 +76,7 @@ const rawStart = (style: "string" | "comment", head: string) =>
 
 export default defineGrammar({
   name: "ocaml",
+  extensions: ["ml", "mli"],
   aliases: ["ml", "mli"],
   initial: "root",
   states: {

@@ -135,4 +135,7 @@ const hlslExtension: CExtension = (base) => {
   };
 };
 
-export default c(hlslExtension);
+export default {
+  ...c(hlslExtension),
+  extensions: ["hlsl", "hlsli", "fx", "fxh"],
+};

@@ -164,6 +164,8 @@ const reader = [
 ];
 export default defineGrammar({
   name: "elisp",
+  extensions: ["el"],
+  filenames: [".emacs"],
   aliases: ["emacs-lisp", "el"],
   initial: "root",
   states: {

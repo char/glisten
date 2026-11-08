@@ -171,6 +171,8 @@ function code(context: Context, position: Position) {
 
 export default defineGrammar<string>({
   name: "groovy",
+  extensions: ["groovy", "gvy", "gy", "gsh", "gradle"],
+  filenames: ["Jenkinsfile"],
   aliases: ["gradle", "gvy"],
   initial: "initial",
   states: {

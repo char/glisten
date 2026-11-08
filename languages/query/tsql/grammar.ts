@@ -127,4 +127,7 @@ const tsql: SqlExtension = ({ start, rest, hex }) => {
   };
 };
 
-export default sql(tsql);
+export default {
+  ...sql(tsql),
+  extensions: ["tsql"],
+};

@@ -5,6 +5,8 @@ export const Manifest = j.obj({
   abi: j.number,
   language: j.string,
   aliases: j.array(j.string),
+  extensions: j.optional(j.array(j.string)),
+  filenames: j.optional(j.array(j.string)),
   embeds: j.array(j.string),
   styles: j.array(
     j.obj({ name: j.string, tag: j.optional(j.string), attribute: j.optional(j.string) }),

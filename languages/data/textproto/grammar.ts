@@ -95,6 +95,7 @@ const fieldArms = [
 
 export default defineGrammar({
   name: "textproto",
+  extensions: ["textproto", "textpb", "pbtxt", "prototxt", "prototext"],
   aliases: ["pbtxt", "txtpb", "textpb"],
   initial: "root",
   states: {

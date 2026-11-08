@@ -1,3 +1,6 @@
 import { css } from "../css/builder.ts";
 
-export default css("scss");
+export default {
+  ...css("scss"),
+  extensions: ["scss"],
+};

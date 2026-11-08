@@ -176,6 +176,8 @@ const code = (end?: string, pattern = false) => [
 
 export default defineGrammar<string>({
   name: "python",
+  extensions: ["py", "pyi", "pyw"],
+  filenames: ["SConstruct", "SConscript", "wscript"],
   // Starlark (Bazel, Buck) is a Python dialect with the same lexical syntax.
   aliases: ["py", "python3", "starlark", "bzl", "bazel"],
   initial: "lineHead",

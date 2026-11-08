@@ -482,6 +482,7 @@ for (const [name, state] of Object.entries(states))
 
 export default defineGrammar({
   name: "tcl",
+  extensions: ["tcl", "tk"],
   aliases: ["sdc", "xdc"],
   initial: "rootStart",
   states,

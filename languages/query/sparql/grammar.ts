@@ -96,6 +96,7 @@ const stringEscape = on(
 
 export default defineGrammar({
   name: "sparql",
+  extensions: ["rq", "sparql"],
   aliases: ["rq"],
   initial: "root",
   states: {

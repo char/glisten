@@ -88,6 +88,7 @@ const number = on(
 // Rune length is not validated, and an unclosed quoted literal colors the rest of the document.
 export default defineGrammar({
   name: "hare",
+  extensions: ["ha"],
   initial: "root",
   states: {
     root: {

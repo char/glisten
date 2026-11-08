@@ -86,6 +86,26 @@ const dtdPunctuation = [
 
 export default defineGrammar({
   name: "xml",
+  extensions: [
+    "xml",
+    "xsd",
+    "xsl",
+    "xslt",
+    "svg",
+    "wsdl",
+    "plist",
+    "props",
+    "targets",
+    "csproj",
+    "fsproj",
+    "vbproj",
+    "vcxproj",
+    "resx",
+    "xaml",
+    "ui",
+    "iml",
+    "nuspec",
+  ],
   aliases: ["svg", "xsl", "xslt", "xsd", "rss", "atom", "plist", "wsdl"],
   initial: "root",
   states: {

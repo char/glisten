@@ -146,6 +146,7 @@ const footer = (indentation: "exact" | "indented") =>
 
 export default defineGrammar({
   name: "hcl",
+  extensions: ["hcl", "tf", "tfvars", "nomad"],
   aliases: ["terraform", "tf", "tfvars", "hcl2"],
   initial: "body",
   states: {

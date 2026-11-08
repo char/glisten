@@ -91,6 +91,7 @@ const number = on(
 const ident = [byte(start), bytes(rest, { min: 0 })] as const;
 export default defineGrammar({
   name: "wgsl",
+  extensions: ["wgsl"],
   initial: "root",
   states: {
     root: {

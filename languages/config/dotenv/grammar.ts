@@ -37,6 +37,8 @@ const expansion = [
 // and identifiers are restricted to ASCII shell-style names.
 export default defineGrammar({
   name: "dotenv",
+  extensions: ["env"],
+  filenames: [".env", ".env.local", ".env.development", ".env.production", ".env.test"],
   aliases: ["env"],
   initial: "root",
   states: {

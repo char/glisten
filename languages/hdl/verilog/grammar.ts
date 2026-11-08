@@ -204,6 +204,7 @@ const basic = [
 
 export default defineGrammar({
   name: "verilog",
+  extensions: ["v", "vh", "sv", "svh"],
   aliases: ["systemverilog", "sv", "svh"],
   initial: "root",
   states: {

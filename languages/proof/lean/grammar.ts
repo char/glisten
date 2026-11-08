@@ -430,4 +430,4 @@ Object.assign(states, {
   quotedFunction: { style: "function", arms: [token("»", "function", popState())] },
   quotedType: { style: "type", arms: [token("»", "type", popState())] },
 });
-export default defineGrammar({ name: "lean", initial: "root", states });
+export default defineGrammar({ name: "lean", extensions: ["lean"], initial: "root", states });

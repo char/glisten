@@ -197,6 +197,7 @@ const escape = on("\\", literal("\\"), character(), paint("string.escape"));
 // Numeric underscore placement and escape validity are not checked.
 export default defineGrammar({
   name: "swift",
+  extensions: ["swift"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

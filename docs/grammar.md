@@ -3,7 +3,10 @@
 The API in `grammar/` defines a byte-oriented state machine compiled to WebAssembly. A grammar paints spans and may delegate ranges to another language. Use
 `defineGrammar` to check a definition before compiling it. The
 closed style vocabulary is in `grammar/styles.ts`; styles and static injection
-names are collected into the compiled module's manifest.
+names are collected into the compiled module's manifest. Optional `aliases`,
+`extensions` (suffixes without leading dots), and `filenames` (exact basenames)
+on the grammar are also copied into the manifest. The standalone
+[filename lookup API](filenames.md) uses a build-generated catalog of this metadata.
 
 ```ts
 import { defineGrammar, popState, pushState, token } from "#/grammar/mod.ts";

@@ -499,4 +499,7 @@ export function c(extension?: CExtension) {
   });
 }
 
-export default c();
+export default {
+  ...c(),
+  extensions: ["c", "h"],
+};

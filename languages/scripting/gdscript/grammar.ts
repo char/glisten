@@ -139,6 +139,7 @@ const code = [
 ];
 export default defineGrammar<string>({
   name: "gdscript",
+  extensions: ["gd"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

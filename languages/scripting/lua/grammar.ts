@@ -140,6 +140,7 @@ const syntax = [
 
 export default defineGrammar({
   name: "lua",
+  extensions: ["lua"],
   aliases: ["lua5.4", "lua5.3", "lua5.2", "lua5.1", "luajit"],
   initial: "start",
   states: {

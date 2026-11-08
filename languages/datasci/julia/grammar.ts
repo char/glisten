@@ -330,4 +330,10 @@ Object.assign(states, {
 });
 // Unicode identifier categories and numeric underscore validity are approximated.
 // Value/expression context for adjoints is lexical; indexing `end` is recognized in the immediate bracket state.
-export default defineGrammar({ name: "julia", aliases: ["jl"], initial: "rootExpr", states });
+export default defineGrammar({
+  name: "julia",
+  extensions: ["jl"],
+  aliases: ["jl"],
+  initial: "rootExpr",
+  states,
+});

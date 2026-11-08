@@ -49,6 +49,7 @@ const escape = on(
 // Uppercase constructors and types share a style; labels and calls are recognized lexically, not by scope.
 export default defineGrammar({
   name: "gleam",
+  extensions: ["gleam"],
   initial: "root",
   states: {
     root: {

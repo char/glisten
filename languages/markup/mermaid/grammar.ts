@@ -293,4 +293,9 @@ states.lineLabel = {
   style: "string",
   arms: [on("\r\n", byte("\r\n"), paint("plain"), popState()), ...quoted],
 };
-export default defineGrammar({ name: "mermaid", initial: "root", states });
+export default defineGrammar({
+  name: "mermaid",
+  extensions: ["mmd", "mermaid"],
+  initial: "root",
+  states,
+});

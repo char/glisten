@@ -144,6 +144,7 @@ const subshellStates = commandStates("subshell");
 
 export default defineGrammar({
   name: "fish",
+  extensions: ["fish"],
   initial: "command",
   states: {
     command: rootStates.command,

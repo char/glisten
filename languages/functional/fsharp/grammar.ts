@@ -313,6 +313,7 @@ for (let n = 1; n <= 8; n++) {
 // Names, numeric validation, contextual meaning and Unicode identifier categories are lexical approximations.
 export default defineGrammar({
   name: "fsharp",
+  extensions: ["fs", "fsi", "fsx"],
   aliases: ["fs"],
   initial: "root",
   states,

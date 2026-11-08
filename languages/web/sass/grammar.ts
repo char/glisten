@@ -126,6 +126,7 @@ const selector = [
 
 export default defineGrammar({
   name: "sass",
+  extensions: ["sass"],
   initial: "root",
   states: {
     root: {

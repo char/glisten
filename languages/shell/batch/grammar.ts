@@ -135,6 +135,7 @@ const common = [
 
 export default defineGrammar({
   name: "batch",
+  extensions: ["bat", "cmd"],
   aliases: ["bat", "cmd", "dosbatch"],
   initial: "command",
   states: {

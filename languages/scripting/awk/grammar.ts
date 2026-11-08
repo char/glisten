@@ -205,6 +205,7 @@ function expressionStates<F extends "root" | "paren">(
 
 export default defineGrammar({
   name: "awk",
+  extensions: ["awk"],
   aliases: ["gawk", "mawk", "nawk"],
   initial: "rootExpect",
   states: {

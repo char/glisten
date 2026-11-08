@@ -60,6 +60,18 @@ const values = ({ finish = [] }: { finish?: readonly Effect[] } = {}): Arm[] => 
 export default defineGrammar({
   initial: "root",
   name: "json",
+  extensions: [
+    "json",
+    "tfstate",
+    "js.map",
+    "mjs.map",
+    "cjs.map",
+    "jsx.map",
+    "ts.map",
+    "tsx.map",
+    "css.map",
+  ],
+  filenames: ["flake.lock", "composer.lock", "Pipfile.lock", "deno.lock"],
   states: {
     root: {
       style: "plain",

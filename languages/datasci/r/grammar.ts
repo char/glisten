@@ -217,6 +217,8 @@ const code = (inParens: boolean) => [
 ];
 export default defineGrammar({
   name: "r",
+  extensions: ["r", "R"],
+  filenames: [".Rprofile", "Rprofile.site", ".Rhistory"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code(false) },

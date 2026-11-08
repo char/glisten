@@ -308,4 +308,10 @@ const states: Record<string, State> = {
     ],
   },
 };
-export default defineGrammar({ name: "d", aliases: ["dlang", "di"], initial: "start", states });
+export default defineGrammar({
+  name: "d",
+  extensions: ["d", "di"],
+  aliases: ["dlang", "di"],
+  initial: "start",
+  states,
+});

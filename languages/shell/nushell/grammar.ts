@@ -228,6 +228,7 @@ function code(
 
 export default defineGrammar({
   name: "nushell",
+  extensions: ["nu"],
   aliases: ["nu"],
   initial: "command",
   states: {

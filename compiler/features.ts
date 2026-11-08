@@ -188,6 +188,8 @@ export function layoutCompilerArea(grammar: Grammar, features: CompilerFeatures)
     abi: ABI,
     language: grammar.name,
     aliases: [...(grammar.aliases ?? [])],
+    extensions: [...(grammar.extensions ?? [])],
+    filenames: [...(grammar.filenames ?? [])],
     embeds,
     styles: styles.map(styleEntry),
     styleMap: 0,

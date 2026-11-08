@@ -372,4 +372,4 @@ states.closeEnd = {
   style: "plain",
   arms: [on(space, bytes(space), paint("plain")), token(">", "punctuation.bracket", popState())],
 };
-export default defineGrammar({ name: "svelte", initial: "root", states });
+export default defineGrammar({ name: "svelte", extensions: ["svelte"], initial: "root", states });

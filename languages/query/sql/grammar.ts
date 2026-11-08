@@ -436,4 +436,7 @@ export function sql(extension?: SqlExtension) {
   });
 }
 
-export default sql();
+export default {
+  ...sql(),
+  extensions: ["sql"],
+};

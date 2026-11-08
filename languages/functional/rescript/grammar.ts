@@ -161,6 +161,7 @@ const code: Arm[] = [
 ];
 export default defineGrammar({
   name: "rescript",
+  extensions: ["res", "resi"],
   aliases: ["res"],
   initial: "root",
   states: {

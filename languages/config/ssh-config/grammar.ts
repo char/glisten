@@ -40,6 +40,8 @@ const expansion = [
 // OpenSSH versions and client/server implementations recognize different sets.
 export default defineGrammar({
   name: "ssh-config",
+  extensions: ["sshconfig"],
+  filenames: ["ssh_config", "sshd_config"],
   aliases: ["ssh_config", "sshd_config"],
   initial: "root",
   states: {

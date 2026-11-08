@@ -428,4 +428,4 @@ states.closeEnd = {
   style: "plain",
   arms: [on(space, bytes(space), paint("plain")), token(">", "punctuation.bracket", popState())],
 };
-export default defineGrammar({ name: "astro", initial: "start", states });
+export default defineGrammar({ name: "astro", extensions: ["astro"], initial: "start", states });

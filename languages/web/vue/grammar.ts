@@ -423,4 +423,9 @@ for (const mode of ["javascript", "typescript"] as const) {
   };
 }
 
-export default defineGrammar({ name: "vue", initial: "root_javascript", states });
+export default defineGrammar({
+  name: "vue",
+  extensions: ["vue"],
+  initial: "root_javascript",
+  states,
+});

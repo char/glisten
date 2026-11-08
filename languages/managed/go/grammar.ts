@@ -148,6 +148,7 @@ const code = [
 ];
 export default defineGrammar({
   name: "go",
+  extensions: ["go"],
   aliases: ["golang"],
   initial: "root",
   states: {

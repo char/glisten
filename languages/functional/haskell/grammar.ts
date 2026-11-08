@@ -58,6 +58,7 @@ const escapeBody = choice(
 
 export default defineGrammar({
   name: "haskell",
+  extensions: ["hs", "lhs"],
   aliases: ["hs"],
   initial: "root",
   states: {

@@ -149,6 +149,7 @@ const values = (context: ValueContext = "ordinary") => [
 
 export default defineGrammar({
   name: "ron",
+  extensions: ["ron"],
   initial: "root",
   states: {
     root: {

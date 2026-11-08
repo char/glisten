@@ -1,3 +1,6 @@
 import { css } from "../css/builder.ts";
 
-export default css("less");
+export default {
+  ...css("less"),
+  extensions: ["less"],
+};

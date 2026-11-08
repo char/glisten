@@ -111,6 +111,8 @@ const syntax = (context: "expression" | "call") => [
 
 export default defineGrammar({
   name: "meson",
+  extensions: ["meson"],
+  filenames: ["meson.build", "meson.options", "meson_options.txt"],
   initial: "root",
   states: {
     root: { style: "plain", arms: syntax("expression") },

@@ -65,6 +65,7 @@ const types = keywordTable(
 
 export default defineGrammar({
   name: "wat",
+  extensions: ["wat", "wast"],
   aliases: ["wast"],
   initial: "root",
   states: {

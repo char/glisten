@@ -478,6 +478,7 @@ Object.assign(states, {
 });
 export default defineGrammar({
   name: "perl",
+  extensions: ["pl", "pm", "t", "pod"],
   aliases: ["pm", "perl5"],
   initial: "expr",
   queueSweep: { footer: "heredocFooter", footerStyle: "label", tabStyle: "string" },

@@ -310,6 +310,21 @@ const arithmeticArms = [
 export default defineGrammar({
   initial: "command",
   name: "bash",
+  extensions: ["sh", "bash", "zsh"],
+  filenames: [
+    ".bashrc",
+    ".bash_profile",
+    ".bash_login",
+    ".bash_logout",
+    ".bash_aliases",
+    ".profile",
+    ".zshrc",
+    ".zshenv",
+    ".zprofile",
+    ".zlogin",
+    ".zlogout",
+    ".envrc",
+  ],
   aliases: ["sh", "shell", "zsh"],
   queueSweep: { footer: "heredocFooter", footerStyle: "label", tabStyle: "string" },
   states: {

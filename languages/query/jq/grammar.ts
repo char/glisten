@@ -82,6 +82,7 @@ const expression = [
 
 export default defineGrammar({
   name: "jq",
+  extensions: ["jq"],
   initial: "root",
   states: {
     root: { style: "plain", arms: [...expression, token(oneOf(")]}"), "punctuation.bracket")] },

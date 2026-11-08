@@ -138,6 +138,7 @@ const structTypeOpeners = [
 
 export default defineGrammar({
   name: "rust",
+  extensions: ["rs"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

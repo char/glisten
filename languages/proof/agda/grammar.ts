@@ -109,6 +109,7 @@ const string = token('"', "string", pushState("string"));
 // Names consume every non-reserved, non-whitespace character before classification.
 export default defineGrammar({
   name: "agda",
+  extensions: ["agda", "lagda"],
   initial: "bol",
   states: {
     bol: {

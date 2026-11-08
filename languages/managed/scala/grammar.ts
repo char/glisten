@@ -139,6 +139,7 @@ const interpolation = [
 // numeric separator placement, character/escape validity and custom interpolator behavior are approximated.
 export default defineGrammar({
   name: "scala",
+  extensions: ["scala", "sc", "sbt"],
   aliases: ["sc", "sbt"],
   initial: "root",
   states: {

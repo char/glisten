@@ -129,6 +129,7 @@ const punctuation = [
 
 export default defineGrammar({
   name: "proto",
+  extensions: ["proto"],
   aliases: ["protobuf"],
   initial: "root",
   states: {

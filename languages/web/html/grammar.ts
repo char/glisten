@@ -441,6 +441,7 @@ for (const [state, name, injection] of [
 states["raw-plaintext"] = { style: "plain", arms: [] };
 export default defineGrammar<string>({
   name: "html",
+  extensions: ["html", "htm", "xhtml"],
   aliases: ["htm", "xhtml"],
   initial: "root",
   states,

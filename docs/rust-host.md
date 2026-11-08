@@ -9,6 +9,12 @@ host.add(&json)?;
 assert_eq!(host.highlight("json", "null")?, "<g-cb>null</g-cb>");
 ```
 
+`glisten::language_for(path)` selects a bundled language without constructing a
+`Highlighter` or loading any Wasm. For example, `language_for("Cargo.lock")`
+returns `Some("toml")`; unknown or ambiguous filenames return `None`. See
+[filename lookup](filenames.md) for matching rules. Run `avril task build` before
+compiling the crate to generate the manifest catalog embedded by this API.
+
 `process(language, source)` returns UTF-8 byte spans, groups, and unresolved language names. Register more modules and retry to resolve missing embeddings. `render` produces whole-document HTML; `render_lines` produces independently balanced lines without CR/LF or a trailing empty line. Both use the same `<g-TAG>` vocabulary as the JavaScript renderer. A retained result belongs to its highlighter's style registry and its original source.
 
 The default guest-memory limit is 64 MiB. `with_memory_limit` enforces an exact byte limit, including dynamically allocated guest scratch, rather than rounding allocations to Wasm pages. Injection composition is limited to 128 levels. Resource exhaustion returns an `anyhow::Error` containing `glisten::Error::Resource`; a failed call does not poison subsequent calls.

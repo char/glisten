@@ -76,6 +76,7 @@ const cases = [
 
 export default defineGrammar({
   name: "llvm",
+  extensions: ["ll"],
   aliases: ["ll"],
   initial: "root",
   states: {

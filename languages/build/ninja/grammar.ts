@@ -34,6 +34,7 @@ const endLine = token("\n", "plain", setState("root"));
 
 export default defineGrammar({
   name: "ninja",
+  extensions: ["ninja"],
   aliases: ["build.ninja"],
   initial: "root",
   states: {

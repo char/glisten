@@ -152,6 +152,7 @@ const code: Arm[] = [
 // Procedure/type declarations and qualified members use local lexical lookahead.
 export default defineGrammar({
   name: "odin",
+  extensions: ["odin"],
   initial: "root",
   states: {
     root: { style: "plain", arms: code },

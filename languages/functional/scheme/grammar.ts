@@ -182,6 +182,7 @@ const skipList = [
 ];
 export default defineGrammar({
   name: "scheme",
+  extensions: ["scm", "ss", "sld"],
   aliases: ["scm", "ss", "sld"],
   initial: "root",
   states: {

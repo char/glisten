@@ -171,6 +171,7 @@ const reader = [
 ];
 export default defineGrammar({
   name: "commonlisp",
+  extensions: ["lisp", "lsp", "cl", "asd"],
   aliases: ["lisp", "cl", "lsp"],
   initial: "root",
   states: {

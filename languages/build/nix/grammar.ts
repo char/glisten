@@ -184,6 +184,7 @@ const attrset = (context: "braces" | "shellApplication"): Record<string, State> 
 export default defineGrammar({
   initial: "root",
   name: "nix",
+  extensions: ["nix"],
   states: withShell(
     {
       root: { style: "plain", arms: [token("}", "punctuation.bracket"), ...expression()] },

@@ -21,6 +21,8 @@ const nameRest = union(nameStart, "-");
 
 export default defineGrammar({
   name: "gitattributes",
+  extensions: ["gitattributes"],
+  filenames: [".gitattributes"],
   aliases: [".gitattributes"],
   initial: "line",
   states: {

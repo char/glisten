@@ -539,6 +539,7 @@ for (let depth = 0; depth <= quotes.length; depth++) {
 // Contextual words and attribute/indexing ambiguities are lexical approximations.
 export default defineGrammar({
   name: "c-sharp",
+  extensions: ["cs", "csx"],
   aliases: ["cs", "csharp"],
   initial: "initial",
   states,

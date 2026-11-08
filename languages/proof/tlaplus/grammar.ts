@@ -108,6 +108,7 @@ const common = [
 // Labels and simple operator definitions are lexical heuristics, not parsed declarations.
 export default defineGrammar({
   name: "tlaplus",
+  extensions: ["tla"],
   aliases: ["tla"],
   initial: "root",
   states: {

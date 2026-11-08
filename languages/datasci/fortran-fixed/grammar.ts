@@ -72,48 +72,51 @@ function stringState(quote: string, header: string): State {
   };
 }
 
-export default fortran({
-  name: "fortran-fixed",
-  columnLimit: 72,
-  lineRules: (code: readonly Arm[]) => ({
-    initial: "fixedLine",
-    states: {
-      fixedLine: {
-        style: "plain",
-        arms: [
-          token("\n", "plain"),
-          on(" 0\t", columnAtLeast(5), byte(" 0\t"), paint("plain"), setState("fixedCode")),
-          on(
-            nonNewline,
-            columnAtLeast(5),
-            byte(nonNewline),
-            paint("punctuation.special"),
-            setState("fixedCode"),
-          ),
-          ...headerPrefix,
-        ],
+export default {
+  ...fortran({
+    name: "fortran-fixed",
+    columnLimit: 72,
+    lineRules: (code: readonly Arm[]) => ({
+      initial: "fixedLine",
+      states: {
+        fixedLine: {
+          style: "plain",
+          arms: [
+            token("\n", "plain"),
+            on(" 0\t", columnAtLeast(5), byte(" 0\t"), paint("plain"), setState("fixedCode")),
+            on(
+              nonNewline,
+              columnAtLeast(5),
+              byte(nonNewline),
+              paint("punctuation.special"),
+              setState("fixedCode"),
+            ),
+            ...headerPrefix,
+          ],
+        },
+        fixedCode: { style: "plain", arms: [newline, tail, ...code] },
+        fixedFullComment: {
+          style: "comment",
+          arms: [
+            tail,
+            on(nonNewline, bytes(nonNewline, { untilColumn: 72 }), paint("comment")),
+            redispatch("\r\n", popState()),
+          ],
+        },
+        comment: {
+          style: "comment",
+          arms: [
+            on(nonNewline, columnAtLeast(72), bytes(nonNewline), paint("plain"), popState()),
+            on(nonNewline, bytes(nonNewline, { untilColumn: 72 }), paint("comment")),
+            redispatch("\r\n", popState()),
+          ],
+        },
+        singleString: stringState("'", "fixedSingleHeader"),
+        doubleString: stringState('"', "fixedDoubleHeader"),
+        fixedSingleHeader: stringHeader("singleString"),
+        fixedDoubleHeader: stringHeader("doubleString"),
       },
-      fixedCode: { style: "plain", arms: [newline, tail, ...code] },
-      fixedFullComment: {
-        style: "comment",
-        arms: [
-          tail,
-          on(nonNewline, bytes(nonNewline, { untilColumn: 72 }), paint("comment")),
-          redispatch("\r\n", popState()),
-        ],
-      },
-      comment: {
-        style: "comment",
-        arms: [
-          on(nonNewline, columnAtLeast(72), bytes(nonNewline), paint("plain"), popState()),
-          on(nonNewline, bytes(nonNewline, { untilColumn: 72 }), paint("comment")),
-          redispatch("\r\n", popState()),
-        ],
-      },
-      singleString: stringState("'", "fixedSingleHeader"),
-      doubleString: stringState('"', "fixedDoubleHeader"),
-      fixedSingleHeader: stringHeader("singleString"),
-      fixedDoubleHeader: stringHeader("doubleString"),
-    },
+    }),
   }),
-});
+  extensions: ["f", "for", "f77", "ftn"],
+};

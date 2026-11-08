@@ -91,6 +91,7 @@ const forms = [
 // Reader discards recognize balanced forms, prefixes and metadata, but do not evaluate reader conditionals or tagged readers.
 export default defineGrammar({
   name: "clojure",
+  extensions: ["clj", "cljs", "cljc", "edn", "bb", "cljx"],
   aliases: ["clj", "cljs", "cljc", "edn"],
   initial: "root",
   states: {

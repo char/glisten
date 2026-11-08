@@ -47,6 +47,7 @@ const escape = on("\\", literal("\\"), escapeBody, paint("string.escape"));
 // Calls without parentheses, module qualifiers and record labels cannot be resolved lexically.
 export default defineGrammar({
   name: "elm",
+  extensions: ["elm"],
   initial: "root",
   states: {
     root: {

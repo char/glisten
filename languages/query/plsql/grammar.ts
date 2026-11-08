@@ -131,4 +131,7 @@ const plsql: SqlExtension = ({ start, rest, name }) => {
   };
 };
 
-export default sql(plsql);
+export default {
+  ...sql(plsql),
+  extensions: ["pls", "pks", "pkb", "plsql"],
+};

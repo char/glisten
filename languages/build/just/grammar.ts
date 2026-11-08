@@ -148,6 +148,8 @@ function group(close: string, context: ExpressionContext): State {
 // shebangs override the Bash default; shell settings do not select a child.
 export default defineGrammar({
   name: "just",
+  extensions: ["just"],
+  filenames: ["justfile", "Justfile", ".justfile"],
   aliases: ["justfile"],
   initial: "root",
   states: {

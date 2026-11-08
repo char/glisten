@@ -471,6 +471,7 @@ states.preamble = {
 };
 export default defineGrammar({
   name: "asciidoc",
+  extensions: ["adoc", "asciidoc", "asc"],
   aliases: ["adoc", "asc"],
   initial: "preamble",
   states,

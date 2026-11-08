@@ -26,6 +26,7 @@ const idRest = union(idStart, digit);
 
 export default defineGrammar({
   name: "dot",
+  extensions: ["dot", "gv"],
   aliases: ["graphviz", "gv"],
   initial: "root",
   states: {

@@ -176,6 +176,7 @@ function quoted(quote: string, fixed: boolean) {
 }
 export default defineGrammar({
   name: "cobol",
+  extensions: ["cob", "cbl", "cpy"],
   initial: "fixedSequence",
   tabStop: 8,
   states: {

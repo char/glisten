@@ -261,4 +261,7 @@ export const cppExtension: CExtension = ({
   };
 };
 
-export default c(cppExtension);
+export default {
+  ...c(cppExtension),
+  extensions: ["cpp", "cc", "cxx", "c++", "C", "h", "hh", "hpp", "hxx", "h++", "inl", "ipp", "tpp"],
+};
