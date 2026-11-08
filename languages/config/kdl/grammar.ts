@@ -79,57 +79,38 @@ const comments = [
   token("//", "comment", pushState("lineComment")),
   token("/*", "comment", pushState("blockComment")),
 ];
-const skipStrings = [
-  on(
-    "#",
-    bytes("#"),
-    lookahead(literal('"')),
-    saveRun(hashes),
-    paint("comment"),
-    pushState("skipRawOpen"),
-  ),
-  on(
-    "r",
-    literal("r"),
-    bytes("#"),
-    lookahead(literal('"')),
-    saveRun(hashes),
-    paint("comment"),
-    pushState("skipRawOpen"),
-  ),
-  token('r"', "comment", pushState("skipRawV1")),
-  token('"""', "comment", pushState("skipMultiline")),
-  token('"', "comment", pushState("skipString")),
-];
+const skippedStrings = (after?: "skipAfterEntry" | "skipDone") => {
+  const continuation = after === undefined ? [] : [setState(after)];
+  return [
+    on(
+      "#",
+      bytes("#"),
+      lookahead(literal('"')),
+      saveRun(hashes),
+      paint("comment"),
+      ...continuation,
+      pushState("skipRawOpen"),
+    ),
+    on(
+      "r",
+      literal("r"),
+      bytes("#"),
+      lookahead(literal('"')),
+      saveRun(hashes),
+      paint("comment"),
+      ...continuation,
+      pushState("skipRawOpen"),
+    ),
+    token('r"', "comment", ...continuation, pushState("skipRawV1")),
+    token('"""', "comment", ...continuation, pushState("skipMultiline")),
+    token('"', "comment", ...continuation, pushState("skipString")),
+  ];
+};
 const skipSpace = on(
   union(" \t\r\n\v\f", byteSet({ bytes: [0xc2, 0xe1, 0xe2, 0xe3] })),
   choice([byte(" \t\r\n\v\f")], [unicodeSpace]),
   paint("comment"),
 );
-const entryStrings = (after: string) => [
-  on(
-    "#",
-    bytes("#"),
-    lookahead(literal('"')),
-    saveRun(hashes),
-    paint("comment"),
-    setState(after),
-    pushState("skipRawOpen"),
-  ),
-  on(
-    "r",
-    literal("r"),
-    bytes("#"),
-    lookahead(literal('"')),
-    saveRun(hashes),
-    paint("comment"),
-    setState(after),
-    pushState("skipRawOpen"),
-  ),
-  token('r"', "comment", setState(after), pushState("skipRawV1")),
-  token('"""', "comment", setState(after), pushState("skipMultiline")),
-  token('"', "comment", setState(after), pushState("skipString")),
-];
 const entryByte = except(all, " \t\r\n\v\f{};=");
 const entryToken = (after: string) =>
   on(
@@ -267,7 +248,7 @@ export default defineGrammar({
     skipNode: {
       style: "comment",
       arms: [
-        ...skipStrings,
+        ...skippedStrings(),
         token("/*", "comment", pushState("blockComment")),
         token("//", "comment", setState("skipNodeLine")),
         on("\\", literal("\\"), repeat(horizontal), newline, paint("comment")),
@@ -288,7 +269,7 @@ export default defineGrammar({
     skipBlock: {
       style: "comment",
       arms: [
-        ...skipStrings,
+        ...skippedStrings(),
         token("/*", "comment", pushState("blockComment")),
         token("//", "comment", pushState("skipLine")),
         token("{", "comment", pushState("skipBlock")),
@@ -309,7 +290,7 @@ export default defineGrammar({
       style: "comment",
       arms: [
         token("(", "comment", pushState("skipType")),
-        ...entryStrings("skipAfterEntry"),
+        ...skippedStrings("skipAfterEntry"),
         entryToken("skipAfterEntry"),
       ],
       otherwise: [popState()],
@@ -330,13 +311,13 @@ export default defineGrammar({
         skipSpace,
         token("/*", "comment", pushState("blockComment")),
         token("(", "comment", pushState("skipType")),
-        ...entryStrings("skipDone"),
+        ...skippedStrings("skipDone"),
         entryToken("skipDone"),
       ],
       otherwise: [popState()],
     },
     skipDone: { style: "comment", arms: [], otherwise: [popState()] },
-    skipType: { style: "comment", arms: [...skipStrings, token(")", "comment", popState())] },
+    skipType: { style: "comment", arms: [...skippedStrings(), token(")", "comment", popState())] },
     skipString: {
       style: "comment",
       arms: [

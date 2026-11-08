@@ -54,22 +54,12 @@ const string = [
   token('"', "string", pushState("doubleString")),
   token("'", "string", pushState("singleString")),
 ];
-const keywords = [
-  "include",
-  "cpp_include",
-  "cpp_type",
-  "package",
-  "safe",
-  "server",
-  "client",
-  "transient",
-  "permanent",
-  "stateful",
-  "xsd_all",
-  "xsd_optional",
-  "xsd_nillable",
-  "xsd_attrs",
-];
+const keywords = `
+  include cpp_include cpp_type package safe server client transient permanent stateful xsd_all
+  xsd_optional xsd_nillable xsd_attrs
+`
+  .trim()
+  .split(/\s+/);
 const containers = ["map", "list", "set", "stream", "sink"];
 const fieldTypeCases = [
   ...keywordTable(["required", "optional"], "keyword"),

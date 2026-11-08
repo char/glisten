@@ -33,24 +33,12 @@ const name = union(alpha, digit, ",._+?#-");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const all = byteSet({ ranges: [[0, 255]] });
 const spaces = bytes(" \t\r\n", { min: 0 });
-const directiveNames = [
-  "include",
-  "include_next",
-  "define",
-  "undef",
-  "if",
-  "ifdef",
-  "ifndef",
-  "elif",
-  "elifdef",
-  "elifndef",
-  "else",
-  "endif",
-  "error",
-  "warning",
-  "pragma",
-  "line",
-];
+const directiveNames = `
+  include include_next define undef if ifdef ifndef elif elifdef elifndef else endif error warning
+  pragma line
+`
+  .trim()
+  .split(/\s+/);
 const directiveStart = lookahead(
   bytes(" \t", { min: 0 }),
   choice(...directiveNames.map((name) => [literal(name), notNext(union(ident, "-"))])),
@@ -89,16 +77,12 @@ const operators = [
 ];
 const words = on(identStart, byte(identStart), bytes(ident, { min: 0 }), paint("variable"));
 const expression = [...comments, ...strings, number, words, ...operators];
-const slashDirectives = [
-  "/dts-v1/",
-  "/plugin/",
-  "/include/",
-  "/incbin/",
-  "/delete-node/",
-  "/delete-property/",
-  "/omit-if-no-ref/",
-  "/bits/",
-].map((s) => token(s, "keyword"));
+const slashDirectives = `
+  /dts-v1/ /plugin/ /include/ /incbin/ /delete-node/ /delete-property/ /omit-if-no-ref/ /bits/
+`
+  .trim()
+  .split(/\s+/)
+  .map((s) => token(s, "keyword"));
 
 export default defineGrammar({
   name: "devicetree",

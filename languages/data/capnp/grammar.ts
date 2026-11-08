@@ -44,43 +44,20 @@ const escape = on(
 );
 const words = [
   ...keywordTable(
-    [
-      "using",
-      "import",
-      "embed",
-      "struct",
-      "enum",
-      "interface",
-      "union",
-      "group",
-      "annotation",
-      "const",
-      "extends",
-    ],
+    `
+      using import embed struct enum interface union group annotation const extends
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(
-    [
-      "Void",
-      "Bool",
-      "Int8",
-      "Int16",
-      "Int32",
-      "Int64",
-      "UInt8",
-      "UInt16",
-      "UInt32",
-      "UInt64",
-      "Float32",
-      "Float64",
-      "Text",
-      "Data",
-      "List",
-      "AnyPointer",
-      "AnyStruct",
-      "AnyList",
-      "Capability",
-    ],
+    `
+      Void Bool Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 Float32 Float64 Text Data List
+      AnyPointer AnyStruct AnyList Capability
+    `
+      .trim()
+      .split(/\s+/),
     "type",
   ),
   ...keywordTable(["void", "true", "false"], "constant.builtin"),

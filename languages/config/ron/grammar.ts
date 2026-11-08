@@ -113,26 +113,30 @@ const strings = [
   ...['b"', '"'].map((text) => token(text, "string", pushState("string"))),
   ...["b'", "'"].map((text) => token(text, "string", pushState("char"))),
 ];
-const identifiers = (probe: boolean) =>
-  on(
+type ValueContext = "ordinary" | "field";
+
+const identifiers = (context: ValueContext) => {
+  const fieldProbe = context === "field" ? [markRecord(), pushState("fieldProbe")] : [];
+  return on(
     start,
     identifier,
     classify(
       [
-        ...keywordTable(["true", "false", "Some", "None"], "constant.builtin", () =>
-          probe ? [markRecord(), pushState("fieldProbe")] : [],
-        ),
-        ...keywordTable(["inf", "inff32", "inff64", "NaN", "NaNf32", "NaNf64"], "number", () =>
-          probe ? [markRecord(), pushState("fieldProbe")] : [],
+        ...keywordTable(["true", "false", "Some", "None"], "constant.builtin", () => fieldProbe),
+        ...keywordTable(
+          ["inf", "inff32", "inff64", "NaN", "NaNf32", "NaNf64"],
+          "number",
+          () => fieldProbe,
         ),
       ],
-      probe ? [paint("type"), markRecord(), pushState("fieldProbe")] : [paint("type")],
+      [paint("type"), ...fieldProbe],
     ),
   );
-const values = (probe = false) => [
+};
+const values = (context: ValueContext = "ordinary") => [
   ...comments,
   ...strings,
-  ...(probe ? [identifiers(true)] : []),
+  ...(context === "field" ? [identifiers(context)] : []),
   number,
   token("..=", "operator"),
   token("..", "operator"),
@@ -140,7 +144,7 @@ const values = (probe = false) => [
   token("[", "punctuation.bracket", pushState("list")),
   token("{", "punctuation.bracket", pushState("map")),
   token(oneOf(",:"), "punctuation.delimiter"),
-  ...(probe ? [] : [identifiers(false)]),
+  ...(context === "ordinary" ? [identifiers(context)] : []),
 ];
 
 export default defineGrammar({
@@ -153,7 +157,7 @@ export default defineGrammar({
     },
     paren: {
       style: "plain",
-      arms: [token(")", "punctuation.bracket", popState()), ...values(true)],
+      arms: [token(")", "punctuation.bracket", popState()), ...values("field")],
     },
     list: { style: "plain", arms: [token("]", "punctuation.bracket", popState()), ...values()] },
     map: { style: "plain", arms: [token("}", "punctuation.bracket", popState()), ...values()] },

@@ -221,11 +221,13 @@ for (const kind of ["zero", "indented"] as const)
   }
 // Tabs in indentation are not YAML indentation; indentTo nevertheless accepts them.
 // Plain scalar continuation lines are not yet contextualized.
-const syntax = (kind: "zero" | "indented", flow = false) => [
-  on(" \t", bytes(" \t"), paint("plain")),
-  ...(flow ? [token("\n", "plain")] : [token("\n", "plain", setState("line"))]),
-  token("#", "comment", pushState("comment")),
-  ...(flow
+type Indentation = "zero" | "indented";
+type CollectionContext = "block" | "flow";
+
+const syntax = (kind: Indentation, context: CollectionContext = "block") => {
+  const inFlow = context === "flow";
+  const newline = inFlow ? token("\n", "plain") : token("\n", "plain", setState("line"));
+  const sequenceMarkers = inFlow
     ? []
     : [
         on(
@@ -241,67 +243,77 @@ const syntax = (kind: "zero" | "indented", flow = false) => [
           lookahead(choice([byte("\r\n")], [lineEnd()])),
           paint("punctuation.delimiter"),
         ),
-      ]),
-  ...["---", "..."].map((s) =>
+      ];
+  const blockScalars = inFlow ? [] : blockOpen(kind);
+  const flowClose = inFlow
+    ? token(oneOf("]}"), "punctuation.bracket", popState())
+    : token(oneOf("]}"), "punctuation.bracket");
+  const plainScalar = inFlow ? plain : blockPlain;
+
+  return [
+    on(" \t", bytes(" \t"), paint("plain")),
+    newline,
+    token("#", "comment", pushState("comment")),
+    ...sequenceMarkers,
+    ...["---", "..."].map((s) =>
+      on(
+        s[0]!,
+        lineStart(),
+        literal(s),
+        lookahead(choice([byte(" \t\r\n")], [lineEnd()])),
+        paint("punctuation.special"),
+      ),
+    ),
+    on("%", lineStart(), literal("%"), bytes(except(all, "\r\n"), { min: 0 }), paint("attribute")),
+    ...blockScalars,
+    token(
+      oneOf("[{"),
+      "punctuation.bracket",
+      pushState(kind === "zero" ? "flowZero" : "flowIndented"),
+    ),
+    flowClose,
     on(
-      s[0]!,
-      lineStart(),
-      literal(s),
-      lookahead(choice([byte(" \t\r\n")], [lineEnd()])),
-      paint("punctuation.special"),
+      "'",
+      ...singleKey,
+      lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
+      paint("property"),
     ),
-  ),
-  on("%", lineStart(), literal("%"), bytes(except(all, "\r\n"), { min: 0 }), paint("attribute")),
-  ...(flow ? [] : blockOpen(kind)),
-  token(
-    oneOf("[{"),
-    "punctuation.bracket",
-    pushState(kind === "zero" ? "flowZero" : "flowIndented"),
-  ),
-  ...(flow
-    ? [token(oneOf("]}"), "punctuation.bracket", popState())]
-    : [token(oneOf("]}"), "punctuation.bracket")]),
-  on(
-    "'",
-    ...singleKey,
-    lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
-    paint("property"),
-  ),
-  on(
-    '"',
-    ...doubleKey,
-    lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
-    paint("property"),
-  ),
-  token('"', "string", pushState("double")),
-  token("'", "string", pushState("single")),
-  on("&*", byte("&*"), bytes(except(all, " \t\r\n,[]{}")), paint("label")),
-  on("!", literal("!<"), bytes(except(all, ">\r\n"), { min: 0 }), literal(">"), paint("type")),
-  on("!", literal("!"), bytes(except(all, " \t\r\n,[]{}"), { min: 0 }), paint("type")),
-  token("<<", "property"),
-  on(
-    word,
-    ...(flow ? plain : blockPlain),
-    lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
-    paint("property"),
-  ),
-  numbers,
-  on(
-    word,
-    ...(flow ? plain : blockPlain),
-    classify(
-      [
-        ...keywordTable(
-          ["null", "Null", "NULL", "~", "true", "True", "TRUE", "false", "False", "FALSE"],
-          "constant.builtin",
-        ),
-        ...keywordTable([".inf", ".Inf", ".INF", ".nan", ".NaN", ".NAN"], "number"),
-      ],
-      [paint("string")],
+    on(
+      '"',
+      ...doubleKey,
+      lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
+      paint("property"),
     ),
-  ),
-  token(oneOf(",:?"), "punctuation.delimiter"),
-];
+    token('"', "string", pushState("double")),
+    token("'", "string", pushState("single")),
+    on("&*", byte("&*"), bytes(except(all, " \t\r\n,[]{}")), paint("label")),
+    on("!", literal("!<"), bytes(except(all, ">\r\n"), { min: 0 }), literal(">"), paint("type")),
+    on("!", literal("!"), bytes(except(all, " \t\r\n,[]{}"), { min: 0 }), paint("type")),
+    token("<<", "property"),
+    on(
+      word,
+      ...plainScalar,
+      lookahead(literal(":"), choice([byte(" \t\r\n")], [lineEnd()])),
+      paint("property"),
+    ),
+    numbers,
+    on(
+      word,
+      ...plainScalar,
+      classify(
+        [
+          ...keywordTable(
+            ["null", "Null", "NULL", "~", "true", "True", "TRUE", "false", "False", "FALSE"],
+            "constant.builtin",
+          ),
+          ...keywordTable([".inf", ".Inf", ".INF", ".nan", ".NaN", ".NAN"], "number"),
+        ],
+        [paint("string")],
+      ),
+    ),
+    token(oneOf(",:?"), "punctuation.delimiter"),
+  ];
+};
 export default defineGrammar({
   name: "yaml",
   aliases: ["yml"],
@@ -351,8 +363,8 @@ export default defineGrammar({
     },
     rootZero: { style: "plain", arms: syntax("zero") },
     rootIndented: { style: "plain", arms: syntax("indented") },
-    flowZero: { style: "plain", arms: syntax("zero", true) },
-    flowIndented: { style: "plain", arms: syntax("indented", true) },
+    flowZero: { style: "plain", arms: syntax("zero", "flow") },
+    flowIndented: { style: "plain", arms: syntax("indented", "flow") },
     comment: { style: "comment", arms: [redispatch("\r\n", popState())] },
     single: {
       style: "string",

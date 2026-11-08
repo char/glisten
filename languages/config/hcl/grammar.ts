@@ -131,11 +131,11 @@ const expression = () => [
   token(",", "punctuation.delimiter"),
 ];
 // Heredoc delimiters use the 256-byte shell capture. Longer identifiers do not close.
-const footer = (indented: boolean) =>
+const footer = (indentation: "exact" | "indented") =>
   on(
-    indented ? union(first, " ") : first,
+    indentation === "indented" ? union(first, " ") : first,
     lineStart(),
-    ...(indented ? [bytes(" ", { min: 0 })] : []),
+    ...(indentation === "indented" ? [bytes(" ", { min: 0 })] : []),
     shell.queueText(),
     optional(literal("\r")),
     lineEnd(),
@@ -263,8 +263,8 @@ export default defineGrammar({
       style: "plain",
       arms: [redispatch("\r\n", shell.queueSave(), setState("indentHeredoc"))],
     },
-    heredoc: { style: "string", arms: [footer(false), ...template] },
-    indentHeredoc: { style: "string", arms: [footer(true), ...template] },
+    heredoc: { style: "string", arms: [footer("exact"), ...template] },
+    indentHeredoc: { style: "string", arms: [footer("indented"), ...template] },
     lineComment: { style: "comment", arms: [redispatch("\r\n", popState())] },
     blockComment: { style: "comment", arms: [token("*/", "comment", popState())] },
   },

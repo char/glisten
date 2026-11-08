@@ -71,7 +71,8 @@ const strings = [
   token('"', "string", pushState("doubleString")),
   token("'", "string", pushState("singleString")),
 ];
-const valueWord = (finish = false) =>
+type ValueContext = "list" | "field";
+const valueWord = (context: ValueContext = "list") =>
   on(
     start,
     ...ident,
@@ -79,46 +80,32 @@ const valueWord = (finish = false) =>
     classify(
       ["inf", "infinity", "nan"].map((text) => ({
         text,
-        then: [paint("number"), ...(finish ? [popState()] : [])],
+        then: [paint("number"), ...(context === "field" ? [popState()] : [])],
       })),
-      [paint("constant.builtin"), ...(finish ? [popState()] : [])],
+      [paint("constant.builtin"), ...(context === "field" ? [popState()] : [])],
       { caseless: true },
     ),
   );
+
+const fieldArms = [
+  on(start, ...ident, paint("property"), pushState("afterName")),
+  token("[", "punctuation.bracket", pushState("extensionName")),
+  token(oneOf(",;"), "punctuation.delimiter"),
+];
 
 export default defineGrammar({
   name: "textproto",
   aliases: ["pbtxt", "txtpb", "textpb"],
   initial: "root",
   states: {
-    root: {
-      style: "plain",
-      arms: [
-        ...trivia,
-        on(start, ...ident, paint("property"), pushState("afterName")),
-        token("[", "punctuation.bracket", pushState("extensionName")),
-        token(oneOf(",;"), "punctuation.delimiter"),
-      ],
-    },
+    root: { style: "plain", arms: [...trivia, ...fieldArms] },
     body: {
       style: "plain",
-      arms: [
-        ...trivia,
-        token("}", "punctuation.bracket", popState()),
-        on(start, ...ident, paint("property"), pushState("afterName")),
-        token("[", "punctuation.bracket", pushState("extensionName")),
-        token(oneOf(",;"), "punctuation.delimiter"),
-      ],
+      arms: [...trivia, token("}", "punctuation.bracket", popState()), ...fieldArms],
     },
     angleBody: {
       style: "plain",
-      arms: [
-        ...trivia,
-        token(">", "punctuation.bracket", popState()),
-        on(start, ...ident, paint("property"), pushState("afterName")),
-        token("[", "punctuation.bracket", pushState("extensionName")),
-        token(oneOf(",;"), "punctuation.delimiter"),
-      ],
+      arms: [...trivia, token(">", "punctuation.bracket", popState()), ...fieldArms],
     },
     // Highlight URL and type-name components without validating percent escapes or name syntax.
     extensionName: {
@@ -155,7 +142,7 @@ export default defineGrammar({
         token("[", "punctuation.bracket", setState("list")),
         token("-", "operator"),
         number(true),
-        valueWord(true),
+        valueWord("field"),
       ],
       otherwise: [popState()],
     },

@@ -62,30 +62,12 @@ const escape = on(
   choice([byte("tnr\"'\\")], [byte(hex), byte(hex)], [literal("u{"), bytes(hex), literal("}")]),
   paint("string.escape"),
 );
-const primitives = [
-  "u8",
-  "u16",
-  "u32",
-  "u64",
-  "s8",
-  "s16",
-  "s32",
-  "s64",
-  "f32",
-  "f64",
-  "bool",
-  "char",
-  "string",
-  "list",
-  "option",
-  "result",
-  "tuple",
-  "borrow",
-  "own",
-  "future",
-  "stream",
-  "map",
-];
+const primitives = `
+  u8 u16 u32 u64 s8 s16 s32 s64 f32 f64 bool char string list option result tuple borrow own
+  future stream map
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...["record", "resource"].map((text) => ({
     text,

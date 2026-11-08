@@ -26,23 +26,12 @@ const hex = union(digit, range("a", "f"), range("A", "F"));
 const start = union("_", range("a", "z"), range("A", "Z"));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
-const types = [
-  "double",
-  "float",
-  "int32",
-  "int64",
-  "uint32",
-  "uint64",
-  "sint32",
-  "sint64",
-  "fixed32",
-  "fixed64",
-  "sfixed32",
-  "sfixed64",
-  "bool",
-  "string",
-  "bytes",
-];
+const types = `
+  double float int32 int64 uint32 uint64 sint32 sint64 fixed32 fixed64 sfixed32 sfixed64 bool
+  string bytes
+`
+  .trim()
+  .split(/\s+/);
 const escape = on(
   "\\",
   literal("\\"),

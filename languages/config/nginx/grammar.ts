@@ -38,23 +38,15 @@ const variable = [
 // quotes, backslashes and the t/r/n escapes; other backslashes remain in the value.
 const escape = on("\\", literal("\\"), character(), paint("string.escape"));
 const comment = token("#", "comment", pushState("comment"));
-const luaNames = [
-  "content_by_lua_block",
-  "rewrite_by_lua_block",
-  "access_by_lua_block",
-  "header_filter_by_lua_block",
-  "body_filter_by_lua_block",
-  "log_by_lua_block",
-  "init_by_lua_block",
-  "init_worker_by_lua_block",
-  "exit_worker_by_lua_block",
-  "balancer_by_lua_block",
-  "ssl_certificate_by_lua_block",
-  "ssl_session_fetch_by_lua_block",
-  "ssl_session_store_by_lua_block",
-  "ssl_client_hello_by_lua_block",
-  "set_by_lua_block",
-];
+const luaNames = `
+  content_by_lua_block rewrite_by_lua_block access_by_lua_block header_filter_by_lua_block
+  body_filter_by_lua_block log_by_lua_block init_by_lua_block init_worker_by_lua_block
+  exit_worker_by_lua_block balancer_by_lua_block ssl_certificate_by_lua_block
+  ssl_session_fetch_by_lua_block ssl_session_store_by_lua_block ssl_client_hello_by_lua_block
+  set_by_lua_block
+`
+  .trim()
+  .split(/\s+/);
 const luaArms = () => [
   token("{", "plain", pushState("luaNested")),
   token('"', "plain", pushState("luaDouble")),
