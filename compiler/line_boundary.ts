@@ -1,6 +1,8 @@
 import { bytesOf, type Matcher } from "#/grammar/mod.ts";
 import { visitMatchers } from "#/grammar/visit.ts";
 
+const newlineByte = "\n".charCodeAt(0);
+
 type Shape = { consumes: boolean; newline: boolean; crosses: boolean };
 const empty: Shape = { consumes: false, newline: false, crosses: false };
 const unknown: Shape = { consumes: true, newline: true, crosses: true };
@@ -8,15 +10,15 @@ const unknown: Shape = { consumes: true, newline: true, crosses: true };
 /** Conservatively determine whether a consuming matcher sequence can cross a physical line. */
 export function mayCrossLine(matchers: readonly Matcher[]): boolean {
   const shapes = new Map<Matcher, Shape>();
+  function join(left: Shape, right: Shape): Shape {
+    return {
+      consumes: left.consumes || right.consumes,
+      newline: left.newline || right.newline,
+      crosses: left.crosses || right.crosses || (left.newline && right.consumes),
+    };
+  }
   function sequence(items: readonly Matcher[]): Shape {
-    return items.reduce((left, item) => {
-      const right = shapes.get(item)!;
-      return {
-        consumes: left.consumes || right.consumes,
-        newline: left.newline || right.newline,
-        crosses: left.crosses || right.crosses || (left.newline && right.consumes),
-      };
-    }, empty);
+    return items.reduce((left, item) => join(left, shapes.get(item)!), empty);
   }
   function shape(item: Matcher): Shape {
     switch (item.kind) {
@@ -24,17 +26,17 @@ export function mayCrossLine(matchers: readonly Matcher[]): boolean {
         const bytes = new TextEncoder().encode(item.text);
         return {
           consumes: bytes.length > 0,
-          newline: bytes.includes(10),
-          crosses: bytes.subarray(0, Math.max(0, bytes.length - 1)).includes(10),
+          newline: bytes.includes(newlineByte),
+          crosses: bytes.subarray(0, Math.max(0, bytes.length - 1)).includes(newlineByte),
         };
       }
       case "one":
-        return { consumes: true, newline: bytesOf(item.set).includes(10), crosses: false };
+        return { consumes: true, newline: bytesOf(item.set).includes(newlineByte), crosses: false };
       case "character":
         return { consumes: true, newline: true, crosses: false };
       case "run": {
         const consumes = item.max !== 0;
-        const newline = consumes && bytesOf(item.set).includes(10);
+        const newline = consumes && bytesOf(item.set).includes(newlineByte);
         return { consumes, newline, crosses: newline && (item.max === undefined || item.max > 1) };
       }
       case "toColumn":
@@ -56,21 +58,17 @@ export function mayCrossLine(matchers: readonly Matcher[]): boolean {
       case "cachedPrefix": {
         const first: Shape = {
           consumes: true,
-          newline: bytesOf(item.first).includes(10),
+          newline: bytesOf(item.first).includes(newlineByte),
           crosses: false,
         };
-        const newline = bytesOf(item.rest).includes(10);
+        const newline = bytesOf(item.rest).includes(newlineByte);
         const rest: Shape = { consumes: true, newline, crosses: newline };
         const suffix = sequence(item.suffix);
-        const join = (left: Shape, right: Shape): Shape => ({
-          consumes: left.consumes || right.consumes,
-          newline: left.newline || right.newline,
-          crosses: left.crosses || right.crosses || (left.newline && right.consumes),
-        });
         return join(join(first, rest), suffix);
       }
       case "separatedRun": {
-        const newline = bytesOf(item.set).includes(10) || bytesOf(item.separators).includes(10);
+        const newline =
+          bytesOf(item.set).includes(newlineByte) || bytesOf(item.separators).includes(newlineByte);
         return { consumes: true, newline, crosses: newline };
       }
       case "sameRun":
@@ -102,17 +100,19 @@ export function mayCrossLine(matchers: readonly Matcher[]): boolean {
 }
 
 /** Check the bytes before the last consumed byte for a newline. */
-export const crossesLineFunction = `(func $crossesLine (param $input i32) (param $start i32) (param $end i32) (result i32)
-  (block $done (loop $next
-    (br_if $done (i32.ge_u (i32.add (local.get $start) (i32.const 1)) (local.get $end)))
-    (if (i32.eq (i32.load8_u (i32.add (local.get $input) (local.get $start))) (i32.const 10)) (then (return (i32.const 1))))
-    (local.set $start (i32.add (local.get $start) (i32.const 1)))
-    (br $next)))
+export const crossesLineFunction = `(func $crossesLine (param $input i32) (param $cursor i32)
+  (param $end i32) (result i32)
+  (block $done (loop $scanNext
+    (br_if $done (i32.ge_u (i32.add (local.get $cursor) (i32.const 1)) (local.get $end)))
+    (if (i32.eq (i32.load8_u (i32.add (local.get $input) (local.get $cursor))) (i32.const ${newlineByte}))
+      (then (return (i32.const 1))))
+    (local.set $cursor (i32.add (local.get $cursor) (i32.const 1)))
+    (br $scanNext)))
   (i32.const 0))`;
 
 /** Emit a branch only when the match cannot be proved line-local. */
 export function lineBoundaryCheck(matchers: readonly Matcher[], failure: string): string {
   return mayCrossLine(matchers)
-    ? `(br_if ${failure} (call $crossesLine (local.get $input) (local.get $pos) (local.get $p)))`
+    ? `(br_if ${failure} (call $crossesLine (local.get $input) (local.get $pos) (local.get $matchCursor)))`
     : "";
 }

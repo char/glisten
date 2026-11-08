@@ -20,6 +20,7 @@ async function runtime() {
     fail,
     reserveOutput: (end) => wat`(call ${reserve} ${end})`,
   });
+  const { emit, emitRaw } = records;
   const small = stopScan("small", [10, 32, 42], false);
   const large = stopScan("large", [1, 2, 3, 4, 5, 6, 7, 8, 9], true);
   const high = stopScan("high", [], true);
@@ -27,28 +28,29 @@ async function runtime() {
     func(
       "write",
       () => wat`(export "write") (param $out i32) (param $end i32) (param $style i32) (result i32)
-      (call ${records.emit} (local.get $out) (local.get $end) (local.get $style))`,
+      (call ${emit} (local.get $out) (local.get $end) (local.get $style))`,
     ),
     func(
       "writeRaw",
-      () => wat`(export "writeRaw") (param $out i32) (param $a i32) (param $b i32) (result i32)
-      (call ${records.emitRaw} (local.get $out) (local.get $a) (local.get $b))`,
+      () => wat`(export "writeRaw") (param $out i32) (param $a i32) (param $matchByte i32) (result i32)
+      (call ${emitRaw} (local.get $out) (local.get $a) (local.get $matchByte))`,
     ),
     func("close", () => wat`(export "close") (param $at i32) (call ${sealHost} (local.get $at))`),
     func(
       "char",
-      () => wat`(export "char") (param $p i32) (param $end i32) (result i32)
-      (call ${charEnd} (i32.const 0) (local.get $p) (local.get $end))`,
+      () => wat`(export "char") (param $matchCursor i32) (param $end i32) (result i32)
+      (call ${charEnd} (i32.const 0) (local.get $matchCursor) (local.get $end))`,
     ),
-    ...[small, large, high].map((scan) =>
-      func(
+    ...[small, large, high].map((scan) => {
+      const exportName = raw(JSON.stringify(scan.name));
+      return func(
         `call_${scan.name}`,
         () => wat`
-      (export ${raw(JSON.stringify(scan.name))})
-      (param $p i32) (param $end i32) (result i32)
-      (call ${scan} (i32.const 0) (local.get $p) (local.get $end))`,
-      ),
-    ),
+      (export ${exportName})
+      (param $matchCursor i32) (param $end i32) (result i32)
+      (call ${scan} (i32.const 0) (local.get $matchCursor) (local.get $end))`,
+      );
+    }),
   ];
   const text = module({ memory: wat`(memory (export "memory") 1 2)`, exports: roots });
   const dir = await makeTempDir();

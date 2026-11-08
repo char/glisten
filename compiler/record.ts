@@ -2,7 +2,8 @@ import type { ArmEffectLowering } from "./arm_effect.ts";
 import type { Style } from "#/grammar/styles.ts";
 
 export function lowerStyle(chosen: Style | undefined, styles: Style[]): string {
-  return `(local.set $style (i32.const ${styles.indexOf(chosen ?? "plain")}))`;
+  const index = styles.indexOf(chosen ?? "plain");
+  return `(local.set $style (i32.const ${index}))`;
 }
 
 export function lowerRecordUpdate(
@@ -10,8 +11,9 @@ export function lowerRecordUpdate(
   mark: boolean,
   styles: Style[],
 ): { patch: string; mark: string } {
+  const index = patch !== undefined ? styles.indexOf(patch) : undefined;
   return {
-    patch: patch !== undefined ? `(local.set $patch (i32.const ${styles.indexOf(patch)}))` : "",
+    patch: index !== undefined ? `(local.set $patch (i32.const ${index}))` : "",
     mark: mark ? "(local.set $mark (i32.const 1))" : "",
   };
 }

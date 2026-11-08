@@ -16,24 +16,24 @@ import {
 async function runInline(
   action: number,
 ): Promise<{ words: number[]; groups: number; injections: number }> {
-  const out = local("out"),
-    pendingStyle = local("pending"),
-    pendingEnd = local("pendingEnd");
-  const pendingAddress = local("pendingAddress"),
-    host = local("host"),
-    hostId = local("hostId");
-  const hostDepth = local("hostDepth"),
-    hostLast = local("hostLast"),
-    hostCurrent = local("hostCurrent");
-  const depth = local("depth"),
-    openAction = local("openAction"),
-    openStart = local("openStart");
-  const openEnd = local("openEnd"),
-    end = local("end"),
-    style = local("style");
-  const wrapStyle = local("wrapStyle"),
-    wrapStart = local("wrapStart"),
-    inputAction = local("action");
+  const out = local("out");
+  const pendingStyle = local("pending");
+  const pendingEnd = local("pendingEnd");
+  const pendingAddress = local("pendingAddress");
+  const host = local("host");
+  const hostId = local("hostId");
+  const hostDepth = local("hostDepth");
+  const hostLast = local("hostLast");
+  const hostCurrent = local("hostCurrent");
+  const depth = local("depth");
+  const openAction = local("openAction");
+  const openStart = local("openStart");
+  const openEnd = local("openEnd");
+  const end = local("end");
+  const style = local("style");
+  const wrapStyle = local("wrapStyle");
+  const wrapStart = local("wrapStart");
+  const inputAction = local("action");
   const span = { out, pendingStyle, pendingEnd, pendingAddress };
   const state = {
     span,
@@ -69,35 +69,43 @@ async function runInline(
     wrapStyle,
     wrapStart,
   ];
+  const declarations = locals.map((item) => wat`(local ${item} i32)`);
+  const mergeSpan = coalesce(span, end, style, records.emit);
+  const open = openInjection(state, { ...records, fail, injections });
+  const segment = emitSegment(state, end, records);
+  const group = emitGroup({ span, wrapStyle, wrapStart, hostCurrent }, end, wat`(i32.const 32)`, {
+    ...records,
+    groups,
+  });
   const entry = func(
     "entry",
     () => wat`(export "entry") (param ${inputAction} i32) (result i32)
-    ${locals.map((item) => wat`(local ${item} i32)`)}
+    ${declarations}
     (local.set ${out} (i32.const 128))
     (local.set ${pendingStyle} (i32.const -1))
     (local.set ${pendingAddress} (i32.const -1))
     (local.set ${hostCurrent} (i32.const -1))
     (local.set ${hostLast} (i32.const -1))
     (local.set ${end} (i32.const 1))
-    ${coalesce(span, end, style, records.emit)}
+    ${mergeSpan}
     (local.set ${end} (i32.const 2))
-    ${coalesce(span, end, style, records.emit)}
+    ${mergeSpan}
     (local.set ${openAction} (local.get ${inputAction}))
     (local.set ${openStart} (i32.const 3))
     (local.set ${openEnd} (i32.const 5))
-    ${openInjection(state, { ...records, fail, injections })}
+    ${open}
     (local.set ${end} (i32.const 3))
-    ${coalesce(span, end, style, records.emit)}
+    ${mergeSpan}
     (local.set ${end} (i32.const 4))
-    ${emitSegment(state, end, records)}
+    ${segment}
     (local.set ${end} (i32.const 5))
-    ${emitSegment(state, end, records)}
+    ${segment}
     (call ${sealHost} (local.get ${hostLast}))
     (local.set ${end} (i32.const 7))
     (local.set ${style} (i32.const 1))
-    ${coalesce(span, end, style, records.emit)}
+    ${mergeSpan}
     (local.set ${wrapStart} (i32.const 6))
-    ${emitGroup({ span, wrapStyle, wrapStart, hostCurrent }, end, wat`(i32.const 32)`, { ...records, groups })}
+    ${group}
     (i32.shr_u (i32.sub (local.get ${out}) (i32.const 128)) (i32.const 3))`,
   );
   const text = module({ memory: wat`(memory (export "memory") 1)`, exports: [entry] });

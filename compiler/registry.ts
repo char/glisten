@@ -20,7 +20,7 @@ import {
   lowerPreviousChar,
 } from "./boundary.ts";
 import { lowerSameRun } from "./run_slot.ts";
-import { lowerColumnMatcher } from "./column.ts";
+import { columnValueMask, lowerColumnMatcher } from "./column.ts";
 import {
   lowerCounterZero,
   lowerCounterPositive,
@@ -74,7 +74,10 @@ const registry = {
   notNext: lowerNotNext,
   lineEnd: lowerLineEnd,
   columnAtLeast: (m, fail) =>
-    `(br_if ${fail} (i64.lt_u (i64.and (local.get $column) (i64.const 4611686018427387903)) (i64.const ${m.column})))`,
+    `(br_if ${fail}
+      (i64.lt_u
+        (i64.and (local.get $column) (i64.const ${columnValueMask}))
+        (i64.const ${m.column})))`,
   notBehind: lowerNotBehind,
   previousChar: lowerPreviousChar,
   captureReset: { shape: lowerCaptureReset, arm: noArm, inShape: true, target: noTarget },
@@ -162,5 +165,5 @@ export function targetAssignment(effect: Effect, index: number, names: string[])
   const target = registry[effect.kind].target(effect as never);
   return target === undefined
     ? []
-    : [`(local.set $t${index} (i32.const ${names.indexOf(target)}))`];
+    : [`(local.set $target${index} (i32.const ${names.indexOf(target)}))`];
 }
