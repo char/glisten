@@ -12,12 +12,13 @@ export function checkWraps(grammar: Grammar): void {
       : [effects];
   };
   for (const state of Object.values<State>(grammar.states)) {
-    const lists = state.arms.flatMap((arm) => branches(arm.then));
-    if (state.otherwise && typeof state.otherwise !== "string") lists.push(state.otherwise);
-    for (const list of lists) {
+    const effectBranches = state.arms.flatMap((arm) => branches(arm.then));
+    if (state.otherwise && typeof state.otherwise !== "string")
+      effectBranches.push(state.otherwise);
+    for (const branch of effectBranches) {
       let depth = 0;
       let returned = false;
-      for (const effect of list) {
+      for (const effect of branch) {
         if (effect.kind === "push" || effect.kind === "speculate") {
           pushed.add(effect.state);
           depth++;
@@ -31,6 +32,8 @@ export function checkWraps(grammar: Grammar): void {
       }
     }
   }
+  // Replacements retain the current frame's origin. Propagate both origins through
+  // zero-depth transitions before deciding whether a frame wrap has an opener.
   for (const frames of [root, pushed]) {
     let changed = true;
     while (changed) {
@@ -40,11 +43,12 @@ export function checkWraps(grammar: Grammar): void {
         if (!state) continue;
         const targets: string[] = [];
         if (typeof state.otherwise === "string") targets.push(state.otherwise);
-        const lists = state.arms.flatMap((arm) => branches(arm.then));
-        if (state.otherwise && typeof state.otherwise !== "string") lists.push(state.otherwise);
-        for (const list of lists) {
+        const effectBranches = state.arms.flatMap((arm) => branches(arm.then));
+        if (state.otherwise && typeof state.otherwise !== "string")
+          effectBranches.push(state.otherwise);
+        for (const branch of effectBranches) {
           let depth = 0;
-          for (const effect of list) {
+          for (const effect of branch) {
             if (effect.kind === "push" || effect.kind === "speculate") depth++;
             if (effect.kind === "goto" && depth === 0) targets.push(effect.state);
             if (effect.kind === "pop") {
@@ -64,8 +68,8 @@ export function checkWraps(grammar: Grammar): void {
   }
   for (const [name, state] of Object.entries<State>(grammar.states)) {
     for (const arm of state.arms)
-      for (const list of branches(arm.then)) {
-        const wraps = list.filter((effect) => effect.kind === "wrap");
+      for (const branch of branches(arm.then)) {
+        const wraps = branch.filter((effect) => effect.kind === "wrap");
         if (wraps.length > 1) throw new Error(`${grammar.name}.${name}: at most one wrap per arm`);
         for (const effect of wraps) {
           if (!Object.hasOwn(styleTags, effect.style) || !styleTags[effect.style])

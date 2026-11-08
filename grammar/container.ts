@@ -7,12 +7,11 @@ export function checkContainer(
   names: Set<string>,
   checkMatchers: (matcher: Matcher) => void,
 ): void {
-  if (state.prefix) {
-    if (!state.prefix.match.length)
-      throw new Error(`${grammar}.${name}: container prefix needs matchers`);
-    state.prefix.match.forEach(checkMatchers);
-    state.prefix.lazy?.unless.forEach(checkMatchers);
-    for (const top of state.prefix.lazy?.top ?? [])
-      if (!names.has(top)) throw new Error(`${grammar}.${name}: unknown lazy state ${top}`);
-  }
+  const prefix = state.prefix;
+  if (!prefix) return;
+  if (!prefix.match.length) throw new Error(`${grammar}.${name}: container prefix needs matchers`);
+  prefix.match.forEach(checkMatchers);
+  prefix.lazy?.unless.forEach(checkMatchers);
+  for (const top of prefix.lazy?.top ?? [])
+    if (!names.has(top)) throw new Error(`${grammar}.${name}: unknown lazy state ${top}`);
 }

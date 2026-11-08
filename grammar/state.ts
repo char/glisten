@@ -28,17 +28,20 @@ export function checkSlotTransitions(
   name: string,
   effects: readonly Effect[],
 ): void {
-  const sharing = (state: string) => grammar.states[state]?.slots === "shared";
-  const ownership = new Set(Object.keys(grammar.states).map(sharing));
+  type Ownership = "shared" | "owning";
+  const ownershipOf = (state: string): Ownership =>
+    grammar.states[state]?.slots === "shared" ? "shared" : "owning";
+  const ownership = new Set(Object.keys(grammar.states).map(ownershipOf));
+  // A pop to an unknown caller is still unambiguous if every state has the same ownership.
   const returned = ownership.size === 1 ? ownership.values().next().value : undefined;
-  let current: boolean | undefined = sharing(name);
-  const pushed: (boolean | undefined)[] = [];
+  let current: Ownership | undefined = ownershipOf(name);
+  const pushed: (Ownership | undefined)[] = [];
   const change = (target: string) => {
     if (current === undefined)
       throw new Error(
         `${grammar.name}.${name}: cannot determine slot ownership after pop before changing state`,
       );
-    if (current !== sharing(target))
+    if (current !== ownershipOf(target))
       throw new Error(
         `${grammar.name}.${name}: state change cannot cross shared and owning slot frames`,
       );
@@ -46,13 +49,13 @@ export function checkSlotTransitions(
   for (const effect of effects) {
     if (effect.kind === "push" || effect.kind === "speculate") {
       pushed.push(current);
-      current = sharing(effect.state);
+      current = ownershipOf(effect.state);
     } else if (effect.kind === "pop") {
       if (!pushed.length && effect.fallback !== undefined) change(effect.fallback);
       current = pushed.length ? pushed.pop() : returned;
     } else if (effect.kind === "goto") {
       change(effect.state);
-      current = sharing(effect.state);
+      current = ownershipOf(effect.state);
     } else if (effect.kind === "queueOpen" && grammar.queueSweep) {
       change(grammar.queueSweep.footer);
     }

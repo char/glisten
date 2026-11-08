@@ -1,5 +1,6 @@
 import type { Style } from "./styles.ts";
 import type { Grammar } from "./mod.ts";
+import type { CounterSlot, RunSlot } from "./slot.ts";
 import { visitGrammar } from "./visit.ts";
 
 /** Collect ordered grammar metadata for the compiler. */
@@ -14,6 +15,14 @@ export function analyzeGrammar(grammar: Grammar) {
   const ranges = new Map<string, number>();
   let injections = false;
   let tracksColumn = false;
+  const useRun = (slot: RunSlot) => {
+    if (!runs.has(slot.name)) runs.set(slot.name, runs.size);
+    if (slot.scope === "frame") frameRuns.add(slot.name);
+  };
+  const useCounter = (slot: CounterSlot) => {
+    if (!counters.has(slot.name)) counters.set(slot.name, counters.size);
+    if (slot.scope === "frame") frameCounters.add(slot.name);
+  };
   visitGrammar(grammar, {
     state(state) {
       styles.add(state.style);
@@ -26,14 +35,9 @@ export function analyzeGrammar(grammar: Grammar) {
         (matcher.kind === "run" && matcher.untilColumn !== undefined)
       )
         tracksColumn = true;
-      if (matcher.kind === "counterZero" || matcher.kind === "counterPositive") {
-        if (!counters.has(matcher.slot.name)) counters.set(matcher.slot.name, counters.size);
-        if (matcher.slot.scope === "frame") frameCounters.add(matcher.slot.name);
-      }
-      if (matcher.kind === "sameRun") {
-        if (!runs.has(matcher.slot.name)) runs.set(matcher.slot.name, runs.size);
-        if (matcher.slot.scope === "frame") frameRuns.add(matcher.slot.name);
-      }
+      if (matcher.kind === "counterZero" || matcher.kind === "counterPositive")
+        useCounter(matcher.slot);
+      if (matcher.kind === "sameRun") useRun(matcher.slot);
     },
     effect(effect) {
       if (effect.kind === "paint" || effect.kind === "patchRecord" || effect.kind === "wrap")
@@ -43,14 +47,9 @@ export function analyzeGrammar(grammar: Grammar) {
         effect.kind === "counterReset" ||
         effect.kind === "counterIncrement" ||
         effect.kind === "counterDecrement"
-      ) {
-        if (!counters.has(effect.slot.name)) counters.set(effect.slot.name, counters.size);
-        if (effect.slot.scope === "frame") frameCounters.add(effect.slot.name);
-      }
-      if (effect.kind === "captureRun") {
-        if (!runs.has(effect.slot.name)) runs.set(effect.slot.name, runs.size);
-        if (effect.slot.scope === "frame") frameRuns.add(effect.slot.name);
-      }
+      )
+        useCounter(effect.slot);
+      if (effect.kind === "captureRun") useRun(effect.slot);
       if (
         effect.kind === "saveRange" ||
         effect.kind === "clearRange" ||

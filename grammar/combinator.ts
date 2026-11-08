@@ -45,7 +45,7 @@ export const cachedPrefix = (
   rest: ByteSet,
   ...suffix: Matcher[]
 ): Matcher => {
-  if (bytesOf(first).some((b) => !bytesOf(rest).includes(b)))
+  if (bytesOf(first).some((byte) => !bytesOf(rest).includes(byte)))
     throw new Error("Prefix first set must be a subset of its rest set");
   return { kind: "cachedPrefix", name, first, rest, suffix };
 };
@@ -54,10 +54,14 @@ export function checkCachedPrefix(
   matcher: Extract<CombinatorMatcher, { kind: "cachedPrefix" }>,
   caches: Map<string, string>,
 ): void {
-  if (bytesOf(matcher.first).some((b) => !bytesOf(matcher.rest).includes(b)))
+  if (bytesOf(matcher.first).some((byte) => !bytesOf(matcher.rest).includes(byte)))
     throw new Error("Prefix first set must be a subset of its rest set");
-  const key = JSON.stringify([bytesOf(matcher.first), bytesOf(matcher.rest), matcher.suffix]);
-  if (caches.has(matcher.name) && caches.get(matcher.name) !== key)
+  const definition = JSON.stringify([
+    bytesOf(matcher.first),
+    bytesOf(matcher.rest),
+    matcher.suffix,
+  ]);
+  if (caches.has(matcher.name) && caches.get(matcher.name) !== definition)
     throw new Error(`Inconsistent cached prefix ${matcher.name}`);
-  caches.set(matcher.name, key);
+  caches.set(matcher.name, definition);
 }

@@ -8,6 +8,7 @@ export type ToColumn = {
   readonly ancestor?: number;
 };
 
+/** Save the physical column at the end of the arm in a frame-local slot. */
 export const saveColumn = (slot: ColumnSlot): CaptureColumn => ({ kind: "captureColumn", slot });
 /** Match a frame's column; ancestor 1 addresses the immediate parent. */
 export const indentTo = (slot: ColumnSlot, options: { ancestor?: number } = {}): ToColumn => {

@@ -41,57 +41,60 @@ export function checkArm(arm: Arm) {
     throw new Error(
       arm.redispatch ? "A redispatch cannot paint" : "A non-painting arm must use redispatch",
     );
+  const hasStackTransition = arm.then.some(
+    (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
+  );
   if (classification?.kind === "word") {
     checkWordArm(arm, classification);
-  } else if (
-    !arm.then.some((effect) => effect.kind === "paint") &&
-    (arm.match.some(
-      (matcher) =>
-        ![
-          "queueHas",
-          "counterZero",
-          "counterPositive",
-          "ahead",
-          "notAhead",
-          "notNext",
-          "notBehind",
-          "previousChar",
-          "lineEnd",
-          "columnAtLeast",
-        ].includes(matcher.kind),
-    ) ||
-      arm.then.length === 0 ||
-      arm.then.some(
-        (effect) =>
-          effect.kind !== "push" &&
-          effect.kind !== "pop" &&
-          effect.kind !== "goto" &&
-          effect.kind !== "speculate" &&
-          !(
-            zeroWidthSpeculation &&
-            (effect.kind === "counterReset" ||
-              effect.kind === "counterIncrement" ||
-              effect.kind === "counterDecrement")
-          ) &&
-          effect.kind !== "queueSave" &&
-          effect.kind !== "queueOpen" &&
-          effect.kind !== "closeInjection" &&
-          effect.kind !== "openStatic" &&
-          effect.kind !== "openNamed" &&
-          effect.kind !== "captureReset" &&
-          effect.kind !== "captureMark" &&
-          effect.kind !== "abandon",
-      ) ||
-      (arm.then.some((effect) => effect.kind === "captureReset" || effect.kind === "captureMark") &&
-        !arm.then.some(
-          (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
-        )) ||
-      (arm.then.some((effect) => effect.kind === "openStatic" || effect.kind === "openNamed") &&
-        !arm.then.some(
-          (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
-        )))
-  ) {
-    throw new Error("An arm must paint what it matches or be a zero-width transition");
+  } else if (!paintCount) {
+    const zeroWidthMatchers: readonly Matcher["kind"][] = [
+      "queueHas",
+      "counterZero",
+      "counterPositive",
+      "ahead",
+      "notAhead",
+      "notNext",
+      "notBehind",
+      "previousChar",
+      "lineEnd",
+      "columnAtLeast",
+    ];
+    const transitionEffects: readonly Effect["kind"][] = [
+      "push",
+      "pop",
+      "goto",
+      "speculate",
+      "queueSave",
+      "queueOpen",
+      "closeInjection",
+      "openStatic",
+      "openNamed",
+      "captureReset",
+      "captureMark",
+      "abandon",
+    ];
+    const counterEffects: readonly Effect["kind"][] = [
+      "counterReset",
+      "counterIncrement",
+      "counterDecrement",
+    ];
+    const requiresStackTransition: readonly Effect["kind"][] = [
+      "captureReset",
+      "captureMark",
+      "openStatic",
+      "openNamed",
+    ];
+    const hasNonAssertion = arm.match.some((matcher) => !zeroWidthMatchers.includes(matcher.kind));
+    const hasInvalidEffect = arm.then.some(
+      (effect) =>
+        !transitionEffects.includes(effect.kind) &&
+        !(zeroWidthSpeculation && counterEffects.includes(effect.kind)),
+    );
+    const missingStackTransition =
+      !hasStackTransition &&
+      arm.then.some((effect) => requiresStackTransition.includes(effect.kind));
+    if (hasNonAssertion || arm.then.length === 0 || hasInvalidEffect || missingStackTransition)
+      throw new Error("An arm must paint what it matches or be a zero-width transition");
   }
   if (!classification) checkRecordEffects(arm.then);
   checkSpeculationArm(arm);

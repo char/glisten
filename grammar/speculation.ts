@@ -20,15 +20,17 @@ export const speculate = (
 export const abandon = (): SpeculationEffect => ({ kind: "abandon" });
 
 export function checkSpeculationArm(arm: Arm): void {
+  const opens = arm.then.some((step) => step.kind === "speculate");
+  const abandons = arm.then.some((step) => step.kind === "abandon");
   if (
-    arm.then.some((step) => step.kind === "speculate") &&
+    opens &&
     !arm.redispatch &&
     (arm.match.length === 0 || !arm.then.some((step) => step.kind === "paint"))
   )
     throw new Error("A speculative opener must consume and paint");
   if (
     arm.redispatch &&
-    arm.then.some((step) => step.kind === "speculate") &&
+    opens &&
     arm.then.some(
       (step) =>
         !["speculate", "counterReset", "counterIncrement", "counterDecrement"].includes(step.kind),
@@ -36,7 +38,7 @@ export function checkSpeculationArm(arm: Arm): void {
   )
     throw new Error("A zero-width speculative opener permits only counter effects");
   if (
-    arm.then.some((step) => step.kind === "abandon") &&
+    abandons &&
     (arm.then.length !== 1 ||
       arm.match.some(
         (matcher) =>
@@ -80,6 +82,8 @@ export function checkSpeculativeStates<Name extends string>(grammar: Grammar<Nam
     for (const arm of state.arms)
       for (const effect of arm.then)
         if (effect.kind === "speculate") speculativeStates.add(effect.state);
+  // Follow replacements until both sets reach a fixed point; nested openers may return
+  // into an outer speculative frame before replacing it.
   const nestedStates = new Set<string>();
   let changed = true;
   while (changed) {

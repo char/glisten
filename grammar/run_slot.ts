@@ -10,7 +10,9 @@ export type SameRun = {
   readonly relation: RunRelation;
 };
 
+/** Save the final run matched by the arm. */
 export const saveRun = (slot: RunSlot): CaptureRun => ({ kind: "captureRun", slot });
+/** Match the saved run, requiring at least its saved length by default. */
 export const matchRun = (slot: RunSlot, options: { relation?: RunRelation } = {}): SameRun => ({
   kind: "sameRun",
   slot,

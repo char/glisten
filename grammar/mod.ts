@@ -1,5 +1,35 @@
+import { checkArm } from "./arm.ts";
+import type { BoundaryMatcher } from "./boundary.ts";
+import type { ByteMatcher, ByteSet } from "./bytes.ts";
+import type { CaptureEffect, CaptureMatcher } from "./capture.ts";
+import type { CaptureColumn, ToColumn } from "./column.ts";
+import type { CombinatorMatcher } from "./combinator.ts";
+import { checkContainer } from "./container.ts";
+import type { CounterEffect, CounterMatcher } from "./counter_slot.ts";
+import type { GroupMatcher } from "./group.ts";
+import type { InjectionEffect, RangeEffect } from "./injection.ts";
+import { checkQueueSweep, type QueueEffect, type QueueMatcher } from "./queue.ts";
+import type { RecordEffect } from "./record.ts";
+import { checkEffect, checkMatcher } from "./registry.ts";
+import type { CaptureRun, SameRun } from "./run_slot.ts";
+import type { SeparatedRun } from "./separated_run.ts";
+import { checkSlots } from "./slot.ts";
+import {
+  checkSpeculationEffects,
+  checkSpeculativeStates,
+  type SpeculationEffect,
+} from "./speculation.ts";
+import {
+  checkFallback,
+  checkSlotTransitions,
+  checkZeroWidthOpen,
+  type StateEffect,
+} from "./state.ts";
 import type { Style } from "./styles.ts";
-import type { ByteSet, ByteMatcher } from "./bytes.ts";
+import { visitMatchers } from "./visit.ts";
+import { branchEffects, type WordEffect } from "./word.ts";
+import { checkWraps } from "./wrap.ts";
+
 export {
   bytesOf,
   byteSet,
@@ -15,22 +45,11 @@ export {
   bytes,
   type ByteSet,
 } from "./bytes.ts";
-import { visitMatchers } from "./visit.ts";
-import { checkEffect, checkMatcher } from "./registry.ts";
-import { checkArm } from "./arm.ts";
-import { checkContainer } from "./container.ts";
-import { checkFallback, checkSlotTransitions, checkZeroWidthOpen } from "./state.ts";
-import { checkWraps } from "./wrap.ts";
-import { checkSlots } from "./slot.ts";
 export { slot, type RunSlot, type CounterSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
 export { on, redispatch } from "./arm.ts";
 export { token, oneOf, keywordTable } from "./authoring.ts";
-import type { RecordEffect } from "./record.ts";
-import type { StateEffect } from "./state.ts";
 export { paint, markRecord, patchRecord, wrap } from "./record.ts";
 export { pushState, popState, setState, resource } from "./state.ts";
-import type { BoundaryMatcher } from "./boundary.ts";
-import type { CombinatorMatcher } from "./combinator.ts";
 export {
   baseState,
   notNext,
@@ -51,15 +70,7 @@ export {
   notLookahead,
   cachedPrefix,
 } from "./combinator.ts";
-import { checkSpeculationEffects, checkSpeculativeStates } from "./speculation.ts";
-import { branchEffects, type WordEffect } from "./word.ts";
-import { checkQueueSweep } from "./queue.ts";
-import type { CaptureEffect, CaptureMatcher } from "./capture.ts";
-import type { QueueEffect, QueueMatcher } from "./queue.ts";
-import type { GroupMatcher } from "./group.ts";
 export * as shell from "./shell.ts";
-import type { CaptureRun, SameRun } from "./run_slot.ts";
-import type { CounterEffect, CounterMatcher } from "./counter_slot.ts";
 export {
   counterZero,
   counterPositive,
@@ -67,11 +78,7 @@ export {
   counterIncrement,
   counterDecrement,
 } from "./counter_slot.ts";
-import type { InjectionEffect, RangeEffect } from "./injection.ts";
-import type { CaptureColumn, ToColumn } from "./column.ts";
-import type { SpeculationEffect } from "./speculation.ts";
 export { speculate, abandon } from "./speculation.ts";
-import type { SeparatedRun } from "./separated_run.ts";
 export { separatedRun } from "./separated_run.ts";
 export { saveColumn, indentTo } from "./column.ts";
 export { clearRange, saveRange, openInjection, hostPrefix, closeInjection } from "./injection.ts";

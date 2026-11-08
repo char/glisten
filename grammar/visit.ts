@@ -36,6 +36,7 @@ export function visitMatchers(
   matchers.forEach(match);
 }
 
+/** Test matchers recursively, including those inside combinators. */
 export function someMatcher(
   matchers: readonly Matcher[],
   predicate: (matcher: Matcher) => boolean,

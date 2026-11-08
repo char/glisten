@@ -16,14 +16,11 @@ export function oneOf(set: ByteSet): OneOf {
 export function token(pattern: string | OneOf, style: Style, ...effects: Effect[]): Arm {
   if (typeof pattern !== "string")
     return on(pattern.set, byte(pattern.set), paint(style), ...effects);
-  const first = new TextEncoder().encode(pattern)[0];
-  if (first === undefined) throw new Error("A token cannot be empty");
-  return on(
-    first < 128 ? String.fromCharCode(first) : byteSet({ bytes: [first] }),
-    literal(pattern),
-    paint(style),
-    ...effects,
-  );
+  const firstByte = new TextEncoder().encode(pattern)[0];
+  if (firstByte === undefined) throw new Error("A token cannot be empty");
+  const dispatch =
+    firstByte < 128 ? String.fromCharCode(firstByte) : byteSet({ bytes: [firstByte] });
+  return on(dispatch, literal(pattern), paint(style), ...effects);
 }
 
 /** Build classification cases in the order of the supplied words. */

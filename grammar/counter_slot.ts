@@ -13,16 +13,21 @@ export type CounterEffect =
   | { readonly kind: "counterIncrement"; readonly slot: CounterSlot }
   | { readonly kind: "counterDecrement"; readonly slot: CounterSlot };
 
+/** Succeed when the counter is zero. */
 export const counterZero = (slot: CounterSlot): CounterMatcher => ({ kind: "counterZero", slot });
+/** Succeed when the counter is greater than zero. */
 export const counterPositive = (slot: CounterSlot): CounterMatcher => ({
   kind: "counterPositive",
   slot,
 });
+/** Reset the counter to zero. */
 export const counterReset = (slot: CounterSlot): CounterEffect => ({ kind: "counterReset", slot });
+/** Increment the counter, saturating at `maxCounter`. */
 export const counterIncrement = (slot: CounterSlot): CounterEffect => ({
   kind: "counterIncrement",
   slot,
 });
+/** Decrement the counter, saturating at zero. */
 export const counterDecrement = (slot: CounterSlot): CounterEffect => ({
   kind: "counterDecrement",
   slot,

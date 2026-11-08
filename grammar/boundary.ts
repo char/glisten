@@ -14,19 +14,21 @@ export const notNext = (set: ByteSet): Matcher => {
   bytesOf(set);
   return { kind: "notNext", set };
 };
+/** Inclusive Unicode code-point ranges. */
 export type CharRanges = readonly (readonly [number, number])[];
 
 export function checkCharRanges(ranges: CharRanges): void {
   if (!Array.isArray(ranges)) throw new RangeError("Expected Unicode code-point ranges");
   for (const range of ranges) {
+    if (!Array.isArray(range) || range.length !== 2)
+      throw new RangeError("Invalid Unicode code-point range");
+    const [start, end] = range;
     if (
-      !Array.isArray(range) ||
-      range.length !== 2 ||
-      !Number.isInteger(range[0]) ||
-      !Number.isInteger(range[1]) ||
-      range[0] < 0 ||
-      range[0] > range[1] ||
-      range[1] > 0x10ffff
+      !Number.isInteger(start) ||
+      !Number.isInteger(end) ||
+      start < 0 ||
+      start > end ||
+      end > 0x10ffff
     )
       throw new RangeError("Invalid Unicode code-point range");
   }

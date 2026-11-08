@@ -4,15 +4,17 @@ import type { Style } from "./styles.ts";
 export function checkRecordEffects(effects: readonly Effect[]) {
   if (!effects.some((effect) => effect.kind === "markRecord" || effect.kind === "patchRecord"))
     return;
-  const paints = effects.flatMap((effect, i) => (effect.kind === "paint" ? [i] : []));
+  const paintPositions = effects.flatMap((effect, index) =>
+    effect.kind === "paint" ? [index] : [],
+  );
   if (
-    paints.length !== 1 ||
+    paintPositions.length !== 1 ||
     effects.filter((effect) => effect.kind === "markRecord").length > 1 ||
     effects.filter((effect) => effect.kind === "patchRecord").length > 1 ||
-    effects.some((effect, i) =>
+    effects.some((effect, index) =>
       effect.kind === "markRecord"
-        ? i < paints[0]!
-        : effect.kind === "patchRecord" && i > paints[0]!,
+        ? index < paintPositions[0]!
+        : effect.kind === "patchRecord" && index > paintPositions[0]!,
     )
   )
     throw new Error("Record patch must precede the single paint and mark must follow it");

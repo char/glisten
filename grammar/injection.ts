@@ -31,22 +31,20 @@ export function checkInjectionArm(arm: Arm): void {
       ? [...classification.cases.map(({ then }) => then), classification.otherwise]
       : [arm.then];
   for (const branch of branches) {
-    const painting = branch.findIndex((effect) => effect.kind === "paint");
-    if (
-      branch.filter(
-        (effect) =>
-          effect.kind === "openNamed" ||
-          effect.kind === "openStatic" ||
-          effect.kind === "hostPrefix" ||
-          effect.kind === "closeInjection",
-      ).length > 1 ||
-      branch.some((effect, index) =>
-        effect.kind === "openNamed" || effect.kind === "openStatic"
-          ? index < painting
-          : ((effect.kind === "closeInjection" && painting >= 0) || effect.kind === "hostPrefix") &&
-            index > painting,
-      )
-    )
+    const paintIndex = branch.findIndex((effect) => effect.kind === "paint");
+    const injectionEffects = branch.filter(
+      (effect) =>
+        effect.kind === "openNamed" ||
+        effect.kind === "openStatic" ||
+        effect.kind === "hostPrefix" ||
+        effect.kind === "closeInjection",
+    );
+    const outOfOrder = branch.some((effect, index) => {
+      if (effect.kind === "openNamed" || effect.kind === "openStatic") return index < paintIndex;
+      if (effect.kind === "hostPrefix") return index > paintIndex;
+      return effect.kind === "closeInjection" && paintIndex >= 0 && index > paintIndex;
+    });
+    if (injectionEffects.length > 1 || outOfOrder)
       throw new Error("Prefix and close injections before painting; open them after painting");
   }
 }

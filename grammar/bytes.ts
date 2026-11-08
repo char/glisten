@@ -24,7 +24,7 @@ export const byte = (set: ByteSet): Matcher => {
 };
 /** One segment-bounded UTF-8 character. */
 export const character = (): Matcher => ({ kind: "character" });
-/** A maximal run of bytes in a set, limited to `max` when supplied. */
+/** A maximal run of bytes in a set, limited by `max` or `untilColumn` when supplied. */
 export const bytes = (
   set: ByteSet,
   options: { min?: number; max?: number; untilColumn?: number } = {},
@@ -96,12 +96,15 @@ export function range(start: string, end: string): ByteSet {
 /** Construct a set from ASCII characters, rejecting non-ASCII input. */
 export const ascii = (text: string): ByteSet => byteSet({ bytes: bytesOf(text) });
 
+/** Construct the union of byte sets. */
 export const union = (...sets: readonly ByteSet[]): ByteSet =>
   byteSet({ bytes: sets.flatMap(bytesOf) });
+/** Construct the bytes present in every supplied set. */
 export const intersection = (first: ByteSet, ...rest: readonly ByteSet[]): ByteSet => {
   const others = rest.map((set) => new Set(bytesOf(set)));
   return byteSet({ bytes: bytesOf(first).filter((byte) => others.every((set) => set.has(byte))) });
 };
+/** Remove all bytes in the excluded sets from the first set. */
 export const except = (first: ByteSet, ...excluded: readonly ByteSet[]): ByteSet => {
   const removed = new Set(excluded.flatMap(bytesOf));
   return byteSet({ bytes: bytesOf(first).filter((byte) => !removed.has(byte)) });

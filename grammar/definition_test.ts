@@ -4,6 +4,7 @@ import {
   defineGrammar,
   literal,
   on,
+  notNext,
   paint,
   popState,
   pushState,
@@ -171,4 +172,11 @@ test("queue footers preserve the opened frame's slot ownership", () => {
 
 test("an arm cannot paint more than once", () => {
   throws(() => on("x", paint("plain"), paint("keyword")), Error, /exactly one paint/);
+});
+
+test("redispatch permits assertions and transitions but not consuming matchers", () => {
+  redispatch("x", notNext("y"), setState("next"));
+  throws(() => redispatch("x", literal("x"), setState("next")), Error, /zero-width transition/);
+  throws(() => redispatch("x", shell.captureReset()), Error, /zero-width transition/);
+  redispatch("x", shell.captureReset(), setState("next"));
 });
