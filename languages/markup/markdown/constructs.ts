@@ -25,6 +25,32 @@ export function fenceRun() {
   );
 }
 
+export function lineMark() {
+  return func("lineMark", () =>
+    raw(`
+    (param $input i32) (param $pos i32) (param $end i32) (param $virtual i32) (result i32)
+    (local $start i32)
+    (local $limit i32)
+    (local $byte i32)
+    ;; The line's first non-space byte while it is indented under four columns, and zero when it
+    ;; can only be indented code, is blank, or over: no construct below can start with a zero
+    ;; mark. A tab is reported as itself, since it may still reach four columns.
+    (local.set $start (local.get $pos))
+    (local.set $limit (i32.sub (i32.const 3) (local.get $virtual)))
+    (if (i32.lt_s (local.get $limit) (i32.const 0)) (then (return (i32.const 0))))
+    (block $done (loop $more
+      (br_if $done (i32.ge_u (local.get $pos) (local.get $end)))
+      (br_if $done (i32.ne (i32.load8_u (i32.add (local.get $input) (local.get $pos))) (i32.const 32)))
+      (br_if $done (i32.ge_u (i32.sub (local.get $pos) (local.get $start)) (local.get $limit)))
+      (local.set $pos (i32.add (local.get $pos) (i32.const 1)))
+      (br $more)))
+    (if (i32.ge_u (local.get $pos) (local.get $end)) (then (return (i32.const 0))))
+    (local.set $byte (i32.load8_u (i32.add (local.get $input) (local.get $pos))))
+    (if (i32.eq (local.get $byte) (i32.const 32)) (then (return (i32.const 0))))
+    (local.get $byte)`),
+  );
+}
+
 export function blankLine() {
   return func("blankLine", () =>
     raw(`

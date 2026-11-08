@@ -61,8 +61,6 @@ export function inlineAtoms(
   const openCount = global("inlineOpenCount", () => wat`(mut i32) (i32.const 0)`);
   const closeCount = global("inlineCloseCount", () => wat`(mut i32) (i32.const 0)`);
   const tickBytes = global("inlineTickBytes", () => wat`(mut i32) (i32.const 0)`);
-  const tickRuns = global("inlineTickRuns", () => wat`(mut i32) (i32.const 0)`);
-  const tickMax = global("inlineTickMax", () => wat`(mut i32) (i32.const 0)`);
   const special = "!&*.:<@[\\]_`~";
   // A byte-set mask from nibble tables, as in the runtime's stop scans.
   const low = Array(16).fill(0),
@@ -72,48 +70,50 @@ export function inlineAtoms(
     high[byte >> 4] = 1 << (byte >> 4);
   }
   const lanes = (mask: Fragment) => wat`(i32.popcnt (i8x16.bitmask ${mask}))`;
+  const is = (char: string) => wat`(i32.eq (local.get $byte) (i32.const ${char.charCodeAt(0)}))`;
   const equal = (char: string) =>
     wat`(i8x16.eq (local.get $chunk) (i8x16.splat (i32.const ${char.charCodeAt(0)})))`;
-  const is = (char: string) => wat`(i32.eq (local.get $byte) (i32.const ${char.charCodeAt(0)}))`;
-  const add = (counter: Def, amount: Fragment) =>
-    wat`(global.set ${counter} (i32.add (global.get ${counter}) ${amount}))`;
-  // Counts bound the workspace: every collected event, run, bracket and backtick run
-  // consumes one of the counted bytes.
+  // Counts bound the workspace: every collected event, run, bracket and backtick slot is paid
+  // for by one of these bytes.
   const countRange = func(
     "countInlineRange",
     () => wat`
     (param $input i32) (param $pos i32) (param $end i32)
     (local $chunk v128) (local $byte i32)
+    (local $special i32) (local $delimiter i32) (local $open i32) (local $close i32)
+    (local $tick i32)
     (call ${charge} (i64.extend_i32_u (i32.sub (local.get $end) (local.get $pos))))
     (block $wide (loop $chunks
       (br_if $wide (i32.gt_u (i32.add (local.get $pos) (i32.const 16)) (local.get $end)))
       (local.set $chunk (v128.load (i32.add (local.get $input) (local.get $pos))))
-      ${add(
-        specialCount,
-        lanes(wat`(i8x16.ne (v128.and
+      (local.set $special (i32.add (local.get $special) ${lanes(wat`(i8x16.ne (v128.and
         (i8x16.swizzle (v128.const i8x16 ${low}) (v128.and (local.get $chunk) (i8x16.splat (i32.const 15))))
         (i8x16.swizzle (v128.const i8x16 ${high}) (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) (i8x16.splat (i32.const 15)))))
-        (i8x16.splat (i32.const 0)))`),
-      )}
-      ${add(delimiterCount, lanes(wat`(v128.or (v128.or ${equal("*")} ${equal("_")}) ${equal("~")})`))}
-      ${add(openCount, lanes(equal("[")))}
-      ${add(closeCount, lanes(equal("]")))}
-      ${add(tickBytes, lanes(equal("`")))}
+        (i8x16.splat (i32.const 0)))`)}))
+      (local.set $delimiter (i32.add (local.get $delimiter)
+        ${lanes(wat`(v128.or (v128.or ${equal("*")} ${equal("_")}) ${equal("~")})`)}))
+      (local.set $open (i32.add (local.get $open) ${lanes(equal("["))}))
+      (local.set $close (i32.add (local.get $close) ${lanes(equal("]"))}))
+      (local.set $tick (i32.add (local.get $tick) ${lanes(equal("`"))}))
       (local.set $pos (i32.add (local.get $pos) (i32.const 16)))
       (br $chunks)))
     (block $narrow (loop $bytes
       (br_if $narrow (i32.ge_u (local.get $pos) (local.get $end)))
       (local.set $byte (i32.load8_u (i32.add (local.get $input) (local.get $pos))))
-      ${add(
-        specialCount,
-        [...special].map(is).reduce((a, b) => wat`(i32.or ${a} ${b})`),
-      )}
-      ${add(delimiterCount, wat`(i32.or (i32.or ${is("*")} ${is("_")}) ${is("~")})`)}
-      ${add(openCount, is("["))}
-      ${add(closeCount, is("]"))}
-      ${add(tickBytes, is("`"))}
+      (local.set $special (i32.add (local.get $special)
+        ${[...special].map(is).reduce((a, b) => wat`(i32.or ${a} ${b})`)}))
+      (local.set $delimiter (i32.add (local.get $delimiter)
+        ${wat`(i32.or (i32.or ${is("*")} ${is("_")}) ${is("~")})`}))
+      (local.set $open (i32.add (local.get $open) ${is("[")}))
+      (local.set $close (i32.add (local.get $close) ${is("]")}))
+      (local.set $tick (i32.add (local.get $tick) ${is("`")}))
       (local.set $pos (i32.add (local.get $pos) (i32.const 1)))
-      (br $bytes)))`,
+      (br $bytes)))
+    (global.set ${specialCount} (i32.add (global.get ${specialCount}) (local.get $special)))
+    (global.set ${delimiterCount} (i32.add (global.get ${delimiterCount}) (local.get $delimiter)))
+    (global.set ${openCount} (i32.add (global.get ${openCount}) (local.get $open)))
+    (global.set ${closeCount} (i32.add (global.get ${closeCount}) (local.get $close)))
+    (global.set ${tickBytes} (i32.add (global.get ${tickBytes}) (local.get $tick)))`,
   );
   const countSpecial = func(
     "countInlineSpecial",
@@ -135,10 +135,7 @@ export function inlineAtoms(
         (then (call ${countRange} (local.get $input) (local.get $pos) (local.get $end))))
       (local.set $pos (local.get $end))
       (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
-      (br $ranges)))
-    ;; Backtick runs and the longest run are bounded by the backtick bytes.
-    (global.set ${tickRuns} (global.get ${tickBytes}))
-    (global.set ${tickMax} (global.get ${tickBytes}))`,
+      (br $ranges)))`,
   );
   const end = global("inlineEnd", () => wat`(mut i64) (i64.const 0)`);
   const style = global("inlineStyle", () => wat`(mut i32) (i32.const 0)`);
@@ -232,8 +229,6 @@ export function inlineAtoms(
     openCount,
     closeCount,
     tickBytes,
-    tickRuns,
-    tickMax,
     parse,
     end,
     style,

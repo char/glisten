@@ -9,7 +9,7 @@ import {
   type Local,
   type Part,
 } from "#/testing/wat/mod.ts";
-import { blankLine, fenceRun, indentedCode, thematicBreak } from "./constructs.ts";
+import { blankLine, fenceRun, indentedCode, lineMark, thematicBreak } from "./constructs.ts";
 import { columns, containerContinue, containerOpen } from "./containers.ts";
 import { atxHeading, setextUnderline } from "./heading.ts";
 import { paragraphScratch } from "./scratch.ts";
@@ -118,6 +118,13 @@ export function blocks(workPerByte = 16384) {
     inlineCursor = local("inlineCursor"),
     inlineStyle = local("inlineStyle"),
     inlineWorkspace = local("inlineWorkspace"),
+    inlineSpecial = local("inlineSpecial"),
+    inlineDelimiter = local("inlineDelimiter"),
+    inlineOpen = local("inlineOpen"),
+    inlineClose = local("inlineClose"),
+    inlineTicks = local("inlineTicks"),
+    inlineCount = local("inlineCount"),
+    inlineBrackets = local("inlineBrackets"),
     inlineTickBytes = local("inlineTickBytes"),
     inlineEventCapacity = local("inlineEventCapacity"),
     inlineWorkspaceBytes = local("inlineWorkspaceBytes"),
@@ -144,6 +151,7 @@ export function blocks(workPerByte = 16384) {
     previousVirtual = local("previousVirtual");
   const sharedTab = local("sharedTab"),
     bodyPos = local("bodyPos");
+  const mark = local("mark");
   const frame = local("frame"),
     prefix = local("prefix"),
     prefixEnd = local("prefixEnd"),
@@ -306,8 +314,34 @@ export function blocks(workPerByte = 16384) {
     terms.reduceRight(
       (rest, term) => wat`(if (result i32) ${term} (then (i32.const 1)) (else ${rest}))`,
     );
+  /**
+   * The line's mark, refreshed wherever the container prefix moves it: every construct below
+   * starts with a byte, so a line that can't carry that byte skips its check.
+   */
+  const lineMarkOf = lineMark();
+  const markLine = wat`
+    (call ${charge} (i64.const 12))
+    (local.set ${mark} (call ${lineMarkOf} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+      (local.get ${virtualIndent})))`;
+  const markAt = (...bytes: number[]) => {
+    const [first = 0, ...rest] = bytes;
+    return rest.reduce(
+      (a, byte) => wat`(i32.or ${a} (i32.eq (local.get ${mark}) (i32.const ${byte})))`,
+      wat`(i32.eq (local.get ${mark}) (i32.const ${first}))`,
+    );
+  };
+  /** Any i32 check that the mark gates, or `absent` when the line can't start it. */
+  const guarded = (condition: Part, check: Part, absent = 0): Part =>
+    wat`(if (result i32) ${condition} (then ${check}) (else (i32.const ${absent})))`;
+  /** A tab or deep indentation hides the mark: only indented code and blank lines can follow. */
+  const markHidden = wat`(i32.or (i32.eqz (local.get ${mark})) (i32.eq (local.get ${mark}) (i32.const 9)))`;
+  const markList = wat`(i32.or (i32.le_u (i32.sub (local.get ${mark}) (i32.const 48)) (i32.const 9))
+    ${markAt(42, 43, 45, 62)})`;
   const delimiter = wat`(call ${marker} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`;
-  const underline = wat`(call ${setext} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`;
+  const underline = wat`(if (result i32) ${markAt(45, 61)}
+    (then (call ${setext} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+      (local.get ${virtualIndent})))
+    (else (i32.const 0)))`;
   /** Emit plain whitespace from `from` up to the first other byte, leaving `cursor` there. */
   function plainIndent(from: Local, end: Local) {
     return wat`
@@ -415,37 +449,45 @@ export function blocks(workPerByte = 16384) {
         (local.set ${inlineCursor} (call ${inline.next} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark})))
         (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
           (call ${inline.countSpecial} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark}))
-          ;; The backtick table has one slot per possible run length and one record per run.
+          ;; Every collected event, delimiter run, bracket and backtick index slot is paid for by
+          ;; a byte the prepass counted: an atom has at most one text gap before it, one closing
+          ;; bracket adds at most eight events, a match consumes two delimiter bytes, and the
+          ;; backtick table has a slot per possible run length plus a record per run.
+          (local.set ${inlineSpecial} (i64.extend_i32_u (global.get ${inline.specialCount})))
+          (local.set ${inlineDelimiter} (i64.extend_i32_u (global.get ${inline.delimiterCount})))
+          (local.set ${inlineOpen} (i64.extend_i32_u (global.get ${inline.openCount})))
+          (local.set ${inlineClose} (i64.extend_i32_u (global.get ${inline.closeCount})))
+          (local.set ${inlineTicks} (i64.extend_i32_u (global.get ${inline.tickBytes})))
           (local.set ${inlineTickBytes} (i64.add
-            (i64.mul (i64.add (i64.extend_i32_u (global.get ${inline.tickMax})) (i64.const 1)) (i64.const 4))
-            (i64.mul (i64.extend_i32_u (global.get ${inline.tickRuns})) (i64.const ${backtickRun.size}))))
-          ;; Each atom consumes a special byte and has at most one preceding text gap, plus one trailing gap.
-          (local.set ${inlineEventCapacity} (i64.add (i64.const 1)
-            (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.specialCount})) (i64.const 2))
-              (i64.mul (i64.extend_i32_u (global.get ${inline.closeCount})) (i64.const 8)))))
-          ;; Runs, ends, active stack entries, and work runs are each bounded by delimiter bytes.
-          ;; A match consumes at least two delimiter bytes.
-          ;; Every bracket entry consumes an opening bracket; one extra entry is the null sentinel.
-          ;; Every link consumes a closing bracket.
-          (local.set ${inlineWorkspaceBytes} (i64.add (i64.add (local.get ${inlineTickBytes}) (i64.const ${56 + bracket.size}))
+            (i64.mul (i64.add (local.get ${inlineTicks}) (i64.const 1)) (i64.const 4))
+            (i64.mul (local.get ${inlineTicks}) (i64.const ${backtickRun.size}))))
+          (local.set ${inlineEventCapacity} (i64.add (i64.add (i64.const 1)
+            (i64.mul (local.get ${inlineSpecial}) (i64.const 2)))
+            (i64.mul (local.get ${inlineClose}) (i64.const 8))))
+          (local.set ${inlineWorkspaceBytes} (i64.add
+            (i64.add (local.get ${inlineTickBytes}) (i64.const ${56 + bracket.size}))
             (i64.add (i64.mul (local.get ${inlineEventCapacity}) (i64.const ${event.size}))
-              (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.delimiterCount}))
-                (i64.const ${run.size * 2 + ends.size + delimiterStackEntry.size}))
-                (i64.add (i64.mul (i64.shr_u (i64.extend_i32_u (global.get ${inline.delimiterCount})) (i64.const 1)) (i64.const ${match.size}))
-                  (i64.add (i64.mul (i64.extend_i32_u (global.get ${inline.openCount})) (i64.const ${bracket.size}))
-                    (i64.mul (i64.extend_i32_u (global.get ${inline.closeCount})) (i64.const ${link.size}))))))))
+              (i64.add
+                (i64.mul (local.get ${inlineDelimiter}) (i64.const ${run.size * 2 + ends.size + delimiterStackEntry.size}))
+                (i64.add
+                  (i64.mul (i64.shr_u (local.get ${inlineDelimiter}) (i64.const 1)) (i64.const ${match.size}))
+                  (i64.add
+                    (i64.mul (local.get ${inlineOpen}) (i64.const ${bracket.size}))
+                    (i64.mul (local.get ${inlineClose}) (i64.const ${link.size}))))))))
           (call ${charge} (local.get ${inlineWorkspaceBytes}))
           (local.set ${inlineWorkspace} (call ${scratch.reserveExact} (local.get ${inlineWorkspaceBytes}) (local.get ${out})))
+          (local.set ${inlineCount} (i32.wrap_i64 (local.get ${inlineDelimiter})))
+          (local.set ${inlineBrackets} (i32.wrap_i64 (local.get ${inlineOpen})))
           (global.set ${inline.backticks} (local.get ${inlineWorkspace}))
           (global.set ${inline.backtickCapacity} (i32.wrap_i64 (local.get ${inlineTickBytes})))
           (global.set ${inline.events} (i32.add (local.get ${inlineWorkspace}) (global.get ${inline.backtickCapacity})))
           (global.set ${inline.runs} (i32.add (global.get ${inline.events}) (i32.mul (i32.wrap_i64 (local.get ${inlineEventCapacity})) (i32.const ${event.size}))))
-          (global.set ${inline.heads} (i32.add (global.get ${inline.runs}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${run.size}))))
-          (global.set ${inline.matches} (i32.add (global.get ${inline.heads}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${ends.size}))))
-          (global.set ${inline.brackets} (i32.add (global.get ${inline.matches}) (i32.mul (i32.shr_u (global.get ${inline.delimiterCount}) (i32.const 1)) (i32.const ${match.size}))))
-          (global.set ${inline.stack} (i32.add (global.get ${inline.brackets}) (i32.mul (i32.add (global.get ${inline.openCount}) (i32.const 1)) (i32.const ${bracket.size}))))
-          (global.set ${inline.work} (i32.add (global.get ${inline.stack}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${delimiterStackEntry.size}))))
-          (global.set ${inline.bottoms} (i32.add (global.get ${inline.work}) (i32.mul (global.get ${inline.delimiterCount}) (i32.const ${run.size}))))
+          (global.set ${inline.heads} (i32.add (global.get ${inline.runs}) (i32.mul (local.get ${inlineCount}) (i32.const ${run.size}))))
+          (global.set ${inline.matches} (i32.add (global.get ${inline.heads}) (i32.mul (local.get ${inlineCount}) (i32.const ${ends.size}))))
+          (global.set ${inline.brackets} (i32.add (global.get ${inline.matches}) (i32.mul (i32.shr_u (local.get ${inlineCount}) (i32.const 1)) (i32.const ${match.size}))))
+          (global.set ${inline.stack} (i32.add (global.get ${inline.brackets}) (i32.mul (i32.add (local.get ${inlineBrackets}) (i32.const 1)) (i32.const ${bracket.size}))))
+          (global.set ${inline.work} (i32.add (global.get ${inline.stack}) (i32.mul (local.get ${inlineCount}) (i32.const ${delimiterStackEntry.size}))))
+          (global.set ${inline.bottoms} (i32.add (global.get ${inline.work}) (i32.mul (local.get ${inlineCount}) (i32.const ${run.size}))))
           (global.set ${inline.links} (i32.add (global.get ${inline.bottoms}) (i32.const 56)))))
         (if (i32.ne (call ${logical.peek} (local.get ${input}) (local.get ${inlineCursor}) (local.get ${queueMark})) (i32.const -1)) (then
             (call ${emphasis.build} (local.get ${input}) (local.get ${definitionCursor}) (local.get ${queueMark}) (local.get ${out}))
@@ -589,7 +631,9 @@ export function blocks(workPerByte = 16384) {
   function fenceAhead() {
     return wat`
               (local.set ${runValue} (i32.const 0))
-              (local.set ${fence} (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
+              (local.set ${fence} (if (result i64) ${markAt(96, 126)}
+                (then (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
+                (else (i64.const -1))))
               (if (i64.ne (local.get ${fence}) (i64.const -1)) (then
                 (local.set ${fenceStart} (i32.wrap_i64 (i64.shr_u (local.get ${fence}) (i64.const 32))))
                 (local.set ${fenceEnd} (i32.wrap_i64 (local.get ${fence})))
@@ -619,15 +663,32 @@ export function blocks(workPerByte = 16384) {
               (local.set ${containerIndex} (i32.add (local.get ${containerIndex}) (i32.const 1)))
               (br ${stackLoop})))
             (if (i32.and (i32.eqz (local.get ${mode})) (local.get ${paragraph})) (then
+              ${markLine}
               ${fenceAhead()}
               (if ${all(
                 wat`(i32.eqz (local.get ${runValue}))`,
                 wat`(i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))`,
-                wat`(i64.eq (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
-                  (local.get ${containerColumn}) (i32.eq (local.get ${frame}) (i32.const 1))) (i64.const -1))`,
-                wat`(i32.eqz (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))`,
-                wat`(i32.eqz (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))`,
-                wat`(i32.eqz (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 1) (local.get ${virtualIndent})))`,
+                guarded(
+                  markList,
+                  wat`(i64.eq (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+                    (local.get ${containerColumn}) (i32.eq (local.get ${frame}) (i32.const 1))) (i64.const -1))`,
+                  1,
+                ),
+                guarded(
+                  markAt(42, 45, 95),
+                  wat`(i32.eqz (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 0) (local.get ${virtualIndent})))`,
+                  1,
+                ),
+                guarded(
+                  markAt(35),
+                  wat`(i32.eqz (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))`,
+                  1,
+                ),
+                guarded(
+                  markAt(60),
+                  wat`(i32.eqz (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (i32.const 1) (local.get ${virtualIndent})))`,
+                  1,
+                ),
                 wat`(i32.eqz ${underline})`,
               )} (then
                 (local.set ${lazy} (i32.const 1))
@@ -693,16 +754,26 @@ export function blocks(workPerByte = 16384) {
 
   function openContainers() {
     return wat`
+        ${markLine}
         (if ${all(
           wat`(i32.eqz (local.get ${lazy}))`,
           wat`(i32.eqz (local.get ${mode}))`,
           wat`(i32.eqz ${all(wat`(local.get ${paragraph})`, underline)})`,
         )} (then
           (block ${openDone} (loop ${openLoop}
-            (br_if ${openDone} (call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent})))
-            (br_if ${openDone} (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent})))
-            (local.set ${prefix} (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
-              (local.get ${containerColumn}) (local.get ${paragraph})))
+            ${markLine}
+            (br_if ${openDone} ${guarded(
+              markHidden,
+              wat`(call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+            )})
+            (br_if ${openDone} ${guarded(
+              markAt(42, 45, 95),
+              wat`(call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent}))`,
+            )})
+            (local.set ${prefix} (if (result i64) ${markList}
+              (then (call ${openContainer} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+                (local.get ${containerColumn}) (local.get ${paragraph})))
+              (else (i64.const -1))))
             (br_if ${openDone} (i64.eq (local.get ${prefix}) (i64.const -1)))
             ${resolve(false)}
             (call ${charge} (i64.const 16))
@@ -850,8 +921,11 @@ export function blocks(workPerByte = 16384) {
 
   function htmlOpening() {
     return wat`
-        (local.set ${mode} (call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
-          (local.get ${paragraph}) (local.get ${virtualIndent})))
+        (local.set ${mode} ${guarded(
+          markAt(60),
+          wat`(call ${startHtml} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})
+            (local.get ${paragraph}) (local.get ${virtualIndent}))`,
+        )})
         (if (local.get ${mode}) (then
           ${resolve(false)}
           (local.set ${paragraph} (i32.const 0))
@@ -882,14 +956,20 @@ export function blocks(workPerByte = 16384) {
           ${openContainers()}))
         (if ${all(
           wat`(i32.eqz (local.get ${paragraph}))`,
-          wat`(call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+          guarded(
+            markHidden,
+            wat`(call ${indentCode} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+          ),
           wat`(i32.eqz (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))`,
         )} (then
           (local.set ${mode} (i32.const 3))
           ${codeLine()}
           (local.set ${pos} (local.get ${next}))
           (br ${line})))
-        (if (call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent})) (then
+        (if ${guarded(
+          markAt(42, 45, 95),
+          wat`(call ${thematic} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${paragraph}) (local.get ${virtualIndent}))`,
+        )} (then
           ${resolve(false)}
           (local.set ${paragraph} (i32.const 0))
           ${plainIndent(pos, lineEnd)}
@@ -921,7 +1001,9 @@ export function blocks(workPerByte = 16384) {
 
   function fenceOpening() {
     return wat`
-        (local.set ${fence} (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
+        (local.set ${fence} (if (result i64) ${markAt(96, 126)}
+          (then (call ${runFence} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd})))
+          (else (i64.const -1))))
         (if (i64.ne (local.get ${fence}) (i64.const -1)) (then
           (local.set ${fenceStart} (i32.wrap_i64 (i64.shr_u (local.get ${fence}) (i64.const 32))))
           (local.set ${fenceEnd} (i32.wrap_i64 (local.get ${fence})))
@@ -1011,7 +1093,10 @@ export function blocks(workPerByte = 16384) {
           (i32.eqz (i32.or (local.get ${lazy}) (local.get ${rowLazy})))) (then
           ${indentation(pos, wat`(local.get ${virtualIndent})`)}
           (if (i32.eqz ${spaceAt(tableAt)}) (then
-            (local.set ${tableCell} (call ${delimiterCells} (local.get ${input}) (local.get ${tableAt}) (local.get ${tableEnd})))
+            (local.set ${tableCell} ${guarded(
+              markAt(45, 58, 124),
+              wat`(call ${delimiterCells} (local.get ${input}) (local.get ${tableAt}) (local.get ${tableEnd}))`,
+            )})
             (if (local.get ${tableCell}) (then
               ${indentation(rowStart, wat`(i32.const 0)`)}
               (local.set ${rowEnd} ${withoutReturn(rowStart, rowEnd)})
@@ -1131,12 +1216,15 @@ export function blocks(workPerByte = 16384) {
   function paragraphLine() {
     return wat`
         (local.set ${style} ${styled("plain")})
-        (if (call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))
+        (if ${guarded(markHidden, wat`(call ${blank} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}))`)}
           (then
             ${resolve(false)}
             (local.set ${paragraph} (i32.const 0)))
           (else
-            (if (call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))
+            (if ${guarded(
+              markAt(35),
+              wat`(call ${heading} (local.get ${input}) (local.get ${pos}) (local.get ${lineEnd}) (local.get ${virtualIndent}))`,
+            )}
               (then
                 ${resolve(false)}
                 (local.set ${paragraph} (i32.const 0))
@@ -1199,7 +1287,8 @@ export function blocks(workPerByte = 16384) {
     (local ${queueEnd} i32) (local ${queueStyle} i32) (local ${paragraphStart} i32) (local ${queuePos} i32)
     (local ${queueTarget} i32) (local ${replayStyle} i32) (local ${definitionCursor} i64) (local ${definitionNext} i64)
     (local ${inlineCursor} i64) (local ${inlineStyle} i32)
-    (local ${inlineWorkspace} i32) (local ${inlineTickBytes} i64) (local ${inlineEventCapacity} i64) (local ${inlineWorkspaceBytes} i64)
+    (local ${inlineWorkspace} i32) (local ${inlineSpecial} i64) (local ${inlineDelimiter} i64) (local ${inlineOpen} i64) (local ${inlineClose} i64) (local ${inlineTicks} i64)
+    (local ${inlineCount} i32) (local ${inlineBrackets} i32) (local ${inlineTickBytes} i64) (local ${inlineEventCapacity} i64) (local ${inlineWorkspaceBytes} i64)
     (local ${attentionEvent} i32) (local ${attentionNode} i32) (local ${attentionPair} i32)
     (local ${attentionStart} i32) (local ${attentionEnd} i32) (local ${attentionStyle} i32) (local ${attentionTarget} i32)
     (local ${onlyDefinitions} i32) (local ${fence} i64) (local ${fenceStart} i32) (local ${fenceEnd} i32)
@@ -1208,7 +1297,7 @@ export function blocks(workPerByte = 16384) {
     (local ${containerColumn} i32) (local ${containerIndex} i32) (local ${frame} i32)
     (local ${prefix} i64) (local ${prefixEnd} i32) (local ${lazy} i32)
     (local ${virtualIndent} i32) (local ${previousColumn} i32) (local ${previousVirtual} i32)
-    (local ${sharedTab} i32) (local ${bodyPos} i32)
+    (local ${sharedTab} i32) (local ${bodyPos} i32) (local ${mark} i32)
     (global.set ${status} (i32.const 0))
     (global.set ${records} (i32.const 0))
     (global.set ${injections} (i32.const 0))
