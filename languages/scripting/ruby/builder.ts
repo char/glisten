@@ -80,32 +80,43 @@ export function ruby(crystal: boolean) {
   const escape = on("\\", literal("\\"), character(), paint("string.escape"));
   const delimiters = [..."!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"];
   const pairs: Record<string, string> = { "(": ")", "[": "]", "{": "}", "<": ">" };
-  const percentStates: Record<string, State> = {};
-  const percentArms: Arm[] = [];
+  const percentKinds = [
+    ["qwis", "literal"],
+    ["QWIx", "expanded"],
+    ["r", "regex"],
+  ] as const;
+  const percentPrefixes = percentKinds.map(([prefixes]) => prefixes).join("");
+  // A prefix picks the kind and the delimiter picks the state, so one percent arm serves every
+  // bracket context instead of one arm per (context, prefix, delimiter).
+  const percentStates: Record<string, State> = {
+    percentPrefix: {
+      style: "string",
+      arms: percentKinds.map(([prefixes, kind]) =>
+        on(prefixes, byte(prefixes), paint("string"), setState(`percentOpen-${kind}`)),
+      ),
+      otherwise: [setState("percentOpen-expanded")],
+    },
+  };
+  for (const [, kind] of percentKinds)
+    percentStates[`percentOpen-${kind}`] = {
+      style: "string",
+      arms: delimiters.map((opener) =>
+        on(
+          opener,
+          byte(opener),
+          paint("string"),
+          setState(`percent-${opener.charCodeAt(0)}-${kind}`),
+        ),
+      ),
+    };
   for (const opener of delimiters) {
     const closer = pairs[opener] ?? opener;
-    for (const [prefixes, interpolates, regex] of [
-      ["qwis", false, false],
-      ["QWIx", true, false],
-      ["r", true, true],
-      ["", true, false],
-    ] as const) {
-      const state = `percent-${opener.charCodeAt(0)}-${regex ? "regex" : interpolates ? "expanded" : "literal"}`;
+    for (const [, kind] of percentKinds) {
+      const state = `percent-${opener.charCodeAt(0)}-${kind}`;
       const nested = `${state}-nested`;
-      percentArms.push(
-        on(
-          "%",
-          literal("%"),
-          ...(prefixes ? [byte(prefixes)] : []),
-          literal(opener),
-          paint("string"),
-          setState("value"),
-          pushState(state),
-        ),
-      );
       const common = [
         ...(opener === "\\" ? [] : [escape]),
-        ...(interpolates ? interpolation : []),
+        ...(kind === "literal" ? [] : interpolation),
         ...macroInterpolation,
         ...(closer !== opener ? [token(opener, "string", pushState(nested))] : []),
       ];
@@ -113,7 +124,7 @@ export function ruby(crystal: boolean) {
         style: "string",
         arms: [
           ...common,
-          ...(regex
+          ...(kind === "regex"
             ? [
                 on(
                   closer,
@@ -265,12 +276,14 @@ export function ruby(crystal: boolean) {
           effect.kind === "goto" && effect.state === "value" ? setState(after) : effect,
         ),
       })),
-      ...percentArms.map((arm) => ({
-        ...arm,
-        then: arm.then.map((effect) =>
-          effect.kind === "goto" && effect.state === "value" ? setState(after) : effect,
-        ),
-      })),
+      on(
+        "%",
+        literal("%"),
+        lookahead(optional(byte(percentPrefixes)), byte(delimiters.join(""))),
+        paint("string"),
+        setState(after),
+        pushState("percentPrefix"),
+      ),
       ...(crystal
         ? [
             on(
