@@ -1,5 +1,8 @@
 import { raw, struct } from "#/testing/wat/mod.ts";
 
+/** Container frames occupy the fixed work area immediately after the runtime header. */
+export const containerStack = { offset: 32, capacity: 128, frameBytes: 4 } as const;
+
 /** A queued paragraph span: where it ends, and its style (or a span kind). */
 export const queued = struct({ end: "i32", style: "i32" });
 
@@ -8,6 +11,10 @@ export const event = struct({ next: "i32", style: "i32", start: "i64", end: "i64
 
 /** A source interval and the style it contributes during replay. */
 export const interval = struct({ start: "i32", end: "i32", style: "i32" });
+
+/** Delimiter resolution needs one i32 opener-bottom position per slot. */
+export const delimiterBottomSlots = 14;
+export const delimiterBottomBytes = delimiterBottomSlots * 4;
 
 /**
  * A delimiter run. `remaining` shrinks as matches consume it, `consumed` counts

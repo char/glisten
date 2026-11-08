@@ -2,6 +2,7 @@ import { ABI, type Manifest } from "#/abi/mod.ts";
 import type { WatSource } from "#/compiler/language.ts";
 import { module, wat } from "#/testing/wat/mod.ts";
 import { blocks, embeds } from "./blocks.ts";
+import { containerStack } from "./layout.ts";
 import { manifestStyles } from "./styles.ts";
 import { punctuationBytes } from "./unicode.ts";
 
@@ -12,7 +13,8 @@ const manifest: Manifest = {
   embeds: Object.keys(embeds),
   styles: manifestStyles,
   styleMap: 0,
-  areaBytes: 544 + punctuationBytes,
+  areaBytes:
+    containerStack.offset + containerStack.capacity * containerStack.frameBytes + punctuationBytes,
   maxDepth: 128,
 };
 

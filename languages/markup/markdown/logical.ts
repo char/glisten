@@ -1,49 +1,54 @@
 import { func, wat, type Def } from "#/testing/wat/mod.ts";
+import { cursorIndex, cursorPosition, packCursor } from "./cursor.ts";
+import { isScannableInlineStyle } from "./inline_scan.ts";
 import { get, queued } from "./layout.ts";
-import { kind, styled } from "./styles.ts";
 
 export function logicalRanges(address: Def, charge?: Def) {
   const work = charge ? wat`(call ${charge} (i64.const 1))` : wat``;
+  const cursor = wat`(local.get $cursor)`;
+  const cursorQueueOffset = cursorIndex(cursor);
+  const position = cursorPosition(cursor);
+  const cursorAtEnd = wat`(i32.ge_u ${cursorQueueOffset} (local.get $queueLimit))`;
+  const normalizedCursor = packCursor(wat`(local.get $queueOffset)`, wat`(local.get $position)`);
+  const scannable = isScannableInlineStyle(queued.get(get("entry"), "style"));
   const normalize = func(
     "logicalNormalize",
     () => wat`
-    (param $cursor i64) (param $limit i32) (result i64)
-    (local $index i32) (local $pos i32) (local $entry i32) (local $end i32)
-    (local.set $index (i32.wrap_i64 (i64.shr_u (local.get $cursor) (i64.const 32))))
-    (local.set $pos (i32.wrap_i64 (local.get $cursor)))
-    (block $done (loop $more
-      ${work}
-      (br_if $done (i32.ge_u (local.get $index) (local.get $limit)))
-      (local.set $entry (i32.add (global.get ${address}) (local.get $index)))
-      (local.set $end ${queued.get(get("entry"), "end")})
-      (if (i32.ge_u (local.get $pos) (local.get $end)) (then
-        (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
+      (param $cursor i64) (param $queueLimit i32) (result i64)
+      (local $queueOffset i32) (local $position i32) (local $entry i32) (local $end i32)
+      (local.set $queueOffset ${cursorQueueOffset})
+      (local.set $position ${position})
+      (block $done (loop $more ${work}
+        (br_if $done (i32.ge_u (local.get $queueOffset) (local.get $queueLimit)))
+        (local.set $entry (i32.add (global.get ${address}) (local.get $queueOffset)))
+        (local.set $end ${queued.get(get("entry"), "end")})
+        (if (i32.ge_u (local.get $position) (local.get $end))
+          (then
+            (local.set $queueOffset (i32.add (local.get $queueOffset) (i32.const ${queued.size})))
+            (br $more)))
+        (br_if $done ${scannable})
+        (local.set $position (local.get $end))
+        (local.set $queueOffset (i32.add (local.get $queueOffset) (i32.const ${queued.size})))
         (br $more)))
-      (br_if $done (i32.and (i32.ne ${queued.get(get("entry"), "style")} ${styled("punctuation.special")})
-        (i32.ne ${queued.get(get("entry"), "style")} (i32.const ${kind.indent}))))
-      (local.set $pos (local.get $end))
-      (local.set $index (i32.add (local.get $index) (i32.const ${queued.size})))
-      (br $more)))
-    (i64.or (i64.shl (i64.extend_i32_u (local.get $index)) (i64.const 32))
-      (i64.extend_i32_u (local.get $pos)))`,
+      ${normalizedCursor}`,
   );
   const peek = func(
     "logicalPeek",
     () => wat`
-    (param $input i32) (param $cursor i64) (param $limit i32) (result i32)
-    ${work}
-    (if (i32.ge_u (i32.wrap_i64 (i64.shr_u (local.get $cursor) (i64.const 32))) (local.get $limit))
-      (then (return (i32.const -1))))
-    (i32.load8_u (i32.add (local.get $input) (i32.wrap_i64 (local.get $cursor))))`,
+      (param $input i32) (param $cursor i64) (param $queueLimit i32) (result i32)
+      ${work}
+      (if ${cursorAtEnd}
+        (then (return (i32.const -1))))
+      (i32.load8_u (i32.add (local.get $input) ${position}))`,
   );
   const advance = func(
     "logicalAdvance",
     () => wat`
-    (param $cursor i64) (param $limit i32) (result i64)
-    ${work}
-    (if (i32.ge_u (i32.wrap_i64 (i64.shr_u (local.get $cursor) (i64.const 32))) (local.get $limit))
-      (then (return (local.get $cursor))))
-    (call ${normalize} (i64.add (local.get $cursor) (i64.const 1)) (local.get $limit))`,
+      (param $cursor i64) (param $queueLimit i32) (result i64)
+      ${work}
+      (if ${cursorAtEnd}
+        (then (return (local.get $cursor))))
+      (call ${normalize} (i64.add (local.get $cursor) (i64.const 1)) (local.get $queueLimit))`,
   );
   return { normalize, peek, advance };
 }

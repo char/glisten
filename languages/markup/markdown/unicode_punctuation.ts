@@ -1,5 +1,7 @@
-// Unicode 15.1 general categories P and S; ASCII punctuation is handled separately.
+// Unicode 15.1 general categories P (punctuation) and S (symbols), excluding ASCII.
+// Ranges are inclusive, ordered by code point, and merged across category boundaries.
 export const punctuationRanges: readonly (readonly [number, number])[] = [
+  // Latin-1 and punctuation or symbols from early script blocks.
   [0xa1, 0xa9],
   [0xab, 0xac],
   [0xae, 0xb1],
@@ -102,6 +104,7 @@ export const punctuationRanges: readonly (readonly [number, number])[] = [
   [0x1fdd, 0x1fdf],
   [0x1fed, 0x1fef],
   [0x1ffd, 0x1ffe],
+  // General punctuation, currency, and letterlike symbols.
   [0x2010, 0x2027],
   [0x2030, 0x205e],
   [0x207a, 0x207e],
@@ -122,6 +125,7 @@ export const punctuationRanges: readonly (readonly [number, number])[] = [
   [0x214a, 0x214d],
   [0x214f, 0x214f],
   [0x218a, 0x218b],
+  // Arrows and technical symbols, followed by script and compatibility blocks.
   [0x2190, 0x2426],
   [0x2440, 0x244a],
   [0x249c, 0x24e9],
@@ -200,6 +204,7 @@ export const punctuationRanges: readonly (readonly [number, number])[] = [
   [0xffe0, 0xffe6],
   [0xffe8, 0xffee],
   [0xfffc, 0xfffd],
+  // Supplementary-plane historic scripts and symbols.
   [0x10100, 0x10102],
   [0x10137, 0x1013f],
   [0x10179, 0x10189],
@@ -267,6 +272,7 @@ export const punctuationRanges: readonly (readonly [number, number])[] = [
   [0x1bc9c, 0x1bc9c],
   [0x1bc9f, 0x1bc9f],
   [0x1cf50, 0x1cfc3],
+  // Musical, mathematical, and notation symbols.
   [0x1d000, 0x1d0f5],
   [0x1d100, 0x1d126],
   [0x1d129, 0x1d164],
@@ -299,6 +305,7 @@ export const punctuationRanges: readonly (readonly [number, number])[] = [
   [0x1ecb0, 0x1ecb0],
   [0x1ed2e, 0x1ed2e],
   [0x1eef0, 0x1eef1],
+  // Game tiles, pictographs, emoji, and symbols for legacy computing.
   [0x1f000, 0x1f02b],
   [0x1f030, 0x1f093],
   [0x1f0a0, 0x1f0ae],
