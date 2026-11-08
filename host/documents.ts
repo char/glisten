@@ -76,6 +76,7 @@ export function document(
         throw new RangeError("Invalid document range");
       if (start === end) return [];
       const mapped: SourceRange[] = [];
+      // Locate the first piece whose logical end is strictly after the range start.
       let low = 0;
       let high = ends.length;
       while (low < high) {
@@ -122,6 +123,7 @@ export function mapDocumentRecords(
       else {
         const start = record.name[0] - inputStart;
         const end = record.name[1] - inputStart;
+        // Validate the name range even when it crosses several source pieces.
         doc.mapRange(start, end);
         mapped.push({
           kind: "opens",

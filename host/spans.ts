@@ -34,16 +34,17 @@ export class Spans {
     const length = end - start;
     if (!length) return;
     // A single span avoids a subarray view, which costs more than the copy itself.
-    if (length === 2) this.push(words[start]!, words[start + 1]!);
-    else {
-      if (this.length + length > this.words.length) {
-        const grown = new Uint32Array(Math.max(this.length + length, this.words.length * 2));
-        grown.set(this.words);
-        this.words = grown;
-      }
-      this.words.set(words.subarray(start, end), this.length);
-      this.length += length;
+    if (length === 2) {
+      this.push(words[start]!, words[start + 1]!);
+      return;
     }
+    if (this.length + length > this.words.length) {
+      const grown = new Uint32Array(Math.max(this.length + length, this.words.length * 2));
+      grown.set(this.words);
+      this.words = grown;
+    }
+    this.words.set(words.subarray(start, end), this.length);
+    this.length += length;
   }
 
   finish(copy = true): Uint32Array {

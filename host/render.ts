@@ -27,7 +27,7 @@ export class Renderer {
   private readonly encoder = new TextEncoder();
   private readonly decoder = new TextDecoder();
   private readonly installed: (string | undefined)[] = [];
-  /** Per style: the group open prefix (`<g-TAG` plus ` NAME="` with an attribute) and its length. */
+  /** Per style: byte length of `<g-TAG`, including ` NAME="` when attributed. */
   private readonly prefixes: number[] = [];
   private table = 0;
   private groupTable = 0;
@@ -46,6 +46,7 @@ export class Renderer {
     if (tags.length > this.capacity) {
       const capacity = Math.max(tags.length, this.capacity * 2, 8);
       let table = this.arena.allocateArea(capacity * 32);
+      // Address zero means "no table" to the renderer.
       if (table === 0) table = this.arena.allocateArea(capacity * 32);
       const groupTable = this.arena.allocateArea(capacity * 16);
       const bytes = new Uint8Array(this.arena.buffer);

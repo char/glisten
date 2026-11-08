@@ -6,6 +6,7 @@ export class Styles {
   readonly tags: (string | undefined)[] = [];
   readonly attributes: (string | undefined)[] = [];
   private readonly ids = new Map<string, number>();
+  // A registered style can deliberately have no tag, so tags alone cannot mark it.
   private readonly registered = new Set<number>();
 
   id(name: string): number {

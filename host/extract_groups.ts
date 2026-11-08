@@ -11,6 +11,8 @@ export function extractGroups(
   copySpans: boolean,
 ): { spans: Uint32Array; groups: Uint32Array; values?: (string | undefined)[] } {
   const count = result.groups!;
+  // Nodes are [start, end, style, first child, next sibling]. Links and stack
+  // entries are one-based, leaving zero as the empty link.
   const data = new Uint32Array(count * 5);
   const stack = new Uint32Array(count);
   const sourceValues = result.groupValues;
@@ -69,9 +71,10 @@ export function extractGroups(
       current = child;
     } else current = sibling || (depth ? stack[--depth]! : 0);
   }
-  return {
+  const extracted: { spans: Uint32Array; groups: Uint32Array; values?: (string | undefined)[] } = {
     spans: copySpans ? words.slice(0, written) : words.subarray(0, written),
     groups: ordered,
-    ...(orderedValues?.some((value) => value !== undefined) ? { values: orderedValues } : {}),
   };
+  if (orderedValues?.some((value) => value !== undefined)) extracted.values = orderedValues;
+  return extracted;
 }

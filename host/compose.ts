@@ -202,17 +202,15 @@ function composeChildren(
     ordered.sort(
       (a, b) => a.group[0]! - b.group[0]! || b.group[1]! - a.group[1]! || b.index - a.index,
     );
-    return {
+    const result: Extract<Result, { status: "ok" }> = {
       status: "ok",
       spans: spans.finish(options.copySpans !== false),
       missing: [...walk.missing],
-      ...(ordered.length
-        ? { groups: Uint32Array.from(ordered.flatMap((entry) => entry.group)) }
-        : {}),
-      ...(values.some((value) => value !== undefined)
-        ? { values: ordered.map((entry) => entry.value) }
-        : {}),
     };
+    if (ordered.length) result.groups = Uint32Array.from(ordered.flatMap((entry) => entry.group));
+    if (values.some((value) => value !== undefined))
+      result.values = ordered.map((entry) => entry.value);
+    return result;
   } catch (error) {
     if (error instanceof Failure) return { status: "resource" };
     throw error;

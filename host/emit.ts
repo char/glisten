@@ -5,11 +5,13 @@ import type { Spans } from "./spans.ts";
 export type Call = {
   result: Extract<CallResult, { status: "ok" }>;
   words: Uint32Array;
+  // Triples of [first word, past-last word, first segment ordinal] per input segment.
   ranges: Uint32Array;
   children: Call[];
   hasGroups: boolean;
   // Indexed by segment-record ordinal; -1 denotes an unlinked segment.
   linkChildren?: Int32Array;
+  // The corresponding range index within the linked child.
   linkRanges?: Uint32Array;
 };
 

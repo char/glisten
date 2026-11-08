@@ -132,6 +132,8 @@ export function callJoined(
       context: batch.context,
     };
   }
+  // Group records follow the spans they cover. Fragment them at piece boundaries,
+  // then insert each fragment after the mapped record ending at that boundary.
   const mapped: number[] = [];
   const endpoints: Map<number, number>[] = [];
   const pendingGroups: { doc: number; end: number; start: number; word: number; value?: string }[] =

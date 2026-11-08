@@ -93,10 +93,11 @@ export class Arena {
     this.cursor = end + memory.padding;
     let view: Uint8Array | undefined;
     return {
-      source: () =>
-        view === undefined || view.buffer !== this.buffer
-          ? (view = new Uint8Array(this.buffer, input, length))
-          : view,
+      source: () => {
+        if (view === undefined || view.buffer !== this.buffer)
+          view = new Uint8Array(this.buffer, input, length);
+        return view;
+      },
       placement: { input, arena: this },
     };
   }

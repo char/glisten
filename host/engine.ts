@@ -110,10 +110,11 @@ export class Engine implements Callee {
       status: "ok",
       injections: Number(this.exports.injections.value) >>> 0,
       groups: this.exports.groups ? Number(this.exports.groups.value) >>> 0 : 0,
-      records: () =>
-        view === undefined || view.buffer !== arena.buffer
-          ? (view = new Uint32Array(arena.buffer, output, count * 2))
-          : view,
+      records: () => {
+        if (view === undefined || view.buffer !== arena.buffer)
+          view = new Uint32Array(arena.buffer, output, count * 2);
+        return view;
+      },
     };
   }
 }

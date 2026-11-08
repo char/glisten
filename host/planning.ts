@@ -97,14 +97,20 @@ class Frame {
     if (kind === record.kind.opensStatic) {
       name = callee.manifest.embeds[end] ?? "";
       target = this.staticTargets[end];
-      if (target === undefined) this.staticTargets[end] = target = names.get(name) ?? null;
+      if (target === undefined) {
+        target = names.get(name) ?? null;
+        this.staticTargets[end] = target;
+      }
     } else {
       name = (this.decoder ??= new TextDecoder()).decode(
         context.source().subarray(words[index + 2]!, words[index + 3]!),
       );
       const cache = (this.namedTargets ??= new Map());
       target = cache.get(name);
-      if (target === undefined) cache.set(name, (target = names.get(name) ?? null));
+      if (target === undefined) {
+        target = names.get(name) ?? null;
+        cache.set(name, target);
+      }
     }
     if (!target && name) missing.add(name);
     return target;
@@ -237,6 +243,7 @@ export function group(scan: Frame): Frame {
   const sizes = scan.sizes;
   targets.length = 0;
   sizes.length = 0;
+  // Small batches are cheaper to search linearly than to populate a map.
   const byTarget = count > 16 ? (scan.byTarget ??= new Map()) : undefined;
   byTarget?.clear();
   for (let id = 0; id < count; id++) {

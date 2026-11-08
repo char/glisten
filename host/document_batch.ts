@@ -34,8 +34,10 @@ export function prepareDocumentBatch(
     }
   } else if (pieces.some((parts) => parts.length > 1)) {
     let length = source.length;
-    for (const parts of pieces)
-      if (parts.length > 1) for (const { start, end } of parts) length += end - start;
+    for (const parts of pieces) {
+      if (parts.length === 1) continue;
+      for (const { start, end } of parts) length += end - start;
+    }
     if (length > 0xffff_ffff) throw new RangeError("Document batch exceeds ABI input range");
     const bytes = new Uint8Array(length);
     bytes.set(source);
@@ -57,8 +59,9 @@ export function prepareDocumentBatch(
     context = { source: () => bytes };
   } else {
     for (let i = 0; i < pieces.length; i++) {
-      ranges[i * 2] = pieces[i]![0]!.start;
-      ranges[i * 2 + 1] = pieces[i]![0]!.end;
+      const piece = pieces[i]![0]!;
+      ranges[i * 2] = piece.start;
+      ranges[i * 2 + 1] = piece.end;
     }
   }
   const batch: DocumentBatch = {
