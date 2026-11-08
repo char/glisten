@@ -30,10 +30,14 @@ const start = union("_.$?@", range("a", "z"), range("A", "Z"));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
-const regs = [
-  ..."al ah ax eax rax bl bh bx ebx rbx cl ch cx ecx rcx dl dh dx edx rdx sil si esi rsi dil di edi rdi bpl bp ebp rbp spl sp esp rsp ip eip rip cs ds es fs gs ss eflags rflags mxcsr st mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 cr0 cr2 cr3 cr4 cr8 dr0 dr1 dr2 dr3 dr6 dr7".split(
-    " ",
-  ),
+const registers = [
+  ...`
+    al ah ax eax rax bl bh bx ebx rbx cl ch cx ecx rcx dl dh dx edx rdx sil si esi rsi dil di
+    edi rdi bpl bp ebp rbp spl sp esp rsp ip eip rip cs ds es fs gs ss eflags rflags mxcsr st
+    mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 cr0 cr2 cr3 cr4 cr8 dr0 dr1 dr2 dr3 dr6 dr7
+  `
+    .trim()
+    .split(/\s+/),
   ...Array.from({ length: 8 }, (_, n) => `k${n}`),
   ...Array.from({ length: 32 }, (_, n) => [`xmm${n}`, `ymm${n}`, `zmm${n}`]).flat(),
   ...Array.from({ length: 8 }, (_, n) => [
@@ -44,27 +48,24 @@ const regs = [
   ]).flat(),
   ...Array.from({ length: 8 }, (_, n) => `st${n}`),
 ];
-const sizes =
-  "byte word dword qword tword oword yword zword ptr short near far strict rel abs offset flat".split(
-    " ",
-  );
-const directives =
-  "section segment global extern common static default bits cpu org align alignb absolute struc endstruc istruc at iend db dw dd dq dt do dy dz resb resw resd resq rest reso resy resz incbin times equ use16 use32 use64 group import export library end assume proc endp public extrn macro endm rept endr include includelib option title subtitle name page model code data const stack".split(
-    " ",
-  );
-const prefix = [
-  "lock",
-  "rep",
-  "repe",
-  "repz",
-  "repne",
-  "repnz",
-  "bnd",
-  "xacquire",
-  "xrelease",
-  "notrack",
-];
-const registerCases = keywordTable(regs, "constant.builtin");
+const sizes = `
+    byte word dword qword tword oword yword zword ptr short near far strict rel abs offset flat
+  `
+  .trim()
+  .split(/\s+/);
+const directives = `
+  section segment global extern common static default bits cpu org align alignb absolute struc
+  endstruc istruc at iend db dw dd dq dt do dy dz resb resw resd resq rest reso resy resz incbin
+  times equ use16 use32 use64 group import export library end assume proc endp public extrn
+  macro endm rept endr include includelib option title subtitle name page model code data const
+  stack
+`
+  .trim()
+  .split(/\s+/);
+const instructionPrefixes = `lock rep repe repz repne repnz bnd xacquire xrelease notrack`
+  .trim()
+  .split(/\s+/);
+const registerCases = keywordTable(registers, "constant.builtin");
 const number = on(
   "0123456789",
   choice(
@@ -96,7 +97,7 @@ const operands = [
     ...ident,
     classify(
       keywordTable(
-        regs.map((name) => `%${name}`),
+        registers.map((name) => `%${name}`),
         "constant.builtin",
       ),
       [paint("variable")],
@@ -167,7 +168,7 @@ export default defineGrammar({
               "endif",
               "error",
               "pragma",
-            ].map((s) => [literal(s)]),
+            ].map((directive) => [literal(directive)]),
           ),
           notNext(rest),
           paint("keyword"),
@@ -188,11 +189,8 @@ export default defineGrammar({
           ...ident,
           classify(
             [
-              ...prefix.map((text) => ({ text, then: [paint("keyword" as const)] })),
-              ...directives.map((text) => ({
-                text,
-                then: [paint("keyword" as const), setState("operands")],
-              })),
+              ...keywordTable(instructionPrefixes, "keyword"),
+              ...keywordTable(directives, "keyword", () => [setState("operands")]),
             ],
             [paint("function"), setState("operands")],
             { caseless: true },

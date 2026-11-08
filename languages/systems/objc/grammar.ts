@@ -33,14 +33,24 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
     paint("operator"),
     pushState("objcMethod"),
   );
+  const whitespace = on(" \t\r\n", bytes(" \t\r\n"), paint("plain"));
+  const methodEnd = [
+    token(";", "punctuation.delimiter", popState(), pushState("labelCandidate")),
+    token("{", "punctuation.bracket", popState(), pushState("labelCandidate")),
+  ];
   return {
     name: "objc",
     aliases: ["objective-c", "objectivec"],
     keywords: (keywords) => {
       keywords.push(
-        ..."__weak __strong __block __autoreleasing __unsafe_unretained __kindof __bridge __bridge_retained __bridge_transfer nullable nonnull null_unspecified _Nullable _Nonnull _Null_unspecified _Nullable_result __nullable __nonnull __covariant __contravariant".split(
-          " ",
-        ),
+        ...`
+          __weak __strong __block __autoreleasing __unsafe_unretained __kindof __bridge
+          __bridge_retained __bridge_transfer nullable nonnull null_unspecified _Nullable
+          _Nonnull _Null_unspecified _Nullable_result __nullable __nonnull __covariant
+          __contravariant
+        `
+          .trim()
+          .split(/\s+/),
       );
     },
     types: (types) => {
@@ -55,9 +65,13 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
         classify(
           [
             ...keywordTable(
-              "@interface @implementation @protocol @end @synthesize @dynamic @class @encode @try @catch @finally @throw @autoreleasepool @available @import @optional @required @synchronized @defs @compatibility_alias".split(
-                " ",
-              ),
+              `
+                @interface @implementation @protocol @end @synthesize @dynamic @class @encode
+                @try @catch @finally @throw @autoreleasepool @available @import @optional
+                @required @synchronized @defs @compatibility_alias
+              `
+                .trim()
+                .split(/\s+/),
               "keyword",
             ),
             ...keywordTable(["@YES", "@NO"], "constant.builtin"),
@@ -106,7 +120,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
       objcReceiver: {
         style: "plain" as const,
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           token(
             "[",
@@ -131,7 +145,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
       objcAfterReceiver: {
         style: "plain" as const,
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           token("->", "operator", setState("objcReceiverMember")),
           token(".", "operator", setState("objcReceiverMember")),
@@ -157,7 +171,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
       objcReceiverMember: {
         style: "plain" as const,
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           on(start, ...ident, paint("variable.member"), setState("objcAfterReceiver")),
         ],
         otherwise: [setState("objcBracketExpr")],
@@ -219,9 +233,12 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
             ...ident,
             classify(
               keywordTable(
-                "atomic nonatomic strong weak copy retain assign readonly readwrite getter setter class nullable nonnull null_resettable".split(
-                  " ",
-                ),
+                `
+                  atomic nonatomic strong weak copy retain assign readonly readwrite getter
+                  setter class nullable nonnull null_resettable
+                `
+                  .trim()
+                  .split(/\s+/),
                 "keyword",
               ),
               [paint("variable")],
@@ -234,8 +251,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
       objcMethod: {
         style: "plain" as const,
         arms: [
-          token(";", "punctuation.delimiter", popState(), pushState("labelCandidate")),
-          token("{", "punctuation.bracket", popState(), pushState("labelCandidate")),
+          ...methodEnd,
           on(
             start,
             ...ident,
@@ -255,12 +271,7 @@ const objcExtension: CExtension = ({ upper, start, rest, ident, comments }) => {
       },
       objcMethodArgs: {
         style: "plain" as const,
-        arms: [
-          token(";", "punctuation.delimiter", popState(), pushState("labelCandidate")),
-          token("{", "punctuation.bracket", popState(), pushState("labelCandidate")),
-          objcSelector,
-          ...code,
-        ],
+        arms: [...methodEnd, objcSelector, ...code],
       },
     }),
   };

@@ -22,6 +22,7 @@ import {
   token,
   union,
   type Arm,
+  type Effect,
 } from "#/grammar/mod.ts";
 
 const digit = range("0", "9");
@@ -30,30 +31,34 @@ const first = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[1
 const rest = union(first, digit);
 const ident = [byte(first), bytes(rest, { min: 0 })];
 const gap = bytes(" \t", { min: 0 });
-const routine = new Set(["procedure", "function", "constructor", "destructor", "operator"]);
-const keywords =
-  "absolute and array as asm begin case class const constref constructor destructor dispinterface div do downto else end except exports file finalization finally for function goto if implementation in inherited initialization interface is label library mod nil not object of on operator or out packed package procedure program property raise record repeat resourcestring set shl shr string then threadvar to try type unit until uses var while with xor private protected public published strict generic specialize helper".split(
-    " ",
-  );
-const directives =
-  "abstract assembler cdecl cppdecl cvar default deprecated dynamic experimental export external far forward implements index inline interrupt iocheck local message name near nodefault noreturn nostackframe overload override pascal platform read register reintroduce safecall sealed saveregisters static stdcall stored varargs virtual winapi write".split(
-    " ",
-  );
-const base = [...new Set(keywords)].map((text) => ({
-  text,
-  then: [
-    paint("keyword"),
-    ...(routine.has(text)
-      ? [pushState("routineName")]
-      : text === "property"
-        ? [pushState("propertyName")]
-        : text === "type"
-          ? [pushState("typeHead")]
-          : []),
-  ],
-}));
+const routineKeywords = new Set(["procedure", "function", "constructor", "destructor", "operator"]);
+const keywords = `
+  absolute and array as asm begin case class const constref constructor destructor dispinterface
+  div do downto else end except exports file finalization finally for function goto if
+  implementation in inherited initialization interface is label library mod nil not object of on
+  operator or out packed package procedure program property raise record repeat resourcestring
+  set shl shr string then threadvar to try type unit until uses var while with xor private
+  protected public published strict generic specialize helper
+`
+  .trim()
+  .split(/\s+/);
+const directives = `
+  abstract assembler cdecl cppdecl cvar default deprecated dynamic experimental export external
+  far forward implements index inline interrupt iocheck local message name near nodefault
+  noreturn nostackframe overload override pascal platform read register reintroduce safecall
+  sealed saveregisters static stdcall stored varargs virtual winapi write
+`
+  .trim()
+  .split(/\s+/);
+const keywordCases = [...new Set(keywords)].map((text) => {
+  const then: Effect[] = [paint("keyword")];
+  if (routineKeywords.has(text)) then.push(pushState("routineName"));
+  else if (text === "property") then.push(pushState("propertyName"));
+  else if (text === "type") then.push(pushState("typeHead"));
+  return { text, then };
+});
 const constants = keywordTable(["true", "false"], "constant.builtin");
-const words = [...base, ...constants];
+const words = [...keywordCases, ...constants];
 const propertyWords = [
   ...words,
   ...keywordTable(
@@ -65,7 +70,7 @@ const typeWords = [...keywordTable(keywords, "keyword"), ...constants].map(({ te
   text,
   then: [popState(), ...then],
 }));
-const semiWords = [
+const afterSemicolonWords = [
   ...words.map(({ text, then }) => ({ text, then: [popState(), ...then] })),
   ...directives
     .filter((word) => !keywords.includes(word))
@@ -78,6 +83,7 @@ const comments: Arm[] = [
   token("(*", "comment", pushState("parenComment")),
   token("//", "comment", pushState("lineComment")),
 ];
+const trivia = [on(" \t\r\n", bytes(" \t\r\n"), paint("plain")), ...comments];
 const code: Arm[] = [
   ...comments,
   on("'", literal("'''"), lookahead(byte("\r\n")), paint("string"), pushState("multiline")),
@@ -118,18 +124,17 @@ export default defineGrammar({
     afterSemi: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        ...comments,
+        ...trivia,
         on(
           first,
           ...ident,
           lookahead(gap, literal("(")),
-          classify(semiWords, [popState(), paint("function")], { caseless: true }),
+          classify(afterSemicolonWords, [popState(), paint("function")], { caseless: true }),
         ),
         on(
           first,
           ...ident,
-          classify(semiWords, [popState(), paint("variable")], { caseless: true }),
+          classify(afterSemicolonWords, [popState(), paint("variable")], { caseless: true }),
         ),
       ],
       otherwise: [popState()],
@@ -137,8 +142,7 @@ export default defineGrammar({
     typeReference: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        ...comments,
+        ...trivia,
         token("^", "operator"),
         on(first, ...ident, lookahead(gap, literal(".")), paint("type")),
         token(".", "punctuation.delimiter"),
@@ -149,19 +153,14 @@ export default defineGrammar({
     typeHead: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        ...comments,
+        ...trivia,
         on(first, ...ident, lookahead(gap, literal("=")), paint("type"), popState()),
       ],
       otherwise: [popState()],
     },
     propertyName: {
       style: "plain",
-      arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        ...comments,
-        on(first, ...ident, paint("function"), setState("propertyTail")),
-      ],
+      arms: [...trivia, on(first, ...ident, paint("function"), setState("propertyTail"))],
       otherwise: [popState()],
     },
     propertyTail: {
@@ -184,8 +183,7 @@ export default defineGrammar({
     routineName: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-        ...comments,
+        ...trivia,
         on(first, ...ident, lookahead(gap, literal(".")), paint("type")),
         token(".", "punctuation.delimiter"),
         on("&", literal("&"), ...ident, paint("function"), popState()),

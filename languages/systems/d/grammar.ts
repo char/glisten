@@ -36,14 +36,23 @@ const ident = [byte(start), bytes(rest, { min: 0 })];
 const hexDigit = union(digit, range("a", "f"), range("A", "F"));
 const hex = union(hexDigit, "_");
 const dec = union(digit, "_");
-const keywords =
-  "abstract alias align asm assert auto body break case cast catch class const continue debug default delegate delete deprecated do else enum export extern final finally for foreach foreach_reverse function goto if immutable import in inout interface invariant is lazy macro mixin module new nothrow out override package pragma private protected public pure ref return scope shared static struct super switch synchronized template this throw try typeid typeof union unittest version volatile while with __gshared __traits __vector __parameters __FILE__ __LINE__ __MODULE__ __FUNCTION__ __PRETTY_FUNCTION__".split(
-    " ",
-  );
-const types =
-  "bool byte ubyte short ushort int uint long ulong cent ucent float double real ifloat idouble ireal cfloat cdouble creal char wchar dchar void string wstring dstring size_t ptrdiff_t".split(
-    " ",
-  );
+const keywords = `
+  abstract alias align asm assert auto body break case cast catch class const continue debug
+  default delegate delete deprecated do else enum export extern final finally for foreach
+  foreach_reverse function goto if immutable import in inout interface invariant is lazy macro
+  mixin module new nothrow out override package pragma private protected public pure ref return
+  scope shared static struct super switch synchronized template this throw try typeid typeof
+  union unittest version volatile while with __gshared __traits __vector __parameters __FILE__
+  __LINE__ __MODULE__ __FUNCTION__ __PRETTY_FUNCTION__
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bool byte ubyte short ushort int uint long ulong cent ucent float double real ifloat idouble
+  ireal cfloat cdouble creal char wchar dchar void string wstring dstring size_t ptrdiff_t
+`
+  .trim()
+  .split(/\s+/);
 const values = ["true", "false", "null"];
 const words = [
   ...keywords.map((text) => ({ text, then: [paint("keyword")] })),
@@ -56,21 +65,24 @@ const escape = on(
   literal("\\"),
   choice(
     [literal("&"), ...ident, literal(";")],
-    ...(
-      [
-        ["x", 2],
-        ["u", 4],
-        ["U", 8],
-      ] as const
-    ).map(([prefix, count]) => [
-      literal(prefix),
-      ...Array.from({ length: count }, () => byte(hexDigit)),
-    ]),
+    [literal("x"), byte(hexDigit), byte(hexDigit)],
+    [literal("u"), byte(hexDigit), byte(hexDigit), byte(hexDigit), byte(hexDigit)],
+    [
+      literal("U"),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+      byte(hexDigit),
+    ],
     [character()],
   ),
   paint("string.escape"),
 );
-const qstates: Record<string, State> = {};
+const delimitedStates: Record<string, State> = {};
 const delimiters = [
   ["(", ")"],
   ["[", "]"],
@@ -79,7 +91,7 @@ const delimiters = [
 ] as const;
 for (const [open, close] of delimiters) {
   const name = `delimited-${open.charCodeAt(0)}`;
-  qstates[name] = {
+  delimitedStates[name] = {
     style: "string",
     arms: [
       token(open, "string", pushState(`${name}-nested`)),
@@ -94,49 +106,17 @@ for (const [open, close] of delimiters) {
       ),
     ],
   };
-  qstates[`${name}-nested`] = {
+  delimitedStates[`${name}-nested`] = {
     style: "string",
     arms: [token(open, "string", pushState(`${name}-nested`)), token(close, "string", popState())],
   };
 }
-const operators = [
-  ">>>=",
-  "<<=",
-  ">>=",
-  "^^=",
-  "...",
-  "!<>=",
-  "!<>",
-  "!<=",
-  "!>=",
-  "<>=",
-  "===",
-  "!==",
-  "=>",
-  "==",
-  "!=",
-  "<=",
-  ">=",
-  "++",
-  "--",
-  "&&",
-  "||",
-  "^^",
-  "<<",
-  ">>>",
-  ">>",
-  "+=",
-  "-=",
-  "*=",
-  "/=",
-  "%=",
-  "&=",
-  "|=",
-  "^=",
-  "~=",
-  "..",
-  "->",
-];
+const operators = `
+  >>>= <<= >>= ^^= ... !<>= !<> !<= !>= <>= === !== => == != <= >= ++ -- && || ^^ << >>> >> +=
+  -= *= /= %= &= |= ^= ~= .. ->
+`
+  .trim()
+  .split(/\s+/);
 const number: Arm = on(
   digit,
   choice(
@@ -199,12 +179,12 @@ const code: Arm[] = [
   on(start, ...ident, classify(words, [paint("variable")])),
   token(oneOf("()[]{}"), "punctuation.bracket"),
   token(oneOf(",;"), "punctuation.delimiter"),
-  ...operators.map((op) => token(op, "operator")),
+  ...operators.map((operator) => token(operator, "operator")),
   token(oneOf(".:"), "punctuation.delimiter"),
   on("!%&*+-/<=>?@^|~", byte("!%&*+-/<=>?@^|~"), paint("operator")),
 ];
 const states: Record<string, State> = {
-  ...qstates,
+  ...delimitedStates,
   start: {
     style: "plain",
     arms: [

@@ -24,84 +24,28 @@ import {
 const digit = range("0", "9");
 // Non-ASCII bytes are accepted without checking Unicode identifier categories.
 const letter = union(range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
-const identRest = union(letter, digit, "_");
+const identifierRest = union(letter, digit, "_");
 const numeral = union(digit, "_");
 const basedDigit = union(numeral, range("a", "f"), range("A", "F"));
-const keywords = [
-  "abort",
-  "abs",
-  "abstract",
-  "accept",
-  "access",
-  "aliased",
-  "and",
-  "array",
-  "at",
-  "begin",
-  "body",
-  "case",
-  "constant",
-  "declare",
-  "delay",
-  "delta",
-  "digits",
-  "do",
-  "else",
-  "elsif",
-  "end",
-  "exception",
-  "exit",
-  "for",
-  "goto",
-  "if",
-  "in",
-  "interface",
-  "is",
-  "limited",
-  "loop",
-  "mod",
-  "new",
-  "not",
-  "of",
-  "or",
-  "others",
-  "out",
-  "overriding",
-  "parallel",
-  "pragma",
-  "protected",
-  "range",
-  "rem",
-  "renames",
-  "requeue",
-  "return",
-  "reverse",
-  "select",
-  "separate",
-  "some",
-  "subtype",
-  "synchronized",
-  "tagged",
-  "task",
-  "terminate",
-  "then",
-  "type",
-  "until",
-  "use",
-  "when",
-  "while",
-  "with",
-  "xor",
-];
+const keywords = `
+  abort abs abstract accept access aliased and array at begin body case constant declare delay
+  delta digits do else elsif end exception exit for goto if in interface is limited loop mod new
+  not of or others out overriding parallel pragma protected range rem renames requeue return
+  reverse select separate some subtype synchronized tagged task terminate then type until use
+  when while with xor
+`
+  .trim()
+  .split(/\s+/);
 const exponent = optional(byte("eE"), optional(byte("+-")), bytes(numeral));
 const comment = token("--", "comment", pushState("comment"));
+const whitespace = on(" \t\r\n", bytes(" \t\r\n"), paint("plain"));
 const withAfterHead = on(
   "wW",
   byte("wW"),
   byte("iI"),
   byte("tT"),
   byte("hH"),
-  notNext(identRest),
+  notNext(identifierRest),
   paint("keyword"),
   setState("withHead"),
 );
@@ -141,7 +85,7 @@ const syntax = [
   on(
     letter,
     byte(letter),
-    bytes(identRest, { min: 0 }),
+    bytes(identifierRest, { min: 0 }),
     classify(
       [
         { text: "all", then: [paint("keyword"), pushState("post")] },
@@ -161,7 +105,9 @@ const syntax = [
       { caseless: true },
     ),
   ),
-  ...[":=", "=>", "..", "**", "/=", "<=", ">=", "<<", ">>", "<>"].map((s) => token(s, "operator")),
+  ...[":=", "=>", "..", "**", "/=", "<=", ">=", "<<", ">>", "<>"].map((operator) =>
+    token(operator, "operator"),
+  ),
   token(oneOf("+-*/=&<>|"), "operator"),
   token(")", "punctuation.bracket", pushState("post")),
   token(oneOf("([{}]"), "punctuation.bracket"),
@@ -182,7 +128,7 @@ export default defineGrammar({
     boundary: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           "lL",
@@ -193,7 +139,7 @@ export default defineGrammar({
           byte("tT"),
           byte("eE"),
           byte("dD"),
-          notNext(identRest),
+          notNext(identifierRest),
           paint("keyword"),
         ),
         on(
@@ -205,7 +151,7 @@ export default defineGrammar({
           byte("aA"),
           byte("tT"),
           byte("eE"),
-          notNext(identRest),
+          notNext(identifierRest),
           paint("keyword"),
         ),
       ],
@@ -216,7 +162,7 @@ export default defineGrammar({
     post: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         token("'", "punctuation.special", setState("attribute")),
         withAfterHead,
@@ -225,18 +171,18 @@ export default defineGrammar({
     },
     afterHead: {
       style: "plain",
-      arms: [on(" \t\r\n", bytes(" \t\r\n"), paint("plain")), comment, withAfterHead],
+      arms: [whitespace, comment, withAfterHead],
       otherwise: [popState()],
     },
     withHead: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           letter,
           byte(letter),
-          bytes(identRest, { min: 0 }),
+          bytes(identifierRest, { min: 0 }),
           classify(
             ["record", "null", "private"].map((text) => ({
               text,
@@ -253,12 +199,12 @@ export default defineGrammar({
     raiseName: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           letter,
           byte(letter),
-          bytes(identRest, { min: 0 }),
+          bytes(identifierRest, { min: 0 }),
           paint("variable"),
           setState("raiseAfter"),
         ),
@@ -268,7 +214,7 @@ export default defineGrammar({
     raiseAfter: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         token(".", "punctuation.delimiter", setState("raiseName")),
         on(
@@ -277,7 +223,7 @@ export default defineGrammar({
           byte("iI"),
           byte("tT"),
           byte("hH"),
-          notNext(identRest),
+          notNext(identifierRest),
           paint("keyword"),
           popState(),
         ),
@@ -288,12 +234,12 @@ export default defineGrammar({
     declarationName: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           letter,
           byte(letter),
-          bytes(identRest, { min: 0 }),
+          bytes(identifierRest, { min: 0 }),
           classify(
             [{ text: "body", then: [paint("keyword")] }],
             [paint("function"), setState("post")],
@@ -311,12 +257,12 @@ export default defineGrammar({
     attribute: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           letter,
           byte(letter),
-          bytes(identRest, { min: 0 }),
+          bytes(identifierRest, { min: 0 }),
           paint("attribute"),
           setState("post"),
         ),
@@ -326,12 +272,12 @@ export default defineGrammar({
     aspectHead: {
       style: "plain",
       arms: [
-        on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+        whitespace,
         comment,
         on(
           letter,
           byte(letter),
-          bytes(identRest, { min: 0 }),
+          bytes(identifierRest, { min: 0 }),
           paint("attribute"),
           setState("aspect"),
         ),

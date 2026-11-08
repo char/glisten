@@ -28,13 +28,21 @@ const hex = union(digit, range("a", "f"), range("A", "F"));
 const decimal = bytes(union(digit, "_"));
 const words = [
   ...keywordTable(
-    "fn let const def type export use static if else for switch match case break continue return yield defer is as nullable void done never size len offset alloc free append insert delete abort assert vastart vaarg vaend struct union enum".split(
-      " ",
-    ),
+    `
+      fn let const def type export use static if else for switch match case break continue
+      return yield defer is as nullable void done never size len offset alloc free append insert
+      delete abort assert vastart vaarg vaend struct union enum
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(
-    "int uint i8 i16 i32 i64 u8 u16 u32 u64 f32 f64 bool rune str uintptr opaque valist".split(" "),
+    `
+      int uint i8 i16 i32 i64 u8 u16 u32 u64 f32 f64 bool rune str uintptr opaque valist
+    `
+      .trim()
+      .split(/\s+/),
     "type",
   ),
   ...keywordTable(["true", "false", "null"], "constant.builtin"),
@@ -65,10 +73,12 @@ const number = on(
   ),
   optional(
     choice(
-      ..."i8 i16 i32 i64 u8 u16 u32 u64 f32 f64 i u z"
-        .split(" ")
-        .sort((a, b) => b.length - a.length)
-        .map((s) => [literal(s), notNext(rest)]),
+      ...`
+        i16 i32 i64 u16 u32 u64 f32 f64 i8 u8 i u z
+      `
+        .trim()
+        .split(/\s+/)
+        .map((suffix) => [literal(suffix), notNext(rest)]),
     ),
   ),
   paint("number"),

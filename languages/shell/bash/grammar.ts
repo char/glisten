@@ -31,14 +31,19 @@ import {
   union,
 } from "#/grammar/mod.ts";
 
-const keywords =
-  "if then else elif fi while until do done in esac function time coproc ! { } for select case".split(
-    " ",
-  );
-const builtins =
-  "alias bg bind break builtin caller cd command compgen complete compopt continue declare dirs disown echo enable eval exec exit export false fc fg getopts hash help history jobs kill let local logout mapfile popd printf pushd pwd read readarray readonly return set shift shopt source suspend test times trap true type typeset ulimit umask unalias unset wait".split(
-    " ",
-  );
+const keywords = `
+    if then else elif fi while until do done in esac function time coproc ! { } for select case
+  `
+  .trim()
+  .split(/\s+/);
+const builtins = `
+  alias bg bind break builtin caller cd command compgen complete compopt continue declare dirs
+  disown echo enable eval exec exit export false fc fg getopts hash help history jobs kill let
+  local logout mapfile popd printf pushd pwd read readarray readonly return set shift shopt
+  source suspend test times trap true type typeset ulimit umask unalias unset wait
+`
+  .trim()
+  .split(/\s+/);
 const nameStart = union("_", range("a", "z"), range("A", "Z"));
 const nameRest = union("_", range("a", "z"), range("A", "Z"), range("0", "9"));
 const notNewline = union(range("\x00", "\x09"), byteSet({ ranges: [[11, 255]] }));
@@ -50,6 +55,8 @@ const bare = union(bareAscii, byteSet({ ranges: [[128, 255]] }));
 const boundary = " \t\n;|&<>()";
 const allBytes = byteSet({ ranges: [[0, 255]] });
 const continuation = "'\"$`\\";
+const wordContinuation = union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }));
+const comment = on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment"));
 const special = paint("punctuation.special");
 const string = paint("string");
 const variable = paint("variable");
@@ -87,16 +94,19 @@ const backquote = ({ beforePaint = [], when = [] }: PartOptions = {}) =>
 const parts = ({
   beforePaint = [],
   bareRun = "include",
-}: { beforePaint?: readonly Effect[]; bareRun?: "include" | "omit" } = {}): Arm[] => [
-  on("$", literal("$(("), ...beforePaint, special, pushState("arithmetic")),
-  on("$", literal("$("), ...beforePaint, special, shell.queueEnter(), pushState("subCommand")),
-  ...quoted({ beforePaint }),
-  ...parameters({ beforePaint }),
-  backquote({ beforePaint }),
-  escaped(beforePaint),
-  on("$\\", byte("$\\"), ...beforePaint, paint("plain")),
-  ...(bareRun === "include" ? [on(bareAscii, bytes(bare), ...beforePaint, paint("plain"))] : []),
-];
+}: { beforePaint?: readonly Effect[]; bareRun?: "include" | "omit" } = {}): Arm[] => {
+  const arms = [
+    on("$", literal("$(("), ...beforePaint, special, pushState("arithmetic")),
+    on("$", literal("$("), ...beforePaint, special, shell.queueEnter(), pushState("subCommand")),
+    ...quoted({ beforePaint }),
+    ...parameters({ beforePaint }),
+    backquote({ beforePaint }),
+    escaped(beforePaint),
+    on("$\\", byte("$\\"), ...beforePaint, paint("plain")),
+  ];
+  if (bareRun === "include") arms.push(on(bareAscii, bytes(bare), ...beforePaint, paint("plain")));
+  return arms;
+};
 const heredocHeader = (footerIndent: "none" | "tabs") => ({
   style: "label" as const,
   captureFallback: true,
@@ -166,24 +176,31 @@ const arrayAssignment = on(
 );
 
 function commandStates({ scope }: { scope: "root" | "sub" | "case" }) {
-  const command = scope === "root" ? "command" : `${scope}Command`;
-  const args = scope === "root" ? "args" : `${scope}Args`;
-  const part = scope === "root" ? "word" : `${scope}Word`;
-  const closers =
+  const scopes = {
+    root: { command: "command", args: "args", part: "word" },
+    sub: { command: "subCommand", args: "subArgs", part: "subWord" },
+    case: { command: "caseCommand", args: "caseArgs", part: "caseWord" },
+  } as const;
+  const { command, args, part } = scopes[scope];
+  const closer =
     scope === "sub"
-      ? [token(")", "punctuation.special", shell.queueLeave(), popState())]
-      : [token(")", "punctuation.bracket", setState(args))];
+      ? token(")", "punctuation.special", shell.queueLeave(), popState())
+      : token(")", "punctuation.bracket", setState(args));
+  const caseTerminator = on(
+    ";",
+    choice([literal(";;&")], [literal(";;")], [literal(";&")]),
+    paint("operator"),
+    popState(),
+  );
+  const caseEnd = on(
+    "e",
+    literal("esac"),
+    notNext(wordContinuation),
+    paint("keyword"),
+    popState(),
+    popState(),
+  );
   const trivia: Arm[] = [
-    ...(scope === "case"
-      ? [
-          on(
-            ";",
-            choice([literal(";;&")], [literal(";;")], [literal(";&")]),
-            paint("operator"),
-            popState(),
-          ),
-        ]
-      : []),
     on(" ", bytes(" \t"), paint("plain")),
     on("\t", bytes(" \t"), paint("plain")),
     on(
@@ -197,7 +214,7 @@ function commandStates({ scope }: { scope: "root" | "sub" | "case" }) {
     ),
     token("\n", "plain", setState(command)),
     token("\\\n", "string.escape"),
-    on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
+    comment,
     on(
       "<>",
       choice([literal("<(")], [literal(">(")]),
@@ -228,8 +245,9 @@ function commandStates({ scope }: { scope: "root" | "sub" | "case" }) {
       shell.queueEnter(),
       pushState("subCommand"),
     ),
-    ...closers,
+    closer,
   ];
+  if (scope === "case") trivia.unshift(caseTerminator);
   const classified = classify(
     [
       ...keywordTable(keywords, "keyword", (text) =>
@@ -243,6 +261,7 @@ function commandStates({ scope }: { scope: "root" | "sub" | "case" }) {
     ],
     [paint("function"), setState(args)],
   );
+  const caseEndArms = scope === "case" ? [caseEnd] : [];
   return {
     command: {
       style: "plain" as const,
@@ -250,25 +269,8 @@ function commandStates({ scope }: { scope: "root" | "sub" | "case" }) {
         token("((", "punctuation.special", pushState("arithmeticCommand")),
         ...trivia,
         assignment,
-        ...(scope === "case"
-          ? [
-              on(
-                "e",
-                literal("esac"),
-                notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
-                paint("keyword"),
-                popState(),
-                popState(),
-              ),
-            ]
-          : []),
-        on(
-          "[",
-          literal("[["),
-          notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
-          paint("keyword"),
-          pushState("test"),
-        ),
+        ...caseEndArms,
+        on("[", literal("[["), notNext(wordContinuation), paint("keyword"), pushState("test")),
         on(bareAscii, bytes(bare), notNext(continuation), classified),
         on(allBytes, bytes(bare), paint("function"), setState(part)),
         ...parts({ beforePaint: [setState(part)], bareRun: "omit" }),
@@ -325,25 +327,22 @@ export default defineGrammar({
       arms: [
         on(" \t\n", bytes(" \t\n"), paint("plain")),
         token("\\\n", "string.escape"),
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
+        comment,
         redispatch(allBytes, popState()),
       ],
     },
     caseHeader: {
       style: "plain",
-      arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
-        ...parts({ beforePaint: [setState("caseHeaderAfter")] }),
-      ],
+      arms: [comment, ...parts({ beforePaint: [setState("caseHeaderAfter")] })],
     },
     caseHeaderAfter: {
       style: "plain",
       arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
+        comment,
         on(
           "i",
           literal("in"),
-          notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
+          notNext(wordContinuation),
           paint("keyword"),
           setState("casePatterns"),
         ),
@@ -353,14 +352,8 @@ export default defineGrammar({
     casePatterns: {
       style: "plain",
       arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
-        on(
-          "e",
-          literal("esac"),
-          notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
-          paint("keyword"),
-          popState(),
-        ),
+        comment,
+        on("e", literal("esac"), notNext(wordContinuation), paint("keyword"), popState()),
         token(")", "punctuation.bracket", pushState("caseCommand")),
         token("|", "operator"),
         ...parts(),
@@ -369,14 +362,8 @@ export default defineGrammar({
     test: {
       style: "plain",
       arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
-        on(
-          "]",
-          literal("]]"),
-          notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
-          paint("keyword"),
-          popState(),
-        ),
+        comment,
+        on("]", literal("]]"), notNext(wordContinuation), paint("keyword"), popState()),
         ...quoted(),
         token("$((", "punctuation.special", pushState("arithmetic")),
         token("$(", "punctuation.special", shell.queueEnter(), pushState("subCommand")),
@@ -390,7 +377,7 @@ export default defineGrammar({
     forHeader: {
       style: "plain",
       arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
+        comment,
         token(oneOf(";\n"), "operator", popState()),
         on(
           nameStart,
@@ -404,25 +391,15 @@ export default defineGrammar({
     forBefore: {
       style: "plain",
       arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
+        comment,
         token(oneOf(";\n"), "operator", popState()),
-        on(
-          "i",
-          literal("in"),
-          notNext(union(continuation + bareAscii, byteSet({ ranges: [[128, 255]] }))),
-          paint("keyword"),
-          setState("forAfter"),
-        ),
+        on("i", literal("in"), notNext(wordContinuation), paint("keyword"), setState("forAfter")),
         ...parts({ beforePaint: [setState("forAfter")] }),
       ],
     },
     forAfter: {
       style: "plain",
-      arms: [
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
-        token(oneOf(";\n"), "operator", popState()),
-        ...parts(),
-      ],
+      arms: [comment, token(oneOf(";\n"), "operator", popState()), ...parts()],
     },
     heredocStart: {
       style: "plain",
@@ -508,11 +485,7 @@ export default defineGrammar({
     assignment: { style: "plain", arms: [redispatch(boundary, popState()), ...parts()] },
     array: {
       style: "plain",
-      arms: [
-        token(")", "punctuation.bracket", popState()),
-        on("#", literal("#"), bytes(notNewline, { min: 0 }), paint("comment")),
-        ...parts(),
-      ],
+      arms: [token(")", "punctuation.bracket", popState()), comment, ...parts()],
     },
     redirect: {
       style: "plain",

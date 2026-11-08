@@ -71,12 +71,10 @@ function cBase() {
     literal("_t"),
     notNext(rest),
   ];
-  const strings = [
-    ...["u8", "u", "U", "L", ""].flatMap((prefix) => [
-      token(`${prefix}\"`, "string", pushState("string")),
-      token(`${prefix}'`, "string", pushState("char")),
-    ]),
-  ];
+  const strings = ["u8", "u", "U", "L", ""].flatMap((prefix) => [
+    token(`${prefix}\"`, "string", pushState("string")),
+    token(`${prefix}'`, "string", pushState("char")),
+  ]);
   const comments = [
     token("//", "comment", pushState("lineComment")),
     token("/*", "comment", pushState("blockComment")),
@@ -111,62 +109,20 @@ export function c(extension?: CExtension) {
   const base = cBase();
   const { digit, upper, hex, start, rest, ident, typeSuffix, strings, comments, number } = base;
   const ext = extension?.(base);
-  const keywords = [
-    "auto",
-    "break",
-    "case",
-    "const",
-    "continue",
-    "default",
-    "do",
-    "else",
-    "extern",
-    "for",
-    "if",
-    "inline",
-    "register",
-    "restrict",
-    "return",
-    "sizeof",
-    "static",
-    "switch",
-    "typedef",
-    "volatile",
-    "while",
-    "_Alignas",
-    "_Alignof",
-    "_Atomic",
-    "_Generic",
-    "_Noreturn",
-    "_Static_assert",
-    "_Thread_local",
-    "alignas",
-    "alignof",
-    "constexpr",
-    "static_assert",
-    "thread_local",
-    "typeof",
-    "typeof_unqual",
-  ];
-  const types = [
-    "void",
-    "char",
-    "short",
-    "int",
-    "long",
-    "float",
-    "double",
-    "signed",
-    "unsigned",
-    "_Bool",
-    "_Complex",
-    "_Imaginary",
-    "bool",
-    "_BitInt",
-    "_Decimal32",
-    "_Decimal64",
-    "_Decimal128",
-  ];
+  const keywords = `
+    auto break case const continue default do else extern for if inline register restrict return
+    sizeof static switch typedef volatile while _Alignas _Alignof _Atomic _Generic _Noreturn
+    _Static_assert _Thread_local alignas alignof constexpr static_assert thread_local typeof
+    typeof_unqual
+  `
+    .trim()
+    .split(/\s+/);
+  const types = `
+    void char short int long float double signed unsigned _Bool _Complex _Imaginary bool _BitInt
+    _Decimal32 _Decimal64 _Decimal128
+  `
+    .trim()
+    .split(/\s+/);
   ext?.keywords?.(keywords);
   ext?.types?.(types);
   const cases = [
@@ -232,6 +188,13 @@ export function c(extension?: CExtension) {
       [character()],
     ),
     paint("string.escape"),
+  );
+  const whitespace = on(" \t\r\n", bytes(" \t\r\n"), paint("plain"));
+  const label = on(
+    start,
+    ...ident,
+    lookahead(bytes(" \t", { min: 0 }), literal(":"), notNext(":")),
+    labels,
   );
   const code = [
     ...comments,
@@ -313,26 +276,13 @@ export function c(extension?: CExtension) {
           token("/*", "comment", pushState("blockComment")),
           token("#", "keyword", popState(), pushState("directiveName")),
           ...(ext?.indentBeforeLabels ?? []),
-          on(
-            start,
-            ...ident,
-            lookahead(bytes(" \t", { min: 0 }), literal(":"), notNext(":")),
-            labels,
-          ),
+          label,
         ],
         otherwise: [popState()],
       },
       labelCandidate: {
         style: "plain",
-        arms: [
-          on(" \t\r", bytes(" \t\r"), paint("plain")),
-          on(
-            start,
-            ...ident,
-            lookahead(bytes(" \t", { min: 0 }), literal(":"), notNext(":")),
-            labels,
-          ),
-        ],
+        arms: [on(" \t\r", bytes(" \t\r"), paint("plain")), label],
         otherwise: [popState()],
       },
       typedefDecl: {
@@ -365,17 +315,13 @@ export function c(extension?: CExtension) {
       },
       gotoLabel: {
         style: "plain",
-        arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          ...comments,
-          on(start, ...ident, paint("label"), popState()),
-        ],
+        arms: [whitespace, ...comments, on(start, ...ident, paint("label"), popState())],
         otherwise: [popState()],
       },
       aggregateHead: {
         style: "plain",
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           on(start, ...ident, paint("type"), setState("aggregateAfter")),
           token("{", "punctuation.bracket", setState("structBody")),
@@ -384,11 +330,7 @@ export function c(extension?: CExtension) {
       },
       aggregateAfter: {
         style: "plain",
-        arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          ...comments,
-          token("{", "punctuation.bracket", setState("structBody")),
-        ],
+        arms: [whitespace, ...comments, token("{", "punctuation.bracket", setState("structBody"))],
         otherwise: [popState()],
       },
       structIndent: {
@@ -426,7 +368,7 @@ export function c(extension?: CExtension) {
       enumHead: {
         style: "plain",
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           on(start, ...ident, paint("type"), setState("enumAfter")),
           token("{", "punctuation.bracket", setState("enumBody")),
@@ -435,11 +377,7 @@ export function c(extension?: CExtension) {
       },
       enumAfter: {
         style: "plain",
-        arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          ...comments,
-          token("{", "punctuation.bracket", setState("enumBody")),
-        ],
+        arms: [whitespace, ...comments, token("{", "punctuation.bracket", setState("enumBody"))],
         otherwise: [popState()],
       },
       enumBody: {
@@ -453,7 +391,7 @@ export function c(extension?: CExtension) {
       fieldDecl: {
         style: "plain",
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           token("*", "operator"),
           token("(", "punctuation.bracket"),
@@ -481,7 +419,7 @@ export function c(extension?: CExtension) {
       tag: {
         style: "plain",
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           ...(ext?.tagBeforeName ?? []),
           on(start, ...ident, paint("type"), ...(ext?.tagNameEnd ?? [popState()])),

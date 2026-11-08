@@ -26,92 +26,30 @@ const start = union("_", range("a", "z"), range("A", "Z"));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const hex = union(digit, range("a", "f"), range("A", "F"));
-const keywords = [
-  "addrspace",
-  "align",
-  "allowzero",
-  "and",
-  "anyframe",
-  "anytype",
-  "asm",
-  "async",
-  "await",
-  "break",
-  "callconv",
-  "catch",
-  "comptime",
-  "const",
-  "continue",
-  "defer",
-  "else",
-  "enum",
-  "errdefer",
-  "error",
-  "export",
-  "extern",
-  "fn",
-  "for",
-  "if",
-  "inline",
-  "linksection",
-  "noalias",
-  "noinline",
-  "nosuspend",
-  "opaque",
-  "or",
-  "orelse",
-  "packed",
-  "pub",
-  "resume",
-  "return",
-  "struct",
-  "suspend",
-  "switch",
-  "test",
-  "threadlocal",
-  "try",
-  "union",
-  "usingnamespace",
-  "var",
-  "volatile",
-  "while",
-];
-const types = [
-  "usize",
-  "isize",
-  "c_char",
-  "c_short",
-  "c_ushort",
-  "c_int",
-  "c_uint",
-  "c_long",
-  "c_ulong",
-  "c_longlong",
-  "c_ulonglong",
-  "c_longdouble",
-  "f16",
-  "f32",
-  "f64",
-  "f80",
-  "f128",
-  "anyerror",
-  "noreturn",
-  "type",
-  "void",
-  "bool",
-  "comptime_int",
-  "comptime_float",
-  "anyopaque",
-];
+const keywords = `
+  addrspace align allowzero and anyframe anytype asm async await break callconv catch comptime
+  const continue defer else enum errdefer error export extern fn for if inline linksection
+  noalias noinline nosuspend opaque or orelse packed pub resume return struct suspend switch
+  test threadlocal try union usingnamespace var volatile while
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  usize isize c_char c_short c_ushort c_int c_uint c_long c_ulong c_longlong c_ulonglong
+  c_longdouble f16 f32 f64 f80 f128 anyerror noreturn type void bool comptime_int comptime_float
+  anyopaque
+`
+  .trim()
+  .split(/\s+/);
+const containerKeywords = ["struct", "union", "enum", "opaque"];
 const cases = [
   ...keywordTable(
     keywords.filter(
-      (x) =>
-        x !== "break" && x !== "continue" && !["struct", "union", "enum", "opaque"].includes(x),
+      (word) => word !== "break" && word !== "continue" && !containerKeywords.includes(word),
     ),
     "keyword",
   ),
-  ...["struct", "union", "enum", "opaque"].map((text) => ({
+  ...containerKeywords.map((text) => ({
     text,
     then: [paint("keyword"), pushState("containerOpen")],
   })),
@@ -131,6 +69,7 @@ const escape = on(
   ),
   paint("string.escape"),
 );
+const quotedStringArms = [escape, token('"', "string", popState()), redispatch("\n", popState())];
 const code = [
   token("//", "comment", pushState("lineComment")),
   token("\\\\", "string", pushState("lineString")),
@@ -256,14 +195,8 @@ export default defineGrammar({
     },
     lineComment: { style: "comment", arms: [redispatch("\n", popState())] },
     lineString: { style: "string", arms: [redispatch("\n", popState())] },
-    string: {
-      style: "string",
-      arms: [escape, token('"', "string", popState()), redispatch("\n", popState())],
-    },
-    quotedIdentifier: {
-      style: "string",
-      arms: [escape, token('"', "string", popState()), redispatch("\n", popState())],
-    },
+    string: { style: "string", arms: quotedStringArms },
+    quotedIdentifier: { style: "string", arms: quotedStringArms },
     char: {
       style: "string",
       arms: [escape, token("'", "string", popState()), redispatch("\n", popState())],

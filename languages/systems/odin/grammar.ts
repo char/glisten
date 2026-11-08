@@ -35,22 +35,32 @@ const word = (text: string) => [literal(text), notNext(rest)];
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
 const decimal = bytes(union(digit, "_"));
 const operators = "!%&*+-/:<=>?^|~";
-const opPart = choice([byte(except(operators, "/"))], [literal("/"), notNext("/*")]);
-const keywords =
-  "package import foreign if else for in switch case fallthrough break continue return defer when using do or_else or_return or_break or_continue not_in cast transmute auto_cast context proc dynamic map matrix struct union enum bit_set bit_field distinct where asm".split(
-    " ",
-  );
-const types =
-  "bool b8 b16 b32 b64 int uint uintptr i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f16 f32 f64 float double rune string cstring rawptr typeid any complex32 complex64 complex128 complex_float complex_double quaternion64 quaternion128 quaternion256 byte".split(
-    " ",
-  );
+const operatorPart = choice([byte(except(operators, "/"))], [literal("/"), notNext("/*")]);
+const keywords = `
+  package import foreign if else for in switch case fallthrough break continue return defer when
+  using do or_else or_return or_break or_continue not_in cast transmute auto_cast context proc
+  dynamic map matrix struct union enum bit_set bit_field distinct where asm
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bool b8 b16 b32 b64 int uint uintptr i8 i16 i32 i64 i128 u8 u16 u32 u64 u128 f16 f32 f64 float
+  double rune string cstring rawptr typeid any complex32 complex64 complex128 complex_float
+  complex_double quaternion64 quaternion128 quaternion256 byte
+`
+  .trim()
+  .split(/\s+/);
 const words = [
   ...keywordTable(keywords, "keyword"),
   ...keywordTable(types, "type"),
   ...keywordTable(
-    ["i", "u"]
-      .flatMap((p) => [16, 32, 64, 128].flatMap((n) => [`${p}${n}le`, `${p}${n}be`]))
-      .concat([16, 32, 64].flatMap((n) => [`f${n}le`, `f${n}be`])),
+    `
+      i16le i16be i32le i32be i64le i64be i128le i128be
+      u16le u16be u32le u32be u64le u64be u128le u128be
+      f16le f16be f32le f32be f64le f64be
+    `
+      .trim()
+      .split(/\s+/),
     "type",
   ),
   ...keywordTable(
@@ -123,9 +133,7 @@ const code: Arm[] = [
       gap,
       literal("::"),
       gap,
-      choice(
-        ...["struct", "union", "enum", "bit_set", "bit_field", "distinct"].map((w) => word(w)),
-      ),
+      choice(...["struct", "union", "enum", "bit_set", "bit_field", "distinct"].map(word)),
     ),
     paint("type"),
   ),
@@ -139,7 +147,7 @@ const code: Arm[] = [
   token("..", "operator"),
   token(".", "punctuation.delimiter", pushState("member")),
   token(oneOf(",;"), "punctuation.delimiter"),
-  on(operators, opPart, repeat(opPart), paint("operator")),
+  on(operators, operatorPart, repeat(operatorPart), paint("operator")),
 ];
 // Procedure/type declarations and qualified members use local lexical lookahead.
 export default defineGrammar({

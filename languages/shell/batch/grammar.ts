@@ -33,12 +33,19 @@ const varBody = except(all, "%\r\n");
 const delayedBody = except(all, "!\r\n");
 const labelBody = except(all, " \t\r\n&|<>()");
 const labelFirst = except(labelBody, "\\/");
-const controls = "if for in do else not exist defined errorlevel".split(" ");
+const controls = `
+  if for in do else not exist defined errorlevel
+`
+  .trim()
+  .split(/\s+/);
 const comparisons = "equ neq lss leq gtr geq".split(" ");
-const builtins =
-  `assoc break call cd chdir cls color copy date del dir echo endlocal erase exit ftype goto md mkdir mklink move path pause popd prompt pushd rd ren rename rmdir set setlocal shift start time title type ver verify vol`.split(
-    /\s+/,
-  );
+const builtins = `
+  assoc break call cd chdir cls color copy date del dir echo endlocal erase exit ftype goto md
+  mkdir mklink move path pause popd prompt pushd rd ren rename rmdir set setlocal shift start
+  time title type ver verify vol
+`
+  .trim()
+  .split(/\s+/);
 const argsCases = [
   ...keywordTable(controls, "keyword"),
   ...keywordTable(comparisons, "operator"),
@@ -55,17 +62,13 @@ const commandCases = [
   ...keywordTable(
     controls.filter((word) => word !== "for"),
     "keyword",
-  ).map((item) => ({
-    ...item,
-    then: [...item.then, setState("args")],
-  })),
+    () => [setState("args")],
+  ),
   ...keywordTable(
     builtins.filter((word) => word !== "set"),
     "function",
-  ).map((item) => ({
-    ...item,
-    then: [...item.then, setState("args")],
-  })),
+    () => [setState("args")],
+  ),
 ];
 const variables = [
   on("%", literal("%%~"), bytes(union(letter, digit, "_$:")), paint("variable")),
@@ -107,11 +110,12 @@ const arithmetic = [
   ),
   on("0123456789", bytes(digit), paint("number")),
   on(letter, ...word, paint("variable")),
-  ...["<<=", ">>=", "<<", ">>", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^="].map((op) =>
-    token(op, "operator"),
+  ...["<<=", ">>=", "<<", ">>", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^="].map((operator) =>
+    token(operator, "operator"),
   ),
   token(oneOf("=+-*/%&|^~"), "operator"),
 ];
+const option = on("/", literal("/"), byte(letter), notNext(wordRest), paint("attribute"));
 const common = [
   on(" \t\r", bytes(" \t\r"), paint("plain")),
   ...variables,
@@ -153,7 +157,7 @@ export default defineGrammar({
       arms: [
         ...common,
         label,
-        on("/", literal("/"), byte(letter), notNext(wordRest), paint("attribute")),
+        option,
         on(letter, ...word, classify(argsCases, [paint("plain")], { caseless: true })),
         token("==", "operator"),
       ],
@@ -169,7 +173,7 @@ export default defineGrammar({
           paint("attribute"),
           setState("arithmetic"),
         ),
-        on("/", literal("/"), byte(letter), notNext(wordRest), paint("attribute")),
+        option,
         ...common,
         token("=", "operator"),
         on(letter, ...word, paint("variable")),
@@ -206,7 +210,7 @@ export default defineGrammar({
       style: "plain",
       arms: [
         ...common,
-        on("/", literal("/"), byte(letter), notNext(wordRest), paint("attribute")),
+        option,
         on(
           letter,
           ...word,

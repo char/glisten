@@ -32,79 +32,19 @@ const start = union("_", range("a", "z"), upper, byteSet({ ranges: [[128, 255]] 
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const hashes = slot.run("rawHashes");
-const keywords = [
-  "as",
-  "async",
-  "await",
-  "break",
-  "const",
-  "continue",
-  "crate",
-  "dyn",
-  "else",
-  "enum",
-  "extern",
-  "fn",
-  "for",
-  "if",
-  "impl",
-  "in",
-  "let",
-  "loop",
-  "match",
-  "mod",
-  "move",
-  "mut",
-  "pub",
-  "ref",
-  "return",
-  "self",
-  "Self",
-  "static",
-  "struct",
-  "super",
-  "trait",
-  "type",
-  "unsafe",
-  "use",
-  "where",
-  "while",
-  "abstract",
-  "become",
-  "box",
-  "do",
-  "final",
-  "macro",
-  "override",
-  "priv",
-  "try",
-  "typeof",
-  "unsized",
-  "virtual",
-  "yield",
-  "union",
-  "default",
-  "gen",
-];
-const types = [
-  "bool",
-  "char",
-  "str",
-  "i8",
-  "i16",
-  "i32",
-  "i64",
-  "i128",
-  "isize",
-  "u8",
-  "u16",
-  "u32",
-  "u64",
-  "u128",
-  "usize",
-  "f32",
-  "f64",
-];
+const keywords = `
+  as async await break const continue crate dyn else enum extern fn for if impl in let loop
+  match mod move mut pub ref return self Self static struct super trait type unsafe use where
+  while abstract become box do final macro override priv try typeof unsized virtual yield union
+  default gen
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  bool char str i8 i16 i32 i64 i128 isize u8 u16 u32 u64 u128 usize f32 f64
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   ...keywordTable(
     keywords.filter((keyword) => keyword !== "fn" && keyword !== "struct"),
@@ -189,6 +129,13 @@ const code = [
   token(oneOf("+-*/%=!<>&|^~?#@"), "operator"),
 ];
 
+const structTypeOpeners = [
+  token("<", "operator", pushState("structAngle")),
+  token("(", "punctuation.bracket", pushState("structParen")),
+  token("[", "punctuation.bracket", pushState("structBracket")),
+  token("{", "punctuation.bracket", pushState("structBrace")),
+];
+
 export default defineGrammar({
   name: "rust",
   initial: "root",
@@ -255,37 +202,25 @@ export default defineGrammar({
       arms: [
         token(",", "punctuation.delimiter", setState("structBody")),
         token("}", "punctuation.bracket", popState()),
-        ...[
-          ["<", "structAngle"],
-          ["(", "structParen"],
-          ["[", "structBracket"],
-          ["{", "structBrace"],
-        ].map(([open, state]) =>
-          token(open!, open === "<" ? "operator" : "punctuation.bracket", pushState(state!)),
-        ),
+        ...structTypeOpeners,
         ...code,
       ],
     },
     ...Object.fromEntries(
-      [
-        ["structAngle", ">"],
-        ["structParen", ")"],
-        ["structBracket", "]"],
-        ["structBrace", "}"],
-      ].map(([state, close]) => [
-        state!,
+      (
+        [
+          ["structAngle", ">"],
+          ["structParen", ")"],
+          ["structBracket", "]"],
+          ["structBrace", "}"],
+        ] as const
+      ).map(([state, close]) => [
+        state,
         {
           style: "plain" as const,
           arms: [
-            token(close!, close === ">" ? "operator" : "punctuation.bracket", popState()),
-            ...[
-              ["<", "structAngle"],
-              ["(", "structParen"],
-              ["[", "structBracket"],
-              ["{", "structBrace"],
-            ].map(([open, nested]) =>
-              token(open!, open === "<" ? "operator" : "punctuation.bracket", pushState(nested!)),
-            ),
+            token(close, close === ">" ? "operator" : "punctuation.bracket", popState()),
+            ...structTypeOpeners,
             ...code,
           ],
         },

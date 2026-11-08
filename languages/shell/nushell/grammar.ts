@@ -25,6 +25,7 @@ import {
   slot,
   token,
   union,
+  type Arm,
   type State,
 } from "#/grammar/mod.ts";
 
@@ -33,17 +34,25 @@ const letter = union(range("a", "z"), range("A", "Z"), "_", byteSet({ ranges: [[
 const digit = range("0", "9");
 const name = union(letter, digit, "-");
 const hashes = slot.run("raw-hashes", { scope: "frame" });
-const keywords =
-  "def export let mut const if else match for in while loop break continue return try catch use module overlay alias extern source hide do".split(
-    " ",
-  );
-const operators = "and or xor not in not-in like not-like starts-with ends-with mod".split(" ");
+const keywords = `
+    def export let mut const if else match for in while loop break continue return try catch use
+    module overlay alias extern source hide do
+  `
+  .trim()
+  .split(/\s+/);
+const operators = `
+  and or xor not in not-in like not-like starts-with ends-with mod
+`
+  .trim()
+  .split(/\s+/);
 const constants = ["true", "false", "null"];
 // Built-in command families whose next bare word is a subcommand.
-const namespaces =
-  "bits bytes date debug decode encode format from hash http input into math path query random split str sys to url".split(
-    " ",
-  );
+const namespaces = `
+    bits bytes date debug decode encode format from hash http input into math path query random
+    split str sys to url
+  `
+  .trim()
+  .split(/\s+/);
 const quotedKey = choice(
   [literal("'"), bytes(except(all, "'\n"), { min: 0 }), literal("'")],
   [
@@ -94,9 +103,40 @@ const number = on(
 // immediately before ':' is treated as a record key outside signatures. Dates
 // recognize ISO shape, not calendar validity. Closing delimiters unwind the
 // innermost group even when mismatched.
-function code(command: boolean, interpolation = false): State {
-  const commandState = interpolation ? "interpolationCommand" : "command";
-  const argsState = interpolation ? "interpolationArgs" : "args";
+function code(
+  position: "command" | "argument",
+  context: "ordinary" | "interpolation" = "ordinary",
+): State {
+  const contexts = {
+    ordinary: { command: "command", args: "args", namespace: "namespace" },
+    interpolation: {
+      command: "interpolationCommand",
+      args: "interpolationArgs",
+      namespace: "interpolationNamespace",
+    },
+  } as const;
+  const { command: commandState, args: argsState, namespace: namespaceState } = contexts[context];
+  const commandAttributes: Arm[] = [];
+  const interpolationEnd: Arm[] = [];
+  if (position === "command") {
+    commandAttributes.push(
+      on(
+        "@",
+        literal("@"),
+        byte(letter),
+        bytes(name, { min: 0 }),
+        paint("attribute"),
+        setState(argsState),
+      ),
+    );
+  }
+  if (context === "interpolation") {
+    interpolationEnd.push(token(")", "punctuation.special", popState()));
+  }
+  const namespaceCases =
+    position === "command"
+      ? keywordTable(namespaces, "function", () => [setState(namespaceState)])
+      : [];
   return {
     style: "plain",
     arms: [
@@ -105,18 +145,7 @@ function code(command: boolean, interpolation = false): State {
       token("#", "comment", pushState("comment")),
       token(";", "punctuation.delimiter", setState(commandState)),
       token("|", "operator", setState(commandState)),
-      ...(command
-        ? [
-            on(
-              "@",
-              literal("@"),
-              byte(letter),
-              bytes(name, { min: 0 }),
-              paint("attribute"),
-              setState(argsState),
-            ),
-          ]
-        : []),
+      ...commandAttributes,
       on(
         "r",
         literal("r"),
@@ -147,29 +176,19 @@ function code(command: boolean, interpolation = false): State {
       token("{|", "punctuation.bracket", setState(argsState), pushState("closureParameters")),
       on("[", literal("["), paint("punctuation.bracket"), setState(argsState), pushState("args")),
       on("({", byte("({"), paint("punctuation.bracket"), setState(argsState), pushState("command")),
-      ...(interpolation ? [token(")", "punctuation.special", popState())] : []),
+      ...interpolationEnd,
       on(")]}", byte(")]}"), paint("punctuation.bracket"), popState()),
       token("..<", "operator"),
       token("..", "operator"),
       on(
         "=!<>+*/%-",
         choice(
-          ...[
-            "=~",
-            "!~",
-            "==",
-            "!=",
-            "<=",
-            ">=",
-            "++",
-            "//",
-            "**",
-            "->",
-            "+=",
-            "-=",
-            "*=",
-            "/=",
-          ].map((s) => [literal(s)]),
+          ...`
+            =~ !~ == != <= >= ++ // ** -> += -= *= /=
+          `
+            .trim()
+            .split(/\s+/)
+            .map((operator) => [literal(operator)]),
           [byte("=!<>+*/%-")],
         ),
         paint("operator"),
@@ -191,11 +210,7 @@ function code(command: boolean, interpolation = false): State {
         classify(
           [
             ...keywordTable(["def", "extern", "alias"], "keyword", () => [setState("definition")]),
-            ...(command
-              ? keywordTable(namespaces, "function", () => [
-                  setState(interpolation ? "interpolationNamespace" : "namespace"),
-                ])
-              : []),
+            ...namespaceCases,
             ...keywordTable(
               keywords.filter((word) => !["def", "extern", "alias", "in"].includes(word)),
               "keyword",
@@ -204,7 +219,7 @@ function code(command: boolean, interpolation = false): State {
             ...keywordTable(operators, "operator"),
             ...keywordTable(constants, "constant.builtin", () => [setState(argsState)]),
           ],
-          [paint(command ? "function" : "plain"), setState(argsState)],
+          [paint(position === "command" ? "function" : "plain"), setState(argsState)],
         ),
       ),
     ],
@@ -216,8 +231,8 @@ export default defineGrammar({
   aliases: ["nu"],
   initial: "command",
   states: {
-    command: code(true),
-    args: code(false),
+    command: code("command"),
+    args: code("argument"),
     definition: {
       style: "plain",
       arms: [
@@ -378,8 +393,8 @@ export default defineGrammar({
         token("(", "punctuation.special", pushState("interpolationCommand")),
       ],
     },
-    interpolationCommand: code(true, true),
-    interpolationArgs: code(false, true),
+    interpolationCommand: code("command", "interpolation"),
+    interpolationArgs: code("argument", "interpolation"),
     rawStart: {
       style: "string",
       arms: [

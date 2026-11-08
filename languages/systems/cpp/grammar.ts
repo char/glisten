@@ -72,15 +72,28 @@ export const cppExtension: CExtension = ({
       pushState("cppRawHead"),
     ),
   );
+  const whitespace = on(" \t\r\n", bytes(" \t\r\n"), paint("plain"));
+  const functionName = on(
+    start,
+    ...ident,
+    lookahead(bytes(" \t", { min: 0 }), literal("(")),
+    paint("function"),
+    popState(),
+  );
   return {
     name: "cpp",
     aliases: ["c++", "cc", "cxx", "hpp", "hxx", "h++"],
     keywords: (keywords) => {
       keywords.splice(keywords.indexOf("auto"), 1);
       keywords.push(
-        ..."asm catch co_await co_return co_yield consteval constinit decltype delete dynamic_cast static_cast reinterpret_cast const_cast explicit export friend mutable new noexcept private protected public template throw try typeid using virtual concept requires namespace".split(
-          " ",
-        ),
+        ...`
+          asm catch co_await co_return co_yield consteval constinit decltype delete
+          dynamic_cast static_cast reinterpret_cast const_cast explicit export friend
+          mutable new noexcept private protected public template throw try typeid using
+          virtual concept requires namespace
+        `
+          .trim()
+          .split(/\s+/),
       );
     },
     types: (types) => {
@@ -91,19 +104,7 @@ export const cppExtension: CExtension = ({
     constants: ["true", "false", "nullptr"],
     wordCases: [
       ...keywordTable(
-        [
-          "and",
-          "and_eq",
-          "bitand",
-          "bitor",
-          "compl",
-          "not",
-          "not_eq",
-          "or",
-          "or_eq",
-          "xor",
-          "xor_eq",
-        ],
+        `and and_eq bitand bitor compl not not_eq or or_eq xor xor_eq`.trim().split(/\s+/),
         "operator",
       ),
       { text: "operator", then: [paint("keyword"), pushState("cppOperator")] },
@@ -136,15 +137,7 @@ export const cppExtension: CExtension = ({
       on("cs", choice([literal("class")], [literal("struct")]), notNext(rest), paint("keyword")),
     ],
     tagNameEnd: [setState("cppTagAfter")],
-    fieldBeforeName: [
-      on(
-        start,
-        ...ident,
-        lookahead(bytes(" \t", { min: 0 }), literal("(")),
-        paint("function"),
-        popState(),
-      ),
-    ],
+    fieldBeforeName: [functionName],
     stringEnd: [setState("cppSuffix")],
     states: () => ({
       cppAttribute: {
@@ -163,16 +156,13 @@ export const cppExtension: CExtension = ({
       },
       cppTagAfter: {
         style: "plain" as const,
-        arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          on("f", literal("final"), notNext(rest), paint("keyword"), popState()),
-        ],
+        arms: [whitespace, on("f", literal("final"), notNext(rest), paint("keyword"), popState())],
         otherwise: [popState()],
       },
       cppAfterParen: {
         style: "plain" as const,
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
+          whitespace,
           ...comments,
           on(
             "cof",
@@ -187,30 +177,14 @@ export const cppExtension: CExtension = ({
       },
       cppTrailingReturn: {
         style: "plain" as const,
-        arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          on(
-            start,
-            ...ident,
-            lookahead(bytes(" \t", { min: 0 }), literal("(")),
-            paint("function"),
-            popState(),
-          ),
-          on(start, ...ident, paint("type"), popState()),
-        ],
+        arms: [whitespace, functionName, on(start, ...ident, paint("type"), popState())],
         otherwise: [popState()],
       },
       cppScope: {
         style: "plain" as const,
         arms: [
-          on(" \t\r\n", bytes(" \t\r\n"), paint("plain")),
-          on(
-            start,
-            ...ident,
-            lookahead(bytes(" \t", { min: 0 }), literal("(")),
-            paint("function"),
-            popState(),
-          ),
+          whitespace,
+          functionName,
           on(
             start,
             ...ident,
@@ -225,19 +199,9 @@ export const cppExtension: CExtension = ({
             ...ident,
             classify(
               keywordTable(
-                [
-                  "string",
-                  "string_view",
-                  "vector",
-                  "array",
-                  "optional",
-                  "unique_ptr",
-                  "shared_ptr",
-                  "tuple",
-                  "map",
-                  "set",
-                  "span",
-                ],
+                `string string_view vector array optional unique_ptr shared_ptr tuple map set span`
+                  .trim()
+                  .split(/\s+/),
                 "type",
                 () => [popState()],
               ),

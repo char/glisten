@@ -34,27 +34,42 @@ const digit = range("0", "9");
 const word = union(letter, digit, "-");
 const variableName = union(letter, digit, ":");
 const hex = union(digit, range("a", "f"), range("A", "F"), "_");
-const keywords =
-  "begin break catch class clean configuration continue data define do dynamicparam else elseif end enum exit filter finally for foreach from function hidden if in inlinescript parallel param process return sequence switch throw trap try until using var while workflow".split(
-    " ",
-  );
-const comparisons =
-  "eq ne gt ge lt le like notlike match notmatch contains notcontains in notin replace split".split(
-    " ",
-  );
+const keywords = `
+  begin break catch class clean configuration continue data define do dynamicparam else elseif
+  end enum exit filter finally for foreach from function hidden if in inlinescript parallel
+  param process return sequence switch throw trap try until using var while workflow
+`
+  .trim()
+  .split(/\s+/);
+const comparisons = `
+    eq ne gt ge lt le like notlike match notmatch contains notcontains in notin replace split
+  `
+  .trim()
+  .split(/\s+/);
 const operators = [
   ...comparisons,
-  ...comparisons.flatMap((x) => [`i${x}`, `c${x}`]),
-  ..."and or xor not band bor bxor bnot shl shr as is isnot join f".split(" "),
-].map((x) => `-${x}`);
-const helpKeywords =
-  "synopsis description example inputs outputs notes link component role functionality parameter forwardhelptargetname forwardhelpcategory remotehelprunspace externalhelp"
-    .split(" ")
-    .map((x) => `.${x}`);
-const attributes =
-  "alias allowemptycollection allowemptystring allownull argumentcompleter cmdletbinding credential dscproperty dsclocalconfigurationmanager outputtype parameter pstypename supports wildcards validatecount validatedrive validatelength validatenotnull validatenotnullorempty validatepattern validaterange validatescript validateset validateuserdrive".split(
-    " ",
-  );
+  ...comparisons.flatMap((comparison) => [`i${comparison}`, `c${comparison}`]),
+  ...`
+    and or xor not band bor bxor bnot shl shr as is isnot join f
+  `
+    .trim()
+    .split(/\s+/),
+].map((operator) => `-${operator}`);
+const helpKeywords = `
+    synopsis description example inputs outputs notes link component role functionality
+    parameter forwardhelptargetname forwardhelpcategory remotehelprunspace externalhelp
+  `
+  .trim()
+  .split(/\s+/)
+  .map((keyword) => `.${keyword}`);
+const attributes = `
+  alias allowemptycollection allowemptystring allownull argumentcompleter cmdletbinding
+  credential dscproperty dsclocalconfigurationmanager outputtype parameter pstypename supports
+  wildcards validatecount validatedrive validatelength validatenotnull validatenotnullorempty
+  validatepattern validaterange validatescript validateset validateuserdrive
+`
+  .trim()
+  .split(/\s+/);
 const escape = on(
   "`",
   literal("`"),
@@ -82,12 +97,10 @@ function variables(after: readonly Effect[] = []): Arm[] {
       literal("$"),
       bytes(variableName),
       classify(
-        [
-          ...["$true", "$false", "$null"].map((text) => ({
-            text,
-            then: [paint("constant.builtin"), ...after],
-          })),
-        ],
+        ["$true", "$false", "$null"].map((text) => ({
+          text,
+          then: [paint("constant.builtin"), ...after],
+        })),
         [paint("variable"), ...after],
         { caseless: true },
       ),
@@ -113,44 +126,32 @@ const number = on(
   paint("number"),
 );
 
-function code(atCommand: boolean, inHash = false): State {
-  const commandState = inHash ? "hashCommand" : "command";
-  const argumentState = inHash ? "hashArguments" : "arguments";
+function code(position: "command" | "argument", context: "ordinary" | "hash" = "ordinary"): State {
+  const atCommand = position === "command";
+  const contexts = {
+    ordinary: { command: "command", argument: "arguments", separator: "command" },
+    hash: { command: "hashCommand", argument: "hashArguments", separator: "hashKey" },
+  } as const;
+  const { command: commandState, argument: argumentState, separator } = contexts[context];
   const after = atCommand ? [setState(argumentState)] : [];
-  const keywordCases = keywords.map((text) => ({
-    text,
-    then: [
-      paint("keyword"),
-      setState(
-        ["function", "filter", "workflow"].includes(text)
-          ? "functionName"
-          : ["class", "enum"].includes(text)
-            ? "typeName"
-            : [
-                  "return",
-                  "throw",
-                  "exit",
-                  "if",
-                  "elseif",
-                  "while",
-                  "until",
-                  "switch",
-                  "foreach",
-                  "for",
-                  "catch",
-                  "param",
-                ].includes(text)
-              ? argumentState
-              : commandState,
-      ),
-    ],
-  }));
+  const functionKeywords = ["function", "filter", "workflow"];
+  const typeKeywords = ["class", "enum"];
+  const argumentKeywords = `return throw exit if elseif while until switch foreach for catch param`
+    .trim()
+    .split(/\s+/);
+  const keywordCases = keywords.map((text) => {
+    let nextState: string = commandState;
+    if (functionKeywords.includes(text)) nextState = "functionName";
+    else if (typeKeywords.includes(text)) nextState = "typeName";
+    else if (argumentKeywords.includes(text)) nextState = argumentState;
+    return { text, then: [paint("keyword"), setState(nextState)] };
+  });
   return {
     style: "plain",
     arms: [
       on(byteSet({ bytes: [0xef] }), lineStart(), literal("\ufeff"), paint("plain")),
       on(" \t\r", bytes(" \t\r"), paint("plain")),
-      token("\n", "plain", setState(inHash ? "hashKey" : "command")),
+      token("\n", "plain", setState(separator)),
       token("<#", "comment", pushState("blockComment")),
       token("#", "comment", pushState("lineComment")),
       escape,
@@ -221,7 +222,7 @@ function code(atCommand: boolean, inHash = false): State {
       token("&&", "operator", setState(commandState)),
       token("||", "operator", setState(commandState)),
       token("|", "operator", setState(commandState)),
-      token(";", "operator", setState(inHash ? "hashKey" : "command")),
+      token(";", "operator", setState(separator)),
       on("=", literal("="), paint("operator"), setState(commandState)),
       on("&", literal("&"), paint("operator"), setState(commandState)),
       on("?", choice([literal("??=")], [literal("??")], [literal("?")]), paint("operator")),
@@ -242,10 +243,10 @@ function code(atCommand: boolean, inHash = false): State {
 // Command positions, type/attribute names and here-string terminators are lexical
 // approximations; PowerShell evaluation and parser-driven command resolution are not performed.
 const states: Record<string, State> = {
-  command: code(true),
-  arguments: code(false),
-  hashCommand: code(true, true),
-  hashArguments: code(false, true),
+  command: code("command"),
+  arguments: code("argument"),
+  hashCommand: code("command", "hash"),
+  hashArguments: code("argument", "hash"),
   hashKey: {
     style: "plain",
     arms: [
