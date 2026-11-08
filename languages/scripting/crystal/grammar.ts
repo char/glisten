@@ -1,3 +1,3 @@
 import { ruby } from "../ruby/builder.ts";
 
-export default ruby(true);
+export default ruby("crystal");

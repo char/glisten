@@ -1,3 +1,3 @@
 import { ruby } from "./builder.ts";
 
-export default ruby(false);
+export default ruby("ruby");

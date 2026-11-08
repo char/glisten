@@ -29,26 +29,56 @@ import {
   type State,
 } from "#/grammar/mod.ts";
 
-export function ruby(crystal: boolean) {
+type Dialect = "ruby" | "crystal";
+
+export function ruby(dialect: Dialect) {
+  const crystal = dialect === "crystal";
   const all = byteSet({ ranges: [[0, 255]] });
   const digit = range("0", "9");
   const start = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
   const rest = union(start, digit);
   const ident = [byte(start), bytes(rest, { min: 0 })];
   const space = bytes(" \t", { min: 0 });
-  const keywords = (
-    crystal
-      ? "abstract alias annotation as as? asm begin break case class def do else elsif end ensure enum extend for fun if ifdef in include lib macro module next of out private protected require rescue return select struct then type undef union unless until when while with yield"
-      : "alias and begin break case class def defined? do else elsif end ensure for if in module next not or redo rescue retry return then undef unless until when while yield"
-  ).split(" ");
+  const keywords = crystal
+    ? `
+        abstract alias annotation as as? asm begin break case class def do else elsif end ensure
+        enum extend for fun if ifdef in include lib macro module next of out private protected
+        require rescue return select struct then type undef union unless until when while with
+        yield
+      `
+        .trim()
+        .split(/\s+/)
+    : `
+        alias and begin break case class def defined? do else elsif end ensure for if in module
+        next not or redo rescue retry return then undef unless until when while yield
+      `
+        .trim()
+        .split(/\s+/);
   const values = crystal
-    ? ["true", "false", "nil", "self", "super", "__FILE__", "__LINE__", "__DIR__", "__END_LINE__"]
-    : ["true", "false", "nil", "self", "super", "__FILE__", "__LINE__", "__ENCODING__"];
-  const builtins = (
-    crystal
-      ? "puts print p pp raise sizeof instance_sizeof pointerof offsetof typeof uninitialized is_a? responds_to? getter setter property getter? property? record delegate forward_missing_to"
-      : "puts print p warn require require_relative load raise fail attr_reader attr_writer attr_accessor include extend prepend private protected public module_function block_given? proc lambda loop sleep exit abort sprintf format binding eval"
-  ).split(" ");
+    ? `
+        true false nil self super __FILE__ __LINE__ __DIR__ __END_LINE__
+      `
+        .trim()
+        .split(/\s+/)
+    : `
+        true false nil self super __FILE__ __LINE__ __ENCODING__
+      `
+        .trim()
+        .split(/\s+/);
+  const builtins = crystal
+    ? `
+        puts print p pp raise sizeof instance_sizeof pointerof offsetof typeof uninitialized is_a?
+        responds_to? getter setter property getter? property? record delegate forward_missing_to
+      `
+        .trim()
+        .split(/\s+/)
+    : `
+        puts print p warn require require_relative load raise fail attr_reader attr_writer
+        attr_accessor include extend prepend private protected public module_function block_given?
+        proc lambda loop sleep exit abort sprintf format binding eval
+      `
+        .trim()
+        .split(/\s+/);
   const digits = (set: typeof digit) => [byte(set), repeat(bytes("_", { min: 0 }), byte(set))];
   const hex = union(digit, range("a", "f"), range("A", "F"));
   const crystalCharEscape = [
@@ -114,12 +144,11 @@ export function ruby(crystal: boolean) {
     for (const [, kind] of percentKinds) {
       const state = `percent-${opener.charCodeAt(0)}-${kind}`;
       const nested = `${state}-nested`;
-      const common = [
-        ...(opener === "\\" ? [] : [escape]),
-        ...(kind === "literal" ? [] : interpolation),
-        ...macroInterpolation,
-        ...(closer !== opener ? [token(opener, "string", pushState(nested))] : []),
-      ];
+      const common: Arm[] = [];
+      if (opener !== "\\") common.push(escape);
+      if (kind !== "literal") common.push(...interpolation);
+      common.push(...macroInterpolation);
+      if (closer !== opener) common.push(token(opener, "string", pushState(nested)));
       percentStates[state] = {
         style: "string",
         arms: [
@@ -195,16 +224,16 @@ export function ruby(crystal: boolean) {
   }
 
   const groups = [
-    ["root", "", ""],
-    ["paren", "(", ")"],
-    ["bracket", "[", "]"],
-    ["brace", "{", "}"],
-    ["interp", "", "}"],
+    ["root", ""],
+    ["paren", ")"],
+    ["bracket", "]"],
+    ["brace", "}"],
+    ["interp", "}"],
     ...(crystal
       ? ([
-          ["macroOutput", "", "}}"],
-          ["macroTag", "", "%}"],
-          ["annotation", "", "]"],
+          ["macroOutput", "}}"],
+          ["macroTag", "%}"],
+          ["annotation", "]"],
         ] as const)
       : []),
   ] as const;
@@ -471,7 +500,7 @@ export function ruby(crystal: boolean) {
     ];
   }
   const states: Record<string, State> = { ...percentStates, ...heredocStates };
-  for (const [group, , close] of groups)
+  for (const [group, close] of groups)
     for (const value of [false, true])
       states[stateName(group, value)] = { style: "plain", arms: code(group, value, close) };
   Object.assign(states, {
@@ -593,7 +622,7 @@ export function ruby(crystal: boolean) {
     },
   });
   return defineGrammar({
-    name: crystal ? "crystal" : "ruby",
+    name: dialect,
     aliases: crystal ? [] : ["rb"],
     initial: "expr",
     queueSweep: { footer: "heredocFooter", footerStyle: "label", tabStyle: "string" },

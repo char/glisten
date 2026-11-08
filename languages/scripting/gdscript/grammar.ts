@@ -27,83 +27,27 @@ const upper = range("A", "Z");
 const start = union("_", range("a", "z"), upper, byteSet({ ranges: [[128, 255]] }));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
-const words = [
-  "and",
-  "as",
-  "assert",
-  "await",
-  "break",
-  "breakpoint",
-  "class",
-  "class_name",
-  "const",
-  "continue",
-  "elif",
-  "else",
-  "enum",
-  "extends",
-  "for",
-  "func",
-  "if",
-  "in",
-  "is",
-  "match",
-  "namespace",
-  "not",
-  "or",
-  "pass",
-  "preload",
-  "return",
-  "signal",
-  "static",
-  "super",
-  "trait",
-  "var",
-  "when",
-  "while",
-];
-const constants = ["true", "false", "null", "PI", "TAU", "INF", "NAN"];
-const types = [
-  "void",
-  "bool",
-  "int",
-  "float",
-  "String",
-  "StringName",
-  "NodePath",
-  "Array",
-  "Dictionary",
-  "Vector2",
-  "Vector2i",
-  "Vector3",
-  "Vector3i",
-  "Vector4",
-  "Vector4i",
-  "Rect2",
-  "Rect2i",
-  "Transform2D",
-  "Transform3D",
-  "Plane",
-  "Quaternion",
-  "AABB",
-  "Basis",
-  "Projection",
-  "Color",
-  "RID",
-  "Object",
-  "Callable",
-  "Signal",
-  "PackedByteArray",
-  "PackedInt32Array",
-  "PackedInt64Array",
-  "PackedFloat32Array",
-  "PackedFloat64Array",
-  "PackedStringArray",
-  "PackedVector2Array",
-  "PackedVector3Array",
-  "PackedVector4Array",
-  "PackedColorArray",
-];
+const words = `
+  and as assert await break breakpoint class class_name const continue elif else enum extends for
+  func if in is match namespace not or pass preload return signal static super trait var when
+  while
+`
+  .trim()
+  .split(/\s+/);
+const constants = `
+  true false null PI TAU INF NAN
+`
+  .trim()
+  .split(/\s+/);
+const types = `
+  void bool int float String StringName NodePath Array Dictionary Vector2 Vector2i Vector3
+  Vector3i Vector4 Vector4i Rect2 Rect2i Transform2D Transform3D Plane Quaternion AABB Basis
+  Projection Color RID Object Callable Signal PackedByteArray PackedInt32Array PackedInt64Array
+  PackedFloat32Array PackedFloat64Array PackedStringArray PackedVector2Array PackedVector3Array
+  PackedVector4Array PackedColorArray
+`
+  .trim()
+  .split(/\s+/);
 const table = [
   ...keywordTable(constants, "constant.builtin"),
   ...keywordTable(types, "type"),
@@ -137,8 +81,13 @@ const number = on(
   ),
   paint("number"),
 );
-const openers = ["'''", '"""', "'", '"'].flatMap((quote, index) => {
-  const suffix = ["TripleSingle", "TripleDouble", "Single", "Double"][index];
+const quoteStyles = [
+  ["'''", "TripleSingle"],
+  ['"""', "TripleDouble"],
+  ["'", "Single"],
+  ['"', "Double"],
+] as const;
+const openers = quoteStyles.flatMap(([quote, suffix]) => {
   return [
     on("r", literal("r"), literal(quote), paint("string"), pushState("raw" + suffix)),
     on("&^$", byte("&^$"), literal(quote), paint("string"), pushState("string" + suffix)),
@@ -234,8 +183,7 @@ export default defineGrammar<string>({
       otherwise: [popState()],
     },
     ...Object.fromEntries(
-      ["'''", '"""', "'", '"'].flatMap((quote, index) => {
-        const suffix = ["TripleSingle", "TripleDouble", "Single", "Double"][index];
+      quoteStyles.flatMap(([quote, suffix]) => {
         return ["string", "raw"].map((kind) => [
           kind + suffix,
           {

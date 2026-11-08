@@ -55,51 +55,17 @@ const ident = [
   optional(literal("!"), notNext("=")),
 ];
 const gap = bytes(" \t\r\n", { min: 0 });
-const keywords = [
-  "begin",
-  "let",
-  "if",
-  "elseif",
-  "else",
-  "for",
-  "while",
-  "in",
-  "isa",
-  "try",
-  "catch",
-  "finally",
-  "struct",
-  "mutable",
-  "module",
-  "baremodule",
-  "using",
-  "import",
-  "export",
-  "public",
-  "quote",
-  "do",
-  "return",
-  "const",
-  "global",
-  "local",
-  "where",
-  "break",
-  "continue",
-  "outer",
-  "as",
-];
-const constants = [
-  "true",
-  "false",
-  "nothing",
-  "missing",
-  "NaN",
-  "NaN16",
-  "NaN32",
-  "Inf",
-  "Inf16",
-  "Inf32",
-];
+const keywords = `
+  begin let if elseif else for while in isa try catch finally struct mutable module baremodule
+  using import export public quote do return const global local where break continue outer as
+`
+  .trim()
+  .split(/\s+/);
+const constants = `
+  true false nothing missing NaN NaN16 NaN32 Inf Inf16 Inf32
+`
+  .trim()
+  .split(/\s+/);
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const dec = union(digit, "_");
 const number = [

@@ -47,69 +47,24 @@ const number = [
     ],
   ),
 ];
-const keywords = [
-  "if",
-  "elseif",
-  "else",
-  "for",
-  "parfor",
-  "while",
-  "switch",
-  "case",
-  "otherwise",
-  "try",
-  "catch",
-  "return",
-  "break",
-  "continue",
-  "global",
-  "persistent",
-  "classdef",
-  "properties",
-  "methods",
-  "events",
-  "enumeration",
-  "arguments",
-  "spmd",
-  "import",
-];
-const constants = ["true", "false", "Inf", "NaN", "pi", "eps"];
-const commands = [
-  "hold",
-  "format",
-  "disp",
-  "grid",
-  "axis",
-  "shading",
-  "colormap",
-  "view",
-  "cd",
-  "addpath",
-  "rmpath",
-  "path",
-  "clear",
-  "close",
-  "load",
-  "save",
-  "set",
-  "title",
-  "xlabel",
-  "ylabel",
-  "zlabel",
-  "legend",
-  "warning",
-  "echo",
-  "diary",
-  "more",
-  "type",
-  "delete",
-  "edit",
-  "open",
-  "help",
-  "doc",
-  "which",
-  "whos",
-];
+const keywords = `
+  if elseif else for parfor while switch case otherwise try catch return break continue global
+  persistent classdef properties methods events enumeration arguments spmd import
+`
+  .trim()
+  .split(/\s+/);
+const constants = `
+  true false Inf NaN pi eps
+`
+  .trim()
+  .split(/\s+/);
+const commands = `
+  hold format disp grid axis shading colormap view cd addpath rmpath path clear close load save
+  set title xlabel ylabel zlabel legend warning echo diary more type delete edit open help doc
+  which whos
+`
+  .trim()
+  .split(/\s+/);
 const groups = [
   ["root", ""],
   ["paren", ")"],
@@ -212,16 +167,7 @@ Object.assign(states, {
   blockComment: {
     style: "comment",
     arms: [
-      on(
-        union(horizontal, "%"),
-        lineStart(),
-        bytes(horizontal, { min: 0 }),
-        literal("%{"),
-        bytes(horizontal, { min: 0 }),
-        lineEnd(),
-        paint("comment"),
-        pushState("blockComment"),
-      ),
+      blockOpen,
       on(
         union(horizontal, "%"),
         lineStart(),

@@ -43,11 +43,13 @@ const variableRest = repeat(choice([bytes(varChar)], [literal("::"), bytes(":", 
 const separators = " \t\v\f\r\n;[]$\\";
 const bare = except(all, separators);
 const commandName = except(bare, '"{#');
-const keywords =
-  `append break catch continue default dict error eval finally foreach global if lappend lassign lindex linsert list llength lmap lrange lrepeat lreplace lreverse lsearch lset lsort namespace on package proc return set throw trap try unset variable while`.split(
-    /\s+/,
-  );
-const direct = new Set(["proc", "if", "while", "for", "catch", "eval", "namespace"]);
+const keywords = `
+  append break catch continue default dict error eval finally foreach global if lappend lassign
+  lindex linsert list llength lmap lrange lrepeat lreplace lreverse lsearch lset lsort namespace
+  on package proc return set throw trap try unset variable while
+`
+  .trim()
+  .split(/\s+/);
 const scriptCases = [
   { text: "proc", target: "procName" },
   { text: "if", target: "ifTest" },
@@ -57,6 +59,7 @@ const scriptCases = [
   { text: "eval", target: "evalBody" },
   { text: "namespace", target: "namespaceSub" },
 ];
+const direct = new Set(scriptCases.map(({ text }) => text));
 const escape = [
   on(
     "\\",

@@ -41,28 +41,22 @@ const quotedName = [
   repeat(choice([literal("\\"), character()], [byte(except(all, "`\\"))])),
   literal("`"),
 ];
-const ws = bytes(" \t\r\n", { min: 0 });
+const whitespace = bytes(" \t\r\n", { min: 0 });
 const keywordCases = [
   ...keywordTable(
-    ["function", "if", "else", "for", "while", "repeat", "break", "next", "return", "in"],
+    `
+      function if else for while repeat break next return in
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   ),
   ...keywordTable(
-    [
-      "TRUE",
-      "FALSE",
-      "T",
-      "F",
-      "NULL",
-      "NA",
-      "NA_integer_",
-      "NA_real_",
-      "NA_complex_",
-      "NA_character_",
-      "Inf",
-      "NaN",
-      "...",
-    ],
+    `
+      TRUE FALSE T F NULL NA NA_integer_ NA_real_ NA_complex_ NA_character_ Inf NaN ...
+    `
+      .trim()
+      .split(/\s+/),
     "constant.builtin",
   ),
 ];
@@ -126,15 +120,15 @@ const comments = [
   token("#", "comment", pushState("lineComment")),
 ];
 const assignmentFunction = lookahead(
-  ws,
+  whitespace,
   choice([literal("<-")], [literal("<<-")], [literal("="), notNext("=")]),
-  ws,
+  whitespace,
   choice([literal("function"), notNext(rest)], [literal("\\")]),
-  ws,
+  whitespace,
   literal("("),
 );
-const call = lookahead(ws, literal("("));
-const argument = lookahead(ws, literal("="), notNext("="));
+const call = lookahead(whitespace, literal("("));
+const argument = lookahead(whitespace, literal("="), notNext("="));
 const code = (inParens: boolean) => [
   ...comments,
   on(

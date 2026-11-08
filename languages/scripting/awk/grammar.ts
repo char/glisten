@@ -28,20 +28,37 @@ const digit = range("0", "9");
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const start = union("_", range("a", "z"), range("A", "Z"));
 const rest = union(start, digit);
-const keywords =
-  "if else while for in do break continue next nextfile exit return delete getline function func switch case default".split(
-    " ",
-  );
-const values =
-  "ARGC ARGV ARGIND CONVFMT ENVIRON ERRNO FIELDWIDTHS FILENAME FNR FPAT FS FUNCTAB IGNORECASE LINT NF NR OFMT OFS ORS PREC PROCINFO ROUNDMODE RS RT RSTART RLENGTH SUBSEP SYMTAB TEXTDOMAIN BINMODE".split(
-    " ",
-  );
-const functions =
-  "atan2 cos sin exp log sqrt int rand srand asort asorti gensub gsub index length match patsplit split sprintf strtonum sub substr tolower toupper mktime strftime systime close fflush system bindtextdomain dcgettext dcngettext isarray typeof and compl lshift or rshift xor".split(
-    " ",
-  );
-const statements = ["print", "printf"];
-const special = ["BEGIN", "END", "BEGINFILE", "ENDFILE"];
+const keywords = `
+  if else while for in do break continue next nextfile exit return delete getline function func
+  switch case default
+`
+  .trim()
+  .split(/\s+/);
+const values = `
+  ARGC ARGV ARGIND CONVFMT ENVIRON ERRNO FIELDWIDTHS FILENAME FNR FPAT FS FUNCTAB IGNORECASE LINT
+  NF NR OFMT OFS ORS PREC PROCINFO ROUNDMODE RS RT RSTART RLENGTH SUBSEP SYMTAB TEXTDOMAIN BINMODE
+`
+  .trim()
+  .split(/\s+/);
+const functions = `
+  atan2 cos sin exp log sqrt int rand srand asort asorti gensub gsub index length match patsplit
+  split sprintf strtonum sub substr tolower toupper mktime strftime systime close fflush system
+  bindtextdomain dcgettext dcngettext isarray typeof and compl lshift or rshift xor
+`
+  .trim()
+  .split(/\s+/);
+const statements = `
+  print printf
+`
+  .trim()
+  .split(/\s+/);
+const special = `
+  BEGIN END BEGINFILE ENDFILE
+`
+  .trim()
+  .split(/\s+/);
+
+const escape = on("\\", literal("\\"), character(), paint("string.escape"));
 
 // Gawk's awkgram.y regexp production sets want_regexp for the lexer: after an
 // operand, slash is division, not an implicitly concatenated regexp. Parent frames retain the result expected
@@ -196,16 +213,12 @@ export default defineGrammar({
     comment: { style: "comment", arms: [redispatch("\n", popState())] },
     string: {
       style: "string",
-      arms: [
-        on("\\", literal("\\"), character(), paint("string.escape")),
-        token('"', "string", popState()),
-        redispatch("\n", popState()),
-      ],
+      arms: [escape, token('"', "string", popState()), redispatch("\n", popState())],
     },
     regex: {
       style: "string",
       arms: [
-        on("\\", literal("\\"), character(), paint("string.escape")),
+        escape,
         token("[", "string", pushState("regexClassStart")),
         token("/", "string", popState()),
         redispatch("\n", popState()),
@@ -232,7 +245,7 @@ export default defineGrammar({
             paint("string"),
           ),
         ),
-        on("\\", literal("\\"), character(), paint("string.escape")),
+        escape,
         token("]", "string", popState()),
         redispatch("\n", popState()),
       ],

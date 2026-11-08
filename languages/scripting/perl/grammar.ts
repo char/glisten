@@ -213,10 +213,15 @@ const groups = [
 ] as const;
 const stateName = (group: string, value: boolean) =>
   group === "root" ? (value ? "value" : "expr") : `${group}${value ? "Value" : "Expr"}`;
-const terms =
-  "if unless while until for foreach given when return die warn print say printf do eval map grep sort split join keys values each defined exists delete scalar ref bless caller shift pop push unshift splice open close read write chomp chop length substr index rindex uc lc quotemeta require use no my our local state package sub and or xor not eq ne lt gt le ge cmp x isa continue last next redo goto format use constant BEGIN CHECK INIT END UNITCHECK".split(
-    " ",
-  );
+const terms = `
+  if unless while until for foreach given when return die warn print say printf do eval map grep
+  sort split join keys values each defined exists delete scalar ref bless caller shift pop push
+  unshift splice open close read write chomp chop length substr index rindex uc lc quotemeta
+  require use no my our local state package sub and or xor not eq ne lt gt le ge cmp x isa
+  continue last next redo goto format use constant BEGIN CHECK INIT END UNITCHECK
+`
+  .trim()
+  .split(/\s+/);
 const digits = union(digit, "_");
 function code(group: string, value: boolean, closing: string): Arm[] {
   const expr = stateName(group, false),

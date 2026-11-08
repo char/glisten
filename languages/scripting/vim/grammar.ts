@@ -73,19 +73,13 @@ const commands = [
   ["con", "continue"],
   ["unl", "unlet"],
 ] as const;
-const noArgs = new Set([
-  "endfunction",
-  "else",
-  "endif",
-  "endfor",
-  "endwhile",
-  "try",
-  "finally",
-  "endtry",
-  "endclass",
-  "break",
-  "continue",
-]);
+const noArgs = new Set(
+  `
+    endfunction else endif endfor endwhile try finally endtry endclass break continue
+  `
+    .trim()
+    .split(/\s+/),
+);
 const multi = [
   ["ec", "echo"],
   ["echon", "echon"],
@@ -437,28 +431,12 @@ for (const d of ["legacy", "vim9"] as const) {
     ],
   };
   const syntaxWords = keywordTable(
-    [
-      "case",
-      "clear",
-      "cluster",
-      "conceal",
-      "include",
-      "iskeyword",
-      "keyword",
-      "list",
-      "match",
-      "off",
-      "on",
-      "region",
-      "reset",
-      "spell",
-      "sync",
-      "contained",
-      "transparent",
-      "keepend",
-      "extend",
-      "oneline",
-    ],
+    `
+      case clear cluster conceal include iskeyword keyword list match off on region reset spell
+      sync contained transparent keepend extend oneline
+    `
+      .trim()
+      .split(/\s+/),
     "keyword",
   );
   const syntaxPattern = on(

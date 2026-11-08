@@ -28,114 +28,26 @@ const upper = range("A", "Z");
 const start = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
-const keywords = ["False", "None", "True"];
-const reserved = [
-  "and",
-  "as",
-  "assert",
-  "async",
-  "await",
-  "break",
-  "class",
-  "continue",
-  "def",
-  "del",
-  "elif",
-  "else",
-  "except",
-  "finally",
-  "for",
-  "from",
-  "global",
-  "if",
-  "import",
-  "in",
-  "is",
-  "lambda",
-  "nonlocal",
-  "not",
-  "or",
-  "pass",
-  "raise",
-  "return",
-  "try",
-  "while",
-  "with",
-  "yield",
-];
-const builtins = [
-  "abs",
-  "aiter",
-  "all",
-  "anext",
-  "any",
-  "ascii",
-  "bin",
-  "bool",
-  "breakpoint",
-  "bytearray",
-  "bytes",
-  "callable",
-  "chr",
-  "classmethod",
-  "compile",
-  "complex",
-  "delattr",
-  "dict",
-  "dir",
-  "divmod",
-  "enumerate",
-  "eval",
-  "exec",
-  "filter",
-  "float",
-  "format",
-  "frozenset",
-  "getattr",
-  "globals",
-  "hasattr",
-  "hash",
-  "help",
-  "hex",
-  "id",
-  "input",
-  "int",
-  "isinstance",
-  "issubclass",
-  "iter",
-  "len",
-  "list",
-  "locals",
-  "map",
-  "max",
-  "memoryview",
-  "min",
-  "next",
-  "object",
-  "oct",
-  "open",
-  "ord",
-  "pow",
-  "print",
-  "property",
-  "range",
-  "repr",
-  "reversed",
-  "round",
-  "set",
-  "setattr",
-  "slice",
-  "sorted",
-  "staticmethod",
-  "str",
-  "sum",
-  "super",
-  "tuple",
-  "type",
-  "vars",
-  "zip",
-  "__import__",
-];
+const keywords = `
+  False None True
+`
+  .trim()
+  .split(/\s+/);
+const reserved = `
+  and as assert async await break class continue def del elif else except finally for from global
+  if import in is lambda nonlocal not or pass raise return try while with yield
+`
+  .trim()
+  .split(/\s+/);
+const builtins = `
+  abs aiter all anext any ascii bin bool breakpoint bytearray bytes callable chr classmethod
+  compile complex delattr dict dir divmod enumerate eval exec filter float format frozenset
+  getattr globals hasattr hash help hex id input int isinstance issubclass iter len list locals
+  map max memoryview min next object oct open ord pow print property range repr reversed round set
+  setattr slice sorted staticmethod str sum super tuple type vars zip __import__
+`
+  .trim()
+  .split(/\s+/);
 const digits = (set = digit) => [byte(set), repeat(optional(literal("_")), byte(set))];
 const hex = union(digit, range("a", "f"), range("A", "F"));
 const number = on(
@@ -156,8 +68,13 @@ const number = on(
   ),
   paint("number"),
 );
-const stringOpeners = ["'''", '"""', "'", '"'].flatMap((quote, index) => {
-  const suffix = ["TripleSingle", "TripleDouble", "Single", "Double"][index];
+const quoteStyles = [
+  ["'''", "TripleSingle"],
+  ['"""', "TripleDouble"],
+  ["'", "Single"],
+  ['"', "Double"],
+] as const;
+const stringOpeners = quoteStyles.flatMap(([quote, suffix]) => {
   return [
     on(
       "fFrR",
@@ -432,8 +349,7 @@ export default defineGrammar<string>({
       otherwise: [popState()],
     },
     ...Object.fromEntries(
-      ["'''", '"""', "'", '"'].flatMap((quote, index) => {
-        const suffix = ["TripleSingle", "TripleDouble", "Single", "Double"][index];
+      quoteStyles.flatMap(([quote, suffix]) => {
         return ["s", "f", "raw", "rf"].map((kind) => [
           kind + suffix,
           {

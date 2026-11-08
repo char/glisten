@@ -30,40 +30,16 @@ const start = union(range("a", "z"), range("A", "Z"), "_");
 const rest = union(start, digit);
 const ident = [byte(start), bytes(rest, { min: 0 })];
 const levels = slot.run("longLevel");
-const keywords = [
-  "and",
-  "break",
-  "do",
-  "else",
-  "elseif",
-  "end",
-  "for",
-  "goto",
-  "if",
-  "in",
-  "not",
-  "or",
-  "repeat",
-  "return",
-  "then",
-  "until",
-  "while",
-];
-const builtin = [
-  "_G",
-  "_VERSION",
-  "coroutine",
-  "debug",
-  "io",
-  "math",
-  "os",
-  "package",
-  "string",
-  "table",
-  "utf8",
-  "bit",
-  "jit",
-];
+const keywords = `
+  and break do else elseif end for goto if in not or repeat return then until while
+`
+  .trim()
+  .split(/\s+/);
+const builtin = `
+  _G _VERSION coroutine debug io math os package string table utf8 bit jit
+`
+  .trim()
+  .split(/\s+/);
 const cases = [
   { text: "local", then: [paint("keyword"), pushState("localName")] },
   { text: "function", then: [paint("keyword"), pushState("functionName")] },
