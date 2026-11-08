@@ -3,6 +3,7 @@ import type { Callee, CallContext } from "./engine.ts";
 import { Names } from "./names.ts";
 import { Spans } from "./spans.ts";
 
+// Segment triples are [source start, source end, document-boundary flags].
 type Batch = { target: Callee; segments: Uint32Array; buffer: Uint32Array<ArrayBuffer> };
 
 /**

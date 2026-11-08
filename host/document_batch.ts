@@ -4,7 +4,9 @@ import { document, validatePieces, type Document, type SourceRange } from "./doc
 /** Documents and their offsets in the input presented to a callee. */
 export type DocumentBatch = {
   readonly context: CallContext;
+  /** [start, end] byte offsets in context.source(), one pair per document. */
   readonly ranges: Uint32Array;
+  /** Logical document offsets mapped back to the original source pieces. */
   readonly maps: readonly Document[];
 };
 

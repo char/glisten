@@ -65,12 +65,12 @@ export class Engine implements Callee {
       return { status: "ok", records: () => records, injections: 0, groups: 0 };
     }
     let documentAddress: number;
-    let output: number;
+    let outputAddress: number;
     try {
       documentAddress = arena.allocate(documents.byteLength);
       new Uint32Array(arena.buffer, documentAddress, documents.length).set(documents);
-      output = arena.outputStart();
-      arena.ensure(output);
+      outputAddress = arena.outputStart();
+      arena.ensure(outputAddress);
     } catch (error) {
       if (error instanceof ResourceError) return { status: "resource" };
       throw error;
@@ -83,7 +83,7 @@ export class Engine implements Callee {
         source.length,
         documentAddress,
         documents.length / 2,
-        output,
+        outputAddress,
       );
     } catch (error) {
       if (
@@ -97,10 +97,10 @@ export class Engine implements Callee {
     }
     if (code === status.resource) return { status: "resource" };
     if (code !== status.ok) throw new Error(`Unknown module status ${code}`);
-    const count = Number(this.exports.records.value) >>> 0;
+    const recordCount = Number(this.exports.records.value) >>> 0;
     try {
       if (this.exports.scratchRequired) arena.ensure(Number(this.exports.scratchRequired.value));
-      arena.commitOutput(output + count * record.bytes);
+      arena.commitOutput(outputAddress + recordCount * record.bytes);
     } catch (error) {
       if (error instanceof ResourceError) return { status: "resource" };
       throw error;
@@ -112,7 +112,7 @@ export class Engine implements Callee {
       groups: this.exports.groups ? Number(this.exports.groups.value) >>> 0 : 0,
       records: () => {
         if (view === undefined || view.buffer !== arena.buffer)
-          view = new Uint32Array(arena.buffer, output, count * 2);
+          view = new Uint32Array(arena.buffer, outputAddress, recordCount * 2);
         return view;
       },
     };

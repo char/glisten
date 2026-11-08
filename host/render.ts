@@ -4,6 +4,12 @@ import { renderModule } from "./render_module.ts";
 
 const compiled = new WebAssembly.Module(renderModule);
 
+// These layouts are shared with render.wat.
+const styleEntryBytes = 32;
+const groupStyleEntryBytes = 16;
+const groupEntryBytes = 20;
+const inlineTagBytes = 8;
+
 /** Renderer tables live in permanent arena areas; output and composed records are temporary. */
 export class Renderer {
   private readonly renderWasm: (
@@ -45,16 +51,20 @@ export class Renderer {
     if (!this.table && !tags.some((tag) => tag !== undefined)) return;
     if (tags.length > this.capacity) {
       const capacity = Math.max(tags.length, this.capacity * 2, 8);
-      let table = this.arena.allocateArea(capacity * 32);
+      let table = this.arena.allocateArea(capacity * styleEntryBytes);
       // Address zero means "no table" to the renderer.
-      if (table === 0) table = this.arena.allocateArea(capacity * 32);
-      const groupTable = this.arena.allocateArea(capacity * 16);
+      if (table === 0) table = this.arena.allocateArea(capacity * styleEntryBytes);
+      const groupTable = this.arena.allocateArea(capacity * groupStyleEntryBytes);
       const bytes = new Uint8Array(this.arena.buffer);
-      bytes.fill(0, table, table + capacity * 32);
-      bytes.fill(0, groupTable, groupTable + capacity * 16);
+      bytes.fill(0, table, table + capacity * styleEntryBytes);
+      bytes.fill(0, groupTable, groupTable + capacity * groupStyleEntryBytes);
       if (this.table) {
-        bytes.copyWithin(table, this.table, this.table + this.capacity * 32);
-        bytes.copyWithin(groupTable, this.groupTable, this.groupTable + this.capacity * 16);
+        bytes.copyWithin(table, this.table, this.table + this.capacity * styleEntryBytes);
+        bytes.copyWithin(
+          groupTable,
+          this.groupTable,
+          this.groupTable + this.capacity * groupStyleEntryBytes,
+        );
       }
       this.table = table;
       this.groupTable = groupTable;
@@ -67,18 +77,18 @@ export class Renderer {
       const close = this.encoder.encode(`</g-${tag}>`);
       let openPointer = 0;
       let closePointer = 0;
-      if (open.length > 8) {
+      if (open.length > inlineTagBytes) {
         openPointer = this.arena.allocateArea(open.length);
         new Uint8Array(this.arena.buffer, openPointer, open.length).set(open);
       }
-      if (close.length > 8) {
+      if (close.length > inlineTagBytes) {
         closePointer = this.arena.allocateArea(close.length);
         new Uint8Array(this.arena.buffer, closePointer, close.length).set(close);
       }
-      const entry = this.table + id * 32;
+      const entry = this.table + id * styleEntryBytes;
       const bytes = new Uint8Array(this.arena.buffer);
-      if (open.length <= 8) bytes.set(open, entry);
-      if (close.length <= 8) bytes.set(close, entry + 8);
+      if (open.length <= inlineTagBytes) bytes.set(open, entry);
+      if (close.length <= inlineTagBytes) bytes.set(close, entry + inlineTagBytes);
       const view = new DataView(this.arena.buffer);
       view.setUint32(entry + 16, open.length, true);
       view.setUint32(entry + 20, close.length, true);
@@ -90,7 +100,7 @@ export class Renderer {
       );
       const prefixPointer = this.arena.allocateArea(prefix.length);
       new Uint8Array(this.arena.buffer, prefixPointer, prefix.length).set(prefix);
-      new Uint32Array(this.arena.buffer, this.groupTable + id * 16, 3).set([
+      new Uint32Array(this.arena.buffer, this.groupTable + id * groupStyleEntryBytes, 3).set([
         prefixPointer,
         prefix.length,
         attribute === undefined ? 0 : 1,
@@ -124,14 +134,14 @@ export class Renderer {
       new Uint32Array(this.arena.buffer, records, spans.length).set(spans);
     }
     // Inline tag stores can write up to seven bytes beyond the logical end.
-    let bound = length * 5 + count * this.maxTagBytes + 8;
+    let bound = length * 5 + count * this.maxTagBytes + inlineTagBytes;
     let layout = 0;
     let visible = 0;
     if (groups?.length) {
       const encoded = values?.map((value) =>
         value === undefined ? undefined : this.encoder.encode(value),
       );
-      layout = this.arena.allocate((groups.length / 3) * 20);
+      layout = this.arena.allocate((groups.length / 3) * groupEntryBytes);
       for (let i = 0; i < groups.length; i += 3) {
         const style = groups[i + 2]!;
         const prefix = this.prefixes[style];
@@ -143,7 +153,7 @@ export class Renderer {
           new Uint8Array(this.arena.buffer, pointer, value.length).set(value);
         }
         const valueLength = value?.length ?? groups[i + 1]! - groups[i]!;
-        const words = new Uint32Array(this.arena.buffer, layout + visible * 20, 5);
+        const words = new Uint32Array(this.arena.buffer, layout + visible * groupEntryBytes, 5);
         words[0] = groups[i]!;
         words[1] = groups[i + 1]!;
         words[2] = style;
@@ -165,7 +175,7 @@ export class Renderer {
           this.table,
           output,
           layout,
-          layout + visible * 20,
+          layout + visible * groupEntryBytes,
           this.groupTable,
           stack,
         )

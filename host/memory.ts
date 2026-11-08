@@ -17,9 +17,9 @@ export class ResourceError extends Error {
 export class Arena {
   /** Memory shared by all module instances attached to this arena. */
   readonly memory: WebAssembly.Memory;
-  private areasEnd = 0;
-  private cursor = 0;
-  private capacity: number = memory.pageBytes;
+  private permanentEnd = 0;
+  private allocationCursor = 0;
+  private capacityBytes: number = memory.pageBytes;
   private readonly encoder = new TextEncoder();
   /** The backing store of {@link memory}; re-read after a module call that may grow it. */
   buffer: ArrayBuffer;
@@ -39,17 +39,17 @@ export class Arena {
   /** Take the backing store again after a module call that may have grown memory. */
   refresh(): void {
     this.buffer = this.memory.buffer;
-    this.capacity = this.buffer.byteLength;
+    this.capacityBytes = this.buffer.byteLength;
   }
 
   /** Ensure bytes below the exclusive end are available and within the configured limit. */
   ensure(end: number): void {
     if (!Number.isSafeInteger(end) || end > this.limit || end < 0)
       throw new ResourceError("Memory limit exceeded");
-    if (end <= this.capacity) return;
+    if (end <= this.capacityBytes) return;
     const pages = Math.ceil(end / memory.pageBytes);
     try {
-      this.memory.grow(pages - this.capacity / memory.pageBytes);
+      this.memory.grow(pages - this.capacityBytes / memory.pageBytes);
     } catch {
       throw new ResourceError("Memory limit exceeded");
     }
@@ -58,9 +58,9 @@ export class Arena {
 
   /** Reserve a permanent, aligned module area; call only outside a highlight. */
   allocateArea(bytes: number): number {
-    this.cursor = this.areasEnd;
+    this.allocationCursor = this.permanentEnd;
     const base = this.allocate(bytes, memory.align);
-    this.areasEnd = this.cursor;
+    this.permanentEnd = this.allocationCursor;
     return base;
   }
 
@@ -71,7 +71,7 @@ export class Arena {
       const empty = new Uint8Array();
       return { source: () => empty, placement: { input: 0, arena: this } };
     }
-    const input = Math.ceil(this.cursor / memory.align) * memory.align;
+    const input = Math.ceil(this.allocationCursor / memory.align) * memory.align;
     const available = this.limit - input - memory.padding;
     if (available < 0) throw new ResourceError("Memory limit exceeded");
     const capacity =
@@ -90,7 +90,7 @@ export class Arena {
     }
     const end = input + length;
     new Uint8Array(this.buffer, end, memory.padding).fill(0);
-    this.cursor = end + memory.padding;
+    this.allocationCursor = end + memory.padding;
     let view: Uint8Array | undefined;
     return {
       source: () => {
@@ -150,26 +150,26 @@ export class Arena {
 
   /** Discard temporary allocations from the previous highlight. */
   begin(): void {
-    this.cursor = this.areasEnd;
+    this.allocationCursor = this.permanentEnd;
   }
 
   /** Reserve an aligned temporary range and return its byte offset. */
   allocate(bytes: number, alignment = 4): number {
-    const start = Math.ceil(this.cursor / alignment) * alignment;
+    const start = Math.ceil(this.allocationCursor / alignment) * alignment;
     const end = start + bytes;
     this.ensure(end);
-    this.cursor = end;
+    this.allocationCursor = end;
     return start;
   }
 
   /** Return the aligned address where a module can begin writing its records. */
   outputStart(): number {
-    return Math.ceil(this.cursor / 4) * 4;
+    return Math.ceil(this.allocationCursor / 4) * 4;
   }
 
   /** Preserve records through their exclusive end for the remainder of this call tree. */
   commitOutput(end: number): void {
     this.ensure(end);
-    this.cursor = end;
+    this.allocationCursor = end;
   }
 }

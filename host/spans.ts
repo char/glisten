@@ -1,4 +1,4 @@
-/** Collect tiled spans, merging adjacent spans with identical styles. */
+/** Collect [exclusive byte end, style ID] pairs, merging equal adjacent styles. */
 export class Spans {
   private words = new Uint32Array(32);
   private length = 0;
