@@ -1,14 +1,31 @@
 import type { Effect, Grammar, State } from "./mod.ts";
 import type { EffectValidationContext } from "./registry.ts";
 
+export type StateEffect =
+  | { readonly kind: "push"; readonly state: string }
+  | { readonly kind: "pop"; readonly fallback?: string }
+  | { readonly kind: "goto"; readonly state: string }
+  | { readonly kind: "resource" };
+
+/** Enter a state, returning to this one on `popState`. */
+export const pushState = (state: string): Effect => ({ kind: "push", state });
+/** Return to the state below, or use `atRoot` at the bottom if supplied. */
+export const popState = (options: { atRoot?: string } = {}): Effect =>
+  options.atRoot === undefined ? { kind: "pop" } : { kind: "pop", fallback: options.atRoot };
+/** Replace the current state. */
+export const setState = (state: string): Effect => ({ kind: "goto", state });
+/** Fail the current highlight as a resource error. */
+export const resource = (): Effect => ({ kind: "resource" });
+
 export function checkStateEffect(effect: Effect, context: EffectValidationContext): void {
   const { grammar, state: name, names, speculativeStates } = context;
-  if (speculativeStates.has(name) && effect.kind === "push")
+  const insideSpeculation = speculativeStates.has(name);
+  if (insideSpeculation && effect.kind === "push")
     throw new Error(`${grammar}.${name}: ordinary pushes inside speculation are not supported`);
-  if (!speculativeStates.has(name) && effect.kind === "abandon")
+  if (!insideSpeculation && effect.kind === "abandon")
     throw new Error(`${grammar}.${name}: abandon requires a speculative state`);
   if (
-    (effect.kind === "push" || (effect.kind === "goto" && !speculativeStates.has(name))) &&
+    (effect.kind === "push" || (effect.kind === "goto" && !insideSpeculation)) &&
     speculativeStates.has(effect.state)
   )
     throw new Error(`${grammar}.${name}: speculative states require a speculative opener`);
@@ -36,7 +53,7 @@ export function checkSlotTransitions(
   const returned = ownership.size === 1 ? ownership.values().next().value : undefined;
   let current: Ownership | undefined = ownershipOf(name);
   const pushed: (Ownership | undefined)[] = [];
-  const change = (target: string) => {
+  const checkReplacement = (target: string) => {
     if (current === undefined)
       throw new Error(
         `${grammar.name}.${name}: cannot determine slot ownership after pop before changing state`,
@@ -51,32 +68,16 @@ export function checkSlotTransitions(
       pushed.push(current);
       current = ownershipOf(effect.state);
     } else if (effect.kind === "pop") {
-      if (!pushed.length && effect.fallback !== undefined) change(effect.fallback);
+      if (!pushed.length && effect.fallback !== undefined) checkReplacement(effect.fallback);
       current = pushed.length ? pushed.pop() : returned;
     } else if (effect.kind === "goto") {
-      change(effect.state);
+      checkReplacement(effect.state);
       current = ownershipOf(effect.state);
     } else if (effect.kind === "queueOpen" && grammar.queueSweep) {
-      change(grammar.queueSweep.footer);
+      checkReplacement(grammar.queueSweep.footer);
     }
   }
 }
-
-export type StateEffect =
-  | { readonly kind: "push"; readonly state: string }
-  | { readonly kind: "pop"; readonly fallback?: string }
-  | { readonly kind: "goto"; readonly state: string }
-  | { readonly kind: "resource" };
-
-/** Enter a state, returning to this one on `popState`. */
-export const pushState = (state: string): Effect => ({ kind: "push", state });
-/** Return to the state below, or use `atRoot` at the bottom if supplied. */
-export const popState = (options: { atRoot?: string } = {}): Effect =>
-  options.atRoot === undefined ? { kind: "pop" } : { kind: "pop", fallback: options.atRoot };
-/** Replace the current state. */
-export const setState = (state: string): Effect => ({ kind: "goto", state });
-/** Fail the current highlight as a resource error. */
-export const resource = (): Effect => ({ kind: "resource" });
 
 export function checkZeroWidthOpen(
   effects: readonly Effect[],

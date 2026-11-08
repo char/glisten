@@ -45,17 +45,20 @@ export const cachedPrefix = (
   rest: ByteSet,
   ...suffix: Matcher[]
 ): Matcher => {
-  if (bytesOf(first).some((byte) => !bytesOf(rest).includes(byte)))
-    throw new Error("Prefix first set must be a subset of its rest set");
+  checkPrefixSets(first, rest);
   return { kind: "cachedPrefix", name, first, rest, suffix };
 };
+
+function checkPrefixSets(first: ByteSet, rest: ByteSet): void {
+  if (bytesOf(first).some((byte) => !bytesOf(rest).includes(byte)))
+    throw new Error("Prefix first set must be a subset of its rest set");
+}
 
 export function checkCachedPrefix(
   matcher: Extract<CombinatorMatcher, { kind: "cachedPrefix" }>,
   caches: Map<string, string>,
 ): void {
-  if (bytesOf(matcher.first).some((byte) => !bytesOf(matcher.rest).includes(byte)))
-    throw new Error("Prefix first set must be a subset of its rest set");
+  checkPrefixSets(matcher.first, matcher.rest);
   const definition = JSON.stringify([
     bytesOf(matcher.first),
     bytesOf(matcher.rest),

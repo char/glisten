@@ -8,6 +8,7 @@ export type Slot<K extends Kind> = {
   readonly name: string;
   readonly [brand]: true;
 };
+/** Run and counter slots can optionally belong to a stack frame rather than the document. */
 export type RunSlot = Slot<"run"> & { readonly scope?: "frame" };
 export type CounterSlot = Slot<"counter"> & { readonly scope?: "frame" };
 export type RangeSlot = Slot<"range">;
@@ -18,19 +19,23 @@ function makeSlot<K extends Kind>(kind: K, name: string): Slot<K> {
   return Object.freeze({ kind, name, [brand]: true as const });
 }
 
+function makeScopedSlot<K extends "run" | "counter">(
+  kind: K,
+  name: string,
+  options: { scope?: "frame" },
+): Slot<K> & { readonly scope?: "frame" } {
+  if (options.scope !== undefined && options.scope !== "frame")
+    throw new Error(`Invalid ${kind} slot scope`);
+  const value = makeSlot(kind, name);
+  return options.scope === "frame" ? Object.freeze({ ...value, scope: "frame" }) : value;
+}
+
+/** Declare distinct handles for grammar-local storage. */
 export const slot = {
-  run: (name: string, options: { scope?: "frame" } = {}): RunSlot => {
-    if (options.scope !== undefined && options.scope !== "frame")
-      throw new Error("Invalid run slot scope");
-    const value = makeSlot("run", name);
-    return options.scope === "frame" ? Object.freeze({ ...value, scope: "frame" }) : value;
-  },
-  counter: (name: string, options: { scope?: "frame" } = {}): CounterSlot => {
-    if (options.scope !== undefined && options.scope !== "frame")
-      throw new Error("Invalid counter slot scope");
-    const value = makeSlot("counter", name);
-    return options.scope === "frame" ? Object.freeze({ ...value, scope: "frame" }) : value;
-  },
+  run: (name: string, options: { scope?: "frame" } = {}): RunSlot =>
+    makeScopedSlot("run", name, options),
+  counter: (name: string, options: { scope?: "frame" } = {}): CounterSlot =>
+    makeScopedSlot("counter", name, options),
   range: (name: string): RangeSlot => makeSlot("range", name),
   column: (name: string): ColumnSlot => makeSlot("column", name),
 };

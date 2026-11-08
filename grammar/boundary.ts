@@ -1,6 +1,9 @@
 import { byteSet, bytesOf, checkColumn, type ByteSet } from "./bytes.ts";
 import type { Matcher } from "./mod.ts";
 
+/** Inclusive Unicode code-point ranges. */
+export type CharRanges = readonly (readonly [number, number])[];
+
 export type BoundaryMatcher =
   | { readonly kind: "baseState"; readonly states: readonly string[] }
   | { readonly kind: "notNext"; readonly set: ByteSet }
@@ -14,9 +17,6 @@ export const notNext = (set: ByteSet): Matcher => {
   bytesOf(set);
   return { kind: "notNext", set };
 };
-/** Inclusive Unicode code-point ranges. */
-export type CharRanges = readonly (readonly [number, number])[];
-
 export function checkCharRanges(ranges: CharRanges): void {
   if (!Array.isArray(ranges)) throw new RangeError("Expected Unicode code-point ranges");
   for (const range of ranges) {
@@ -34,24 +34,25 @@ export function checkCharRanges(ranges: CharRanges): void {
   }
 }
 
-const previousChar = (ranges: CharRanges, invert: boolean): Matcher => {
+const previousChar = (ranges: CharRanges, polarity: "in" | "notIn"): Matcher => {
   checkCharRanges(ranges);
   return {
     kind: "previousChar",
     ranges: ranges.map(([start, end]) => [start, end] as const),
-    invert,
+    invert: polarity === "notIn",
   };
 };
 
 /** Test the preceding UTF-8 scalar, or LF at document start. Malformed UTF-8 is not in any set. */
-export const previousCharIn = (ranges: CharRanges): Matcher => previousChar(ranges, false);
+export const previousCharIn = (ranges: CharRanges): Matcher => previousChar(ranges, "in");
 /** The complement of previousCharIn, including malformed UTF-8. */
-export const previousCharNotIn = (ranges: CharRanges): Matcher => previousChar(ranges, true);
+export const previousCharNotIn = (ranges: CharRanges): Matcher => previousChar(ranges, "notIn");
 
+const newline = "\n".charCodeAt(0);
 const notNewline = byteSet({
   ranges: [
-    [0, 9],
-    [11, 255],
+    [0, newline - 1],
+    [newline + 1, 255],
   ],
 });
 

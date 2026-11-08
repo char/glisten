@@ -2,19 +2,6 @@ import type { Grammar } from "./mod.ts";
 import { visitGrammar } from "./visit.ts";
 import type { EffectValidationContext } from "./registry.ts";
 
-export function checkQueueSweep(grammar: Grammar, names: Set<string>): void {
-  if (grammar.queueSweep && !names.has(grammar.queueSweep.footer))
-    throw new Error(`${grammar.name}: unknown queue footer state ${grammar.queueSweep.footer}`);
-}
-
-export function checkQueueOpen(
-  _effect: Extract<QueueEffect, { kind: "queueOpen" }>,
-  context: EffectValidationContext,
-): void {
-  if (!context.hasQueueSweep)
-    throw new Error(`${context.grammar}.${context.state}: queueOpen needs a queue sweep`);
-}
-
 export type FooterIndent = "none" | "tabs" | "whitespace";
 export type QueueEffect =
   | { readonly kind: "queueEnter" }
@@ -50,6 +37,19 @@ export const queueHas = (mask: 0 | 1 = 0, flags: 0 | 1 = 0): QueueMatcher => ({
 export const queueText = (): QueueMatcher => ({ kind: "queueText" });
 /** Match a queued delimiter followed by a segment-local newline or document end. */
 export const queueFooter = (): QueueMatcher => ({ kind: "queueFooter" });
+
+export function checkQueueSweep(grammar: Grammar, names: Set<string>): void {
+  if (grammar.queueSweep && !names.has(grammar.queueSweep.footer))
+    throw new Error(`${grammar.name}: unknown queue footer state ${grammar.queueSweep.footer}`);
+}
+
+export function checkQueueOpen(
+  _effect: Extract<QueueEffect, { kind: "queueOpen" }>,
+  context: EffectValidationContext,
+): void {
+  if (!context.hasQueueSweep)
+    throw new Error(`${context.grammar}.${context.state}: queueOpen needs a queue sweep`);
+}
 
 export function usesQueue(grammar: Grammar): boolean {
   let used = !!grammar.queueSweep;

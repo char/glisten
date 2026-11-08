@@ -12,11 +12,13 @@ export type SpeculationEffect =
     }
   | { readonly kind: "abandon" };
 
+/** Save a checkpoint and enter a speculative state. */
 export const speculate = (
   state: string,
   group?: string,
   isolate?: { readonly base: string; readonly group: string },
 ): SpeculationEffect => ({ kind: "speculate", state, group, isolate });
+/** Roll back the current speculative frame and retry from its opener. */
 export const abandon = (): SpeculationEffect => ({ kind: "abandon" });
 
 export function checkSpeculationArm(arm: Arm): void {

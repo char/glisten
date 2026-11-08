@@ -1,25 +1,6 @@
 import type { Effect } from "./mod.ts";
 import type { Style } from "./styles.ts";
 
-export function checkRecordEffects(effects: readonly Effect[]) {
-  if (!effects.some((effect) => effect.kind === "markRecord" || effect.kind === "patchRecord"))
-    return;
-  const paintPositions = effects.flatMap((effect, index) =>
-    effect.kind === "paint" ? [index] : [],
-  );
-  if (
-    paintPositions.length !== 1 ||
-    effects.filter((effect) => effect.kind === "markRecord").length > 1 ||
-    effects.filter((effect) => effect.kind === "patchRecord").length > 1 ||
-    effects.some((effect, index) =>
-      effect.kind === "markRecord"
-        ? index < paintPositions[0]!
-        : effect.kind === "patchRecord" && index > paintPositions[0]!,
-    )
-  )
-    throw new Error("Record patch must precede the single paint and mark must follow it");
-}
-
 export type RecordEffect =
   | { readonly kind: "paint"; readonly style: Style }
   | { readonly kind: "markRecord" }
@@ -39,3 +20,26 @@ export const wrap = (style: Style, options: { from?: "arm" } = {}): Effect => ({
   style,
   from: options.from ?? "frame",
 });
+
+export function checkRecordEffects(effects: readonly Effect[]) {
+  if (!effects.some((effect) => effect.kind === "markRecord" || effect.kind === "patchRecord"))
+    return;
+  const paintPositions = effects.flatMap((effect, index) =>
+    effect.kind === "paint" ? [index] : [],
+  );
+  const marks = effects.filter((effect) => effect.kind === "markRecord");
+  const patches = effects.filter((effect) => effect.kind === "patchRecord");
+  const paintIndex = paintPositions[0];
+  if (
+    paintPositions.length !== 1 ||
+    paintIndex === undefined ||
+    marks.length > 1 ||
+    patches.length > 1 ||
+    effects.some(
+      (effect, index) =>
+        (effect.kind === "markRecord" && index < paintIndex) ||
+        (effect.kind === "patchRecord" && index > paintIndex),
+    )
+  )
+    throw new Error("Record patch must precede the single paint and mark must follow it");
+}

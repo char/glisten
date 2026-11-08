@@ -5,15 +5,18 @@ import type { RangeSlot } from "./slot.ts";
 export type RangeEffect =
   | { readonly kind: "saveRange"; readonly slot: RangeSlot }
   | { readonly kind: "clearRange"; readonly slot: RangeSlot };
-/** Open a named host after painting this arm, or close the active host before painting it. */
+/** Open an embedded language after painting, or route/close the active host before painting. */
 export type InjectionEffect =
   | { readonly kind: "openNamed"; readonly slot: RangeSlot }
   | { readonly kind: "openStatic"; readonly language: string }
   | { readonly kind: "hostPrefix" }
   | { readonly kind: "closeInjection" };
 
+/** Save the arm's matched source range for a later named injection. */
 export const saveRange = (slot: RangeSlot): RangeEffect => ({ kind: "saveRange", slot });
+/** Clear a previously saved source range. */
 export const clearRange = (slot: RangeSlot): RangeEffect => ({ kind: "clearRange", slot });
+/** Open an embedded language selected by a saved name or a static language identifier. */
 export const openInjection = (
   target: { named: RangeSlot; static?: never } | { static: string; named?: never },
 ): InjectionEffect =>
@@ -22,6 +25,7 @@ export const openInjection = (
     : { kind: "openStatic", language: target.static };
 /** Paint this token in the parent while leaving the active host open. */
 export const hostPrefix = (): InjectionEffect => ({ kind: "hostPrefix" });
+/** Close the active embedded language. */
 export const closeInjection = (): InjectionEffect => ({ kind: "closeInjection" });
 
 export function checkInjectionArm(arm: Arm): void {

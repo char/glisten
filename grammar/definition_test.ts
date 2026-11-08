@@ -5,7 +5,9 @@ import {
   literal,
   on,
   notNext,
+  markRecord,
   paint,
+  patchRecord,
   popState,
   pushState,
   redispatch,
@@ -172,6 +174,21 @@ test("queue footers preserve the opened frame's slot ownership", () => {
 
 test("an arm cannot paint more than once", () => {
   throws(() => on("x", paint("plain"), paint("keyword")), Error, /exactly one paint/);
+});
+
+test("record patches precede painting and marks follow it", () => {
+  on("x", literal("x"), patchRecord("keyword"), paint("plain"), markRecord());
+  throws(() => on("x", literal("x"), markRecord(), paint("plain")), Error, /Record patch/);
+  throws(
+    () => on("x", literal("x"), paint("plain"), patchRecord("keyword")),
+    Error,
+    /Record patch/,
+  );
+  throws(
+    () => on("x", literal("x"), paint("plain"), markRecord(), markRecord()),
+    Error,
+    /Record patch/,
+  );
 });
 
 test("redispatch permits assertions and transitions but not consuming matchers", () => {

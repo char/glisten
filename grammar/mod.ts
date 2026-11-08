@@ -30,6 +30,7 @@ import { visitMatchers } from "./visit.ts";
 import { branchEffects, type WordEffect } from "./word.ts";
 import { checkWraps } from "./wrap.ts";
 
+// Byte sets and consuming matchers.
 export {
   bytesOf,
   byteSet,
@@ -45,11 +46,9 @@ export {
   bytes,
   type ByteSet,
 } from "./bytes.ts";
-export { slot, type RunSlot, type CounterSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
-export { on, redispatch } from "./arm.ts";
-export { token, oneOf, keywordTable } from "./authoring.ts";
-export { paint, markRecord, patchRecord, wrap } from "./record.ts";
-export { pushState, popState, setState, resource } from "./state.ts";
+export { separatedRun } from "./separated_run.ts";
+
+// Assertions and matcher composition.
 export {
   baseState,
   notNext,
@@ -70,7 +69,19 @@ export {
   notLookahead,
   cachedPrefix,
 } from "./combinator.ts";
-export * as shell from "./shell.ts";
+
+// Arms, painting, classification, and state transitions.
+export { on, redispatch } from "./arm.ts";
+export { token, oneOf, keywordTable } from "./authoring.ts";
+export { paint, markRecord, patchRecord, wrap } from "./record.ts";
+export { classify } from "./word.ts";
+export { pushState, popState, setState, resource } from "./state.ts";
+export { speculate, abandon } from "./speculation.ts";
+
+// Slots and the operations that read or write them.
+export { slot, type RunSlot, type CounterSlot, type RangeSlot, type ColumnSlot } from "./slot.ts";
+export { saveRun, matchRun } from "./run_slot.ts";
+export { saveColumn, indentTo } from "./column.ts";
 export {
   counterZero,
   counterPositive,
@@ -78,12 +89,10 @@ export {
   counterIncrement,
   counterDecrement,
 } from "./counter_slot.ts";
-export { speculate, abandon } from "./speculation.ts";
-export { separatedRun } from "./separated_run.ts";
-export { saveColumn, indentTo } from "./column.ts";
+
+// Embedded languages and shell-style captures and queues.
 export { clearRange, saveRange, openInjection, hostPrefix, closeInjection } from "./injection.ts";
-export { saveRun, matchRun } from "./run_slot.ts";
-export { classify } from "./word.ts";
+export * as shell from "./shell.ts";
 
 /**
  * Consumes input from `pos`, or fails. A failed matcher leaves `pos` unspecified: the
@@ -170,7 +179,7 @@ export type Grammar<Name extends string = string> = {
   readonly states: { readonly [name in Name]: State };
 };
 
-/** Define a grammar, checking that every state it names exists. */
+/** Define a grammar, checking its references, matchers, effects, and state invariants. */
 export function defineGrammar<Name extends string>(grammar: Grammar<Name>): Grammar<Name> {
   const names = new Set<string>(Object.keys(grammar.states));
   if (!names.size) throw new Error(`${grammar.name}: a grammar needs a state`);

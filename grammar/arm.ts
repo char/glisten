@@ -8,23 +8,22 @@ import { bytesOf } from "./bytes.ts";
 
 /** A consuming arm on the bytes `on`: matchers first, then effects. */
 export function on(set: ByteSet, ...steps: (Matcher | Effect)[]): Arm {
-  return buildArm(set, steps, false);
+  return buildArm(set, steps, "consume");
 }
 
 /** A zero-width transition which retries the current byte. */
 export function redispatch(set: ByteSet, ...steps: (Matcher | Effect)[]): Arm {
-  return buildArm(set, steps, true);
+  return buildArm(set, steps, "redispatch");
 }
 
-function buildArm(set: ByteSet, steps: (Matcher | Effect)[], transition: boolean): Arm {
+function buildArm(set: ByteSet, steps: (Matcher | Effect)[], mode: "consume" | "redispatch"): Arm {
   const split = steps.findIndex(isEffect);
   const match = (split < 0 ? steps : steps.slice(0, split)) as Matcher[];
   const then = (split < 0 ? [] : steps.slice(split)) as Effect[];
   if (then.some((step) => !isEffect(step)))
     throw new Error("An arm's matchers must precede its effects");
-  const arm: Arm = transition
-    ? { on: set, match, then, redispatch: true }
-    : { on: set, match, then };
+  const arm: Arm =
+    mode === "redispatch" ? { on: set, match, then, redispatch: true } : { on: set, match, then };
   checkArm(arm);
   return arm;
 }
@@ -41,12 +40,12 @@ export function checkArm(arm: Arm) {
     throw new Error(
       arm.redispatch ? "A redispatch cannot paint" : "A non-painting arm must use redispatch",
     );
-  const hasStackTransition = arm.then.some(
-    (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
-  );
   if (classification?.kind === "word") {
     checkWordArm(arm, classification);
   } else if (!paintCount) {
+    const hasStackTransition = arm.then.some(
+      (effect) => effect.kind === "push" || effect.kind === "pop" || effect.kind === "goto",
+    );
     const zeroWidthMatchers: readonly Matcher["kind"][] = [
       "queueHas",
       "counterZero",
