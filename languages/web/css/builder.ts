@@ -39,7 +39,7 @@ export function css(mode: boolean | "less") {
     literal("\\"),
     choice([bytes(hex, { min: 1, max: 6 }), optional(byte(" \t\r\n\f"))], [character()]),
   ];
-  const ident = [choice([byte(nameStart)], escape), repeat(choice([byte(rest)], escape))];
+  const ident = [choice([bytes(nameStart)], escape), repeat(choice([bytes(rest)], escape))];
   const anyByte = byteSet({ ranges: [[0, 255]] });
   const other = except(anyByte, less ? "{};\"'/@" : "{};\"'/");
   const doubleContent = except(anyByte, '"\\\n\r\f');
@@ -47,7 +47,7 @@ export function css(mode: boolean | "less") {
   const commentContent = except(anyByte, "*");
   const beforeBlock = repeat(
     choice(
-      [less ? bytes(other) : byte(other)],
+      [bytes(other)],
       ...(less
         ? [
             [literal("@{"), bytes(except(anyByte, "}"), { min: 0 }), literal("}")],
@@ -310,14 +310,6 @@ export function css(mode: boolean | "less") {
     token(",", "punctuation.delimiter"),
     on(start, ...ident, paint("tag")),
   ];
-  const sharedSelectorAtoms = selectorAtoms.map((arm) => ({
-    ...arm,
-    then: [popState(), ...arm.then],
-  }));
-  const sharedSelector = redispatch(
-    union(start, ".#@$`%~/'\":[(*&>+|,"),
-    pushState("lessSelectorAtom"),
-  );
   const keyframes = [
     on(
       "@",
@@ -448,7 +440,7 @@ export function css(mode: boolean | "less") {
           atRule,
           token("{", "punctuation.bracket", pushState("block")),
           ...declarations,
-          ...(less ? [sharedSelector] : selectorAtoms),
+          ...selectorAtoms,
         ],
       },
       block: {
@@ -463,7 +455,7 @@ export function css(mode: boolean | "less") {
           token("{", "punctuation.bracket", pushState("block")),
           ...declarations,
           ...(less ? [lessBareMixin] : []),
-          ...(less ? [sharedSelector] : selectorAtoms),
+          ...selectorAtoms,
         ],
       },
       afterProperty: {
@@ -571,7 +563,7 @@ export function css(mode: boolean | "less") {
           token(")", "punctuation.bracket", popState()),
           redispatch("{};", popState()),
           number,
-          ...(less ? [sharedSelector] : selectorAtoms),
+          ...selectorAtoms,
         ],
       },
       attributeSelector: {
@@ -710,10 +702,6 @@ export function css(mode: boolean | "less") {
         : {}),
       ...(less
         ? {
-            lessSelectorAtom: {
-              style: "plain",
-              arms: [...sharedSelectorAtoms, on(anyByte, character(), paint("plain"), popState())],
-            },
             scssLineComment: { style: "comment", arms: [redispatch("\n\r", popState())] },
             lessInterpolation: {
               style: "plain",
@@ -780,7 +768,7 @@ export function css(mode: boolean | "less") {
                   pushState("lessBareMixinMember"),
                 ),
                 token("(", "punctuation.bracket", pushState("lessMixinGroup")),
-                sharedSelector,
+                ...selectorAtoms,
               ],
             },
             lessBareMixinMember: {
