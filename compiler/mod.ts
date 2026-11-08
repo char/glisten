@@ -544,7 +544,9 @@ export function compile(
   const records = recordWriters({
     base: fragment`(global.get $base)`,
     fail,
+    writable: scratch ? fragment`(i32.sub (global.get $specScratch) (i32.const 8))` : undefined,
     reserveOutput: scratch ? (end) => fragment`(call $specReserveOutput ${end})` : undefined,
+    lazyReserve: true,
   });
   const injections = global(
     "injections",
@@ -717,6 +719,8 @@ export function compile(
   ${scratch ? speculationScratch : ""}
   ${hasSpeculation ? speculationFunctions : ""}
   ${hasSpeculation && hasInjections ? speculationOutputFunctions : ""}
+  ${scratch ? "" : definition(records.limit)}
+  ${definition(records.grow)}
   ${definition(records.emit)}
   ${
     hasInjections || hasWrap
@@ -774,6 +778,7 @@ export function compile(
     (global.set $status (i32.const 0)) (global.set $injections (i32.const 0))
     ${hasWrap ? "(global.set $groups (i32.const 0))" : ""}
     ${scratch ? `(call $scratchInit (local.get $out) (local.get $length) (i32.const ${Math.max(speculationGroups.length, options.speculationScratch ? 1 : 0)}))` : ""}
+    ${print(records.init)}
     (local.set $initial (local.get $out))
     (block $documents (loop $document
       (br_if $documents (i32.eqz (local.get $count)))
@@ -874,6 +879,7 @@ export function compile(
         (local.set $pos (local.get $next))
         (br $token)))
       ${hasInjections ? `${renderInline(flushSpan(injectedSpan, records.emit))}\n      (if (local.get $host) (then (call $sealHost (local.get $hostLast)) (local.set $host (i32.const 0))))` : hasWrap ? renderInline(flushSpan(simpleSpan, records.emit)) : renderInline(emitPending(simpleSpan, records.emit))}
+      ${scratch ? `(call $specReserveOutput (i64.extend_i32_u (local.get $out)))` : ""}
       (local.set $documents (i32.add (local.get $documents) (i32.const 8)))
       (local.set $count (i32.sub (local.get $count) (i32.const 1)))
       (br $document)))

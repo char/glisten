@@ -1,4 +1,5 @@
 import { bytesOf, type ByteSet, type Matcher } from "#/grammar/mod.ts";
+import { splat } from "./vector.ts";
 
 type Literal = Extract<Matcher, { kind: "literal" }>;
 type One = Extract<Matcher, { kind: "one" }>;
@@ -60,7 +61,10 @@ export function lowerRun(
         (br_if ${done} (i64.ge_u (i64.and (local.get $matchColumn) (i64.const 4611686018427387903)) (i64.const ${m.untilColumn})))
         (local.set $b (i32.load8_u (i32.add (local.get $input) (local.get $p))))
         (br_if ${done} (i32.eqz ${member("(local.get $b)", m.set)}))
-        (local.set $matchColumn (call $advanceColumn (local.get $input) (local.get $p) (i32.add (local.get $p) (i32.const 1)) (local.get $matchColumn)))
+        (local.set $matchColumn (if (result i64)
+          (i32.lt_u (i32.sub (local.get $b) (i32.const 32)) (i32.const 95))
+          (then (i64.add (i64.and (local.get $matchColumn) (i64.const 4611686018427387903)) (i64.const 1)))
+          (else (call $advanceColumn (local.get $input) (local.get $p) (i32.add (local.get $p) (i32.const 1)) (local.get $matchColumn)))))
         (local.set $p (i32.add (local.get $p) (i32.const 1)))
         (br ${done}_more)))
       ${m.min ? `(br_if ${fail} (i32.lt_u (i32.sub (local.get $p) (local.get ${start})) (i32.const ${m.min})))` : ""}`;
@@ -75,7 +79,7 @@ export function lowerRun(
       const vector =
         vectorBytes.length <= 8
           ? vectorBytes
-              .map((b) => `(i8x16.eq (local.get $chunk) (i8x16.splat (i32.const ${b})))`)
+              .map((b) => `(i8x16.eq (local.get $chunk) ${splat(b)})`)
               .reduce((a, b) => `(v128.or ${a} ${b})`)
           : (() => {
               const low = [Array(16).fill(0), Array(16).fill(0)];
@@ -85,7 +89,7 @@ export function lowerRun(
               const part = (i: number) => `(v128.and
                     (i8x16.swizzle (v128.const i8x16 ${low[i]!.join(" ")}) (local.get $lo))
                     (i8x16.swizzle (v128.const i8x16 ${high[i]!.join(" ")}) (local.get $hi)))`;
-              return `(i8x16.ne (v128.or ${part(0)} ${part(1)}) (i8x16.splat (i32.const 0)))`;
+              return `(i8x16.ne (v128.or ${part(0)} ${part(1)}) ${splat(0)})`;
             })();
       fn = {
         name,
@@ -95,8 +99,8 @@ export function lowerRun(
                   (block $tail (loop $vectors
                     (br_if $tail (i32.lt_u (i32.sub (local.get $limit) (local.get $p)) (i32.const 16)))
                     (local.set $chunk (v128.load (i32.add (local.get $input) (local.get $p))))
-                    (local.set $lo (v128.and (local.get $chunk) (i8x16.splat (i32.const 15))))
-                    (local.set $hi (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) (i8x16.splat (i32.const 15))))
+                    (local.set $lo (v128.and (local.get $chunk) ${splat(15)}))
+                    (local.set $hi (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) ${splat(15)}))
                     (local.set $mask (i32.xor (i8x16.bitmask ${vector}) (i32.const 65535)))
                     (if (local.get $mask) (then
                       (local.set $p (i32.add (local.get $p) (i32.ctz (local.get $mask)))) (br $done)))
@@ -150,10 +154,19 @@ export function lowerRun(
   }
   const start = save();
   const done = fresh("run");
+  // A long bound is clamped once, so the loop tests one end per byte.
+  const bound = m.max !== undefined && m.max >= 4 ? save() : undefined;
+  const end = bound ?? "$limit";
   return `(local.set ${start} (local.get $p))
+          ${
+            bound === undefined
+              ? ""
+              : `(local.set ${bound} (if (result i32) (i32.gt_u (i32.add (local.get $p) (i32.const ${m.max})) (local.get $limit))
+                  (then (local.get $limit)) (else (i32.add (local.get $p) (i32.const ${m.max})))))`
+          }
           (block ${done} (loop ${done}_more
-            (br_if ${done} (i32.ge_u (local.get $p) (local.get $limit)))
-            ${m.max === undefined ? "" : `(br_if ${done} (i32.ge_u (i32.sub (local.get $p) (local.get ${start})) (i32.const ${m.max})))`}
+            (br_if ${done} (i32.ge_u (local.get $p) (local.get ${end})))
+            ${bound === undefined && m.max !== undefined ? `(br_if ${done} (i32.ge_u (i32.sub (local.get $p) (local.get ${start})) (i32.const ${m.max})))` : ""}
             (local.set $b (i32.load8_u (i32.add (local.get $input) (local.get $p))))
             (br_if ${done} (i32.eqz ${member("(local.get $b)", m.set)}))
             (local.set $p (i32.add (local.get $p) (i32.const 1)))

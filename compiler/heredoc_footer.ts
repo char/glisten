@@ -1,3 +1,5 @@
+import { splat } from "./vector.ts";
+
 /** Lower a footer comparison to bounded SIMD equality and a scalar tail. */
 export function heredocFooterWat(vector = true): string {
   return `(func $heredocFooter (param $input i32) (param $pos i32) (param $end i32)
@@ -13,7 +15,7 @@ export function heredocFooterWat(vector = true): string {
         ? `(block $tail (loop $vector
       (br_if $tail (i32.lt_u (i32.sub (local.get $len) (local.get $i)) (i32.const 16)))
       (local.set $chunk (v128.load (i32.add (local.get $input) (i32.add (local.get $pos) (local.get $i)))))
-      (if (i8x16.bitmask (v128.or (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 10)))
+      (if (i8x16.bitmask (v128.or (i8x16.eq (local.get $chunk) ${splat(10)})
         (i8x16.ne (local.get $chunk) (v128.load (i32.add (local.get $delimiter) (local.get $i))))))
         (then (return (i32.const 0))))
       (local.set $i (i32.add (local.get $i) (i32.const 16))) (br $vector)))`

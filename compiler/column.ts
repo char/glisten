@@ -2,6 +2,7 @@ import type { Matcher } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
 import type { ShapeLowering } from "./effect.ts";
 import type { ToColumn } from "#/grammar/column.ts";
+import { splat } from "./vector.ts";
 
 export const lowerColumnAction: ShapeLowering<"captureColumn"> = (op, _i, context) =>
   lowerCaptureColumn(context.columns.indexOf(op.slot.name));
@@ -60,8 +61,8 @@ export const columnFunction = (
     (local.set $chunk (v128.load (i32.add (local.get $input) (local.get $at))))
     (br_if $vectorDone (i32.or (i8x16.bitmask (local.get $chunk))
       (i8x16.bitmask (v128.or
-        (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 9)))
-        (i8x16.eq (local.get $chunk) (i8x16.splat (i32.const 10)))))))
+        (i8x16.eq (local.get $chunk) ${splat(9)})
+        (i8x16.eq (local.get $chunk) ${splat(10)})))))
     (local.set $column (i64.add (local.get $column) (i64.const 16)))
     (local.set $continuations (i64.const 0))
     (local.set $at (i32.add (local.get $at) (i32.const 16)))

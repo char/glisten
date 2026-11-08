@@ -1,4 +1,5 @@
 import { func, global, raw, wat, type Def, type Fragment, type Local } from "#/testing/wat/mod.ts";
+import { splat } from "./vector.ts";
 
 // Callable definitions.
 
@@ -6,29 +7,55 @@ import { func, global, raw, wat, type Def, type Fragment, type Local } from "#/t
 export const status = global("status", () => wat`(export "status") (mut i32) (i32.const 0)`);
 export const fail = func("fail", () => wat`(global.set ${status} (i32.const 1)) (unreachable)`);
 
-/** Checked record writes. The caller owns the base address and any overlapping scratch. */
+/**
+ * Checked record writes. The caller owns the base address and the room above it, and refreshes
+ * `limit` at the start of each call, after any growth of its own.
+ */
 export function recordWriters(options: {
   base: Fragment;
   fail: Def;
+  /** The last address at which a record may start; all of memory below the scratch by default. */
+  writable?: Fragment;
   reserveOutput?: (end: Fragment) => Fragment;
-}): { emit: Def; emitRaw: Def } {
+  /**
+   * Run `reserveOutput` only when a write nears the limit, which then must do nothing but make
+   * room. Without it the hook runs before every write, so it may also charge for the write.
+   */
+  lazyReserve?: boolean;
+}): { emit: Def; emitRaw: Def; limit: Def; grow: Def; init: Fragment } {
+  const limit = global("outLimit", () => wat`(mut i32) (i32.const 0)`);
+  const writable =
+    options.writable ??
+    wat`(i32.sub (i32.wrap_i64 (i64.shl (i64.extend_i32_u (memory.size)) (i64.const 16))) (i32.const 8))`;
+  const room = wat`(global.set ${limit} ${writable})`;
   const reserve = options.reserveOutput?.(wat`(local.get $need)`) ?? wat``;
-  const body = (rawStyle: boolean) => wat`
-    (param $out i32) (param $end i32) (param $style i32) (result i32)
-    (local $need i64) (local $available i64)
-    (local.set $need (i64.add (i64.extend_i32_u (local.get $out)) (i64.const 8)))
+  const grow = func(
+    "growOutput",
+    () => wat`(param $need i64) (local $available i64)
     (if (i64.gt_u (local.get $need) (i64.const 4294967295)) (then (call ${options.fail})))
     ${reserve}
     (local.set $available (i64.shl (i64.extend_i32_u (memory.size)) (i64.const 16)))
     (if (i64.gt_u (local.get $need) (local.get $available)) (then
       (if (i32.eq (memory.grow (i32.wrap_i64 (i64.shr_u (i64.add (i64.sub (local.get $need) (local.get $available)) (i64.const 65535)) (i64.const 16)))) (i32.const -1))
         (then (call ${options.fail})))))
+    ${room}`,
+  );
+  const makeRoom = wat`(call ${grow} (i64.add (i64.extend_i32_u (local.get $out)) (i64.const 8)))`;
+  const reserveRoom = options.lazyReserve
+    ? wat`(if (i32.ge_u (local.get $out) (global.get ${limit})) (then ${makeRoom}))`
+    : makeRoom;
+  const body = (rawStyle: boolean) => wat`
+    (param $out i32) (param $end i32) (param $style i32) (result i32)
+    ${reserveRoom}
     (i32.store (local.get $out) (local.get $end))
     (i32.store offset=4 (local.get $out) ${rawStyle ? wat`(local.get $style)` : wat`(i32.load16_u (i32.add ${options.base} (i32.shl (local.get $style) (i32.const 1))))`})
     (i32.add (local.get $out) (i32.const 8))`;
   return {
     emit: func("emit", () => body(false)),
     emitRaw: func("emitRaw", () => body(true)),
+    limit,
+    grow,
+    init: room,
   };
 }
 
@@ -85,7 +112,7 @@ export function stopScan(name: string, bytes: readonly number[], high: boolean):
       ? ""
       : bytes.length <= 8
         ? bytes
-            .map((b) => `(i8x16.eq (local.get $chunk) (i8x16.splat (i32.const ${b})))`)
+            .map((b) => `(i8x16.eq (local.get $chunk) ${splat(b)})`)
             .reduce((a, b) => `(v128.or ${a} ${b})`)
         : (() => {
             const lo = Array(16).fill(0);
@@ -95,9 +122,9 @@ export function stopScan(name: string, bytes: readonly number[], high: boolean):
               hi[b >> 4] = 1 << (b >> 4);
             }
             return `(i8x16.ne (v128.and
-            (i8x16.swizzle (v128.const i8x16 ${lo.join(" ")}) (v128.and (local.get $chunk) (i8x16.splat (i32.const 15))))
-            (i8x16.swizzle (v128.const i8x16 ${hi.join(" ")}) (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) (i8x16.splat (i32.const 15)))))
-            (i8x16.splat (i32.const 0)))`;
+            (i8x16.swizzle (v128.const i8x16 ${lo.join(" ")}) (v128.and (local.get $chunk) ${splat(15)}))
+            (i8x16.swizzle (v128.const i8x16 ${hi.join(" ")}) (v128.and (i16x8.shr_u (local.get $chunk) (i32.const 4)) ${splat(15)})))
+            ${splat(0)})`;
           })();
   const asciiScalar = rangesOf(bytes)
     .map(([lo, hi]) =>
@@ -106,7 +133,7 @@ export function stopScan(name: string, bytes: readonly number[], high: boolean):
         : `(i32.le_u (i32.sub (local.get $b) (i32.const ${lo})) (i32.const ${hi - lo}))`,
     )
     .reduce((a, b) => (a ? `(i32.or ${a} ${b})` : b), "");
-  const vectorHigh = `(i8x16.lt_s (local.get $chunk) (i8x16.splat (i32.const 0)))`;
+  const vectorHigh = `(i8x16.lt_s (local.get $chunk) ${splat(0)})`;
   const vector = high
     ? asciiVector
       ? `(v128.or ${asciiVector} ${vectorHigh})`

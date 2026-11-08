@@ -7,6 +7,7 @@ export const speculationScratch = `
   (global $queueCapacity (mut i32) (i32.const 0))
   (global $queueUsed (mut i32) (i32.const 0))
   (global $scratchRequired (export "scratchRequired") (mut i64) (i64.const 0))
+  (global $outLimit (mut i32) (i32.const 0))
   (func $scratchResize (param $capacity i32) (param $end i64)
     (local $old i32) (local $next i32) (local $oldQueue i32) (local $newQueue i32)
     (local $size i64) (local $required i64) (local $available i64) (local $preferred i64)
@@ -36,6 +37,8 @@ export const speculationScratch = `
           (memory.copy (local.get $next) (local.get $old) (global.get $specScratchSize))
           (memory.copy (local.get $newQueue) (local.get $oldQueue) (global.get $queueUsed))))))
     (global.set $specScratch (local.get $next))
+    ;; The queue grows down into the record limit, so the limit follows the scratch.
+    (global.set $outLimit (i32.sub (local.get $next) (i32.const 8)))
     (global.set $queueCapacity (local.get $capacity)))
   (func $scratchInit (param $out i32) (param $length i32) (param $spec i32)
     (local $bytes i64) (local $offset i64) (local $size i64)
