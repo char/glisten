@@ -40,7 +40,7 @@ const hex = union(digit, range("a", "f"), range("A", "F"));
 const word = except(all, " \t\r\n,[]{}:#");
 const scalarTail = repeat(
   choice(
-    [byte(word)],
+    [bytes(word)],
     [literal(":"), notNext(" \t\r\n,[]{}")],
     [literal("#")],
     [bytes(" \t"), notNext("#\r\n"), byte(word)],
@@ -50,7 +50,7 @@ const plain = [byte(word), scalarTail];
 const blockWord = except(all, " \t\r\n:#");
 const blockTail = repeat(
   choice(
-    [byte(blockWord)],
+    [bytes(blockWord)],
     [literal(":"), notNext(" \t\r\n")],
     [literal("#")],
     [bytes(" \t"), notNext("#\r\n"), byte(blockWord)],
@@ -59,12 +59,12 @@ const blockTail = repeat(
 const blockPlain = [byte(word), blockTail];
 const singleKey = [
   literal("'"),
-  repeat(choice([literal("''")], [byte(except(all, "'\r\n"))])),
+  repeat(choice([literal("''")], [bytes(except(all, "'\r\n"))])),
   literal("'"),
 ];
 const doubleKey = [
   literal('"'),
-  repeat(choice([literal("\\"), character()], [byte(except(all, '"\\\r\n'))])),
+  repeat(choice([literal("\\"), character()], [bytes(except(all, '"\\\r\n'))])),
   literal('"'),
 ];
 const keyName = choice(singleKey, doubleKey, plain);
