@@ -21,28 +21,182 @@ import {
   setState,
   token,
   union,
+  type State,
+  type Arm,
+  type Effect,
 } from "#/grammar/mod.ts";
 
-export function template(twig: boolean) {
-  const digit = range("0", "9");
-  const hex = union(digit, range("a", "f"), range("A", "F"));
-  const first = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
-  const rest = union(first, digit);
-  const name = [byte(first), bytes(rest, { min: 0 })];
-  const space = " \t\r\n\v\f";
-  const words = [
-    ...keywordTable(
-      (twig
-        ? "if elseif else endif for in endfor block endblock extends include embed endembed use macro endmacro import from as set endset apply endapply verbatim endverbatim with endwith deprecated guard sandbox endsandbox cache endcache do flush autoescape endautoescape not and or is starts ends matches same true false null"
-        : "if elif else endif for in recursive endfor block endblock extends include import as from macro endmacro call endcall set endset filter endfilter with endwith raw endraw trans endtrans pluralize not and or is none true false True False None scoped required ignore missing without context autoescape endautoescape do break continue"
-      ).split(" "),
-      "keyword",
+type Dialect = "jinja" | "twig";
+
+type Extension = {
+  rawWord: string;
+  rawEnd: string;
+  openTrim: string;
+  rawOpenTrim: string;
+  filterStatement: string;
+  closeTrim: string;
+  isStyle: "keyword" | "operator";
+  constants: readonly string[];
+  operators: readonly string[];
+  keywords: string;
+  number: Arm;
+  comments: readonly Arm[];
+  codeOperators: readonly Arm[];
+  symbols: readonly Arm[];
+  functionEffect(cases: ReturnType<typeof keywordTable>): Effect;
+  aliases?: readonly string[];
+  expressionClose: readonly Arm[];
+  statementHead: readonly Arm[];
+  rawHeaderClose: readonly Arm[];
+  interpolation: readonly Arm[];
+  testNames: readonly Arm[];
+  states(code: readonly Arm[]): Record<string, State>;
+};
+
+const escape = on("\\", literal("\\"), character(), paint("string.escape"));
+const digit = range("0", "9");
+const hex = union(digit, range("a", "f"), range("A", "F"));
+const first = union("_", range("a", "z"), range("A", "Z"), byteSet({ ranges: [[128, 255]] }));
+const rest = union(first, digit);
+const name = [byte(first), bytes(rest, { min: 0 })];
+const space = " \t\r\n\v\f";
+
+function jinjaExtension(): Extension {
+  return {
+    rawWord: "raw",
+    rawEnd: "endraw",
+    openTrim: "-+",
+    rawOpenTrim: "-",
+    filterStatement: "filter",
+    closeTrim: "+",
+    isStyle: "keyword" as const,
+    constants: ["true", "false", "none", "True", "False", "None"],
+    operators: [],
+    keywords: `if elif else endif for in recursive endfor block endblock extends include import as from
+      macro endmacro call endcall set endset filter endfilter with endwith raw endraw trans
+      endtrans pluralize not and or is none true false True False None scoped required ignore
+      missing without context autoescape endautoescape do break continue`,
+
+    number: on(
+      digit,
+      choice(
+        [literal("0"), byte("xX"), bytes(union(hex, "_"))],
+        [literal("0"), byte("bB"), bytes("01_")],
+        [literal("0"), byte("oO"), bytes("01234567_")],
+        [
+          bytes(union(digit, "_")),
+          optional(literal("."), bytes(union(digit, "_"))),
+          optional(byte("eE"), optional(byte("+-")), bytes(union(digit, "_"))),
+        ],
+      ),
+      paint("number"),
+    ),
+    comments: [],
+    codeOperators: [],
+    symbols: [],
+    functionEffect(cases) {
+      return classify(cases, [paint("function")]);
+    },
+    aliases: ["jinja2"],
+    expressionClose: [],
+    statementHead: [],
+    rawHeaderClose: [],
+    interpolation: [],
+    testNames: [],
+    states: () => ({}),
+  };
+}
+
+function twigExtension(): Extension {
+  const twigOperators = [
+    ...[
+      ["starts", "with"],
+      ["ends", "with"],
+      ["not", "in"],
+      ["has", "some"],
+      ["has", "every"],
+    ].map(([first, second]) =>
+      on(
+        first![0]!,
+        literal(first!),
+        bytes(space),
+        literal(second!),
+        notNext(rest),
+        paint("operator"),
+      ),
+    ),
+    ...["b-and", "b-or", "b-xor"].map((word) =>
+      on("b", literal(word), notNext(rest), paint("operator")),
     ),
   ];
-  const constants = twig
-    ? ["true", "false", "null", "none", "TRUE", "FALSE", "NULL", "NONE"]
-    : ["true", "false", "none", "True", "False", "None"];
-  const wordOperators = twig ? ["and", "or", "xor", "not", "in", "matches"] : [];
+  const twigSymbolOperators = ["...", "..", "<=>", "??", "?:", "=>", "?"].map((operator) =>
+    token(operator, "operator"),
+  );
+  return {
+    rawWord: "verbatim",
+    rawEnd: "endverbatim",
+    openTrim: "-~",
+    rawOpenTrim: "-~",
+    filterStatement: "apply",
+    closeTrim: "~",
+    isStyle: "operator" as const,
+    constants: ["true", "false", "null", "none", "TRUE", "FALSE", "NULL", "NONE"],
+    operators: ["and", "or", "xor", "not", "in", "matches"],
+    keywords: `if elseif else endif for in endfor block endblock extends include embed endembed use
+      macro endmacro import from as set endset apply endapply verbatim endverbatim with endwith
+      deprecated guard sandbox endsandbox cache endcache do flush autoescape endautoescape
+      not and or is starts ends matches same true false null`,
+
+    number: on(
+      digit,
+      bytes(digit),
+      repeat(literal("_"), bytes(digit)),
+      optional(literal("."), bytes(digit), repeat(literal("_"), bytes(digit))),
+      optional(byte("eE"), optional(byte("+-")), bytes(digit), repeat(literal("_"), bytes(digit))),
+      paint("number"),
+    ),
+    comments: [token("#", "comment", pushState("twigLineComment"))],
+    codeOperators: twigOperators,
+    symbols: twigSymbolOperators,
+    functionEffect: () => paint("function"),
+    expressionClose: [token("~}}", "punctuation.special", popState())],
+    statementHead: [on(first, ...name, paint("keyword"), setState("statement"))],
+    rawHeaderClose: [token("~%}", "punctuation.special", setState("raw"))],
+    interpolation: [token("#{", "punctuation.special", pushState("twigInterpolation"))],
+    testNames: [
+      on(
+        "s",
+        literal("same"),
+        lookahead(bytes(space), literal("as"), notNext(rest)),
+        paint("function"),
+        setState("twigSameAs"),
+      ),
+    ],
+    states(code): Record<string, State> {
+      return {
+        twigSameAs: {
+          style: "plain",
+          arms: [on(space, bytes(space), paint("plain")), token("as", "keyword", popState())],
+          otherwise: [popState()],
+        },
+        twigLineComment: {
+          style: "comment",
+          arms: [on("\n", literal("\n"), paint("plain"), popState())],
+        },
+        twigInterpolation: {
+          style: "plain",
+          arms: [token("}", "punctuation.special", popState()), ...code],
+        },
+      };
+    },
+  };
+}
+
+export function template(dialect: Dialect) {
+  const extension = { jinja: jinjaExtension, twig: twigExtension }[dialect]();
+  const words = keywordTable(extension.keywords.trim().split(/\s+/), "keyword");
+  const constants = extension.constants;
+  const wordOperators: readonly string[] = extension.operators;
   const cases = [
     ...keywordTable(constants, "constant.builtin"),
     ...keywordTable(wordOperators, "operator"),
@@ -50,84 +204,31 @@ export function template(twig: boolean) {
       (entry) => !constants.includes(entry.text) && !wordOperators.includes(entry.text),
     ),
   ];
-  const number = twig
-    ? on(
-        digit,
-        bytes(digit),
-        repeat(literal("_"), bytes(digit)),
-        optional(literal("."), bytes(digit), repeat(literal("_"), bytes(digit))),
-        optional(
-          byte("eE"),
-          optional(byte("+-")),
-          bytes(digit),
-          repeat(literal("_"), bytes(digit)),
-        ),
-        paint("number"),
-      )
-    : on(
-        digit,
-        choice(
-          [literal("0"), byte("xX"), bytes(union(hex, "_"))],
-          [literal("0"), byte("bB"), bytes("01_")],
-          [literal("0"), byte("oO"), bytes("01234567_")],
-          [
-            bytes(union(digit, "_")),
-            optional(literal("."), bytes(union(digit, "_"))),
-            optional(byte("eE"), optional(byte("+-")), bytes(union(digit, "_"))),
-          ],
-        ),
-        paint("number"),
-      );
   const code = [
     token('"', "string", pushState("doubleString")),
     token("'", "string", pushState("singleString")),
-    ...(twig ? [token("#", "comment", pushState("twigLineComment"))] : []),
-    number,
-    ...(twig
-      ? [
-          ...[
-            ["starts", "with"],
-            ["ends", "with"],
-            ["not", "in"],
-            ["has", "some"],
-            ["has", "every"],
-          ].map(([a, b]) =>
-            on(a![0]!, literal(a!), bytes(space), literal(b!), notNext(rest), paint("operator")),
-          ),
-          ...["b-and", "b-or", "b-xor"].map((word) =>
-            on("b", literal(word), notNext(rest), paint("operator")),
-          ),
-        ]
-      : []),
+    ...extension.comments,
+    extension.number,
+    ...extension.codeOperators,
     on(
       first,
       ...name,
       lookahead(bytes(space, { min: 0 }), literal("(")),
-      twig ? paint("function") : classify(cases, [paint("function")]),
+      extension.functionEffect(cases),
     ),
     on(
       first,
       ...name,
       classify(
         [
-          { text: "is", then: [paint(twig ? "operator" : "keyword"), pushState("testName")] },
+          { text: "is", then: [paint(extension.isStyle), pushState("testName")] },
           ...cases.filter((entry) => entry.text !== "is"),
         ],
         [paint("variable")],
       ),
     ),
     token("|", "operator", pushState("filterName")),
-    ...(twig
-      ? [
-          token("...", "operator"),
-          token("..", "operator"),
-          token("<=>", "operator"),
-          token("??", "operator"),
-          token("?:", "operator"),
-          token("=>", "operator"),
-          token("?", "operator"),
-        ]
-      : []),
+    ...extension.symbols,
     token(".", "punctuation.delimiter", pushState("member")),
     token("(", "punctuation.bracket", pushState("paren")),
     token("[", "punctuation.bracket", pushState("square")),
@@ -136,10 +237,7 @@ export function template(twig: boolean) {
     token(oneOf("+-*/%=<>~"), "operator"),
     token(oneOf(",:"), "punctuation.delimiter"),
   ];
-  const escape = on("\\", literal("\\"), character(), paint("string.escape"));
-  const rawWord = twig ? "verbatim" : "raw";
-  const rawEnd = twig ? "endverbatim" : "endraw";
-  const openTrim = twig ? "-~" : "-+";
+  const { rawWord, rawEnd, openTrim } = extension;
   const rawOpening = on(
     "{",
     literal("{%"),
@@ -149,7 +247,7 @@ export function template(twig: boolean) {
       literal(rawWord),
       notNext(rest),
       bytes(space, { min: 0 }),
-      optional(byte(twig ? "-~" : "-")),
+      optional(byte(extension.rawOpenTrim)),
       literal("%}"),
     ),
     paint("punctuation.special"),
@@ -178,8 +276,8 @@ export function template(twig: boolean) {
   // when used as names. Non-ASCII identifier bytes are accepted without Unicode
   // identifier validation; numeric separators are colored without validation.
   return defineGrammar<string>({
-    name: twig ? "twig" : "jinja",
-    ...(twig ? {} : { aliases: ["jinja2"] }),
+    name: dialect,
+    ...(extension.aliases ? { aliases: extension.aliases } : {}),
     initial: "root",
     states: {
       root: {
@@ -195,7 +293,7 @@ export function template(twig: boolean) {
         style: "plain",
         arms: [
           token("-}}", "punctuation.special", popState()),
-          ...(twig ? [token("~}}", "punctuation.special", popState())] : []),
+          ...extension.expressionClose,
           token("}}", "punctuation.special", popState()),
           ...code,
         ],
@@ -205,14 +303,14 @@ export function template(twig: boolean) {
         arms: [
           on(space, bytes(space), paint("plain")),
           on(
-            twig ? "a" : "f",
-            literal(twig ? "apply" : "filter"),
+            extension.filterStatement[0]!,
+            literal(extension.filterStatement),
             notNext(rest),
             paint("keyword"),
             setState("statement"),
             pushState("filterName"),
           ),
-          ...(twig ? [on(first, ...name, paint("keyword"), setState("statement"))] : []),
+          ...extension.statementHead,
         ],
         otherwise: [setState("statement")],
       },
@@ -220,7 +318,7 @@ export function template(twig: boolean) {
         style: "plain",
         arms: [
           token("-%}", "punctuation.special", popState()),
-          token(twig ? "~%}" : "+%}", "punctuation.special", popState()),
+          token(extension.closeTrim + "%}", "punctuation.special", popState()),
           token("%}", "punctuation.special", popState()),
           ...code,
         ],
@@ -229,7 +327,7 @@ export function template(twig: boolean) {
         style: "comment",
         arms: [
           token("-#}", "comment", popState()),
-          token(twig ? "~#}" : "+#}", "comment", popState()),
+          token(extension.closeTrim + "#}", "comment", popState()),
           token("#}", "comment", popState()),
         ],
       },
@@ -238,7 +336,7 @@ export function template(twig: boolean) {
         arms: [
           token(rawWord, "keyword"),
           token("-%}", "punctuation.special", setState("raw")),
-          ...(twig ? [token("~%}", "punctuation.special", setState("raw"))] : []),
+          ...extension.rawHeaderClose,
           token("%}", "punctuation.special", setState("raw")),
         ],
       },
@@ -248,7 +346,7 @@ export function template(twig: boolean) {
         arms: [
           token(rawEnd, "keyword"),
           token("-%}", "punctuation.special", popState()),
-          token(twig ? "~%}" : "+%}", "punctuation.special", popState()),
+          token(extension.closeTrim + "%}", "punctuation.special", popState()),
           token("%}", "punctuation.special", popState()),
         ],
       },
@@ -257,29 +355,9 @@ export function template(twig: boolean) {
       curly: { style: "plain", arms: [token("}", "punctuation.bracket", popState()), ...code] },
       doubleString: {
         style: "string",
-        arms: [
-          escape,
-          ...(twig ? [token("#{", "punctuation.special", pushState("twigInterpolation"))] : []),
-          token('"', "string", popState()),
-        ],
+        arms: [escape, ...extension.interpolation, token('"', "string", popState())],
       },
-      ...(twig
-        ? {
-            twigSameAs: {
-              style: "plain",
-              arms: [on(space, bytes(space), paint("plain")), token("as", "keyword", popState())],
-              otherwise: [popState()],
-            },
-            twigLineComment: {
-              style: "comment",
-              arms: [on("\n", literal("\n"), paint("plain"), popState())],
-            },
-            twigInterpolation: {
-              style: "plain",
-              arms: [token("}", "punctuation.special", popState()), ...code],
-            },
-          }
-        : {}),
+      ...extension.states(code),
       singleString: { style: "string", arms: [escape, token("'", "string", popState())] },
       filterName: {
         style: "plain",
@@ -293,17 +371,7 @@ export function template(twig: boolean) {
         style: "plain",
         arms: [
           on(space, bytes(space), paint("plain")),
-          ...(twig
-            ? [
-                on(
-                  "s",
-                  literal("same"),
-                  lookahead(bytes(space), literal("as"), notNext(rest)),
-                  paint("function"),
-                  setState("twigSameAs"),
-                ),
-              ]
-            : []),
+          ...extension.testNames,
           on(
             first,
             ...name,

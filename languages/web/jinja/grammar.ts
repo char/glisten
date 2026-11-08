@@ -1,3 +1,3 @@
 import { template } from "./builder.ts";
 
-export default template(false);
+export default template("jinja");

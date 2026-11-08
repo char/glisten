@@ -1,3 +1,3 @@
 import { template } from "../jinja/builder.ts";
 
-export default template(true);
+export default template("twig");

@@ -1,3 +1,3 @@
 import { css } from "../css/builder.ts";
 
-export default css(true);
+export default css("scss");
