@@ -190,7 +190,7 @@ test("retained groups survive a later highlight", async () => {
       },
     ]),
   );
-  const retained = host._process("color", "abcdef");
+  const retained = host.process("color", "abcdef");
   assert(retained.status === "ok");
   equal([...retained.spans], [6, 0]);
   equal([...retained.groups!], [1, 2, 1]);

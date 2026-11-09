@@ -190,7 +190,8 @@ source   ```bash⏎echo hi⏎```⏎        (offsets 0 3 7 8 16 19 20)
 ```ts
 highlight(language, source): string     // HTML spans and nested group elements; escaped text
                                         // and, for groups, escaped manifest attributes
-_process(language, source): Result      // public, not promoted: the spans themselves
+highlightFull(language, source): Promise<string> // load missing languages, then render HTML
+process(language, source): Result       // owned spans, groups, and missing language names
 render(source, result): string          // retained successful result from this highlighter
 
 type Result =                                                              //
@@ -199,15 +200,33 @@ type Result =                                                              //
 // spans = [end₀, style₀, end₁, style₁, …]; span i covers [end_{i-1} ?? 0, end_i);
 // style indexes host.styles. Same layout as span records: a call tree without
 // injections returns one copy of the module's output, untouched.
-// _process optionally exposes groups: Uint32Array [start, end, style, ...],
+// process optionally exposes groups: Uint32Array [start, end, style, ...],
 // ordered by start, then decreasing end. Absent when there are no groups.
 // values?: (string | undefined)[] is parallel to groups: a string is the full
 // logical group text for a fragment; undefined means source[start, end).
 // The offsets are UTF-8 byte offsets into the source. A tagged group wraps its
 // spans in <g-TAG>; an optional manifest attribute receives the group text,
 // escaped for a double-quoted HTML attribute. Span elements split at group boundaries.
-// highlight() throws ResourceError where _process returns "resource".
+// highlight() and highlightFull() throw ResourceError where process() returns "resource".
 ```
+
+`process` and `highlight` are synchronous and never load languages. Retained results
+own their arrays and survive subsequent calls, including language registration;
+render them with the original source and the same highlighter.
+
+`highlightFull` requires a constructor option
+`loadLanguage: (name: string) => Promise<WebAssembly.Module | undefined>`, even
+when all languages are already registered. It processes the source, loads missing
+languages, and repeats to discover nested injections. Names passed to the loader
+are ASCII-lowercased and may be aliases. Concurrent calls share in-flight loads
+for the same name.
+
+Each unresolved name is attempted at most once per `highlightFull` call. Returning
+`undefined` leaves its ranges in `missingStyle` (default `plain`). A returned
+module must register the requested name or alias; mismatches, loader errors, and
+module errors propagate. Failed or unsupported loads may be retried by a later call.
+Empty input does not load anything. Use a caller-controlled catalog to map names
+to module URLs, rather than treating source-provided injection names as URLs.
 
 ## 7. Styles
 

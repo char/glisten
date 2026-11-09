@@ -36,9 +36,28 @@ once built, you can load `dist/host.js`
 import { Highlighter } from "./dist/host.js";
 
 const highlighter = new Highlighter();
-await highlighter.add(
-  await WebAssembly.compileStreaming(fetch("./dist/javascript.wasm")),
-);
+await highlighter.add(await WebAssembly.compileStreaming(fetch("./dist/javascript.wasm")));
 
 const html = highlighter.highlight("javascript", 'console.log("hello, world!");');
 ```
+
+for on-demand loading, including nested injections, configure `loadLanguage` and
+use `highlightFull`:
+
+```typescript
+const highlighter = new Highlighter({
+  loadLanguage: async (name) => {
+    return WebAssembly.compileStreaming(fetch(`/vendor/glisten/${name}.wasm`));
+  },
+});
+
+const html = await highlighter.highlightFull(
+  "html",
+  '<script>console.log("hello, world!");</script>',
+);
+```
+
+`highlightFull` requires a loader; returning `undefined` leaves that language's
+ranges unstyled by default. loader errors propagate. `highlight` stays synchronous
+and only uses registered languages. `process` returns owned byte spans, groups,
+and missing language names if you want to handle composition yourself.

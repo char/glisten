@@ -11,7 +11,7 @@ for (const grammar of [nix, bash])
   await highlighter.add(new WebAssembly.Module(await buildModule(compileLanguage(grammar))));
 
 function check(source: string, expected: Record<string, string>): void {
-  const result = highlighter._process("nix", source);
+  const result = highlighter.process("nix", source);
   assert(result.status === "ok", `Highlighting failed: ${source}`);
   equal(result.missing, []);
   for (const [needle, style] of Object.entries(expected)) {

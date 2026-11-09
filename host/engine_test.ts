@@ -66,7 +66,7 @@ test("highlighter returns no output for an empty document", async () => {
   await host.add(await puppet(manifest(), []));
   for (const source of ["", new Uint8Array()]) {
     equal(host.highlight("root", source), "");
-    const result = host._process("root", source);
+    const result = host.process("root", source);
     assert(result.status === "ok");
     equal(Array.from(result.spans), []);
   }
@@ -88,7 +88,7 @@ test("joining beyond the shared-memory limit returns resource", async () => {
     ]),
   );
   await host.add(await puppet(manifest("child"), []));
-  assert(host._process("root", new Uint8Array(40000)).status === "resource");
+  assert(host.process("root", new Uint8Array(40000)).status === "resource");
 });
 
 test("highlighter maps module style indices and resolves aliases", async () => {
@@ -98,7 +98,7 @@ test("highlighter maps module style indices and resolves aliases", async () => {
       { records: [{ kind: "span", end: 3, style: 1 }], injections: 0 },
     ]),
   );
-  const result = host._process("alias", "abc");
+  const result = host.process("alias", "abc");
   assert(result.status === "ok");
   equal(
     [host.languages, host.styles, Array.from(result.spans)],
@@ -114,7 +114,7 @@ test("single-module results remain owned across later highlights", async () => {
       { records: [{ kind: "span", end: 3, style: 0 }], injections: 0 },
     ]),
   );
-  const result = host._process("root", "abc");
+  const result = host.process("root", "abc");
   assert(result.status === "ok");
   host.highlight("root", "xyz");
   equal(Array.from(result.spans), [3, 1]);
@@ -125,17 +125,17 @@ test("resource traps are reported and unrelated traps propagate", async () => {
   await failing.add(
     await puppet(manifest(), [{ records: [], injections: 0, outcome: "resource" }]),
   );
-  const result = failing._process("root", "x");
+  const result = failing.process("root", "x");
   assert(result.status === "resource");
   const trapping = new Highlighter();
   await trapping.add(await puppet(manifest(), [{ records: [], injections: 0, outcome: "trap" }]));
-  throws(() => trapping._process("root", "x"), WebAssembly.RuntimeError);
+  throws(() => trapping.process("root", "x"), WebAssembly.RuntimeError);
 });
 
 test("input placement beyond the memory limit returns resource", async () => {
   const host = new Highlighter({ memoryLimitBytes: 65536 });
   await host.add(await puppet(manifest(), []));
-  const result = host._process("root", new Uint8Array(65536));
+  const result = host.process("root", new Uint8Array(65536));
   assert(result.status === "resource");
 });
 
@@ -150,7 +150,7 @@ test("module growth leaves a readable record view", async () => {
       },
     ]),
   );
-  const result = host._process("root", "x");
+  const result = host.process("root", "x");
   assert(result.status === "ok");
   equal(Array.from(result.spans), [1, 1]);
 });
@@ -179,7 +179,7 @@ test("growth during a child call preserves earlier parent records", async () => 
       },
     ]),
   );
-  const result = host._process("root", "abcd");
+  const result = host.process("root", "abcd");
   assert(result.status === "ok");
   equal(Array.from(result.spans), [1, 0, 3, 2, 4, 0]);
 });
@@ -187,7 +187,7 @@ test("growth during a child call preserves earlier parent records", async () => 
 test("module memory growth beyond the maximum is a resource failure", async () => {
   const host = new Highlighter({ memoryLimitBytes: 65536 });
   await host.add(await puppet(manifest(), [{ records: [], injections: 0, outcome: { grow: 1 } }]));
-  const result = host._process("root", "a");
+  const result = host.process("root", "a");
   assert(result.status === "resource");
 });
 
@@ -196,10 +196,10 @@ test("zero bytes never invoke a puppet", async () => {
   await host.add(
     await puppet(manifest(), [{ records: [{ kind: "span", end: 1, style: 0 }], injections: 0 }]),
   );
-  const empty = host._process("root", "");
+  const empty = host.process("root", "");
   assert(empty.status === "ok");
   equal(Array.from(empty.spans), []);
-  const next = host._process("root", "x");
+  const next = host.process("root", "x");
   assert(next.status === "ok");
   equal(Array.from(next.spans), [1, 0]);
 });
@@ -209,7 +209,7 @@ test("strings replace lone surrogates when encoded", async () => {
   await host.add(
     await puppet(manifest(), [{ records: [{ kind: "span", end: 3, style: 0 }], injections: 0 }]),
   );
-  const result = host._process("root", "\ud800");
+  const result = host.process("root", "\ud800");
   assert(result.status === "ok");
   equal(Array.from(result.spans), [3, 0]);
 });
@@ -219,7 +219,7 @@ test("invalid UTF-8 byte input remains unchecked", async () => {
   await host.add(
     await puppet(manifest(), [{ records: [{ kind: "span", end: 2, style: 0 }], injections: 0 }]),
   );
-  const result = host._process("root", new Uint8Array([255, 128]));
+  const result = host.process("root", new Uint8Array([255, 128]));
   assert(result.status === "ok");
   equal(Array.from(result.spans), [2, 0]);
 });
@@ -227,7 +227,7 @@ test("invalid UTF-8 byte input remains unchecked", async () => {
 test("dispose prevents further calls", () => {
   const host = new Highlighter();
   host.dispose();
-  throws(() => host._process("x", "x"), Error, /disposed/);
+  throws(() => host.process("x", "x"), Error, /disposed/);
 });
 
 test("overlapping module style lists share host IDs", async () => {
@@ -265,7 +265,7 @@ test("overlapping module style lists share host IDs", async () => {
       ],
     ),
   );
-  const result = host._process("root", "abc");
+  const result = host.process("root", "abc");
   assert(result.status === "ok");
   equal(
     [host.styles, Array.from(result.spans)],
@@ -279,7 +279,7 @@ test("overlapping module style lists share host IDs", async () => {
 test("document placement beyond the memory limit returns resource", async () => {
   const host = new Highlighter({ memoryLimitBytes: 65536 });
   await host.add(await puppet(manifest(), []));
-  const result = host._process("root", new Uint8Array(65536 - 2048 - 16 - 4));
+  const result = host.process("root", new Uint8Array(65536 - 2048 - 16 - 4));
   assert(result.status === "resource");
 });
 
@@ -292,7 +292,7 @@ test("non-page-aligned limits are enforced at byte precision", () => {
 test("small byte limits turn oversized input placement into resource failure", async () => {
   const host = new Highlighter({ memoryLimitBytes: 4096 });
   await host.add(await puppet(manifest(), []));
-  const result = host._process("root", new Uint8Array(3000));
+  const result = host.process("root", new Uint8Array(3000));
   assert(result.status === "resource");
 });
 
@@ -318,7 +318,7 @@ test("named embeds are decoded after the producing module grows memory", async (
       },
     ]),
   );
-  const result = host._process("root", "FOO");
+  const result = host.process("root", "FOO");
   assert(result.status === "ok");
   equal([Array.from(result.spans), result.missing], [[3, 2], []]);
 });
@@ -359,14 +359,14 @@ test("puppet automatically grows memory for output records", async () => {
       },
     ]),
   );
-  const result = host._process("root", new Uint8Array(63440));
+  const result = host.process("root", new Uint8Array(63440));
   assert(result.status === "ok");
   equal(Array.from(result.spans), [1, 0, 2, 1, 3, 0, 63440, 1]);
 });
 
 test("unknown-language spans use the placed UTF-8 byte length", () => {
   const host = new Highlighter();
-  const result = host._process("Missing", "Aé😀\ud800");
+  const result = host.process("Missing", "Aé😀\ud800");
   assert(result.status === "ok");
   equal([Array.from(result.spans), result.missing], [[10, 0], ["Missing"]]);
 });
@@ -403,7 +403,7 @@ test("string input succeeds when UTF-8 fits but its worst-case reservation does 
   await host.add(
     await puppet(manifest(), [{ records: [{ kind: "span", end: 1500, style: 0 }], injections: 0 }]),
   );
-  const result = host._process("root", "a".repeat(1500));
+  const result = host.process("root", "a".repeat(1500));
   assert(result.status === "ok");
   equal(Array.from(result.spans), [1500, 0]);
 });
@@ -413,7 +413,7 @@ test("string input that does not fit in UTF-8 returns resource", async () => {
   await host.add(
     await puppet(manifest(), [{ records: [{ kind: "span", end: 2040, style: 0 }], injections: 0 }]),
   );
-  const result = host._process("root", "é".repeat(1020));
+  const result = host.process("root", "é".repeat(1020));
   assert(result.status === "resource");
 });
 
@@ -426,25 +426,25 @@ test("failure to commit output returns a resource failure", async () => {
       { records: [{ kind: "span", end: length, style: 0 }], injections: 0 },
     ]),
   );
-  const result = host._process("root", new Uint8Array(length));
+  const result = host.process("root", new Uint8Array(length));
   assert(result.status === "resource");
 });
 
 test("empty input succeeds with a zero-byte arena", () => {
   const host = new Highlighter({ memoryLimitBytes: 0 });
-  const result = host._process("missing", "");
+  const result = host.process("missing", "");
   assert(result.status === "ok");
   equal([Array.from(result.spans), result.missing], [[], []]);
 });
 
 test("unknown languages still observe the source placement limit", () => {
   const host = new Highlighter({ memoryLimitBytes: 0 });
-  const result = host._process("missing", "x");
+  const result = host.process("missing", "x");
   assert(result.status === "resource");
 });
 
 test("truncated string placement fails even for an unknown language", () => {
   const host = new Highlighter({ memoryLimitBytes: 32 });
-  const result = host._process("missing", "é".repeat(9));
+  const result = host.process("missing", "é".repeat(9));
   assert(result.status === "resource");
 });

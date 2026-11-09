@@ -57,7 +57,7 @@ test("renders composed tags, escaping, bare styles, and byte boundaries", async 
     new TextEncoder().encode(input),
     { checks: true },
   );
-  const processed = host._process("root", input);
+  const processed = host.process("root", input);
   assert(composed.status === "ok" && processed.status === "ok");
   equal(Array.from(composed.spans), Array.from(processed.spans));
   equal(host.highlight("root", input), "<g-o>&lt;</g-o><g-i>&amp;&gt;</g-i>x");
@@ -78,7 +78,7 @@ test("first registration sets tags, including a reserved missing style", async (
   await host.add(await puppet(second, script, { repeat: true }));
   equal(host.highlight("missing", "&"), "<g-first>&amp;</g-first>");
   equal(host.highlight("second", "x"), "<g-first>x</g-first>");
-  const missing = host._process("missing", "&");
+  const missing = host.process("missing", "&");
   assert(missing.status === "ok");
   equal(missing.missing, ["missing"]);
   equal(new Highlighter().highlight("missing", "<&>"), "&lt;&amp;&gt;");
@@ -104,7 +104,7 @@ test("resource failure throws", async () => {
   } catch (error) {
     assert(error instanceof ResourceError);
   }
-  const result = host._process("root", "x");
+  const result = host.process("root", "x");
   assert(result.status === "resource");
 
   const embedded = new Highlighter();

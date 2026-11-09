@@ -16,7 +16,7 @@ const manifest = (language: string, embeds: string[] = []): Manifest => ({
   maxDepth: 8,
 });
 
-test("_process exposes nested groups outermost first and merges spans", async () => {
+test("process exposes nested groups outermost first and merges spans", async () => {
   const host = new Highlighter({ checks: true });
   await host.add(
     await puppet(manifest("color"), [
@@ -32,11 +32,11 @@ test("_process exposes nested groups outermost first and merges spans", async ()
       },
     ]),
   );
-  const result = host._process("color", "abcdef");
+  const result = host.process("color", "abcdef");
   assert(result.status === "ok");
   equal([...result.spans], [6, 0]);
   equal([...result.groups!], [1, 5, 1, 2, 4, 1]);
-  const plain = host._process("missing", "text");
+  const plain = host.process("missing", "text");
   assert(plain.status === "ok");
   equal(plain.groups, undefined);
 });
@@ -67,7 +67,7 @@ test("a child's group appears inside a fence-like injection", async () => {
       },
     ]),
   );
-  const result = host._process("markdown", "```red```");
+  const result = host.process("markdown", "```red```");
   assert(result.status === "ok");
   equal([...result.spans], [9, 0]);
   equal([...result.groups!], [3, 6, 1]);

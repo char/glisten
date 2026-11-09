@@ -107,7 +107,7 @@ test("a span merged across an embedded segment has one complete tag pair", async
       { repeat: true },
     ),
   );
-  const result = host._process("root", "a<&b");
+  const result = host.process("root", "a<&b");
   assert(result.status === "ok");
   equal(Array.from(result.spans), [4, 1]);
   equal(host.highlight("root", "a<&b"), "<g-s>a&lt;&amp;b</g-s>");
@@ -145,7 +145,7 @@ test("arena growth preserves direct module records and the source", async () => 
   );
   const text = "a".repeat(15000);
   equal(host.highlight("root", text), `<g-s>${text}</g-s>`);
-  const result = host._process("root", text);
+  const result = host.process("root", text);
   assert(result.status === "ok");
   equal(Array.from(result.spans), [15000, 1]);
 });
@@ -159,7 +159,7 @@ test("renderer output exhaustion throws", async () => {
       { repeat: true },
     ),
   );
-  const result = host._process("root", "x".repeat(400));
+  const result = host.process("root", "x".repeat(400));
   assert(result.status === "ok");
   try {
     host.highlight("root", "x".repeat(400));
