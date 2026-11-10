@@ -19,14 +19,17 @@ and performant WASM bundles out the end of the pipeline.
 
 requires [avril](https://git.t4t.associates/char/avril), an upcoming V8 runtime.
 
-additionally requires WABT (`wat2wasm`, `wasm-validate`) and Binaryen (`wasm-opt`),
-but the flake's dev shell (`nix develop .`) can provide these for you.
+additionally requires WABT (`wat2wasm`, `wasm-validate`), Binaryen (`wasm-opt`), and
+Deno (for declaration generation), but the flake's dev shell (`nix develop .`)
+can provide these for you.
 
 ```shell
 avril task build
 ```
 
-built output will land in a bunch of `dist/{language}.wasm` modules, `dist/host.js`, and some manifests.
+built output will land in a bunch of `dist/{language}.wasm` modules, `dist/host.js`,
+`dist/filename.js`, and some manifests. both JavaScript entrypoints come with
+self-contained `.d.ts` declarations.
 
 ## usage
 

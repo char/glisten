@@ -1,7 +1,7 @@
 import { mkdirs, writeFile, writeTextFile } from "avril:fs";
-import { run } from "avril:std";
 import { compileLanguage } from "#/compiler/language.ts";
 import { languages } from "#/languages/mod.ts";
+import { buildHost } from "./build_host.ts";
 import { buildModule } from "./module.ts";
 
 await mkdirs("dist");
@@ -31,10 +31,4 @@ await Promise.all([
   writeTextFile("_generated/languages.json", catalogJson),
   writeTextFile("dist/languages.json", catalogJson),
 ]);
-for (const [source, output] of [
-  ["host/mod.ts", "dist/host.js"],
-  ["filename.ts", "dist/filename.js"],
-] as const)
-  await run("avril", ["bundle", "--minify", "--sourcemap", source, "-o", output], {
-    stderr: "inherit",
-  });
+await buildHost();

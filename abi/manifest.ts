@@ -1,7 +1,18 @@
 import { ABI, names } from "./constants.ts";
-import type { Manifest } from "./schema.ts";
 
-export type { Manifest };
+/** Public module manifest, independent of the build-time schema dependency. */
+export type Manifest = {
+  abi: number;
+  language: string;
+  aliases: string[];
+  extensions?: string[];
+  filenames?: string[];
+  embeds: string[];
+  styles: { name: string; tag?: string; attribute?: string }[];
+  styleMap: number;
+  areaBytes: number;
+  maxDepth: number;
+};
 
 /** A missing manifest or incompatible ABI version. */
 export class AbiError extends Error {}

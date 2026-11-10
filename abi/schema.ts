@@ -1,7 +1,10 @@
 import * as j from "@char/justin";
+import type { Manifest } from "./manifest.ts";
+
+export type { Manifest };
 
 /** Build-time manifest schema (docs/abi.md). */
-export const Manifest = j.obj({
+const manifestSchema = j.obj({
   abi: j.number,
   language: j.string,
   aliases: j.array(j.string),
@@ -16,8 +19,9 @@ export const Manifest = j.obj({
   maxDepth: j.number,
 });
 
-/** Manifest shape inferred from its build-time schema. */
-export type Manifest = j.Infer<typeof Manifest>;
+type Equal<A, B> =
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
+true satisfies Equal<j.Infer<typeof manifestSchema>, Manifest>;
 
 /** Validate a manifest during builds; not used by the host. */
-export const validateManifest = j.validation.compile(Manifest);
+export const validateManifest = j.validation.compile(manifestSchema);
