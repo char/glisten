@@ -77,6 +77,9 @@ class Frame {
   linkChildren?: Int32Array;
   linkRanges?: Uint32Array;
 
+  // Scan: word index and pre-record position of each non-span record.
+  pending = new Uint32Array();
+
   resetResolution(): void {
     this.targets.length = 0;
     this.staticTargets.length = 0;
@@ -141,44 +144,66 @@ export function scan(
   let length = 0;
   let current = 0;
   let position = segments[0]!;
+  let boundary = segments[1]!;
   let rangeStart = 0;
   let rangeOrdinal = 0;
+  let ordinals = 0;
   const finishRange = (end: number) => {
     frame.ranges[current * 3] = rangeStart;
     frame.ranges[current * 3 + 1] = end;
     frame.ranges[current * 3 + 2] = rangeOrdinal;
     rangeStart = end;
-    rangeOrdinal = length;
+    rangeOrdinal = ordinals;
     current++;
+    boundary = segments[current * 3 + 1] ?? -1;
     position = segments[current * 3] ?? position;
   };
-  for (let i = 0; i < words.length; i += 2) {
-    const end = words[i]!;
+  // Spans dominate the record stream, so their loop stays free of the rest.
+  const wordCount = words.length;
+  const kindShift = record.kindShift;
+  const checkBoundary = !wholeWithoutGroups;
+  let pending = frame.pending;
+  let pendingLength = 0;
+  for (let i = 0; i < wordCount; i += 2) {
     const word = words[i + 1]!;
-    const kind = word >>> record.kindShift;
-    // A whole root without groups has no intermediate input boundary to finish.
-    if (wholeWithoutGroups && kind === record.kind.span) {
-      position = end;
+    const kind = word >>> kindShift;
+    if (kind === record.kind.span) {
+      if (checkBoundary && position === boundary) finishRange(i);
+      position = words[i]!;
       continue;
     }
-    // An open followed by a group belongs to the current range, even at its end.
-    const nextRecord = i + (kind === record.kind.opensNamed ? 4 : 2);
-    const groupAfterOpen =
-      (kind === record.kind.opensStatic || kind === record.kind.opensNamed) &&
-      nextRecord + 1 < words.length &&
-      words[nextRecord + 1]! >>> record.kindShift === record.kind.group;
-    if (kind !== record.kind.group && !groupAfterOpen && position === segments[current * 3 + 1])
-      finishRange(i);
+    const end = words[i]!;
+    const recordIndex = i;
     if (kind === record.kind.group) {
       frame.singleSegments = false;
       continue;
     }
-    const id = word & record.injectionMask;
-    if (kind === record.kind.opensStatic || kind === record.kind.opensNamed) {
-      frame.targets[id] = frame.resolve(kind, end, words, i, callee, context, names, missing);
+    const isOpen = kind === record.kind.opensStatic || kind === record.kind.opensNamed;
+    if (isOpen) {
+      // An open followed by a group belongs to the current range, even at its end.
+      const nextRecord = i + (kind === record.kind.opensNamed ? 4 : 2);
+      const groupAfterOpen =
+        nextRecord + 1 < wordCount &&
+        words[nextRecord + 1]! >>> record.kindShift === record.kind.group;
+      if (!groupAfterOpen && position === boundary) finishRange(i);
       if (kind === record.kind.opensNamed) i += 2;
-      continue;
+    } else if (position === boundary) finishRange(i);
+    if (kind === record.kind.segment || kind === record.kind.segmentCloses) ordinals++;
+    if (pendingLength + 2 > pending.length) {
+      const grown = new Uint32Array(Math.max(pendingLength + 2, pending.length * 4));
+      grown.set(pending.subarray(0, pendingLength));
+      pending = frame.pending = grown;
     }
+    pending[pendingLength++] = recordIndex;
+    pending[pendingLength++] = position;
+    // Opens carry no source end, so only segments and spans advance the position.
+    if (!isOpen) position = end;
+  }
+  for (let k = 0; k < pendingLength; k += 2) {
+    const i = pending[k]!;
+    const word = words[i + 1]!;
+    const kind = word >>> record.kindShift;
+    const id = word & record.injectionMask;
     if (kind === record.kind.segment || kind === record.kind.segmentCloses) {
       if (frame.counts[id] || kind !== record.kind.segmentCloses) frame.singleSegments = false;
       const offset = length * 4;
@@ -188,17 +213,18 @@ export function scan(
         data = grown;
       }
       data[offset] = id;
-      data[offset + 1] = position;
-      data[offset + 2] = end;
+      data[offset + 1] = pending[k + 1]!;
+      data[offset + 2] = words[i]!;
       data[offset + 3] =
         (frame.counts[id] ? 0 : segment.starts) |
         (kind === record.kind.segmentCloses ? segment.ends : 0);
       frame.counts[id] = frame.counts[id]! + 1;
       length++;
+    } else {
+      frame.targets[id] = frame.resolve(kind, words[i]!, words, i, callee, context, names, missing);
     }
-    position = end;
   }
-  if (position === segments[current * 3 + 1]) finishRange(words.length);
+  if (position === boundary) finishRange(wordCount);
   frame.data = data;
   frame.length = length;
   return frame;
