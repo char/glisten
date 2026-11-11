@@ -1,4 +1,4 @@
-import type { Matcher } from "#/grammar/mod.ts";
+import { union, type ByteSet, type Matcher } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
 
 const prefixMiss = 0;
@@ -175,12 +175,71 @@ export function lowerAhead(
     (local.set $matchCursor (local.get ${start}))`;
 }
 
+const oneSet = (m: Matcher | undefined): ByteSet | undefined =>
+  m?.kind === "one" ? m.set : undefined;
+
+const alternativeSet = (alternative: readonly Matcher[]): ByteSet | undefined =>
+  alternative.length === 1 ? oneSet(alternative[0]) : undefined;
+
+const maximalRun = (context: LowerContext, set: ByteSet, fail: string) =>
+  context.matcher({ kind: "run", set, min: 0 }, fail);
+
+/**
+ * if we have a bunch of single-byte matchers in a row,
+ * we can lower it to an inline bulk operation
+ */
+function lowerRepeatedBytes(
+  m: { readonly matchers: readonly Matcher[] },
+  fail: string,
+  context: LowerContext,
+): string | undefined {
+  if (m.matchers.length !== 1) return undefined;
+  const body = m.matchers[0]!;
+  const direct = oneSet(body);
+  if (direct !== undefined) return maximalRun(context, direct, fail);
+  if (body.kind !== "either") return undefined;
+
+  const alternatives = body.alternatives;
+  const lead = alternativeSet(alternatives[0] ?? []);
+  if (lead === undefined) return undefined;
+  // Alternatives that each consume one byte of their own set consume exactly the maximal
+  // run of their union.
+  const sets: ByteSet[] = [];
+  for (const alternative of alternatives) {
+    const set = alternativeSet(alternative);
+    if (set === undefined) break;
+    sets.push(set);
+  }
+  if (sets.length === alternatives.length) return maximalRun(context, union(...sets), fail);
+
+  const { fresh, save } = context;
+  const each = save();
+  const done = fresh("repeat");
+  const more = fresh("more");
+  const miss = `${done}_miss`;
+  const choice = lowerEither(
+    { kind: "either", alternatives: alternatives.slice(1) },
+    miss,
+    false,
+    context,
+  );
+  return `(block ${done} (loop ${more}
+    ${maximalRun(context, lead, fail)}
+    (local.set ${each} (local.get $matchCursor))
+    (block ${miss}
+      ${choice}
+      (br_if ${done} (i32.eq (local.get $matchCursor) (local.get ${each})))
+      (br ${more}))))`;
+}
+
 export function lowerMany(
   m: { readonly matchers: readonly Matcher[] },
   fail: string,
   knownPrefix: boolean,
   context: LowerContext,
 ): string {
+  const repeated = lowerRepeatedBytes(m, fail, context);
+  if (repeated !== undefined) return repeated;
   const { fresh, save, matcher } = context;
   const start = save();
   const done = fresh("repeat");
