@@ -22,6 +22,8 @@ async function runtime() {
   });
   const { emit, emitRaw } = records;
   const small = stopScan("small", [10, 32, 42], false);
+  const six = stopScan("six", [9, 10, 13, 32, 34, 35], false);
+  const eight = stopScan("eight", [9, 10, 13, 32, 34, 35, 39, 40], false);
   const large = stopScan("large", [1, 2, 3, 4, 5, 6, 7, 8, 9], true);
   const high = stopScan("high", [], true);
   const roots = [
@@ -41,7 +43,7 @@ async function runtime() {
       () => wat`(export "char") (param $matchCursor i32) (param $end i32) (result i32)
       (call ${charEnd} (i32.const 0) (local.get $matchCursor) (local.get $end))`,
     ),
-    ...[small, large, high].map((scan) => {
+    ...[small, six, eight, large, high].map((scan) => {
       const exportName = raw(JSON.stringify(scan.name));
       return func(
         `call_${scan.name}`,
@@ -68,6 +70,8 @@ async function runtime() {
     close(at: number): void;
     char(pos: number, end: number): number;
     small(pos: number, end: number): number;
+    six(pos: number, end: number): number;
+    eight(pos: number, end: number): number;
     large(pos: number, end: number): number;
     high(pos: number, end: number): number;
   };
@@ -106,4 +110,57 @@ test("runtime character and SIMD scans work at vector and UTF-8 boundaries", asy
   assert(r.small(46, 60) === 60);
   throws(() => stopScan("bad", [], false));
   throws(() => stopScan("bad", [3, 2], true));
+});
+
+test("stop scans report the first stop of every byte set around vector boundaries", async () => {
+  const r = await runtime();
+  const data = new Uint8Array(r.memory.buffer);
+  const scans = [
+    { call: r.small, stops: [10, 32, 42], high: false },
+    { call: r.six, stops: [9, 10, 13, 32, 34, 35], high: false },
+    { call: r.eight, stops: [9, 10, 13, 32, 34, 35, 39, 40], high: false },
+    { call: r.large, stops: [1, 2, 3, 4, 5, 6, 7, 8, 9], high: true },
+    { call: r.high, stops: [], high: true },
+  ];
+  const offsets = [0, 1, 2, 7, 8, 14, 15, 16, 17, 23, 31, 32, 33, 47, 48, 63];
+  // Filler outside every stop set, so each probe has exactly one stop.
+  data.fill(65, 0, 512);
+  for (const { call, stops, high } of scans) {
+    equal(call(0, 512), 512);
+    for (const stop of high ? [...stops, 0x80, 0xe2, 0xff] : stops) {
+      for (const offset of offsets) {
+        data[offset] = stop;
+        equal(call(0, 64), offset);
+        equal(call(offset, 64), offset);
+        data[offset] = 65;
+      }
+    }
+  }
+  // Stops and high bytes sprinkled through filler, so first matches land inside the first
+  // vector chunk, across chunk boundaries, and several chunks in.
+  const alphabet = [9, 10, 13, 32, 34, 35, 39, 40, 42, 0x80, 0xc3, 0xe2];
+  const filler = [65, 66, 99, 126, 0x7f];
+  let seed = 1;
+  for (let i = 0; i < 512; i++) {
+    seed = (seed * 1103515245 + 12345) & 0x7fff_ffff;
+    const roll = (seed >>> 16) % 100;
+    const index = (seed >>> 8) % alphabet.length;
+    data[i] = roll < 20 ? alphabet[index]! : filler[index % filler.length]!;
+  }
+  for (const { call, stops, high } of scans) {
+    const set = new Set(stops);
+    for (const pos of [0, 1, 15, 16, 17, 31, 33]) {
+      for (const width of [0, 1, 2, 3, 5, 15, 16, 17, 31, 32, 64, 128]) {
+        const end = pos + width;
+        let expected = end;
+        for (let i = pos; i < end; i++) {
+          if (set.has(data[i]!) || (high && data[i]! >= 128)) {
+            expected = i;
+            break;
+          }
+        }
+        equal(call(pos, end), expected);
+      }
+    }
+  }
 });
