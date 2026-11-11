@@ -182,7 +182,12 @@ function composeChildren(
       rootResult,
     );
     if (!tree.result.injections) {
-      const extracted = extractGroups(tree.result, tree.words, options.copySpans !== false);
+      const extracted = extractGroups(
+        tree.result,
+        tree.words,
+        options.copySpans !== false,
+        scratch.groups,
+      );
       return { status: "ok", missing: [], ...extracted };
     }
     refreshRecordViews(tree);

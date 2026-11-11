@@ -28,6 +28,7 @@ class Fake implements Callee {
     private readonly entries: {
       records: OutputRecord[];
       injections?: number;
+      groups?: number;
       resource?: boolean;
     }[],
   ) {}
@@ -43,7 +44,12 @@ class Fake implements Callee {
         item.kind === "span" ? { ...item, style: this.map[item.style]! } : item,
       ),
     );
-    return { status: "ok", injections: entry.injections ?? 0, records: () => records };
+    return {
+      status: "ok",
+      injections: entry.injections ?? 0,
+      groups: entry.groups ?? 0,
+      records: () => records,
+    };
   }
 }
 
@@ -738,4 +744,58 @@ test("scratch invalidates cached named targets when the registry changes", () =>
     assert(result.status === "ok");
     equal(Array.from(result.spans), [1, style]);
   }
+});
+
+test("a shared scratch keeps retained group results stable across highlights", () => {
+  const grouped: OutputRecord[] = [
+    { kind: "span", end: 2, style: 0 },
+    { kind: "group", start: 0, style: 0 },
+    { kind: "span", end: 4, style: 0 },
+    { kind: "group", start: 2, style: 0 },
+  ];
+  const lone: OutputRecord[] = [
+    { kind: "span", end: 3, style: 0 },
+    { kind: "group", start: 0, style: 0 },
+  ];
+  const root = new Fake(manifest("root"), [
+    { records: grouped, groups: 2 },
+    { records: lone, groups: 1 },
+    { records: grouped, groups: 2 },
+  ]);
+  root.useStyles(new Uint16Array([0]));
+  const names = new Names<Callee>();
+  names.add(["root"], root);
+  const scratch = new Scratch();
+  const options = { names, missingStyle: 0, checks: false, scratch };
+  const groupedSource = new TextEncoder().encode("abcd");
+  const loneSource = new TextEncoder().encode("xyz");
+  const first = compose("root", { source: () => groupedSource }, options);
+  assert(first.status === "ok");
+  equal(
+    [Array.from(first.spans), Array.from(first.groups!)],
+    [
+      [4, 0],
+      [0, 2, 0, 2, 4, 0],
+    ],
+  );
+  const second = compose("root", { source: () => loneSource }, options);
+  assert(second.status === "ok");
+  equal(
+    [Array.from(second.spans), Array.from(second.groups!)],
+    [
+      [3, 0],
+      [0, 3, 0],
+    ],
+  );
+  equal(Array.from(first.spans), [4, 0]);
+  equal(Array.from(first.groups!), [0, 2, 0, 2, 4, 0]);
+  const third = compose("root", { source: () => groupedSource }, options);
+  assert(third.status === "ok");
+  equal(
+    [Array.from(third.spans), Array.from(third.groups!)],
+    [
+      [4, 0],
+      [0, 2, 0, 2, 4, 0],
+    ],
+  );
 });

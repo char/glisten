@@ -1,5 +1,6 @@
 import { record, segment } from "#/abi/mod.ts";
 import type { Callee, CallContext } from "./engine.ts";
+import { GroupScratch } from "./extract_groups.ts";
 import { Names } from "./names.ts";
 import { Spans } from "./spans.ts";
 
@@ -14,6 +15,8 @@ type Batch = { target: Callee; segments: Uint32Array; buffer: Uint32Array<ArrayB
 export class Scratch {
   private readonly frames: Frame[] = [];
   private readonly outputs: Spans[] = [];
+  /** Extraction buffers; borrow-mode group results alias them until the next extraction. */
+  readonly groups = new GroupScratch();
   private cursor = 0;
 
   /** Save the cursor before leasing frames for a composition. */
