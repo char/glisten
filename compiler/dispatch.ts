@@ -171,7 +171,13 @@ export function buildDispatch(
   // Built after dispatch so that every case is known; cases may add shapes.
   const caseList = [...cases.values()];
   for (const { arms } of caseList) for (const arm of arms) arm.match.forEach(countMatchers);
-  const outlined = outlineMatchers(caseList, known, matcher, () => saves, runParameters);
+  const outlined = outlineMatchers(
+    caseList,
+    known,
+    matcher,
+    { count: () => saves, restore: (count) => (saves = count) },
+    runParameters,
+  );
   const armContext = {
     features,
     fresh,
@@ -211,6 +217,13 @@ export function buildDispatch(
     shapeList,
   };
 }
+
+/**
+ * A shared matcher sequence is only worth a function once its lowering is substantial: under
+ * V8 a wasm call spills the token loop's locals, so calling a short body costs more than
+ * inlining it, while duplicating it costs little. Large bodies stay shared, where size wins.
+ */
+const outlineBodyMinimum = 3000;
 
 function consumes(m: Matcher | undefined): boolean {
   return (
@@ -370,7 +383,7 @@ function outlineMatchers(
   caseList: Array<{ arms: readonly Arm[]; bytes: Set<number> }>,
   known: (first: Matcher | undefined, bytes: Set<number>) => boolean,
   matcher: (item: Matcher, fail: string) => string,
-  getSaves: () => number,
+  saves: { readonly count: () => number; readonly restore: (count: number) => void },
   runParameters: string,
 ): Map<string, { name: string; code: string }> {
   // lowerings-match: a matcher sequence used by several arms is outlined.
@@ -411,11 +424,16 @@ function outlineMatchers(
   const outlined = new Map<string, { name: string; code: string }>();
   for (const [key, rest] of uses) {
     if (counts.get(key)! < 2 || rest.some(hasCachedPrefix)) continue;
-    const name = `$match${outlined.size}`;
-    const first = getSaves();
+    const first = saves.count();
     const body = rest.map((m) => matcher(m, "$fail")).join("\n");
+    // Test the sequence before naming a function: short bodies are cheaper inlined.
+    if (body.length < outlineBodyMinimum) {
+      saves.restore(first);
+      continue;
+    }
+    const name = `$match${outlined.size}`;
     const locals = Array.from(
-      { length: getSaves() - first },
+      { length: saves.count() - first },
       (_, i) => `(local $backtrack${first + i} i32)`,
     );
     outlined.set(key, {
