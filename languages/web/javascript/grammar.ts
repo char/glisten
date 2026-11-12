@@ -8,6 +8,7 @@ import {
   closeInjection,
   defineGrammar,
   except,
+  hostPrefix,
   keywordTable,
   literal,
   lookahead,
@@ -100,18 +101,39 @@ const number = (after: string) =>
     setState(after),
   );
 const hex = union(digit, range("a", "f"), range("A", "F"));
-const escape = on(
-  "\\",
-  literal("\\"),
-  choice(
-    [literal("\r\n")],
-    [literal("u{"), bytes(hex, { min: 1, max: 6 }), literal("}")],
-    [literal("u"), bytes(hex, { min: 4, max: 4 })],
-    [literal("x"), bytes(hex, { min: 2, max: 2 })],
-    [character()],
-  ),
-  paint("string.escape"),
+const escapeContent = choice(
+  [literal("\r\n")],
+  [literal("u{"), bytes(hex, { min: 1, max: 6 }), literal("}")],
+  [literal("u"), bytes(hex, { min: 4, max: 4 })],
+  [literal("x"), bytes(hex, { min: 2, max: 2 })],
+  [character()],
 );
+const escape = on("\\", literal("\\"), escapeContent, paint("string.escape"));
+const taggedEscape = on("\\", literal("\\"), escapeContent, hostPrefix(), paint("string.escape"));
+
+// Tagged templates like html`...` inject their language. svg reuses xml;
+// gql is an alias of graphql but static opens need the canonical name.
+const taggedTemplates: readonly { readonly lang: string; readonly tags: readonly string[] }[] = [
+  { lang: "html", tags: ["html"] },
+  { lang: "css", tags: ["css"] },
+  { lang: "scss", tags: ["scss"] },
+  { lang: "less", tags: ["less"] },
+  { lang: "sass", tags: ["sass"] },
+  { lang: "sql", tags: ["sql"] },
+  { lang: "graphql", tags: ["graphql", "gql"] },
+  { lang: "markdown", tags: ["markdown", "md"] },
+  { lang: "xml", tags: ["xml", "svg"] },
+  { lang: "yaml", tags: ["yaml", "yml"] },
+  { lang: "json", tags: ["json"] },
+  { lang: "glsl", tags: ["glsl"] },
+  { lang: "wgsl", tags: ["wgsl"] },
+  { lang: "hlsl", tags: ["hlsl"] },
+  { lang: "bash", tags: ["bash", "sh"] },
+];
+const cap = (name: string): string => name[0]!.toUpperCase() + name.slice(1);
+const tagState = (lang: string): string => `tag${cap(lang)}`;
+const templateTagState = (lang: string): string => `template${cap(lang)}`;
+const reopenTagState = (lang: string): string => `reopen${cap(lang)}`;
 
 type Context =
   | "root"
@@ -299,6 +321,18 @@ function code(
         ]
       : []),
     number(after),
+    ...taggedTemplates.flatMap(({ lang, tags }) =>
+      tags.map((tag) =>
+        on(
+          tag[0]!,
+          literal(tag),
+          lookahead(literal("`")),
+          paint("function"),
+          setState(after),
+          pushState(tagState(lang)),
+        ),
+      ),
+    ),
     ...(context === "tsClass"
       ? [
           on(
@@ -568,6 +602,56 @@ export function javascript({
           token("`", "string", popState()),
         ],
       },
+      ...Object.fromEntries(
+        taggedTemplates.map(({ lang }) => [
+          tagState(lang),
+          {
+            style: "plain" as const,
+            arms: [
+              token(
+                "`",
+                "string",
+                setState(templateTagState(lang)),
+                openInjection({ static: lang }),
+              ),
+            ],
+            otherwise: [popState()],
+          },
+        ]),
+      ),
+      ...Object.fromEntries(
+        taggedTemplates.map(({ lang }) => [
+          templateTagState(lang),
+          {
+            style: "plain" as const,
+            arms: [
+              taggedEscape,
+              on(
+                "$",
+                literal("${"),
+                closeInjection(),
+                paint("punctuation.special"),
+                pushState(reopenTagState(lang)),
+                pushState("interpolationValue"),
+              ),
+              on("`", literal("`"), closeInjection(), paint("string"), popState()),
+            ],
+          },
+        ]),
+      ),
+      ...Object.fromEntries(
+        taggedTemplates.map(({ lang }) => [
+          reopenTagState(lang),
+          {
+            style: "plain" as const,
+            arms: [],
+            otherwise: [
+              openInjection({ static: lang }),
+              popState({ atRoot: templateTagState(lang) }),
+            ],
+          },
+        ]),
+      ),
       regex: {
         style: "string",
         arms: [
