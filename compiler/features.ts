@@ -50,14 +50,19 @@ export function analyzeCompilerGrammar(
   );
   const hasQueue = !!grammar.queueSweep || usesQueue(grammar);
   const scratch = hasQueue || hasSpeculation || (options.speculationScratch ?? false);
+  const scratchGroups = Math.max(speculationGroups.length, options.speculationScratch ? 1 : 0);
   let hasWrap = false;
   let hasFrameWrap = false;
   let hasPreviousChar = false;
+  let hasGroupMatcher = false;
+  let recordPatching = false;
   visitGrammar(grammar, {
     matcher(matcher) {
       if (matcher.kind === "previousChar") hasPreviousChar = true;
+      if (matcher.kind === "group") hasGroupMatcher = true;
     },
     effect(effect) {
+      if (effect.kind === "markRecord" || effect.kind === "patchRecord") recordPatching = true;
       if (effect.kind === "wrap") {
         hasWrap = true;
         if (effect.from === "frame") hasFrameWrap = true;
@@ -77,19 +82,6 @@ export function analyzeCompilerGrammar(
     injections: hasInjections,
     styles,
   } = analysis;
-  const recordPatching = states.some((state) =>
-    state.arms.some((arm) =>
-      arm.then.some(
-        (effect) =>
-          effect.kind === "markRecord" ||
-          effect.kind === "patchRecord" ||
-          (effect.kind === "word" &&
-            [...effect.cases.map(({ then }) => then), effect.otherwise].some((branch) =>
-              branch.some((step) => step.kind === "markRecord" || step.kind === "patchRecord"),
-            )),
-      ),
-    ),
-  );
   const hasTransitions = states.some(
     (state) =>
       (state.otherwise !== undefined && typeof state.otherwise !== "string") ||
@@ -107,9 +99,11 @@ export function analyzeCompilerGrammar(
     hasZeroWidthSpeculation,
     hasQueue,
     scratch,
+    scratchGroups,
     hasWrap,
     hasFrameWrap,
     hasPreviousChar,
+    hasGroupMatcher,
     runSlots,
     frameRuns,
     counterSlots,
@@ -228,9 +222,11 @@ export type CompilerFeatures = {
   hasZeroWidthSpeculation: boolean;
   hasQueue: boolean;
   scratch: boolean;
+  scratchGroups: number;
   hasWrap: boolean;
   hasFrameWrap: boolean;
   hasPreviousChar: boolean;
+  hasGroupMatcher: boolean;
   runSlots: Map<string, number>;
   frameRuns: Set<string>;
   counterSlots: Map<string, number>;

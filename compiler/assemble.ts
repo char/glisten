@@ -31,7 +31,6 @@ import { containerCode } from "./container.ts";
 import { prefixCacheFunctions } from "./combinator.ts";
 import { separatedRunFunctions } from "./separated_run.ts";
 import { groupWat } from "./group.ts";
-import { usesGroup } from "#/grammar/group.ts";
 import { speculationScratch } from "./speculation_scratch.ts";
 import { speculationFunctions } from "./speculation.ts";
 import { speculationOutputFunctions } from "./speculation_output.ts";
@@ -43,7 +42,6 @@ import { emitHighlight } from "./highlight.ts";
 
 export function assembleCompiled(
   grammar: Grammar,
-  options: { speculationScratch?: boolean },
   features: CompilerFeatures,
   area: CompilerArea,
   plan: DispatchPlan,
@@ -241,7 +239,6 @@ export function assembleCompiled(
 
   const highlight = emitHighlight({
     grammar,
-    options,
     features,
     area,
     prefix,
@@ -297,6 +294,7 @@ function emitModuleDefinitions(context: {
     hasSpeculation,
     hasInjections,
     hasPreviousChar,
+    hasGroupMatcher,
     hasContainers,
     states,
     sharedStates,
@@ -344,7 +342,7 @@ function emitModuleDefinitions(context: {
   }
   ${sharedStates.length && (hasContainers || grammar.queueSweep) ? slotOwnerFunction(sharedStates, frameBytes, framesOffset) : ""}
   ${hasCapture ? captureWat(captureOffset) : ""}
-  ${states.some((state) => state.arms.some((arm) => usesGroup(arm.match)) || (state.prefix && (usesGroup(state.prefix.match) || (state.prefix.lazy && usesGroup(state.prefix.lazy.unless))))) ? groupWat : ""}
+  ${hasGroupMatcher ? groupWat : ""}
   ${hasQueue ? queueWat(captureOffset, ownerOffset, bodyOffset) : ""}
   ${tracksColumn ? columnFunction(grammar.tabStop ?? 4) : ""}
   ${scanDefs.join("\n")}

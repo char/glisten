@@ -386,8 +386,7 @@ function outlineMatchers(
   saves: { readonly count: () => number; readonly restore: (count: number) => void },
   runParameters: string,
 ): Map<string, { name: string; code: string }> {
-  // lowerings-match: a matcher sequence used by several arms is outlined.
-  const usesColumn = (m: Matcher): boolean =>
+  const needsInlineState = (m: Matcher): boolean =>
     someMatcher(
       [m],
       (item) =>
@@ -398,34 +397,26 @@ function outlineMatchers(
         item.kind === "columnAtLeast" ||
         (item.kind === "run" && item.untilColumn !== undefined),
     );
-  const uses = new Map<string, readonly Matcher[]>();
-  const counts = new Map<string, number>();
+  const candidates = new Map<string, { matchers: readonly Matcher[]; count: number }>();
   for (const { arms, bytes } of caseList)
     for (const arm of arms) {
       const rest = arm.match.slice(known(arm.match[0], bytes) ? 1 : 0);
       if (
-        rest.some(usesColumn) ||
+        rest.some(needsInlineState) ||
         (rest.length < 2 &&
           !rest.some((m) => m.kind === "either" || m.kind === "opt" || m.kind === "repeat"))
       )
         continue;
       const key = JSON.stringify(rest);
-      uses.set(key, rest);
-      counts.set(key, (counts.get(key) ?? 0) + 1);
+      const candidate = candidates.get(key);
+      if (candidate) candidate.count++;
+      else candidates.set(key, { matchers: rest, count: 1 });
     }
-  const hasCachedPrefix = (root: Matcher): boolean => {
-    let found = false;
-    visitMatchers([root], (matcher) => {
-      if (matcher.kind === "cachedPrefix") found = true;
-      return !found;
-    });
-    return found;
-  };
   const outlined = new Map<string, { name: string; code: string }>();
-  for (const [key, rest] of uses) {
-    if (counts.get(key)! < 2 || rest.some(hasCachedPrefix)) continue;
+  for (const [key, { matchers, count }] of candidates) {
+    if (count < 2 || someMatcher(matchers, (m) => m.kind === "cachedPrefix")) continue;
     const first = saves.count();
-    const body = rest.map((m) => matcher(m, "$fail")).join("\n");
+    const body = matchers.map((m) => matcher(m, "$fail")).join("\n");
     // Test the sequence before naming a function: short bodies are cheaper inlined.
     if (body.length < outlineBodyMinimum) {
       saves.restore(first);

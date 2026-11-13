@@ -9,7 +9,6 @@ import type { CompilerFeatures, CompilerArea } from "./features.ts";
 
 export function emitHighlight(context: {
   grammar: Grammar;
-  options: { speculationScratch?: boolean };
   features: CompilerFeatures;
   area: CompilerArea;
   prefix: ReturnType<typeof prefixCacheFunctions>;
@@ -29,7 +28,6 @@ export function emitHighlight(context: {
 }): string {
   const {
     grammar,
-    options,
     features,
     area,
     prefix,
@@ -61,6 +59,7 @@ export function emitHighlight(context: {
     hasContainers,
     hasSpeculation,
     scratch,
+    scratchGroups,
     speculationGroups,
     states,
     initial,
@@ -175,7 +174,6 @@ export function emitHighlight(context: {
     ${speculationLocals}
 `;
   const resetGroups = hasWrap ? "(global.set $groups (i32.const 0))" : "";
-  const scratchGroups = Math.max(speculationGroups.length, options.speculationScratch ? 1 : 0);
   const initializeScratch = scratch
     ? `(call $scratchInit (local.get $out) (local.get $length) (i32.const ${scratchGroups}))`
     : "";

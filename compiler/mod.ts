@@ -15,5 +15,5 @@ export function compile(
   const features = analyzeCompilerGrammar(grammar, options);
   const area = layoutCompilerArea(grammar, features);
   const dispatch = buildDispatch(grammar, features, area);
-  return assembleCompiled(grammar, options, features, area, dispatch);
+  return assembleCompiled(grammar, features, area, dispatch);
 }
