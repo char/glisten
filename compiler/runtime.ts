@@ -1,4 +1,4 @@
-import { memory, record, status as statusCode } from "#/abi/constants.ts";
+import { memory, record, status as statusCode } from "#/abi/mod.ts";
 import { func, global, raw, wat, type Def, type Fragment, type Local } from "#/testing/wat/mod.ts";
 import { byteInRange, i32Or, injectionAction, splat, utf8, v128Or } from "./idioms.ts";
 

@@ -1,4 +1,4 @@
-import { record } from "#/abi/constants.ts";
+import { record } from "#/abi/mod.ts";
 import { wat as fragment, type Def, type Fragment, type Local } from "#/testing/wat/mod.ts";
 import { emitGroup, emitPending, flushSpan, recordWriters } from "./runtime.ts";
 import { type Grammar } from "#/grammar/mod.ts";

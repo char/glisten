@@ -1,14 +1,7 @@
 import { makeTempDir, readFile, writeTextFile } from "avril:fs";
 import { run } from "avril:std";
-import {
-  ABI,
-  encode,
-  manifestSection,
-  memory,
-  record,
-  type Manifest,
-  type OutputRecord,
-} from "#/abi/mod.ts";
+import { ABI, encode, memory, record, type Manifest, type OutputRecord } from "#/abi/mod.ts";
+import { manifestSection } from "#/abi/manifest.ts";
 import { func, global, local, module, wat, type Fragment } from "./wat/mod.ts";
 
 /** One scripted invocation of the puppet's highlight export. */

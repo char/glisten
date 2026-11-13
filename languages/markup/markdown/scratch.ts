@@ -1,4 +1,4 @@
-import { memory } from "#/abi/constants.ts";
+import { memory } from "#/abi/mod.ts";
 import { fail } from "#/compiler/runtime.ts";
 import { func, global, wat, type Def } from "#/testing/wat/mod.ts";
 import { get, queued } from "./layout.ts";

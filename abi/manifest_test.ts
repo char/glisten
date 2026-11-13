@@ -1,14 +1,7 @@
 import { test } from "avril:test";
 import { assert, equal, throws } from "#/testing/assert.ts";
-import {
-  ABI,
-  AbiError,
-  manifestSection,
-  readManifest,
-  validateStyleAttributes,
-  type Manifest,
-} from "./mod.ts";
-import { validateManifest } from "./schema.ts";
+import { ABI, AbiError, readManifest, validateStyleAttributes, type Manifest } from "./mod.ts";
+import { manifestSection, validateManifest } from "./manifest.ts";
 
 const header = [0, 97, 115, 109, 1, 0, 0, 0];
 const manifest: Manifest = {

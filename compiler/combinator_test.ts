@@ -1,5 +1,5 @@
 import { test } from "avril:test";
-import { decode } from "#/abi/records.ts";
+import { decode } from "#/abi/mod.ts";
 import type { Matcher } from "#/grammar/mod.ts";
 import {
   byte,

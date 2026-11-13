@@ -1,4 +1,4 @@
-import { exportsOf, record, readManifest, status, type Exports, type Manifest } from "#/abi/mod.ts";
+import { record, readManifest, status, type Exports, type Manifest } from "#/abi/mod.ts";
 import { Arena, defaultMemoryLimitBytes, ResourceError } from "./memory.ts";
 
 /** Source bytes and, for WebAssembly engines, their one-time placement in shared memory. */
@@ -45,7 +45,7 @@ export class Engine implements Callee {
     const instance = await WebAssembly.instantiate(module, {
       env: { memory: arena.memory, base: new WebAssembly.Global({ value: "i32" }, base) },
     });
-    return new Engine(manifest, arena, base, exportsOf(instance));
+    return new Engine(manifest, arena, base, instance.exports as unknown as Exports);
   }
 
   /** Install the module-style to host-style mapping in the module's area. */

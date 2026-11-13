@@ -1,4 +1,4 @@
-import { record } from "#/abi/constants.ts";
+import { record } from "#/abi/mod.ts";
 import {
   global,
   local,

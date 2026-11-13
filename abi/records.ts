@@ -1,6 +1,22 @@
-import { record } from "./constants.ts";
+import { layout } from "./layout.ts";
 
-/** Decoded output record, including the trailing name pair for named opens (docs/abi.md). */
+const recordLayout = layout({ a: "i32", word: "i32" });
+export const record = {
+  bytes: recordLayout.size,
+  ...recordLayout.offset,
+  kindShift: 29,
+  styleMask: 0x1fff_ffff,
+  injectionMask: 0x1fff_ffff,
+  kind: {
+    span: 0b000,
+    group: 0b010,
+    segment: 0b100,
+    segmentCloses: 0b101,
+    opensStatic: 0b110,
+    opensNamed: 0b111,
+  },
+} as const;
+
 export type OutputRecord =
   | { kind: "span"; end: number; style: number }
   | { kind: "group"; start: number; style: number }
@@ -8,102 +24,109 @@ export type OutputRecord =
   | { kind: "opens"; injection: number; embeds: number }
   | { kind: "opens"; injection: number; name: readonly [start: number, end: number] };
 
-const u32Max = 0xffff_ffff;
-const kindNames = new Map<number, keyof typeof record.kind>(
-  (Object.entries(record.kind) as [keyof typeof record.kind, number][]).map(([name, bits]) => [
-    bits,
-    name,
-  ]),
-);
-
-/** Identify the record kind encoded in a word (docs/abi.md). */
 export function kindOf(word: number): keyof typeof record.kind {
-  const bits = word >>> record.kindShift;
-  const kind = kindNames.get(bits);
-  if (kind === undefined) throw new Error(`Invalid record kind: ${bits}`);
-  return kind;
+  switch (word >>> record.kindShift) {
+    case 0:
+      return "span";
+    case 2:
+      return "group";
+    case 4:
+      return "segment";
+    case 5:
+      return "segmentCloses";
+    case 6:
+      return "opensStatic";
+    case 7:
+      return "opensNamed";
+    default:
+      throw new Error("Invalid record kind");
+  }
 }
 
-function checked(value: number, max: number, field: string): number {
-  if (!Number.isInteger(value) || value < 0 || value > max)
-    throw new Error(`Invalid ${field}: ${value}`);
+function integer(value: number, max: number, name: string): number {
+  if (!Number.isInteger(value) || value < 0 || value > max) throw new RangeError(`Invalid ${name}`);
   return value;
 }
 
-/** Encode records to ABI words, rejecting values outside their unsigned field ranges. */
 export function encode(records: readonly OutputRecord[]): Uint32Array {
-  const words: number[] = [];
+  let wordCount = records.length * 2;
   for (const item of records) {
-    switch (item.kind) {
-      case "span":
-        words.push(
-          checked(item.end, u32Max, "end"),
-          checked(item.style, record.styleMask, "style"),
-        );
-        break;
-      case "group":
-        words.push(
-          checked(item.start, u32Max, "start"),
-          (record.kind.group << record.kindShift) | checked(item.style, record.styleMask, "style"),
-        );
-        break;
-      case "segment": {
-        const kind = item.closes ? record.kind.segmentCloses : record.kind.segment;
-        words.push(
-          checked(item.end, u32Max, "end"),
-          (kind << record.kindShift) | checked(item.injection, record.injectionMask, "injection"),
-        );
-        break;
-      }
-      case "opens": {
-        const injection = checked(item.injection, record.injectionMask, "injection");
-        if ("embeds" in item)
-          words.push(
-            checked(item.embeds, u32Max, "embeds"),
-            (record.kind.opensStatic << record.kindShift) | injection,
-          );
-        else
-          words.push(
-            0,
-            (record.kind.opensNamed << record.kindShift) | injection,
-            checked(item.name[0], u32Max, "name start"),
-            checked(item.name[1], u32Max, "name end"),
-          );
-        break;
+    if (item.kind === "opens" && !("embeds" in item)) wordCount += 2;
+  }
+
+  const words = new Uint32Array(wordCount);
+  let cursor = 0;
+
+  for (const item of records) {
+    const kind = item.kind;
+    if (kind === "span" || kind === "group") {
+      const position = kind === "span" ? item.end : item.start;
+      words[cursor++] = integer(position, 0xffff_ffff, "position");
+      words[cursor++] =
+        integer(item.style, record.styleMask, "style") |
+        ((kind === "span" ? record.kind.span : record.kind.group) << record.kindShift);
+    } else {
+      const id = integer(item.injection, record.injectionMask, "injection");
+      if (kind === "segment") {
+        words[cursor++] = integer(item.end, 0xffff_ffff, "end");
+        words[cursor++] =
+          id |
+          ((item.closes ? record.kind.segmentCloses : record.kind.segment) << record.kindShift);
+      } else if ("embeds" in item) {
+        words[cursor++] = integer(item.embeds, 0xffff_ffff, "embeds");
+        words[cursor++] = id | (record.kind.opensStatic << record.kindShift);
+      } else {
+        words[cursor++] = 0;
+        words[cursor++] = id | (record.kind.opensNamed << record.kindShift);
+        const name = item.name;
+        words[cursor++] = integer(name[0], 0xffff_ffff, "name start");
+        words[cursor++] = integer(name[1], 0xffff_ffff, "name end");
       }
     }
   }
-  return new Uint32Array(words);
+
+  return words;
 }
 
-/** Decode ABI words, throwing if a record or named-open pair is malformed. */
 export function decode(words: Uint32Array): OutputRecord[] {
   if (words.length % 2) throw new Error("Odd record word count");
+
   const result: OutputRecord[] = [];
-  for (let i = 0; i < words.length; i += 2) {
-    const a = words[i]!;
-    const word = words[i + 1]!;
-    const injection = word & record.injectionMask;
-    const kind = kindOf(word);
-    switch (kind) {
+
+  for (let index = 0; index < words.length; index += 2) {
+    const a = words[index]!;
+    const word = words[index + 1]!;
+    const payload = word & record.injectionMask;
+
+    switch (kindOf(word)) {
       case "span":
-        result.push({ kind: "span", end: a, style: word });
+        result.push({ kind: "span", end: a, style: payload });
         break;
       case "group":
-        result.push({ kind: "group", start: a, style: word & record.styleMask });
+        result.push({ kind: "group", start: a, style: payload });
         break;
       case "segment":
       case "segmentCloses":
-        result.push({ kind: "segment", end: a, injection, closes: kind === "segmentCloses" });
+        result.push({
+          kind: "segment",
+          end: a,
+          injection: payload,
+          closes: word >>> record.kindShift === record.kind.segmentCloses,
+        });
         break;
       case "opensStatic":
-        result.push({ kind: "opens", injection, embeds: a });
+        result.push({ kind: "opens", injection: payload, embeds: a });
         break;
       case "opensNamed":
-        if (a !== 0 || i + 3 >= words.length) throw new Error("Malformed named open");
-        result.push({ kind: "opens", injection, name: [words[i + 2]!, words[i + 3]!] });
-        i += 2;
+        if (a !== 0 || index + 3 >= words.length) throw new Error("Invalid named open");
+        result.push({
+          kind: "opens",
+          injection: payload,
+          name: [words[index + 2]!, words[index + 3]!],
+        });
+        index += 2;
     }
   }
+
   return result;
 }

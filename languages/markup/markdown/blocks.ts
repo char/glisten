@@ -1,4 +1,4 @@
-import { document as documentLayout, record as recordLayout } from "#/abi/constants.ts";
+import { document as documentLayout, record as recordLayout } from "#/abi/mod.ts";
 import {
   func,
   global,

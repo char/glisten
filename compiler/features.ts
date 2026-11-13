@@ -1,5 +1,4 @@
-import { ABI } from "#/abi/constants.ts";
-import type { Manifest } from "#/abi/schema.ts";
+import { ABI, type Manifest } from "#/abi/mod.ts";
 import { styleEntry, type Style } from "#/grammar/styles.ts";
 import { type Grammar } from "#/grammar/mod.ts";
 import { analyzeGrammar } from "#/grammar/analysis.ts";

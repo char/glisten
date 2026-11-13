@@ -4,7 +4,7 @@ import type { LowerContext } from "./matcher.ts";
 import type { ShapeLowering } from "./effect.ts";
 import { captureBytes, captureLayout } from "./capture.ts";
 import { maxDepth } from "#/grammar/limits.ts";
-import { record } from "#/abi/constants.ts";
+import { record } from "#/abi/mod.ts";
 import { heredocFooterWat } from "./heredoc_footer.ts";
 import { isSharedState } from "./state.ts";
 

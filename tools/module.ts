@@ -8,8 +8,8 @@ import {
   writeTextFile,
 } from "avril:fs";
 import { env, rename, run } from "avril:std";
-import { manifestSection, validateStyleAttributes } from "#/abi/mod.ts";
-import { validateManifest } from "#/abi/schema.ts";
+import { manifestSection, validateManifest } from "#/abi/manifest.ts";
+import { validateStyleAttributes } from "#/abi/mod.ts";
 import type { Compiled } from "#/compiler/mod.ts";
 
 const pending = new Map<string, Promise<Uint8Array>>();

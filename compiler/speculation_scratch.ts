@@ -1,4 +1,4 @@
-import { memory, record } from "#/abi/constants.ts";
+import { memory, record } from "#/abi/mod.ts";
 import { bitmapBitMask, bitmapByteShift, epochTagShift } from "./speculation.ts";
 
 const pageShift = Math.log2(memory.pageBytes);

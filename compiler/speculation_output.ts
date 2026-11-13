@@ -1,4 +1,4 @@
-import { record } from "#/abi/constants.ts";
+import { record } from "#/abi/mod.ts";
 
 const pendingAddressOffset = 0;
 const currentAddressOffset = pendingAddressOffset + 4;

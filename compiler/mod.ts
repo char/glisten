@@ -1,5 +1,5 @@
 import type { Grammar } from "#/grammar/mod.ts";
-import type { Manifest } from "#/abi/schema.ts";
+import type { Manifest } from "#/abi/mod.ts";
 import { analyzeCompilerGrammar, layoutCompilerArea } from "./features.ts";
 import { buildDispatch } from "./dispatch.ts";
 import { assembleCompiled } from "./assemble.ts";
