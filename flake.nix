@@ -7,7 +7,7 @@
     in {
       devShells = forSystems (system:
         let pkgs = import nixpkgs { inherit system; }; in {
-          default = pkgs.mkShell { packages = with pkgs; [ wabt binaryen oxfmt cargo rustc rustfmt deno ]; };
+          default = pkgs.mkShell { packages = with pkgs; [ wabt binaryen oxfmt cargo rustc rustfmt ]; };
         });
     };
 }

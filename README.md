@@ -19,9 +19,8 @@ and performant WASM bundles out the end of the pipeline.
 
 requires [avril](https://git.t4t.associates/char/avril), an upcoming V8 runtime.
 
-additionally requires WABT (`wat2wasm`, `wasm-validate`), Binaryen (`wasm-opt`), and
-Deno (for declaration generation), but the flake's dev shell (`nix develop .`)
-can provide these for you.
+additionally requires WABT (`wat2wasm`, `wasm-validate`) and Binaryen (`wasm-opt`),
+but the flake's dev shell (`nix develop .`) can provide these for you.
 
 ```shell
 avril task build
