@@ -606,14 +606,23 @@ function dispatchTables(
     const fallback = fallbacks[index]!;
     if (!keys.length) return `(br ${fallback})`;
     if (keys.length >= 8) {
+      const highDefault = byByte.get(255) ?? fallback;
+      let end = 256;
+      while (end > 0 && (byByte.get(end - 1) ?? fallback) === highDefault) end--;
+      if (end === 0) return `(br ${highDefault})`;
+
       const min = Math.min(...keys);
       const max = Math.max(...keys);
+      if (end <= max - min + 1) {
+        const table = Array.from({ length: end }, (_, i) => byByte.get(i) ?? fallback);
+        return `(br_table ${table.join(" ")} ${highDefault} (local.get $byte))`;
+      }
       const table = Array.from(
         { length: max - min + 1 },
         (_, i) => byByte.get(min + i) ?? fallback,
       );
-      return `(br_table ${table.join(" ")} ${fallback}
-        (i32.sub (local.get $byte) (i32.const ${min})))`;
+      const byte = min ? `(i32.sub (local.get $byte) (i32.const ${min}))` : "(local.get $byte)";
+      return `(br_table ${table.join(" ")} ${fallback} ${byte})`;
     }
     const groups = new Map<string, number[]>();
     for (const [byte, label] of byByte) groups.set(label, [...(groups.get(label) ?? []), byte]);
