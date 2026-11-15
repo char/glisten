@@ -1,5 +1,5 @@
 import { test } from "avril:test";
-import { compileLanguage } from "#/compiler/language.ts";
+import { compileLanguage } from "#/compiler/mod.ts";
 import { Highlighter } from "#/host/mod.ts";
 import { assert, equal } from "#/testing/assert.ts";
 import { buildModule } from "#/tools/module.ts";

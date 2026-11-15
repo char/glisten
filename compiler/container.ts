@@ -1,14 +1,14 @@
 import type { Grammar, Matcher, State } from "#/grammar/mod.ts";
-import { lineBoundaryCheck } from "./line_boundary.ts";
-import { i32Or } from "./idioms.ts";
+import { lineBoundaryCheck } from "./bytes.ts";
+import { i32Or } from "./runtime.ts";
 import {
   frameAddressAt,
   frameStateBytes,
   frameColumnBytes,
   frameRunBytes,
   frameWordBytes,
-} from "./state.ts";
-import type { speculationCode } from "./speculation_codegen.ts";
+} from "./effects.ts";
+import type { speculationCode } from "./speculation.ts";
 
 type ContainerContext = {
   states: State[];

@@ -1,6 +1,6 @@
 import { test } from "avril:test";
 import { ABI, type Manifest } from "#/abi/mod.ts";
-import { compileLanguage, type LanguageSource, type WatSource } from "#/compiler/language.ts";
+import { compileLanguage, type LanguageSource, type WatSource } from "#/compiler/mod.ts";
 import type { Grammar } from "#/grammar/mod.ts";
 import { Highlighter } from "#/host/mod.ts";
 import { assert, equal } from "#/testing/assert.ts";

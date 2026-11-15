@@ -1,7 +1,6 @@
-import { rangesOf } from "./runtime.ts";
-import { lowerMatcher, targetAssignment } from "./registry.ts";
-import { lowerBranch } from "./arm_effect.ts";
-import type { LowerContext } from "./matcher.ts";
+import { rangesOf, byteInRange, i32Or } from "./runtime.ts";
+import { lowerMatcher, type LowerContext, type PrefixCache } from "./matchers.ts";
+import { targetAssignment, lowerBranch, lowerInjectionActions } from "./effects.ts";
 import {
   bytesOf,
   type Arm,
@@ -9,15 +8,12 @@ import {
   type Effect,
   type Grammar,
   type Matcher,
+  maxDepth,
+  maxTransitions,
 } from "#/grammar/mod.ts";
-import { maxDepth, maxTransitions } from "#/grammar/mod.ts";
-import { lowerInjectionActions } from "./injection.ts";
-import { byteInRange, i32Or } from "./idioms.ts";
 import { lowerWordSelection, wordFunctions } from "./word.ts";
-import { prefixCacheFunctions } from "./combinator.ts";
-import { separatedRunFunctions } from "./separated_run.ts";
-import { speculationCode } from "./speculation_codegen.ts";
-import { lineBoundaryCheck } from "./line_boundary.ts";
+import { speculationCode } from "./speculation.ts";
+import { lineBoundaryCheck } from "./bytes.ts";
 import { someMatcher, visitMatchers } from "#/grammar/analysis.ts";
 import type { CompilerFeatures, CompilerArea } from "./features.ts";
 
@@ -50,7 +46,7 @@ export function buildDispatch(
   const fresh = (hint: string) => `$${hint}${labels++}`;
   let saves = 0;
   const save = () => `$backtrack${saves++}`;
-  const prefix = prefixCacheFunctions();
+  const prefix: PrefixCache = { caches: new Map(), counts: new Map(), functions: new Map() };
   const runCounts = new Map<string, number>();
   function countMatchers(root: Matcher) {
     visitMatchers([root], (matcher) => {
@@ -93,7 +89,7 @@ export function buildDispatch(
       "(i32.const 0)",
     );
 
-  const separatedFunctions = separatedRunFunctions();
+  const separatedFunctions = new Map<string, { name: string; code: string }>();
   const matcherContext: LowerContext = {
     member,
     fresh,
@@ -637,12 +633,12 @@ export type DispatchPlan = {
   fresh: (hint: string) => string;
   matcher: (matcher: Matcher, fail: string, knownPrefix?: boolean) => string;
   getSaves: () => number;
-  prefix: ReturnType<typeof prefixCacheFunctions>;
+  prefix: PrefixCache;
   words: ReturnType<typeof wordFunctions>;
   scans: Map<string, string>;
   runFunctions: Map<string, { name: string; code: string }>;
   outlined: Map<string, { name: string; code: string }>;
-  separatedFunctions: ReturnType<typeof separatedRunFunctions>;
+  separatedFunctions: Map<string, { name: string; code: string }>;
   fallbacks: string[];
   dispatch: string[];
   fallbackCode: string[];

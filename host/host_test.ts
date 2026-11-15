@@ -1,6 +1,6 @@
 import { test } from "avril:test";
 import type { Manifest, OutputRecord } from "#/abi/mod.ts";
-import { compileLanguage } from "#/compiler/language.ts";
+import { compileLanguage } from "#/compiler/mod.ts";
 import {
   closeInjection,
   defineGrammar,

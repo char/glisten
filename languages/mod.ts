@@ -1,4 +1,4 @@
-import type { LanguageSource } from "#/compiler/language.ts";
+import type { LanguageSource } from "#/compiler/mod.ts";
 
 /** Every language, by module name (`dist/<name>.wasm`). */
 export const languages: Readonly<Record<string, () => Promise<{ default: LanguageSource }>>> = {

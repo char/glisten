@@ -1,8 +1,6 @@
-import type { Matcher } from "#/grammar/mod.ts";
-import type { LowerContext } from "./matcher.ts";
-import type { ShapeLowering } from "./effect.ts";
-import type { ToColumn } from "#/grammar/mod.ts";
-import { byteInRange, splat, utf8 } from "./idioms.ts";
+import { type Matcher, maxCounter } from "#/grammar/mod.ts";
+import type { LowerContext } from "./matchers.ts";
+import { byteInRange, splat, utf8 } from "./runtime.ts";
 
 const continuationBits = 2;
 const columnBits = 64 - continuationBits;
@@ -16,18 +14,14 @@ function physicalColumn(state: string): string {
   return `(i64.and ${state} (i64.const ${columnValueMask}))`;
 }
 
-export const lowerColumnAction: ShapeLowering<"captureColumn"> = (op, _i, context) =>
-  lowerCaptureColumn(context.columns.indexOf(op.slot.name));
-
-export function lowerToColumn(
-  matcher: ToColumn,
-  slot: number,
+export function lowerColumnMatcher(
+  matcher: Extract<Matcher, { kind: "toColumn" }>,
   fail: string,
-  done: string,
-  frameBytes: number,
-  framesOffset: number,
-  tabStop: number,
+  context: LowerContext,
 ): string {
+  const { fresh, columns, frameBytes, framesOffset, tabStop } = context;
+  const slot = columns.indexOf(matcher.slot.name);
+  const done = fresh("column");
   const columnSlot = `$columnSlot${slot}`;
   const { ancestor } = matcher;
   if (!ancestor) return matchColumnCode(`(local.get ${columnSlot})`, fail, done, tabStop);
@@ -49,12 +43,7 @@ export function lowerCaptureColumn(slot: number): string {
 }
 
 /** Match spaces and tabs through the saved physical column, including tab overshoot. */
-export function matchColumnCode(
-  target: string,
-  fail: string,
-  done: string,
-  tabStop: number,
-): string {
+function matchColumnCode(target: string, fail: string, done: string, tabStop: number): string {
   const more = `${done}_more`;
   const tabMask = -tabStop;
   const advanced =
@@ -152,20 +141,84 @@ export const columnFunction = (tabStop: number) => {
     (i64.or (local.get $column) (i64.shl (local.get $continuations) (i64.const ${columnBits}))))`;
 };
 
-export function lowerColumnMatcher(
-  m: Extract<Matcher, { kind: "toColumn" }>,
+function byteBefore(cursor: string): string {
+  return `(i32.load8_u (i32.add (local.get $input) (i32.sub ${cursor} (i32.const 1))))`;
+}
+
+/** Lower capture to a backward scan within the already-matched token. */
+export function captureRunCode(index: number): string {
+  const byte = `$runByte${index}`;
+  const length = `$runLength${index}`;
+  const lastByte = byteBefore("(local.get $matchCursor)");
+  const previousByte = byteBefore("(local.get $runAt)");
+  return `(local.set ${byte} ${lastByte})
+    (local.set $runAt (i32.sub (local.get $matchCursor) (i32.const 1)))
+    (block $runScanDone (loop $scanPreviousByte
+      (br_if $runScanDone (i32.le_u (local.get $runAt) (local.get $pos)))
+      (br_if $runScanDone
+        (i32.ne
+          ${previousByte}
+          (local.get ${byte})))
+      (local.set $runAt (i32.sub (local.get $runAt) (i32.const 1)))
+      (br $scanPreviousByte)))
+    (local.set ${length} (i32.sub (local.get $matchCursor) (local.get $runAt)))`;
+}
+
+/** Lower a saved run match to a bounded byte loop and length comparison. */
+export function lowerSameRun(
+  m: Extract<Matcher, { kind: "sameRun" }>,
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
-  const { fresh, columns, frameBytes, framesOffset, tabStop } = context;
-  return lowerToColumn(
-    m,
-    columns.indexOf(m.slot.name),
-    fail,
-    fresh("column"),
-    frameBytes,
-    framesOffset,
-    tabStop,
-  );
+  const index = context.runSlots.get(m.slot.name)!;
+  const start = context.save();
+  const done = context.fresh("sameRun");
+  const relation = m.relation;
+  const byte = `$runByte${index}`;
+  const length = `$runLength${index}`;
+  const more = `${done}_more`;
+  const matchedLength = `(i32.sub (local.get $matchCursor) (local.get ${start}))`;
+  const prefixLimit =
+    relation === "prefix"
+      ? `(br_if ${done}
+        (i32.ge_u ${matchedLength} (local.get ${length})))`
+      : "";
+  const comparison = relation === "exact" ? "i32.ne" : "i32.lt_u";
+  return `(br_if ${fail} (i32.eqz (local.get ${length})))
+    (local.set ${start} (local.get $matchCursor))
+    (block ${done} (loop ${more} ${prefixLimit}
+      (br_if ${done} (i32.ge_u (local.get $matchCursor) (local.get $limit)))
+      (br_if ${done}
+        (i32.ne (i32.load8_u (i32.add (local.get $input) (local.get $matchCursor))) (local.get ${byte})))
+      (local.set $matchCursor (i32.add (local.get $matchCursor) (i32.const 1)))
+      (br ${more})))
+    (br_if ${fail}
+      (${comparison} ${matchedLength} (local.get ${length})))`;
+}
+
+export function lowerCounterZero(index: number, fail: string): string {
+  const local = `$counter${index}`;
+  return `(br_if ${fail} (local.get ${local}))`;
+}
+
+export function lowerCounterPositive(index: number, fail: string): string {
+  const local = `$counter${index}`;
+  return `(br_if ${fail} (i32.eqz (local.get ${local})))`;
+}
+
+export function lowerCounterReset(index: number): string {
+  const local = `$counter${index}`;
+  return `(local.set ${local} (i32.const 0))`;
+}
+
+export function lowerCounterIncrement(index: number): string {
+  const local = `$counter${index}`;
+  return `(if (i32.lt_u (local.get ${local}) (i32.const ${maxCounter}))
+    (then (local.set ${local} (i32.add (local.get ${local}) (i32.const 1)))))`;
+}
+
+export function lowerCounterDecrement(index: number): string {
+  const local = `$counter${index}`;
+  return `(if (local.get ${local})
+    (then (local.set ${local} (i32.sub (local.get ${local}) (i32.const 1)))))`;
 }

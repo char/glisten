@@ -19,22 +19,19 @@ import {
   status,
   stopScan,
 } from "./runtime.ts";
-import { lowerShapeEffect } from "./registry.ts";
-import { type Effect, type Grammar } from "#/grammar/mod.ts";
-import { columnFunction } from "./column.ts";
-import { previousCharFunction } from "./boundary.ts";
+import { lowerShapeEffect, slotOwnerFunction } from "./effects.ts";
+import type { Effect, Grammar } from "#/grammar/mod.ts";
+import { columnFunction } from "./slots.ts";
+import { previousCharFunction, crossesLineFunction } from "./bytes.ts";
 import { wordFunctions } from "./word.ts";
-import { captureWat } from "./capture.ts";
-import { slotOwnerFunction } from "./state.ts";
-import { queueWat } from "./queue.ts";
+import { captureWat, queueWat, groupWat } from "./shell.ts";
 import { containerCode } from "./container.ts";
-import { prefixCacheFunctions } from "./combinator.ts";
-import { separatedRunFunctions } from "./separated_run.ts";
-import { groupWat } from "./group.ts";
-import { speculationScratch } from "./speculation_scratch.ts";
-import { speculationFunctions } from "./speculation.ts";
-import { speculationOutputFunctions } from "./speculation_output.ts";
-import { crossesLineFunction } from "./line_boundary.ts";
+import type { PrefixCache } from "./matchers.ts";
+import {
+  speculationScratch,
+  speculationFunctions,
+  speculationOutputFunctions,
+} from "./speculation.ts";
 import type { Compiled } from "./mod.ts";
 import type { CompilerFeatures, CompilerArea } from "./features.ts";
 import type { DispatchPlan } from "./dispatch.ts";
@@ -270,9 +267,9 @@ function emitModuleDefinitions(context: {
   scanDefs: string[];
   words: ReturnType<typeof wordFunctions>;
   runFunctions: Map<string, { name: string; code: string }>;
-  prefix: ReturnType<typeof prefixCacheFunctions>;
+  prefix: PrefixCache;
   outlined: Map<string, { name: string; code: string }>;
-  separatedFunctions: ReturnType<typeof separatedRunFunctions>;
+  separatedFunctions: Map<string, { name: string; code: string }>;
 }): string {
   const {
     grammar,

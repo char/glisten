@@ -1,17 +1,17 @@
 import { record } from "#/abi/mod.ts";
 import { wat as fragment, type Def, type Fragment, type Local } from "#/testing/wat/mod.ts";
 import { emitGroup, emitPending, flushSpan, recordWriters } from "./runtime.ts";
-import { type Grammar } from "#/grammar/mod.ts";
-import { columnValueMask } from "./column.ts";
-import { queueSweepCode } from "./queue.ts";
-import { prefixCacheFunctions } from "./combinator.ts";
+import type { Grammar } from "#/grammar/mod.ts";
+import { columnValueMask } from "./slots.ts";
+import { queueSweepCode } from "./shell.ts";
+import type { PrefixCache } from "./matchers.ts";
 import type { CompilerFeatures, CompilerArea } from "./features.ts";
 
 export function emitHighlight(context: {
   grammar: Grammar;
   features: CompilerFeatures;
   area: CompilerArea;
-  prefix: ReturnType<typeof prefixCacheFunctions>;
+  prefix: PrefixCache;
   hasWords: boolean;
   locals: string;
   handles: { hostCurrent: Local; wrapStyle: Local; wrapStart: Local };

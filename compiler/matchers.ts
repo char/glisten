@@ -1,22 +1,69 @@
-import { union, type ByteSet, type Matcher } from "#/grammar/mod.ts";
-import type { LowerContext } from "./matcher.ts";
+import { type ByteSet, type Matcher, union } from "#/grammar/mod.ts";
+import {
+  lowerLiteral,
+  lowerOne,
+  lowerCharacter,
+  lowerRun,
+  lowerSeparatedRun,
+  lowerBaseState,
+  lowerNotNext,
+  lowerLineEnd,
+  lowerNotBehind,
+  lowerPreviousChar,
+} from "./bytes.ts";
+import {
+  lowerGroup,
+  lowerQueueHas,
+  lowerQueueFooter,
+  lowerQueueText,
+  lowerCaptured,
+} from "./shell.ts";
+import {
+  lowerSameRun,
+  columnValueMask,
+  lowerColumnMatcher,
+  lowerCounterZero,
+  lowerCounterPositive,
+} from "./slots.ts";
+
+type FunctionCode = { name: string; code: string };
+
+export type LowerContext = {
+  member: (byte: string, set: ByteSet) => string;
+  fresh: (hint: string) => string;
+  save: () => string;
+  rangesOf: (bytes: number[]) => [number, number][];
+  runFunctions: Map<string, FunctionCode>;
+  runCounts: Map<string, number>;
+  separatedFunctions: Map<string, FunctionCode>;
+  names: string[];
+  hasSpeculation: boolean;
+  runSlots: Map<string, number>;
+  counterSlots: Map<string, number>;
+  columns: string[];
+  tabStop: number;
+  frameBytes: number;
+  framesOffset: number;
+  prefix: PrefixCache;
+  getSaves: () => number;
+  outerField: () => string;
+  needsCallerLocals: (matcher: Matcher) => boolean;
+  matcher: (matcher: Matcher, fail: string, knownPrefix?: boolean) => string;
+};
 
 const prefixMiss = 0;
 const suffixMiss = 1;
 const prefixMatched = 2;
 
-export function prefixCacheFunctions() {
-  return {
-    caches: new Map<string, string>(),
-    counts: new Map<string, number>(),
-    functions: new Map<string, { name: string; code: string }>(),
-  };
-}
+export type PrefixCache = {
+  caches: Map<string, string>;
+  counts: Map<string, number>;
+  functions: Map<string, FunctionCode>;
+};
 
-export function lowerEither(
+function lowerEither(
   m: Extract<Matcher, { kind: "either" }>,
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
   const { fresh, save, matcher } = context;
@@ -35,10 +82,9 @@ export function lowerEither(
       (br ${fail}))`;
 }
 
-export function lowerOpt(
+function lowerOpt(
   m: Extract<Matcher, { kind: "opt" }>,
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
   const { fresh, save, matcher } = context;
@@ -53,7 +99,7 @@ export function lowerOpt(
       (local.set $matchCursor (local.get ${start})))`;
 }
 
-export function lowerCachedPrefix(
+function lowerCachedPrefix(
   m: Extract<Matcher, { kind: "cachedPrefix" }>,
   fail: string,
   knownPrefix: boolean,
@@ -145,10 +191,9 @@ export function lowerCachedPrefix(
       (br ${fail}))`;
 }
 
-export function lowerNotAhead(
+function lowerNotAhead(
   m: Extract<Matcher, { kind: "notAhead" }>,
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
   const { fresh, save, matcher } = context;
@@ -161,10 +206,9 @@ export function lowerNotAhead(
     (local.set $matchCursor (local.get ${start}))`;
 }
 
-export function lowerAhead(
+function lowerAhead(
   m: Extract<Matcher, { kind: "ahead" }>,
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
   const { save, matcher } = context;
@@ -220,7 +264,6 @@ function lowerRepeatedBytes(
   const choice = lowerEither(
     { kind: "either", alternatives: alternatives.slice(1) },
     miss,
-    false,
     context,
   );
   return `(block ${done} (loop ${more}
@@ -232,10 +275,9 @@ function lowerRepeatedBytes(
       (br ${more}))))`;
 }
 
-export function lowerMany(
+function lowerMany(
   m: { readonly matchers: readonly Matcher[] },
   fail: string,
-  knownPrefix: boolean,
   context: LowerContext,
 ): string {
   const repeated = lowerRepeatedBytes(m, fail, context);
@@ -252,4 +294,75 @@ export function lowerMany(
       (br_if ${done} (i32.eq (local.get $matchCursor) (local.get ${start})))
       (br ${more}))
     (local.set $matchCursor (local.get ${start}))))`;
+}
+
+export function lowerMatcher(
+  matcher: Matcher,
+  fail: string,
+  knownPrefix: boolean,
+  context: LowerContext,
+): string {
+  switch (matcher.kind) {
+    case "literal":
+      return lowerLiteral(matcher, fail);
+    case "one":
+      return lowerOne(matcher, fail, context.member);
+    case "character":
+      return lowerCharacter(fail);
+    case "run":
+      return lowerRun(matcher, fail, context);
+    case "previousChar":
+      return lowerPreviousChar(matcher, fail);
+    case "group":
+      return lowerGroup(fail);
+    case "queueHas":
+      return lowerQueueHas(matcher.mask, matcher.flags, fail);
+    case "queueFooter":
+      return lowerQueueFooter(fail);
+    case "queueText":
+      return lowerQueueText(fail);
+    case "captured":
+      return lowerCaptured(fail);
+    case "separatedRun":
+      return lowerSeparatedRun(matcher, fail, context.member, context.separatedFunctions);
+    case "either":
+      return lowerEither(matcher, fail, context);
+    case "baseState":
+      return lowerBaseState(
+        matcher,
+        fail,
+        context.names,
+        context.hasSpeculation,
+        context.outerField,
+      );
+    case "sameRun":
+      return lowerSameRun(matcher, fail, context);
+    case "counterZero":
+      return lowerCounterZero(context.counterSlots.get(matcher.slot.name)!, fail);
+    case "counterPositive":
+      return lowerCounterPositive(context.counterSlots.get(matcher.slot.name)!, fail);
+    case "toColumn":
+      return lowerColumnMatcher(matcher, fail, context);
+    case "opt":
+      return lowerOpt(matcher, fail, context);
+    case "cachedPrefix":
+      return lowerCachedPrefix(matcher, fail, knownPrefix, context);
+    case "notAhead":
+      return lowerNotAhead(matcher, fail, context);
+    case "ahead":
+      return lowerAhead(matcher, fail, context);
+    case "repeat":
+      return lowerMany(matcher, fail, context);
+    case "notNext":
+      return lowerNotNext(matcher, fail, context.member);
+    case "lineEnd":
+      return lowerLineEnd(fail);
+    case "notBehind":
+      return lowerNotBehind(matcher, fail, context.member);
+    case "columnAtLeast":
+      return `(br_if ${fail}
+      (i64.lt_u
+        (i64.and (local.get $column) (i64.const ${columnValueMask}))
+        (i64.const ${matcher.column})))`;
+  }
 }

@@ -1,9 +1,8 @@
 import { ABI, type Manifest } from "#/abi/mod.ts";
 import { styleEntry, type Style } from "#/grammar/styles.ts";
-import { type Grammar } from "#/grammar/mod.ts";
-import { analyzeGrammar } from "#/grammar/analysis.ts";
-import { maxDepth } from "#/grammar/mod.ts";
-import { captureAreaBytes } from "./capture.ts";
+import { type Grammar, maxDepth } from "#/grammar/mod.ts";
+import { analyzeGrammar, usesCapture, usesQueue, visitGrammar } from "#/grammar/analysis.ts";
+import { captureAreaBytes, queueAreas } from "./shell.ts";
 import {
   frameAddressAt,
   frameColumnBytes,
@@ -11,12 +10,8 @@ import {
   frameStateBytes,
   frameWordBytes,
   stateFrameAreaBytes,
-} from "./state.ts";
-import { usesCapture } from "#/grammar/analysis.ts";
-import { queueAreas } from "./queue.ts";
-import { usesQueue } from "#/grammar/analysis.ts";
-import { speculationAreaBytes, speculationCode } from "./speculation_codegen.ts";
-import { visitGrammar } from "#/grammar/analysis.ts";
+} from "./effects.ts";
+import { speculationAreaBytes, speculationCode } from "./speculation.ts";
 
 export function analyzeCompilerGrammar(
   grammar: Grammar,

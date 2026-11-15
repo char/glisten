@@ -1,5 +1,5 @@
 import { ABI, type Manifest } from "#/abi/mod.ts";
-import type { WatSource } from "#/compiler/language.ts";
+import type { WatSource } from "#/compiler/mod.ts";
 import { module, wat } from "#/testing/wat/mod.ts";
 import { blocks, embeds } from "./blocks.ts";
 import { containerStack } from "./layout.ts";

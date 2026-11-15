@@ -1,5 +1,5 @@
 import { mkdirs, writeFile, writeTextFile } from "avril:fs";
-import { compileLanguage } from "#/compiler/language.ts";
+import { compileLanguage } from "#/compiler/mod.ts";
 import { languages } from "#/languages/mod.ts";
 import { buildHost } from "./build_host.ts";
 import { buildModule } from "./module.ts";
