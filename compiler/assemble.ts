@@ -285,6 +285,7 @@ function emitModuleDefinitions(context: {
     outlined,
     separatedFunctions,
   } = context;
+  const wordActions = words.finalize();
   const {
     hasWrap,
     scratch,
@@ -344,11 +345,13 @@ function emitModuleDefinitions(context: {
   ${tracksColumn ? columnFunction(grammar.tabStop ?? 4) : ""}
   ${scanDefs.join("\n")}
   ${[...words.functions.values()].map(({ data }) => data ?? "").join("\n")}
+  ${wordActions.data}
   ${[...runFunctions.values()].map(({ code }) => code).join("\n")}
   ${[...prefix.functions.values()].map(({ code }) => code).join("\n")}
   ${[...outlined.values()].map(({ code }) => code).join("\n")}
   ${[...separatedFunctions.values()].map(({ code }) => code).join("\n")}
   ${[...words.functions.values()].map(({ code }) => code).join("\n")}
+  ${wordActions.code}
 `;
 }
 

@@ -33,7 +33,7 @@ export function buildDispatch(
     counterSlots,
     columns,
   } = features;
-  const { framesOffset, frameOpeningOffset, frameBytes, snapshotOffset, spec, manifest } = area;
+  const { framesOffset, frameOpeningOffset, frameBytes, spec, manifest } = area;
 
   const runArguments = [...runSlots.values()]
     .map((i) => `(local.get $runByte${i}) (local.get $runLength${i})`)
@@ -72,7 +72,7 @@ export function buildDispatch(
     runSlots,
     counterSlots,
   });
-  const words = wordFunctions(snapshotOffset, manifest);
+  const words = wordFunctions(manifest.areaBytes, manifest);
   const scans = new Map<string, string>();
   const scanOf = (bytes: number[], high: boolean) => {
     const key = `${high ? "h" : "a"}:${bytes.join(",")}`;
@@ -355,7 +355,12 @@ function lowerArm(
     );
   const selected =
     classification?.kind === "word"
-      ? lowerWordSelection(classification, words.lookup, branch)
+      ? lowerWordSelection(classification, words.lookup, branch, {
+          styles,
+          names,
+          shapeOf: (operations) => shapeOf(operations, false, shared),
+          actions: words.actions,
+        })
       : branch(arm.then);
   const opener = arm.then.find((effect) => effect.kind === "speculate");
   const group = opener?.kind === "speculate" ? speculationGroup(opener) : undefined;

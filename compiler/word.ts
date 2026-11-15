@@ -1,26 +1,114 @@
 import type { Manifest } from "#/abi/mod.ts";
 import type { WordEffect, Effect } from "#/grammar/mod.ts";
 
+type WordSelectionOptions = {
+  styles: string[];
+  names: string[];
+  shapeOf: (ops: Effect[]) => string;
+  actions: (words: number[]) => number;
+};
+
 export function lowerWordSelection(
   classification: WordEffect,
   lookup: (cases: WordEffect["cases"], results: readonly number[], caseless?: boolean) => string,
   branch: (effects: readonly Effect[]) => string,
+  options: WordSelectionOptions,
 ): string {
   const groups = new Map<string, readonly Effect[]>();
   for (const { then } of classification.cases) groups.set(JSON.stringify(then), then);
   const keys = [...groups.keys()];
   const results = classification.cases.map(({ then }) => keys.indexOf(JSON.stringify(then)));
   const lookupName = lookup(classification.cases, results, classification.caseless);
-  const branches = [...groups.values()]
-    .map((effects, i) => {
-      const body = branch(effects);
-      return `(if (i32.eq (local.get $word) (i32.const ${i})) (then ${body}))`;
-    })
-    .join("\n");
-  const otherwise = branch(classification.otherwise);
+
+  const effectsByGroup = [...groups.values()];
+  const branches =
+    lowerPackedSelection(effectsByGroup, options) ??
+    effectsByGroup
+      .map(
+        (effects, i) =>
+          `(if (i32.eq (local.get $word) (i32.const ${i})) (then ${branch(effects)}))`,
+      )
+      .join("\n");
   return `(local.set $word (call ${lookupName} (local.get $input) (local.get $pos) (local.get $matchCursor)))
     ${branches}
-    ${otherwise}`;
+    ${branch(classification.otherwise)}`;
+}
+
+function lowerPackedSelection(
+  groups: readonly (readonly Effect[])[],
+  { styles, names, shapeOf, actions }: WordSelectionOptions,
+): string | undefined {
+  if (groups.length < 8 || styles.length > 256 || names.length > 256) return;
+  if (
+    !groups.every((effects) => {
+      const paints = effects.filter((effect) => effect.kind === "paint");
+      const ops = effects.filter((effect) => effect.kind !== "paint");
+      return (
+        paints.length === 1 &&
+        ops.length <= 2 &&
+        ops.every((op) => op.kind === "goto" || op.kind === "push" || op.kind === "pop")
+      );
+    })
+  )
+    return;
+
+  const destinations: string[] = [];
+  const usesTarget = [false, false];
+  const words = groups.map((effects) => {
+    const ops = effects.filter((effect) => effect.kind !== "paint");
+    const destination = ops.length ? shapeOf(ops) : "$paint";
+    let destIndex = destinations.indexOf(destination);
+    if (destIndex === -1) destIndex = destinations.push(destination) - 1;
+
+    const paint = effects.find((effect) => effect.kind === "paint")!;
+    const targets = ops.map((op, i) => {
+      const target =
+        op.kind === "goto" || op.kind === "push"
+          ? op.state
+          : op.kind === "pop"
+            ? op.fallback
+            : undefined;
+      if (target === undefined) return 0;
+      usesTarget[i] = true;
+      return names.indexOf(target);
+    });
+    return (
+      (destIndex |
+        (styles.indexOf(paint.style) << 8) |
+        ((targets[0] ?? 0) << 16) |
+        ((targets[1] ?? 0) << 24)) >>>
+      0
+    );
+  });
+  if (destinations.length > 128) return;
+
+  const start = actions(words);
+  const index = start ? `(i32.add (local.get $word) (i32.const ${start}))` : "(local.get $word)";
+  const targets = [
+    usesTarget[0]
+      ? `(local.set $target0 (i32.and (i32.shr_u (local.get $word) (i32.const 16)) (i32.const 255)))`
+      : "",
+    usesTarget[1] ? `(local.set $target1 (i32.shr_u (local.get $word) (i32.const 24)))` : "",
+  ].join("\n");
+  const dispatch =
+    destinations.length === 1
+      ? `(br ${destinations[0]})`
+      : `(local.set $word (i32.and (local.get $word) (i32.const 255)))
+        ${destinations
+          .slice(0, -1)
+          .map(
+            (destination, i) =>
+              `(br_if ${destination} ${i === 0 ? "(i32.eqz (local.get $word))" : `(i32.eq (local.get $word) (i32.const ${i}))`})`,
+          )
+          .join("\n")}
+        (br ${destinations.at(-1)!})`;
+
+  return `(if (i32.ge_s (local.get $word) (i32.const 0))
+    (then
+      (local.set $word (call $wordAction ${index}))
+      (local.set $style (i32.and (i32.shr_u (local.get $word) (i32.const 8)) (i32.const 255)))
+      ${targets}
+      ${dispatch}))`;
 }
 
 const encoder = new TextEncoder();
@@ -288,6 +376,18 @@ export function wordTable(
 
 export function wordFunctions(offset: number, manifest: Manifest) {
   let wordOffset = offset;
+  const actionWords: number[] = [];
+  const actionSlices = new Map<string, number>();
+  const actions = (words: number[]) => {
+    const key = JSON.stringify(words);
+    let start = actionSlices.get(key);
+    if (start === undefined) {
+      start = actionWords.length;
+      actionWords.push(...words);
+      actionSlices.set(key, start);
+    }
+    return start;
+  };
   const functions = new Map<string, { name: string; code: string; data?: string }>();
   const lookup = (cases: WordEffect["cases"], results: readonly number[], caseless = false) => {
     const key =
@@ -312,5 +412,27 @@ export function wordFunctions(offset: number, manifest: Manifest) {
     }
     return entry.name;
   };
-  return { functions, lookup };
+  const finalize = () => {
+    if (!actionWords.length) return { data: "", code: "" };
+    const actionsOffset = Math.ceil(wordOffset / 4) * 4;
+    const bytes = actionWords.flatMap((word) => [
+      word & 255,
+      (word >>> 8) & 255,
+      (word >>> 16) & 255,
+      word >>> 24,
+    ]);
+    const encoded = bytes.map((byte) => `\\${byte.toString(16).padStart(2, "0")}`).join("");
+    manifest.areaBytes = Math.ceil((actionsOffset + bytes.length) / 16) * 16;
+    return {
+      data: `(data $wordActions "${encoded}") (global $wordActionsReady (mut i32) (i32.const 0))`,
+      code: `(func $wordAction (param $index i32) (result i32)
+        (if (i32.eqz (global.get $wordActionsReady))
+          (then
+            (memory.init $wordActions (i32.add (global.get $base) (i32.const ${actionsOffset})) (i32.const 0) (i32.const ${bytes.length}))
+            (global.set $wordActionsReady (i32.const 1))))
+        (i32.load offset=${actionsOffset}
+          (i32.add (global.get $base) (i32.shl (local.get $index) (i32.const 2)))))`,
+    };
+  };
+  return { functions, lookup, actions, finalize };
 }
