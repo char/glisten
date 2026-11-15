@@ -1,4 +1,4 @@
-import { maxDepth } from "#/grammar/limits.ts";
+import { maxDepth } from "#/grammar/mod.ts";
 import { rewindAllowance, rewindFrontierFactor } from "./speculation.ts";
 import { speculationOutputBytes } from "./speculation_output.ts";
 

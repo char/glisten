@@ -23,10 +23,14 @@ import {
   openInjection,
   slot,
 } from "./mod.ts";
-import { analyzeGrammar } from "./analysis.ts";
-import { usesCapture } from "./capture.ts";
-import { usesQueue } from "./queue.ts";
-import { someMatcher, visitGrammar, visitMatchers } from "./visit.ts";
+import {
+  analyzeGrammar,
+  usesCapture,
+  usesQueue,
+  someMatcher,
+  visitGrammar,
+  visitMatchers,
+} from "./analysis.ts";
 import { equal, throws } from "#/testing/assert.ts";
 
 const prefixColumnSlot = slot.column("prefix");

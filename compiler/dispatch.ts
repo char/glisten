@@ -10,7 +10,7 @@ import {
   type Grammar,
   type Matcher,
 } from "#/grammar/mod.ts";
-import { maxDepth, maxTransitions } from "#/grammar/limits.ts";
+import { maxDepth, maxTransitions } from "#/grammar/mod.ts";
 import { lowerInjectionActions } from "./injection.ts";
 import { byteInRange, i32Or } from "./idioms.ts";
 import { lowerWordSelection, wordFunctions } from "./word.ts";
@@ -18,7 +18,7 @@ import { prefixCacheFunctions } from "./combinator.ts";
 import { separatedRunFunctions } from "./separated_run.ts";
 import { speculationCode } from "./speculation_codegen.ts";
 import { lineBoundaryCheck } from "./line_boundary.ts";
-import { someMatcher, visitMatchers } from "#/grammar/visit.ts";
+import { someMatcher, visitMatchers } from "#/grammar/analysis.ts";
 import type { CompilerFeatures, CompilerArea } from "./features.ts";
 
 export function buildDispatch(

@@ -1,6 +1,6 @@
 import type { ByteSet, Matcher } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
-import type { SeparatedRun } from "#/grammar/separated_run.ts";
+import type { SeparatedRun } from "#/grammar/mod.ts";
 
 export function separatedRunFunctions() {
   return new Map<string, { name: string; code: string }>();

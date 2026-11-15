@@ -1,5 +1,5 @@
 import { bytesOf, type Matcher } from "#/grammar/mod.ts";
-import { visitMatchers } from "#/grammar/visit.ts";
+import { visitMatchers } from "#/grammar/analysis.ts";
 
 const newlineByte = "\n".charCodeAt(0);
 

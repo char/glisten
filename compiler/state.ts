@@ -1,4 +1,4 @@
-import { maxDepth } from "#/grammar/limits.ts";
+import { maxDepth } from "#/grammar/mod.ts";
 import type { Effect } from "#/grammar/mod.ts";
 import type { ShapeContext, ShapeLowering } from "./effect.ts";
 import type { ArmEffectLowering } from "./arm_effect.ts";

@@ -1,5 +1,5 @@
 import type { Manifest } from "#/abi/mod.ts";
-import type { WordEffect } from "#/grammar/word.ts";
+import type { WordEffect } from "#/grammar/mod.ts";
 import type { Effect } from "#/grammar/mod.ts";
 
 export function lowerWordSelection(

@@ -1,6 +1,6 @@
 import type { Matcher } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
-import { captureLimit } from "#/grammar/capture.ts";
+import { captureLimit } from "#/grammar/mod.ts";
 import type { ShapeLowering } from "./effect.ts";
 
 export const lowerCaptureReset: ShapeLowering<"captureReset"> = () => `(call $captureReset)`;

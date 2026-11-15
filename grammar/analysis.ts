@@ -1,9 +1,123 @@
+import type { Effect, Grammar, Matcher, State } from "./mod.ts";
+import type { CounterSlot, RunSlot } from "./slots.ts";
 import type { Style } from "./styles.ts";
-import type { Grammar } from "./mod.ts";
-import type { CounterSlot, RunSlot } from "./slot.ts";
-import { visitGrammar } from "./visit.ts";
 
-/** Collect ordered grammar metadata for the compiler. */
+export type GrammarVisitor = {
+  state?: (state: State) => void;
+  matcher?: (matcher: Matcher) => void;
+  effect?: (effect: Effect) => void;
+};
+
+export function visitMatchers(
+  matchers: readonly Matcher[],
+  visit: (matcher: Matcher) => void | boolean,
+  leave?: (matcher: Matcher) => void,
+): void {
+  const match = (item: Matcher): void => {
+    if (visit(item) === false) {
+      leave?.(item);
+      return;
+    }
+    switch (item.kind) {
+      case "either":
+        item.alternatives.forEach((alternative) => alternative.forEach(match));
+        break;
+      case "ahead":
+      case "notAhead":
+      case "opt":
+      case "repeat":
+        item.matchers.forEach(match);
+        break;
+      case "cachedPrefix":
+        item.suffix.forEach(match);
+        break;
+    }
+    leave?.(item);
+  };
+  matchers.forEach(match);
+}
+
+export function someMatcher(
+  matchers: readonly Matcher[],
+  predicate: (matcher: Matcher) => boolean,
+): boolean {
+  let found = false;
+  visitMatchers(matchers, (matcher) => {
+    if (found) return false;
+    if (predicate(matcher)) found = true;
+    return !found;
+  });
+  return found;
+}
+
+export function visitGrammar(grammar: Grammar, visitor: GrammarVisitor): void {
+  const match = (matcher: Matcher) => visitMatchers([matcher], (item) => visitor.matcher?.(item));
+  const effect = (item: Effect): void => {
+    visitor.effect?.(item);
+    if (item.kind === "word") {
+      item.cases.forEach(({ then }) => then.forEach(effect));
+      item.otherwise.forEach(effect);
+    }
+  };
+  for (const state of Object.values(grammar.states)) {
+    visitor.state?.(state);
+    state.prefix?.match.forEach(match);
+    state.prefix?.lazy?.unless.forEach(match);
+    for (const arm of state.arms) {
+      arm.match.forEach(match);
+      arm.then.forEach(effect);
+    }
+    if (state.otherwise && typeof state.otherwise !== "string") state.otherwise.forEach(effect);
+  }
+}
+
+export function usesCapture(grammar: Grammar): boolean {
+  let used = false;
+  visitGrammar(grammar, {
+    state: (state) => {
+      if (state.captureFallback) used = true;
+    },
+    matcher: (matcher) => {
+      if (matcher.kind === "captured") used = true;
+    },
+    effect: (effect) => {
+      if (
+        effect.kind === "captureReset" ||
+        effect.kind === "captureAppend" ||
+        effect.kind === "captureMark" ||
+        effect.kind === "queueSave"
+      )
+        used = true;
+    },
+  });
+  return used;
+}
+
+export function usesQueue(grammar: Grammar): boolean {
+  let used = !!grammar.queueSweep;
+  visitGrammar(grammar, {
+    matcher: (matcher) => {
+      if (
+        matcher.kind === "queueHas" ||
+        matcher.kind === "queueText" ||
+        matcher.kind === "queueFooter"
+      )
+        used = true;
+    },
+    effect: (effect) => {
+      if (
+        effect.kind === "queueEnter" ||
+        effect.kind === "queueLeave" ||
+        effect.kind === "queueSave" ||
+        effect.kind === "queueShift" ||
+        effect.kind === "queueOpen"
+      )
+        used = true;
+    },
+  });
+  return used;
+}
+
 export function analyzeGrammar(grammar: Grammar) {
   const styles = new Set<Style>(["plain"]);
   const embeds = new Set<string>();
@@ -84,7 +198,3 @@ export function analyzeGrammar(grammar: Grammar) {
     injections,
   };
 }
-
-export const stylesOf = (grammar: Grammar): Style[] => analyzeGrammar(grammar).styles;
-export const staticEmbeds = (grammar: Grammar): string[] => analyzeGrammar(grammar).embeds;
-export const columnSlots = (grammar: Grammar): string[] => analyzeGrammar(grammar).columns;

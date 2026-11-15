@@ -1,9 +1,9 @@
 import type { Grammar, Matcher } from "#/grammar/mod.ts";
-import type { FooterIndent } from "#/grammar/queue.ts";
+import type { FooterIndent } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
 import type { ShapeLowering } from "./effect.ts";
 import { captureBytes, captureLayout } from "./capture.ts";
-import { maxDepth } from "#/grammar/limits.ts";
+import { maxDepth } from "#/grammar/mod.ts";
 import { record } from "#/abi/mod.ts";
 import { heredocFooterWat } from "./heredoc_footer.ts";
 import { isSharedState } from "./state.ts";

@@ -1,23 +1,35 @@
 import { test } from "avril:test";
+import { equal, throws } from "#/testing/assert.ts";
 import {
+  bytes,
   classify,
+  columnAtLeast,
+  counterIncrement,
+  counterReset,
+  counterZero,
   defineGrammar,
+  indentTo,
   literal,
-  on,
-  notNext,
+  lookahead,
   markRecord,
+  matchRun,
+  notNext,
+  on,
+  openInjection,
   paint,
   patchRecord,
   popState,
   pushState,
   redispatch,
+  saveRun,
   setState,
   shell,
   slot,
   type Arm,
+  type Effect,
   type Matcher,
+  type State,
 } from "./mod.ts";
-import { throws } from "#/testing/assert.ts";
 
 const grammarWith = (matcher: Matcher) =>
   defineGrammar({
@@ -60,6 +72,7 @@ test("definition checks root pop targets in arms and fallback effects", () => {
     Error,
     /unknown state missing/,
   );
+
   throws(
     () =>
       defineGrammar({
@@ -80,13 +93,14 @@ test("state slot sharing accepts only the shared option", () => {
     initial: "root",
     states: { root: { style: "plain", arms: [], slots: "shared" } },
   });
+
   const invalid = { style: "plain" as const, arms: [], slots: "other" };
   throws(
     () =>
       defineGrammar({
         name: "invalid-sharing",
         initial: "root",
-        states: { root: invalid as unknown as import("./mod.ts").State },
+        states: { root: invalid as unknown as State },
       }),
     Error,
     /invalid slot sharing option/,
@@ -94,7 +108,7 @@ test("state slot sharing accepts only the shared option", () => {
 });
 
 test("state replacement preserves frame slot ownership", () => {
-  const make = (arm: Arm, otherwise?: string | readonly import("./mod.ts").Effect[]) =>
+  const make = (arm: Arm, otherwise?: string | readonly Effect[]) =>
     defineGrammar({
       name: "ownership",
       initial: "root",
@@ -104,6 +118,7 @@ test("state replacement preserves frame slot ownership", () => {
         owner: { style: "plain", arms: [] },
       },
     });
+
   const message = /cannot cross shared and owning/;
   throws(() => make(on("x", literal("x"), paint("plain"), setState("shared"))), Error, message);
   throws(() => make(redispatch("x", setState("shared"))), Error, message);
@@ -178,6 +193,7 @@ test("an arm cannot paint more than once", () => {
 
 test("record patches precede painting and marks follow it", () => {
   on("x", literal("x"), patchRecord("keyword"), paint("plain"), markRecord());
+
   throws(() => on("x", literal("x"), markRecord(), paint("plain")), Error, /Record patch/);
   throws(
     () => on("x", literal("x"), paint("plain"), patchRecord("keyword")),
@@ -196,4 +212,149 @@ test("redispatch permits assertions and transitions but not consuming matchers",
   throws(() => redispatch("x", literal("x"), setState("next")), Error, /zero-width transition/);
   throws(() => redispatch("x", shell.captureReset()), Error, /zero-width transition/);
   redispatch("x", shell.captureReset(), setState("next"));
+});
+
+test("run slot scope is opt-in and rejects unknown scopes", () => {
+  equal(slot.run("document").scope, undefined);
+  equal(slot.run("frame", { scope: "frame" }).scope, "frame");
+  throws(() => slot.run("bad", { scope: "invalid" as "frame" }), Error, /scope/);
+});
+
+test("counter slot scope is opt-in and rejects unknown scopes", () => {
+  equal(slot.counter("document").scope, undefined);
+  equal(slot.counter("frame", { scope: "frame" }).scope, "frame");
+  throws(() => slot.counter("bad", { scope: "invalid" as "frame" }), Error, /scope/);
+});
+
+test("slot handles are distinct by declaration and kind", () => {
+  const first = slot.run("delimiter");
+  const second = slot.run("delimiter");
+  throws(
+    () =>
+      defineGrammar({
+        name: "duplicate-slots",
+        initial: "root",
+        states: {
+          root: {
+            style: "plain",
+            arms: [
+              on("a", literal("a"), paint("plain"), saveRun(first)),
+              on("b", matchRun(second), paint("plain")),
+            ],
+          },
+        },
+      }),
+    Error,
+    /duplicate run slot delimiter/,
+  );
+
+  defineGrammar({
+    name: "distinct-kinds",
+    initial: "root",
+    states: {
+      root: {
+        style: "plain",
+        arms: [
+          on("a", literal("a"), paint("plain"), saveRun(first)),
+          on(" ", indentTo(slot.column("delimiter")), paint("plain")),
+        ],
+      },
+    },
+  });
+});
+
+test("definition rejects a slot of the wrong kind", () => {
+  const range = slot.range("name");
+  // @ts-expect-error Range handles cannot be used as run handles.
+  const wrong = saveRun(range);
+  throws(
+    () =>
+      defineGrammar({
+        name: "wrong-slot",
+        initial: "root",
+        states: {
+          root: { style: "plain", arms: [on("a", literal("a"), paint("plain"), wrong)] },
+        },
+      }),
+    Error,
+    /expected a run slot handle/,
+  );
+
+  // @ts-expect-error Named injections require a range handle.
+  openInjection({ named: slot.run("name") });
+});
+
+test("physical column matchers reject invalid bounds", () => {
+  for (const n of [-1, 1.5, Infinity, 2147483648]) {
+    throws(() => columnAtLeast(n), Error, /column/i);
+    throws(() => bytes("x", { untilColumn: n }), Error, /column/i);
+  }
+
+  columnAtLeast(0);
+  bytes("x", { untilColumn: 2147483647 });
+});
+
+test("column assertions are only permitted at an arm start", () => {
+  const grammar = (arm: Arm) =>
+    defineGrammar({
+      name: "column-validation",
+      initial: "s",
+      states: { s: { style: "plain", arms: [arm] } },
+    });
+
+  throws(
+    () => grammar(on("x", literal("x"), columnAtLeast(1), paint("plain"))),
+    Error,
+    /only valid as the first matcher/,
+  );
+  throws(
+    () => grammar(on("x", lookahead(columnAtLeast(1)), literal("x"), paint("plain"))),
+    Error,
+    /only valid as the first matcher/,
+  );
+
+  grammar(on("x", columnAtLeast(1), literal("x"), paint("plain")));
+  defineGrammar({
+    name: "column-redispatch",
+    initial: "s",
+    states: {
+      s: { style: "plain", arms: [redispatch("x", columnAtLeast(1), setState("t"))] },
+      t: { style: "plain", arms: [] },
+    },
+  });
+});
+
+test("counter slots are checked through nested matchers and effects", () => {
+  const one = slot.counter("cells");
+  const two = slot.counter("cells");
+  throws(
+    () =>
+      defineGrammar({
+        name: "duplicate",
+        initial: "root",
+        states: {
+          root: {
+            style: "plain",
+            arms: [
+              on("a", lookahead(counterZero(one)), literal("a"), paint("plain"), counterReset(two)),
+            ],
+          },
+        },
+      }),
+    Error,
+    /duplicate counter slot cells/,
+  );
+
+  // @ts-expect-error A run slot is not a counter.
+  const wrong = counterIncrement(slot.run("cells"));
+  throws(
+    () =>
+      defineGrammar({
+        name: "wrong",
+        initial: "root",
+        states: { root: { style: "plain", arms: [on("a", literal("a"), paint("plain"), wrong)] } },
+      }),
+    Error,
+    /expected a counter slot handle/,
+  );
 });

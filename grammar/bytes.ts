@@ -1,6 +1,3 @@
-import type { Matcher } from "./mod.ts";
-
-/** An ASCII string shorthand or an explicitly constructed set of bytes. */
 export type ByteSet = string | { readonly bytes: readonly number[] };
 
 function checkedByte(value: number): number {
@@ -9,7 +6,6 @@ function checkedByte(value: number): number {
   return value;
 }
 
-/** Construct a byte set from explicit byte values and inclusive byte ranges. */
 export function byteSet(options: {
   bytes?: readonly number[];
   ranges?: readonly (readonly [number, number])[];
@@ -24,11 +20,9 @@ export function byteSet(options: {
   return Object.freeze({ bytes: Object.freeze([...members].sort((a, b) => a - b)) });
 }
 
-/** Encode a string as UTF-8 bytes and use those bytes as set members. */
 export const utf8Bytes = (text: string): ByteSet =>
   byteSet({ bytes: [...new TextEncoder().encode(text)] });
 
-/** Construct an inclusive range from single ASCII endpoints. */
 export function range(start: string, end: string): ByteSet {
   if (
     start.length !== 1 ||
@@ -40,24 +34,19 @@ export function range(start: string, end: string): ByteSet {
   return byteSet({ ranges: [[start.charCodeAt(0), end.charCodeAt(0)]] });
 }
 
-/** Construct a set from ASCII characters, rejecting non-ASCII input. */
 export const ascii = (text: string): ByteSet => byteSet({ bytes: bytesOf(text) });
 
-/** Construct the union of byte sets. */
 export const union = (...sets: readonly ByteSet[]): ByteSet =>
   byteSet({ bytes: sets.flatMap(bytesOf) });
-/** Construct the bytes present in every supplied set. */
 export const intersection = (first: ByteSet, ...rest: readonly ByteSet[]): ByteSet => {
   const others = rest.map((set) => new Set(bytesOf(set)));
   return byteSet({ bytes: bytesOf(first).filter((byte) => others.every((set) => set.has(byte))) });
 };
-/** Remove all bytes in the excluded sets from the first set. */
 export const except = (first: ByteSet, ...excluded: readonly ByteSet[]): ByteSet => {
   const removed = new Set(excluded.flatMap(bytesOf));
   return byteSet({ bytes: bytesOf(first).filter((byte) => !removed.has(byte)) });
 };
 
-/** The members of a byte set, ascending. */
 export function bytesOf(set: ByteSet): number[] {
   if (typeof set === "string") {
     const bytes = [...set].map((character) => character.codePointAt(0)!);
@@ -66,45 +55,6 @@ export function bytesOf(set: ByteSet): number[] {
   }
   return [...new Set(set.bytes.map(checkedByte))].sort((a, b) => a - b);
 }
-
-export type ByteMatcher =
-  | { readonly kind: "literal"; readonly text: string }
-  | { readonly kind: "one"; readonly set: ByteSet }
-  | { readonly kind: "character" }
-  | {
-      readonly kind: "run";
-      readonly set: ByteSet;
-      readonly min: number;
-      readonly max?: number;
-      readonly untilColumn?: number;
-    };
-
-/** Bytes of a literal. */
-export const literal = (text: string): Matcher => ({ kind: "literal", text });
-/** One byte in a set. */
-export const byte = (set: ByteSet): Matcher => {
-  bytesOf(set);
-  return { kind: "one", set };
-};
-/** One segment-bounded UTF-8 character. */
-export const character = (): Matcher => ({ kind: "character" });
-/** A maximal run of bytes in a set, limited by `max` or `untilColumn` when supplied. */
-export const bytes = (
-  set: ByteSet,
-  options: { min?: number; max?: number; untilColumn?: number } = {},
-): Matcher => {
-  const { min = 1, max, untilColumn } = options;
-  bytesOf(set);
-  checkRunBounds(min, max);
-  if (untilColumn !== undefined) checkColumn(untilColumn);
-  return {
-    kind: "run",
-    set,
-    min,
-    ...(max === undefined ? {} : { max }),
-    ...(untilColumn === undefined ? {} : { untilColumn }),
-  };
-};
 
 export function checkColumn(column: number): void {
   if (!Number.isSafeInteger(column) || column < 0 || column > 0x7fffffff)
@@ -119,4 +69,28 @@ export function checkRunBounds(min: number, max?: number): void {
     (max !== undefined && (!Number.isSafeInteger(max) || max < min || max > 0x7fffffff))
   )
     throw new RangeError("Invalid run bounds");
+}
+
+export type CharRanges = readonly (readonly [number, number])[];
+
+export function checkCharRanges(ranges: CharRanges): void {
+  if (!Array.isArray(ranges)) throw new RangeError("Expected Unicode code-point ranges");
+  for (const range of ranges) {
+    if (!Array.isArray(range) || range.length !== 2)
+      throw new RangeError("Invalid Unicode code-point range");
+    const [start, end] = range;
+    if (
+      !Number.isInteger(start) ||
+      !Number.isInteger(end) ||
+      start < 0 ||
+      start > end ||
+      end > 0x10ffff
+    )
+      throw new RangeError("Invalid Unicode code-point range");
+  }
+}
+
+export function checkSeparatedRunMinimum(min: number): void {
+  if (!Number.isSafeInteger(min) || min < 1 || min > 0x7fffffff)
+    throw new RangeError("Invalid separated run minimum");
 }

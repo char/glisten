@@ -2,7 +2,7 @@ import { ABI, type Manifest } from "#/abi/mod.ts";
 import { styleEntry, type Style } from "#/grammar/styles.ts";
 import { type Grammar } from "#/grammar/mod.ts";
 import { analyzeGrammar } from "#/grammar/analysis.ts";
-import { maxDepth } from "#/grammar/limits.ts";
+import { maxDepth } from "#/grammar/mod.ts";
 import { captureAreaBytes } from "./capture.ts";
 import {
   frameAddressAt,
@@ -12,11 +12,11 @@ import {
   frameWordBytes,
   stateFrameAreaBytes,
 } from "./state.ts";
-import { usesCapture } from "#/grammar/capture.ts";
+import { usesCapture } from "#/grammar/analysis.ts";
 import { queueAreas } from "./queue.ts";
-import { usesQueue } from "#/grammar/queue.ts";
+import { usesQueue } from "#/grammar/analysis.ts";
 import { speculationAreaBytes, speculationCode } from "./speculation_codegen.ts";
-import { visitGrammar } from "#/grammar/visit.ts";
+import { visitGrammar } from "#/grammar/analysis.ts";
 
 export function analyzeCompilerGrammar(
   grammar: Grammar,

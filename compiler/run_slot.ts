@@ -1,5 +1,5 @@
 import type { Matcher } from "#/grammar/mod.ts";
-import type { RunRelation } from "#/grammar/run_slot.ts";
+import type { RunRelation } from "#/grammar/mod.ts";
 import type { LowerContext } from "./matcher.ts";
 import type { ArmEffectLowering } from "./arm_effect.ts";
 

@@ -20,8 +20,9 @@ struct Index {
 }
 
 static INDEX: LazyLock<Index> = LazyLock::new(|| {
-    let catalog: Vec<Metadata> = serde_json::from_str(include_str!("../../_generated/languages.json"))
-        .expect("invalid bundled language metadata");
+    let catalog: Vec<Metadata> =
+        serde_json::from_str(include_str!("../../_generated/languages.json"))
+            .expect("invalid bundled language metadata");
     let mut index = Index {
         filenames: HashMap::new(),
         extensions: HashMap::new(),

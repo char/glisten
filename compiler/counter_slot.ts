@@ -1,4 +1,4 @@
-import { maxCounter } from "#/grammar/counter_slot.ts";
+import { maxCounter } from "#/grammar/mod.ts";
 import type { MatcherLowering } from "./matcher.ts";
 import type { ShapeLowering } from "./effect.ts";
 
