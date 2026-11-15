@@ -200,7 +200,7 @@ function composeInjections(
           const word = records[at + 1]!;
           if (word >>> 29 === 2) {
             groups.push(value, position, word & 0x1fff_ffff);
-            groupDepths.push(depth);
+            groupDepths.push(depth * 2);
             values.push(undefined);
           } else {
             if (position === end) break;
@@ -305,6 +305,7 @@ function composeInjections(
     let doc = 0;
     let position = currentDocuments[0]!;
     let pieceCursor = 0;
+    let lastInjection = -1;
 
     function project(start: number, end: number, target: number[]): void {
       const projection = projections[doc]!;
@@ -316,9 +317,7 @@ function composeInjections(
         if (part.start >= end) break;
         const sourceStart = part.source + Math.max(start, part.start) - part.start;
         const sourceEnd = part.source + Math.min(end, part.end) - part.start;
-        const count = target.length;
-        if (count && target[count - 1] === sourceStart) target[count - 1] = sourceEnd;
-        else target.push(sourceStart, sourceEnd);
+        target.push(sourceStart, sourceEnd);
       }
     }
 
@@ -332,11 +331,13 @@ function composeInjections(
         while (doc < documents.length && position === currentDocuments[doc * 2 + 1]) {
           doc++;
           pieceCursor = 0;
+          lastInjection = -1;
           if (doc < documents.length) position = currentDocuments[doc * 2]!;
         }
         const projection = projections[doc]!;
         while (pieceCursor < projection.length && projection[pieceCursor]!.end <= position)
           pieceCursor++;
+        if (kind === 0) lastInjection = -1;
         const injection = kind === 0 ? undefined : injections[id];
         if (kind !== 0 && !injection) throw new Error("Invalid injection ID");
         for (let index = pieceCursor; index < projection.length; index++) {
@@ -346,11 +347,20 @@ function composeInjections(
           if (injection) {
             const start = piece.source + Math.max(position, piece.start) - piece.start;
             const end = piece.source + Math.min(value, piece.end) - piece.start;
-            const child = chunks.length;
-            chunks.push([]);
-            target.push(-child, 0, 0, 0);
-            injection.pieces.push(start, end);
-            injection.targets.push(child);
+            if (
+              lastInjection === id &&
+              injection.pieces[injection.pieces.length - 1] === start &&
+              target[target.length - 4] === -injection.targets[injection.targets.length - 1]!
+            ) {
+              injection.pieces[injection.pieces.length - 1] = end;
+            } else {
+              const child = chunks.length;
+              chunks.push([]);
+              target.push(-child, 0, 0, 0);
+              injection.pieces.push(start, end);
+              injection.targets.push(child);
+            }
+            lastInjection = id;
           } else {
             const address = call.offset + i * 4;
             const delta = piece.source - piece.start;
@@ -368,6 +378,7 @@ function composeInjections(
         }
         position = value;
       } else if (kind === 2) {
+        lastInjection = -1;
         mapped.length = 0;
         project(value, position, mapped);
         const full =
@@ -378,7 +389,7 @@ function composeInjections(
             : undefined;
         for (let j = 0; j < mapped.length; j += 2) {
           groups.push(mapped[j]!, mapped[j + 1]!, id);
-          groupDepths.push(depth);
+          groupDepths.push(depth * 2);
           values.push(full);
         }
       } else if (kind === 6 || kind === 7) {
@@ -400,7 +411,12 @@ function composeInjections(
           resolved = { name, guest: languages.get(name) };
           i += 2;
         }
-        injections[id] = { name: resolved.name, guest: resolved.guest, pieces: [], targets: [] };
+        injections[id] = {
+          name: resolved.name,
+          guest: resolved.guest,
+          pieces: [],
+          targets: [],
+        };
       } else throw new Error("Invalid record kind");
     }
     return injections;
@@ -448,6 +464,12 @@ function composeInjections(
     const batches = new Map<Guest, Document[]>();
     for (const injection of injections) {
       const child = injection.guest;
+      const label = child ? child.manifest.language : "plain";
+      for (let i = 0; i < injection.pieces.length; i += 2) {
+        groups.push(injection.pieces[i]!, injection.pieces[i + 1]!, languages.languageStyle);
+        groupDepths.push(depth * 2 + 1);
+        values.push(label);
+      }
       if (!child) {
         noteMissing(injection.name);
         for (let i = 0; i < injection.targets.length; i++) {

@@ -7,8 +7,18 @@ fn language(
     styles: serde_json::Value,
     records: &[[u32; 2]],
 ) -> Language {
+    language_with_aliases(name, &[], embeds, styles, records)
+}
+
+fn language_with_aliases(
+    name: &str,
+    aliases: &[&str],
+    embeds: &[&str],
+    styles: serde_json::Value,
+    records: &[[u32; 2]],
+) -> Language {
     let manifest = json!({
-        "abi": 4, "language": name, "aliases": [], "embeds": embeds,
+        "abi": 4, "language": name, "aliases": aliases, "embeds": embeds,
         "styles": styles, "styleMap": 0, "areaBytes": 16, "maxDepth": 16,
     });
     let metadata = manifest
@@ -72,20 +82,104 @@ fn groups_crossing_source_gaps_retain_their_full_attribute() {
         ]),
         &[[1, 1], [3, 0], [4, 1], [0, (2 << 29) | 2]],
     );
+
     let mut host = Highlighter::new().unwrap();
     host.add(&root).unwrap();
     host.add(&child).unwrap();
+
     let result = host.process("root", "ab\ncd").unwrap();
     assert_eq!(
         host.render_lines("ab\ncd", &result),
         [
-            "<g-co v=\"abcd\"><g-k>a</g-k>b</g-co>",
-            "<g-co v=\"abcd\">c<g-k>d</g-k></g-co>",
+            r#"<g-la l="child"><g-co v="abcd"><g-k>a</g-k>b</g-co></g-la>"#,
+            r#"<g-la l="child"><g-co v="abcd">c<g-k>d</g-k></g-co></g-la>"#,
         ]
     );
     assert_eq!(
         host.highlight("root", "abXcd").unwrap(),
-        "<g-co v=\"abcd\"><g-k>a</g-k>b</g-co>X<g-co v=\"abcd\">c<g-k>d</g-k></g-co>"
+        r#"<g-la l="child"><g-co v="abcd"><g-k>a</g-k>b</g-co></g-la>X<g-la l="child"><g-co v="abcd">c<g-k>d</g-k></g-co></g-la>"#
+    );
+}
+
+#[test]
+fn contiguous_segments_use_canonical_labels_and_preserve_group_nesting() {
+    let root = language(
+        "root",
+        &["ALIAS"],
+        json!([{"name":"outer", "tag":"o"}, {"name":"language", "tag":"wrong"}]),
+        &[[0, 6 << 29], [1, 4 << 29], [2, 5 << 29], [0, 2 << 29]],
+    );
+    let child = language_with_aliases(
+        "child",
+        &["alias"],
+        &[],
+        json!([
+            {"name":"plain"}, {"name":"constant.color", "tag":"co", "attribute":"v"}
+        ]),
+        &[[2, 0], [0, (2 << 29) | 1]],
+    );
+
+    let mut host = Highlighter::new().unwrap();
+    host.add(&root).unwrap();
+    host.add(&child).unwrap();
+
+    assert_eq!(
+        host.highlight("root", "ab").unwrap(),
+        r#"<g-o><g-la l="child"><g-co v="ab">ab</g-co></g-la></g-o>"#
+    );
+}
+
+#[test]
+fn parent_group_boundaries_split_injections_and_child_groups() {
+    let root = language(
+        "root",
+        &["child"],
+        json!([{"name":"outer", "tag":"o"}]),
+        &[[0, 6 << 29], [1, 4 << 29], [0, 2 << 29], [2, 5 << 29]],
+    );
+    let child = language(
+        "child",
+        &[],
+        json!([
+            {"name":"plain"}, {"name":"color", "tag":"co", "attribute":"v"}
+        ]),
+        &[[2, 0], [0, (2 << 29) | 1]],
+    );
+
+    let mut host = Highlighter::new().unwrap();
+    host.add(&root).unwrap();
+    host.add(&child).unwrap();
+
+    assert_eq!(
+        host.highlight("root", "ab").unwrap(),
+        r#"<g-o><g-la l="child"><g-co v="ab">a</g-co></g-la></g-o><g-la l="child"><g-co v="ab">b</g-co></g-la>"#
+    );
+}
+
+#[test]
+fn missing_and_empty_injections_use_plain_without_empty_elements() {
+    let root = language(
+        "root",
+        &["absent"],
+        json!([{"name":"plain"}]),
+        &[
+            [0, 6 << 29],
+            [1, 5 << 29],
+            [0, (7 << 29) | 1],
+            [1, 1],
+            [2, (5 << 29) | 1],
+            [0, (6 << 29) | 2],
+        ],
+    );
+
+    let mut host = Highlighter::new().unwrap();
+    host.add(&root).unwrap();
+
+    let result = host.process("root", "ab").unwrap();
+    assert_eq!(result.missing, ["absent"]);
+    assert_eq!(
+        host.render("ab", &result),
+        r#"<g-la l="plain">a</g-la><g-la l="plain">b</g-la>"#
     );
 }
 
@@ -107,12 +201,14 @@ fn injection_names_can_cross_source_gaps() {
         &std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/dist/json.wasm")).unwrap(),
     )
     .unwrap();
+
     let mut host = Highlighter::new().unwrap();
     for language in [&root, &child, &json] {
         host.add(language).unwrap();
     }
+
     assert_eq!(
         host.highlight("root", "jsXonnull").unwrap(),
-        "jsXon<g-cb>null</g-cb>"
+        r#"<g-la l="child">js</g-la>X<g-la l="child">on<g-la l="json"><g-cb>null</g-cb></g-la></g-la>"#
     );
 }

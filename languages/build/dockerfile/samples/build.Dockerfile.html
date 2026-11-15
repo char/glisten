@@ -6,22 +6,22 @@
 <g-k>WORKDIR</g-k><g-s> /src</g-s>
 <g-k>COPY</g-k><g-s> go.mod go.sum ./</g-s>
 <g-k>RUN</g-k> <g-at>--mount</g-at><g-o>=</g-o><g-s>type=cache,target=/go/pkg/mod</g-s> <g-se>\
-</g-se>    <g-f>go</g-f> mod download <g-o>&amp;&amp;</g-o> <g-se>\
+</g-se><g-la l="bash">    <g-f>go</g-f> mod download <g-o>&amp;&amp;</g-o> </g-la><g-se>\
 </g-se><g-c>    # This line is removed before the shell sees the command.
     # So is this one.
-</g-c>    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"building </g-s><g-ps>${</g-ps><g-v>TARGETOS:-linux</g-v><g-ps>}</g-ps><g-s>"</g-s>
-<g-k>RUN</g-k> <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"joined </g-s><g-se>\
+</g-c><g-la l="bash">    <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"building </g-s><g-ps>${</g-ps><g-v>TARGETOS:-linux</g-v><g-ps>}</g-ps><g-s>"</g-s></g-la>
+<g-k>RUN</g-k> <g-la l="bash"><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"joined </g-s></g-la><g-se>\
 </g-se><g-c>    # A comment inside an open shell quote is still removed.
-</g-c><g-s>    value"</g-s>
+</g-c><g-la l="bash"><g-s>    value"</g-s></g-la>
 <g-k>COPY</g-k><g-s> . .</g-s>
 <g-k>RUN</g-k> <g-ps>&lt;&lt;</g-ps><g-l>BUILD</g-l>
-<g-cb>set</g-cb> -eu
+<g-la l="bash"><g-cb>set</g-cb> -eu
 <g-f>go</g-f> build -o /out/app ./cmd/app
-<g-l>BUILD</g-l>
+</g-la><g-l>BUILD</g-l>
 <g-k>RUN</g-k> <g-ps>&lt;&lt;-</g-ps><g-l>SCRIPT</g-l>
-	<g-cb>echo</g-cb> <g-s>"tab-stripped terminator"</g-s>
-<g-l>	SCRIPT</g-l>
-<g-k>ONBUILD</g-k> <g-k>RUN</g-k> <g-cb>echo</g-cb> <g-s>"building a downstream image"</g-s>
+<g-la l="bash">	<g-cb>echo</g-cb> <g-s>"tab-stripped terminator"</g-s>
+</g-la><g-l>	SCRIPT</g-l>
+<g-k>ONBUILD</g-k> <g-k>RUN</g-k> <g-la l="bash"><g-cb>echo</g-cb> <g-s>"building a downstream image"</g-s></g-la>
 
 <g-k>FROM</g-k><g-s> alpine:3.20 </g-s><g-k>AS</g-k><g-l> runtime</g-l>
 <g-k>COPY</g-k><g-s> </g-s><g-at>--from</g-at><g-o>=</g-o><g-s>build /out/app /usr/local/bin/app</g-s>

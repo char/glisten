@@ -18,6 +18,7 @@ export class Languages {
   readonly styles: string[] = [];
   readonly definitions: (Style | undefined)[] = [];
   readonly missingStyle: number;
+  readonly languageStyle: number;
   revision = 0;
   private readonly styleIds = new Map<string, number>();
   private readonly pending = new Map<string, Promise<void>>();
@@ -29,6 +30,16 @@ export class Languages {
     private readonly assertActive: () => void,
   ) {
     this.missingStyle = this.reserve(missingStyle);
+    this.languageStyle = this.define({ name: "language", tag: "la", attribute: "l" });
+  }
+
+  private define(style: Style): number {
+    const id = this.reserve(style.name);
+    if (this.definitions[id] === undefined) {
+      this.definitions[id] = style;
+      this.revision++;
+    }
+    return id;
   }
 
   private reserve(name: string): number {
@@ -62,13 +73,7 @@ export class Languages {
     );
     const guest = this.execution.instantiate(module, manifest, mapping);
 
-    for (const style of manifest.styles) {
-      const id = this.reserve(style.name);
-      if (this.definitions[id] === undefined) {
-        this.definitions[id] = style;
-        this.revision++;
-      }
-    }
+    for (const style of manifest.styles) this.define(style);
 
     this.canonical.push(manifest.language);
     for (const name of [manifest.language, ...manifest.aliases]) {

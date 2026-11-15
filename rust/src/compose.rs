@@ -90,15 +90,26 @@ impl Highlighter {
                             style: payload as u16,
                         }));
                     } else {
-                        injections
+                        let pieces = &mut injections
                             .get_mut(payload)
                             .context("unknown injection")?
-                            .pieces
-                            .push(range.clone());
-                        parts.push(Part::Segment {
-                            injection: payload,
-                            range,
-                        });
+                            .pieces;
+                        if let Some(Part::Segment {
+                            injection: previous,
+                            range: last,
+                        }) = parts.last_mut()
+                            && *previous == payload
+                            && last.end == range.start
+                        {
+                            last.end = range.end;
+                            pieces.last_mut().unwrap().end = range.end;
+                        } else {
+                            pieces.push(range.clone());
+                            parts.push(Part::Segment {
+                                injection: payload,
+                                range,
+                            });
+                        }
                     }
                     position = value;
                 }
@@ -141,6 +152,11 @@ impl Highlighter {
         ensure!(position == source.len(), "records do not tile source");
         let mut children = Vec::with_capacity(injections.len());
         for injection in &injections {
+            let label = self
+                .names
+                .get(&injection.language.to_ascii_lowercase())
+                .map(|&index| self.runtime.manifest(index).language.clone())
+                .unwrap_or_else(|| "plain".to_owned());
             let text = injection
                 .pieces
                 .iter()
@@ -172,7 +188,7 @@ impl Highlighter {
                     });
                 }
             }
-            children.push(mapped);
+            children.push((label, mapped));
         }
         let mut result = Highlight::default();
         let mut cursors = vec![0; children.len()];
@@ -181,7 +197,7 @@ impl Highlighter {
                 Part::Span(span) => push_span(&mut result.spans, span),
                 Part::Group(group) => result.groups.push(group),
                 Part::Segment { injection, range } => {
-                    let child = &children[injection];
+                    let (label, child) = &children[injection];
                     let cursor = &mut cursors[injection];
                     while let Some(span) = child
                         .spans
@@ -200,10 +216,15 @@ impl Highlighter {
                             })
                             .cloned(),
                     );
+                    result.groups.push(Group {
+                        range,
+                        style: crate::LANGUAGE_STYLE,
+                        value: Some(label.clone()),
+                    });
                 }
             }
         }
-        for child in children {
+        for (_, child) in children {
             for name in child.missing {
                 if !result.missing.contains(&name) {
                     result.missing.push(name);

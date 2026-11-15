@@ -11,9 +11,9 @@
 <g-k>const</g-k> <g-v>partialExponent</g-v> <g-o>=</g-o> <g-n>12</g-n><g-v>e</g-v><g-o>+</g-o><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>oddSeparator</g-v> <g-o>=</g-o> <g-n>1__2</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>quotient</g-v> <g-o>=</g-o> <g-pb>(</g-pb><g-v>returning</g-v> <g-o>+</g-o> <g-n>1</g-n><g-pb>)</g-pb> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>pattern</g-v> <g-o>=</g-o> <g-s>/</g-s><g-pb>[</g-pb><g-s>a/</g-s><g-se>\]</g-se><g-pb>]</g-pb><g-o>+</g-o><g-se>\/</g-se><g-s>end/gi</g-s><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>alternative</g-v> <g-o>=</g-o> <g-v>returning</g-v> <g-o>?</g-o> <g-s>/a/</g-s> <g-pd>:</g-pd> <g-s>/b/</g-s><g-pd>;</g-pd>
-<g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-s>/start/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'start'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>pattern</g-v> <g-o>=</g-o> <g-s>/</g-s><g-la l="regex"><g-pb>[</g-pb><g-s>a/</g-s><g-se>\]</g-se><g-pb>]</g-pb><g-o>+</g-o><g-se>\/</g-se><g-s>end</g-s></g-la><g-s>/gi</g-s><g-pd>;</g-pd>
+<g-k>const</g-k> <g-v>alternative</g-v> <g-o>=</g-o> <g-v>returning</g-v> <g-o>?</g-o> <g-s>/</g-s><g-la l="regex"><g-s>a</g-s></g-la><g-s>/</g-s> <g-pd>:</g-pd> <g-s>/</g-s><g-la l="regex"><g-s>b</g-s></g-la><g-s>/</g-s><g-pd>;</g-pd>
+<g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>start</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'start'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>afterObject</g-v> <g-o>=</g-o> <g-pb>({</g-pb> <g-vm>x</g-vm><g-pd>:</g-pd> <g-n>4</g-n> <g-pb>})</g-pb> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>afterArray</g-v> <g-o>=</g-o> <g-pb>[</g-pb><g-n>4</g-n><g-pb>][</g-pb><g-n>0</g-n><g-pb>]</g-pb> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>nested</g-v> <g-o>=</g-o> <g-s>`outer </g-s><g-ps>${</g-ps><g-s>`inner </g-s><g-ps>${</g-ps> <g-pb>{</g-pb> <g-vm>value</g-vm><g-pd>:</g-pd> <g-n>1</g-n> <g-pb>}</g-pb><g-o>.</g-o><g-vm>value</g-vm> <g-ps>}</g-ps><g-s>`</g-s><g-ps>}</g-ps><g-s> tail`</g-s><g-pd>;</g-pd>
@@ -26,15 +26,15 @@
 <g-k>const</g-k> <g-v>afterBlock</g-v> <g-o>=</g-o> <g-n>6</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>brokenString</g-v> <g-o>=</g-o> <g-s>'unfinished</g-s>
 <g-k>const</g-k> <g-v>recovered</g-v> <g-o>=</g-o> <g-n>7</g-n><g-pd>;</g-pd>
-<g-k>const</g-k> <g-v>brokenRegex</g-v> <g-o>=</g-o> <g-s>/unterminated</g-s><g-pb>[</g-pb>
+<g-k>const</g-k> <g-v>brokenRegex</g-v> <g-o>=</g-o> <g-s>/</g-s><g-la l="regex"><g-s>unterminated</g-s><g-pb>[</g-pb></g-la>
 <g-k>const</g-k> <g-v>recoveredAgain</g-v> <g-o>=</g-o> <g-n>8</g-n><g-pd>;</g-pd>
 <g-k>const</g-k> <g-v>property</g-v> <g-o>=</g-o> <g-pb>{</g-pb> <g-vm>return</g-vm><g-pd>:</g-pd> <g-n>1</g-n><g-pd>,</g-pd> <g-vm>class</g-vm><g-pd>:</g-pd> <g-n>2</g-n> <g-pb>}</g-pb><g-pd>;</g-pd>
 <g-v>property</g-v><g-o>.</g-o><g-vm>return</g-vm> <g-o>/</g-o> <g-n>2</g-n><g-pd>;</g-pd>
-<g-k>while</g-k> <g-pb>((</g-pb><g-v>returning</g-v><g-pb>))</g-pb> <g-s>/while/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'while'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
-<g-k>with</g-k> <g-pb>(</g-pb><g-v>Math</g-v><g-pb>)</g-pb> <g-s>/with/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'with'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
-<g-v>label</g-v><g-pd>:</g-pd> <g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-s>/label/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'label'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
-<g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-v>returning</g-v><g-o>++</g-o><g-pd>;</g-pd> <g-k>else</g-k> <g-k>if</g-k> <g-pb>(</g-pb><g-v>constable</g-v><g-pb>)</g-pb> <g-s>/else/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'else'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
-<g-k>async</g-k> <g-k>function</g-k> <g-f>iterate</g-f><g-pb>(</g-pb><g-v>xs</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>for</g-k> <g-k>await</g-k> <g-pb>(</g-pb><g-k>const</g-k> <g-v>x</g-v> <g-k>of</g-k> <g-v>xs</g-v><g-pb>)</g-pb> <g-s>/item/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>x</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
+<g-k>while</g-k> <g-pb>((</g-pb><g-v>returning</g-v><g-pb>))</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>while</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'while'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>with</g-k> <g-pb>(</g-pb><g-v>Math</g-v><g-pb>)</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>with</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'with'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-v>label</g-v><g-pd>:</g-pd> <g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>label</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'label'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>if</g-k> <g-pb>(</g-pb><g-v>returning</g-v><g-pb>)</g-pb> <g-v>returning</g-v><g-o>++</g-o><g-pd>;</g-pd> <g-k>else</g-k> <g-k>if</g-k> <g-pb>(</g-pb><g-v>constable</g-v><g-pb>)</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>else</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-s>'else'</g-s><g-pb>)</g-pb><g-pd>;</g-pd>
+<g-k>async</g-k> <g-k>function</g-k> <g-f>iterate</g-f><g-pb>(</g-pb><g-v>xs</g-v><g-pb>)</g-pb> <g-pb>{</g-pb> <g-k>for</g-k> <g-k>await</g-k> <g-pb>(</g-pb><g-k>const</g-k> <g-v>x</g-v> <g-k>of</g-k> <g-v>xs</g-v><g-pb>)</g-pb> <g-s>/</g-s><g-la l="regex"><g-s>item</g-s></g-la><g-s>/</g-s><g-o>.</g-o><g-vm>test</g-vm><g-pb>(</g-pb><g-v>x</g-v><g-pb>)</g-pb><g-pd>;</g-pd> <g-pb>}</g-pb>
 <g-c>// The last block intentionally remains open.</g-c>
 <g-c>/* unfinished block: 世界
 </g-c>

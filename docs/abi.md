@@ -212,7 +212,10 @@ type Result =                                                              //
 
 `process` and `highlight` are synchronous and never load languages. Retained results
 own their arrays and survive subsequent calls, including language registration;
-render them with the original source and the same highlighter.
+render them with the original source and the same highlighter. The host adds
+`language` groups for non-empty injections, wrapping contiguous segments and
+splitting at host gaps. Their value is the resolved canonical `manifest.language`,
+or `plain` when unresolved. Root documents are not wrapped.
 
 `highlightFull` requires a constructor option
 `loadLanguage: (name: string) => Promise<WebAssembly.Module | undefined>`, even
@@ -244,7 +247,9 @@ attribute    optional lowercase ASCII name matching [a-z][a-z0-9-]*; validated a
 theme: CSS for the <g-TAG> elements                  // not ABI; vocabulary in styles.md
 ```
 
-Languages stay independent (a new style rebuilds nothing else), and nothing remaps spans.
+The host registers `language` with tag `la` and attribute `l`, rendering injection
+groups as `<g-la l="…">`. Languages stay independent (a new style rebuilds nothing
+else), and nothing remaps spans.
 
 ## 8. Composition
 

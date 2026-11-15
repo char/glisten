@@ -64,8 +64,14 @@ test("highlightFull loads the root, aliases, and nested injections on demand, on
     },
   });
   equal(await host.highlightFull("ROOT", ""), "");
-  equal(await host.highlightFull("ROOT", "<"), "<g-k>&lt;</g-k>");
-  equal(await host.highlightFull("root", "&"), "<g-k>&amp;</g-k>");
+  equal(
+    await host.highlightFull("ROOT", "<"),
+    '<g-la l="child"><g-la l="leaf"><g-k>&lt;</g-k></g-la></g-la>',
+  );
+  equal(
+    await host.highlightFull("root", "&"),
+    '<g-la l="child"><g-la l="leaf"><g-k>&amp;</g-k></g-la></g-la>',
+  );
   equal(requested, ["root", "alias", "leaf"]);
 });
 
@@ -81,7 +87,7 @@ test("unsupported languages fall back; mislabeled modules are rejected before re
     },
   });
   await host.add(await language("root", { embed: "unsupported" }));
-  equal(await host.highlightFull("root", "<"), "<g-k>&lt;</g-k>");
+  equal(await host.highlightFull("root", "<"), '<g-la l="plain"><g-k>&lt;</g-k></g-la>');
   const error = await rejection(host.highlightFull("mislabeled", "<"));
   assert(error instanceof Error && /does not register "mislabeled"/.test(error.message));
   equal(host.languages, ["root"]);
@@ -100,7 +106,10 @@ test("concurrent highlightFull calls share loads and keep their own input", asyn
     },
   });
   const results = Promise.all([host.highlightFull("ROOT", "<"), host.highlightFull("root", "&")]);
-  equal(await results, ["<g-k>&lt;</g-k>", "<g-k>&amp;</g-k>"]);
+  equal(await results, [
+    '<g-la l="child"><g-k>&lt;</g-k></g-la>',
+    '<g-la l="child"><g-k>&amp;</g-k></g-la>',
+  ]);
   equal(requested, ["root", "child"]);
 });
 

@@ -36,3 +36,5 @@ Grammars paint names from `grammar/styles.ts`. A module's manifest carries the t
 | `diff.minus`            | `dd` | Removed lines in diffs                           |
 
 Groups wrap their contents in the group's tag. For a `constant.color` group, the host sets `v` to the escaped logical group text, even when the group is split across source segments. For example, a theme can use `g-co::before { background: attr(v type(<color>)); }`. Attribute values are attached to groups, not ordinary painted spans. See [the ABI](abi.md) for group composition.
+
+The host registers the `language` group style as `<g-la l="…">`. Each non-empty injection is wrapped over its contiguous segments, splitting at host gaps. The `l` attribute is the resolved canonical `manifest.language`, or `plain` if unresolved; root documents are not wrapped.

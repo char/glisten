@@ -12,14 +12,14 @@ Building <g-ps>$(</g-ps><g-v>1</g-v><g-ps>)</g-ps>
 
 <g-l>.PHONY</g-l><g-pd>:</g-pd> all clean
 <g-l>all</g-l><g-pd>:</g-pd> <g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps> <g-pd>|</g-pd> build
-<g-ps>	@</g-ps><g-cb>echo</g-cb> <g-s>"building </g-s><g-v>$@</g-v><g-s> from </g-s><g-v>$^</g-v><g-s>"</g-s><g-o>;</g-o> <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$$</g-v><g-s>HOME"</g-s>
-<g-ps>	+$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps> <g-ps>$(</g-ps><g-v>CFLAGS</g-v><g-ps>)</g-ps> <g-f>-o</g-f> <g-v>$@</g-v> <g-v>$^</g-v> <g-se>\
-</g-se><g-ps>	</g-ps>  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> done
+<g-ps>	@</g-ps><g-la l="bash"><g-cb>echo</g-cb> <g-s>"building </g-s></g-la><g-v>$@</g-v><g-la l="bash"><g-s> from </g-s></g-la><g-v>$^</g-v><g-la l="bash"><g-s>"</g-s><g-o>;</g-o> <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$$</g-v><g-s>HOME"</g-s></g-la>
+<g-ps>	+$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps><g-la l="bash"> </g-la><g-ps>$(</g-ps><g-v>CFLAGS</g-v><g-ps>)</g-ps><g-la l="bash"> <g-f>-o</g-f> </g-la><g-v>$@</g-v><g-la l="bash"> </g-la><g-v>$^</g-v><g-la l="bash"> <g-se>\
+</g-se></g-la><g-ps>	</g-ps><g-la l="bash">  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> done</g-la>
 
 <g-ps>%</g-ps><g-l>.o</g-l><g-pd>:</g-pd> <g-ps>%</g-ps>.c
-<g-ps>	$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps> <g-f>-c</g-f> <g-v>$&lt;</g-v> -o <g-v>$@</g-v>
-<g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps><g-pd>:</g-pd> <g-ps>%</g-ps>.o<g-pd>:</g-pd> <g-ps>%</g-ps>.c <g-pd>;</g-pd><g-ps> @</g-ps><g-cb>echo</g-cb> <g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps> <g-v>$&lt;</g-v>
-<g-l>clean</g-l><g-pd>::</g-pd> <g-pd>;</g-pd><g-ps> -</g-ps><g-f>rm</g-f> -f <g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps>
+<g-ps>	$(</g-ps><g-v>CC</g-v><g-ps>)</g-ps><g-la l="bash"> <g-f>-c</g-f> </g-la><g-v>$&lt;</g-v><g-la l="bash"> -o </g-la><g-v>$@</g-v>
+<g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps><g-pd>:</g-pd> <g-ps>%</g-ps>.o<g-pd>:</g-pd> <g-ps>%</g-ps>.c <g-pd>;</g-pd><g-ps> @</g-ps><g-la l="bash"><g-cb>echo</g-cb> </g-la><g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps><g-la l="bash"> </g-la><g-v>$&lt;</g-v>
+<g-l>clean</g-l><g-pd>::</g-pd> <g-pd>;</g-pd><g-ps> -</g-ps><g-la l="bash"><g-f>rm</g-f> -f </g-la><g-ps>$(</g-ps><g-v>objects</g-v><g-ps>)</g-ps>
 
 <g-k>ifeq</g-k> (<g-ps>$(</g-ps><g-v>VERSION</g-v><g-ps>)</g-ps>,1)
 <g-k>include</g-k> settings.mk
@@ -29,8 +29,8 @@ Building <g-ps>$(</g-ps><g-v>1</g-v><g-ps>)</g-ps>
 
 <g-v>.RECIPEPREFIX</g-v> <g-o>=</g-o> <g-s>&gt;</g-s>
 <g-l>custom</g-l><g-pd>:</g-pd> <g-k>private</g-k> <g-v>CC</g-v> <g-o>:=</g-o> clang
-<g-l>custom</g-l><g-pd>:</g-pd> <g-pd>;</g-pd><g-ps> @</g-ps><g-cb>echo</g-cb> inline
-<g-ps>&gt;@</g-ps><g-cb>echo</g-cb> <g-s>"custom </g-s><g-v>$@</g-v><g-s>"</g-s><g-o>;</g-o> <g-cb>echo</g-cb> <g-v>$$</g-v>HOME
+<g-l>custom</g-l><g-pd>:</g-pd> <g-pd>;</g-pd><g-ps> @</g-ps><g-la l="bash"><g-cb>echo</g-cb> inline</g-la>
+<g-ps>&gt;@</g-ps><g-la l="bash"><g-cb>echo</g-cb> <g-s>"custom </g-s></g-la><g-v>$@</g-v><g-la l="bash"><g-s>"</g-s><g-o>;</g-o> <g-cb>echo</g-cb> <g-v>$$</g-v>HOME</g-la>
 <g-v>.RECIPEPREFIX</g-v> <g-o>=</g-o>
 <g-l>back</g-l><g-pd>:</g-pd>
-<g-ps>	@</g-ps><g-cb>echo</g-cb> normal
+<g-ps>	@</g-ps><g-la l="bash"><g-cb>echo</g-cb> normal</g-la>

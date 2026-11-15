@@ -11,5 +11,6 @@
 <g-pb>[</g-pb><g-at>confirm</g-at><g-pb>(</g-pb><g-s>"Deploy now?"</g-s><g-pb>)]</g-pb>
 <g-pb>[</g-pb><g-at>linux</g-at><g-pb>]</g-pb>
 <g-f>deploy</g-f> <g-o>$</g-o><g-v>TOKEN</g-v><g-o>=</g-o><g-s>'test'</g-s> <g-o>*</g-o><g-v>targets</g-v><g-o>:</g-o> <g-f>build</g-f>
-    <g-cb>echo</g-cb> <g-s>"deploy </g-s><g-ps>{{</g-ps><g-k>if</g-k> <g-v>TOKEN</g-v> <g-o>!=</g-o> <g-s>''</g-s> <g-pb>{</g-pb> <g-v>TOKEN</g-v> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>'none'</g-s> <g-pb>}</g-pb><g-ps>}}</g-ps><g-s>"</g-s>
-    <g-k>for</g-k> <g-v>host</g-v> <g-k>in</g-k> <g-ps>{{</g-ps><g-v>targets</g-v><g-ps>}}</g-ps><g-o>;</g-o> <g-k>do</g-k> <g-cb>echo</g-cb> <g-s>"</g-s><g-v>$host</g-v><g-s>"</g-s><g-o>;</g-o> <g-k>done</g-k>
+    <g-la l="bash"><g-cb>echo</g-cb> <g-s>"deploy </g-s></g-la><g-ps>{{</g-ps><g-k>if</g-k> <g-v>TOKEN</g-v> <g-o>!=</g-o> <g-s>''</g-s> <g-pb>{</g-pb> <g-v>TOKEN</g-v> <g-pb>}</g-pb> <g-k>else</g-k> <g-pb>{</g-pb> <g-s>'none'</g-s> <g-pb>}</g-pb><g-ps>}}</g-ps><g-la l="bash"><g-s>"</g-s>
+</g-la>    <g-la l="bash"><g-k>for</g-k> <g-v>host</g-v> <g-k>in</g-k> </g-la><g-ps>{{</g-ps><g-v>targets</g-v><g-ps>}}</g-ps><g-la l="bash"><g-o>;</g-o> <g-k>do</g-k> <g-cb>echo</g-cb> <g-s>"</g-s><g-v>$host</g-v><g-s>"</g-s><g-o>;</g-o> <g-k>done</g-k>
+</g-la>

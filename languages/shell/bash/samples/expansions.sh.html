@@ -18,7 +18,7 @@
 <g-v>number=</g-v><g-ps>$((</g-ps><g-n>16#ff</g-n> <g-o>+</g-o> <g-n>2</g-n> <g-o>*</g-o> <g-pb>(</g-pb><g-n>3</g-n> <g-o>+</g-o> <g-n>4</g-n><g-pb>)</g-pb><g-ps>))</g-ps>
 <g-ps>((</g-ps> <g-v>number</g-v> <g-o>+=</g-o> <g-n>1</g-n> <g-ps>))</g-ps>
 <g-v>result=</g-v><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> <g-s>"</g-s><g-ps>$(</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> nested<g-ps>)</g-ps><g-s>"</g-s><g-ps>)</g-ps>
-<g-v>old=</g-v><g-ps>`</g-ps><g-cb>printf</g-cb> <g-s>'%s'</g-s> legacy<g-ps>`</g-ps>
+<g-v>old=</g-v><g-ps>`</g-ps><g-la l="bash"><g-cb>printf</g-cb> <g-s>'%s'</g-s> legacy</g-la><g-ps>`</g-ps>
 <g-cb>printf</g-cb> <g-s>'%s %d\n'</g-s> <g-s>"</g-s><g-v>$result</g-v><g-s>"</g-s> <g-s>"</g-s><g-v>$number</g-v><g-s>"</g-s> <g-o>&gt;</g-o>output.txt <g-o>2&gt;&gt;</g-o>errors.txt
 <g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>"</g-s><g-v>$old</g-v><g-s>"</g-s> <g-o>|&amp;</g-o> <g-f>sed</g-f> <g-s>'s/legacy/new/'</g-s>
 <g-cb>read</g-cb> -r first rest <g-o>&lt;&lt;&lt;</g-o><g-s>"</g-s><g-v>$greeting</g-v><g-s>"</g-s>

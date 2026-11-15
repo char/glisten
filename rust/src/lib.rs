@@ -16,6 +16,8 @@ pub use runtime::Language;
 
 pub type Result<T> = anyhow::Result<T>;
 
+pub(crate) const LANGUAGE_STYLE: u16 = 1;
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("resource limit exceeded")]
@@ -86,12 +88,19 @@ impl Highlighter {
         Ok(Self {
             runtime: runtime::Runtime::new(bytes)?,
             names: HashMap::new(),
-            styles: vec![Style {
-                name: "plain".into(),
-                tag: None,
-                attribute: None,
-            }],
-            registered: vec![false],
+            styles: vec![
+                Style {
+                    name: "plain".into(),
+                    tag: None,
+                    attribute: None,
+                },
+                Style {
+                    name: "language".into(),
+                    tag: Some("la".into()),
+                    attribute: Some("l".into()),
+                },
+            ],
+            registered: vec![false, true],
         })
     }
 

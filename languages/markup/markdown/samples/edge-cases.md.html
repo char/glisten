@@ -34,23 +34,24 @@ extra | delimiter | column
   </g-tr><g-tu>/another-destination</g-tu><g-tr>
   </g-tr><g-s>"title on a separate line"</g-s>
 
-<g-pb>&lt;</g-pb><g-tg>div</g-tg>
+<g-la l="html"><g-pb>&lt;</g-pb><g-tg>div</g-tg>
 <g-at>class</g-at><g-o>=</g-o><g-s>"multiline"</g-s><g-pb>&gt;</g-pb>
 *HTML or markdown?*
 <g-pb>&lt;/</g-pb><g-tg>div</g-tg><g-pb>&gt;</g-pb>
-
-<g-c>&lt;!-- An HTML comment
+</g-la>
+<g-la l="html"><g-c>&lt;!-- An HTML comment
      with *literal* content --&gt;</g-c>
-
+</g-la>
 A fence longer than the apparent closer:
 
 <g-pd>````</g-pd><g-l>bash</g-l>
-<g-cb>echo</g-cb> <g-s>"three ticks don't close this"</g-s>
-<g-ps>```</g-ps>
+<g-la l="bash"><g-cb>echo</g-cb> <g-s>"three ticks don't close this"</g-s>
+<g-ps>```</g-ps><g-la l="bash">
 <g-cb>echo</g-cb> <g-s>"still inside"</g-s>
-<g-pd>````</g-pd>
+</g-la></g-la><g-pd>````</g-pd>
 
 A final unterminated fence:
 
 <g-pd>~~~</g-pd><g-l>json</g-l>
-<g-pb>{</g-pb><g-pr>"unfinished"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd>
+<g-la l="json"><g-pb>{</g-pb><g-pr>"unfinished"</g-pr><g-pd>:</g-pd> <g-pb>[</g-pb><g-n>1</g-n><g-pd>,</g-pd> <g-n>2</g-n><g-pd>,</g-pd>
+</g-la>

@@ -128,7 +128,79 @@ test("missing injections preserve spelling and omit empty names", async () => {
   assert(result.status === "ok");
   equal([...result.spans], [5, 0]);
   equal(result.missing, ["XYZ"]);
-  equal(host.highlight("root", "XYZ--"), "<g-missing>XYZ--</g-missing>");
+  equal(
+    host.highlight("root", "XYZ--"),
+    '<g-la l="plain"><g-missing>XYZ</g-missing></g-la><g-la l="plain"><g-missing>--</g-missing></g-la>',
+  );
+});
+
+test("injection groups coalesce adjacent segments and split at parent groups", async () => {
+  const host = new Highlighter({ checks: true });
+  await host.add(
+    await puppet(
+      manifest("root", {
+        embeds: ["ALIAS"],
+        styles: [
+          { name: "outer", tag: "o" },
+          { name: "language", tag: "wrong" },
+        ],
+      }),
+      [
+        {
+          injections: 2,
+          records: [
+            { kind: "opens", injection: 0, embeds: 0 },
+            { kind: "segment", injection: 0, end: 1, closes: false },
+            { kind: "segment", injection: 0, end: 2, closes: true },
+            { kind: "group", start: 0, style: 0 },
+            { kind: "opens", injection: 1, embeds: 0 },
+          ],
+        },
+      ],
+      { repeat: true },
+    ),
+  );
+  await host.add(
+    await scripted(
+      "child",
+      [
+        { kind: "span", end: 2, style: 0 },
+        { kind: "group", start: 0, style: 1 },
+      ],
+      {
+        aliases: ["alias"],
+        styles: [{ name: "plain" }, { name: "color", tag: "co", attribute: "v" }],
+      },
+    ),
+  );
+
+  equal(host.highlight("root", "ab"), '<g-o><g-la l="child"><g-co v="ab">ab</g-co></g-la></g-o>');
+
+  await host.add(
+    await puppet(
+      manifest("split", {
+        embeds: ["child"],
+        styles: [{ name: "outer", tag: "o" }],
+      }),
+      [
+        {
+          injections: 1,
+          records: [
+            { kind: "opens", injection: 0, embeds: 0 },
+            { kind: "segment", injection: 0, end: 1, closes: false },
+            { kind: "group", start: 0, style: 0 },
+            { kind: "segment", injection: 0, end: 2, closes: true },
+          ],
+        },
+      ],
+      { repeat: true },
+    ),
+  );
+
+  equal(
+    host.highlight("split", "ab"),
+    '<g-o><g-la l="child"><g-co v="ab">a</g-co></g-la></g-o><g-la l="child"><g-co v="ab">b</g-co></g-la>',
+  );
 });
 
 test("registration shares styles and honors the first aliases, tags, and attributes", async () => {
@@ -153,7 +225,7 @@ test("registration shares styles and honors the first aliases, tags, and attribu
   await host.add(await scripted("Third", span, { styles: [{ name: "bare", tag: "b" }] }));
 
   equal(host.languages, ["First", "Second", "Third"]);
-  equal(host.styles, ["plain", "color", "bare"]);
+  equal(host.styles, ["plain", "language", "color", "bare"]);
   equal(host.highlight("SHARED", "x"), "<g-co>x</g-co>");
   equal(host.highlight("sEcOnD", "x"), '<g-co v="x"><g-co>x</g-co></g-co>');
   equal(host.highlight("third", "x"), "x");
@@ -278,11 +350,15 @@ test("compiled injections splice interrupted and multiple documents", async () =
     [...result.spans],
     [1, plain, 2, string, 3, plain, 4, string, 6, plain, 8, string, 9, plain],
   );
-  equal([...result.groups], [1, 2, color, 3, 4, color, 6, 8, color]);
-  equal(result.values, ["ab", "ab", undefined]);
+  const language = host.styles.indexOf("language");
+  equal(
+    [...result.groups],
+    [1, 2, language, 1, 2, color, 3, 4, language, 3, 4, color, 6, 8, language, 6, 8, color],
+  );
+  equal(result.values, ["child", "ab", "child", "ab", "child", undefined]);
 
   const html =
-    '[<g-co v="ab"><g-s>a</g-s></g-co>-<g-co v="ab"><g-s>b</g-s></g-co>][<g-co v="ab"><g-s>ab</g-s></g-co>]';
+    '[<g-la l="child"><g-co v="ab"><g-s>a</g-s></g-co></g-la>-<g-la l="child"><g-co v="ab"><g-s>b</g-s></g-co></g-la>][<g-la l="child"><g-co v="ab"><g-s>ab</g-s></g-co></g-la>]';
   equal(host.highlight("root", "[a-b][ab]"), html);
   equal(host.render("[a-b][ab]", result), html);
 });
@@ -327,7 +403,10 @@ test("named injections resolve a name split by a host gap", async () => {
   assert(result.status === "ok");
   equal([...result.spans], [6, plain, 7, string, 8, plain]);
   equal(result.missing, []);
-  equal(host.highlight("root", "[ba-sh!]"), "[ba-sh<g-s>!</g-s>]");
+  equal(
+    host.highlight("root", "[ba-sh!]"),
+    '[<g-la l="middle">ba</g-la>-<g-la l="middle">sh<g-la l="bash"><g-s>!</g-s></g-la></g-la>]',
+  );
 });
 
 test("resource and unrelated traps are distinct, and failures recover", async () => {

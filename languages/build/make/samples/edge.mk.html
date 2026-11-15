@@ -2,10 +2,10 @@
 <g-l>.PHONY</g-l><g-pd>:</g-pd> show
 <g-l>show</g-l><g-pd>:</g-pd> input <g-pd>|</g-pd> directory
 <g-k>ifeq</g-k> (<g-ps>$(</g-ps><g-v>MODE</g-v><g-ps>)</g-ps>,debug)
-<g-ps>	-@</g-ps><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>'</g-s><g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps><g-s>'</g-s> <g-s>"</g-s><g-ps>$(</g-ps><g-f>shell</g-f><g-v> echo nested</g-v><g-ps>)</g-ps><g-s>"</g-s> <g-v>$$</g-v>HOME <g-se>\
-</g-se><g-ps>	</g-ps>  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> <g-v>$&lt;</g-v> <g-v>$?</g-v> <g-v>$*</g-v>
+<g-ps>	-@</g-ps><g-la l="bash"><g-cb>printf</g-cb> <g-s>'%s\n'</g-s> <g-s>'</g-s></g-la><g-ps>$(</g-ps><g-v>@D</g-v><g-ps>)</g-ps><g-la l="bash"><g-s>'</g-s> <g-s>"</g-s></g-la><g-ps>$(</g-ps><g-f>shell</g-f><g-v> echo nested</g-v><g-ps>)</g-ps><g-la l="bash"><g-s>"</g-s> <g-v>$$</g-v>HOME <g-se>\
+</g-se></g-la><g-ps>	</g-ps><g-la l="bash">  <g-o>&amp;&amp;</g-o> <g-cb>echo</g-cb> </g-la><g-v>$&lt;</g-v><g-la l="bash"> </g-la><g-v>$?</g-v><g-la l="bash"> </g-la><g-v>$*</g-v>
 <g-k>else</g-k>
-<g-ps>	+</g-ps><g-cb>echo</g-cb> release
+<g-ps>	+</g-ps><g-la l="bash"><g-cb>echo</g-cb> release</g-la>
 <g-k>endif</g-k>
 
 <g-k>define</g-k> <g-v>outer</g-v>

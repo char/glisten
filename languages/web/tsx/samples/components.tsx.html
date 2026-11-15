@@ -7,7 +7,7 @@
   <g-pr>renderExtra</g-pr><g-o>?</g-o><g-pd>:</g-pd> <g-pb>(</g-pb><g-v>item</g-v><g-pd>:</g-pd> <g-t>T</g-t><g-pb>)</g-pb> <g-o>=&gt;</g-o> <g-t>ReactNode</g-t><g-pd>;</g-pd>
 <g-pb>}</g-pb>
 
-<g-c>/** A list with a localized empty state. */</g-c>
+<g-c>/**</g-c><g-la l="jsdoc"><g-c> A list with a localized empty state. </g-c></g-la><g-c>*/</g-c>
 <g-k>export</g-k> <g-k>function</g-k> <g-f>ItemList</g-f><g-pb>&lt;</g-pb><g-t>T</g-t> <g-k>extends</g-k> <g-t>Item</g-t><g-pb>&gt;({</g-pb> <g-vm>items</g-vm><g-pd>,</g-pd> <g-vm>renderExtra</g-vm> <g-pb>}</g-pb><g-pd>:</g-pd> <g-t>ListProps</g-t><g-pb>&lt;</g-pb><g-t>T</g-t><g-pb>&gt;)</g-pb> <g-pb>{</g-pb>
   <g-k>const</g-k> <g-pb>[</g-pb><g-v>selected</g-v><g-pd>,</g-pd> <g-v>setSelected</g-v><g-pb>]</g-pb> <g-o>=</g-o> <g-v>useState</g-v><g-pb>&lt;</g-pb><g-t>string</g-t> <g-o>|</g-o> <g-cb>null</g-cb><g-pb>&gt;(</g-pb><g-cb>null</g-cb><g-pb>)</g-pb><g-pd>;</g-pd>
   <g-k>return</g-k> <g-pb>(</g-pb>

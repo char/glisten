@@ -11,10 +11,10 @@ Escaped <g-se>\*</g-se>literal*, attribute <g-v>{version}</g-v>, and <g-tu>https
 
 <g-at>[source,</g-at><g-l>unknown</g-l><g-at>]</g-at>
 <g-pd>------</g-pd>
-inside
+<g-la l="plain">inside
 ----
 still inside
-<g-pd>------</g-pd>
+</g-la><g-pd>------</g-pd>
 After the missing language, <g-ts>*markup*</g-ts> resumes.
 
 <g-pd>****</g-pd>
@@ -40,8 +40,8 @@ A sidebar containing an open block:
 <g-pd>--</g-pd>
 <g-at>[,</g-at><g-l>ruby</g-l><g-at>]</g-at>
 <g-pd>----</g-pd>
-<g-f>puts</g-f> <g-s>"hello"</g-s>
-<g-pd>----</g-pd>
+<g-la l="ruby"><g-f>puts</g-f> <g-s>"hello"</g-s>
+</g-la><g-pd>----</g-pd>
 <g-pd>--</g-pd>
 <g-pd>****</g-pd>
 <g-pd>=====</g-pd>
@@ -50,8 +50,8 @@ Back in the outer example.
 
 <g-at>[source%linenums,</g-at><g-l>python</g-l><g-at>]</g-at>
 <g-pd>----</g-pd>
-<g-f>print</g-f><g-pb>(</g-pb><g-s>"options"</g-s><g-pb>)</g-pb>
-<g-pd>----</g-pd>
+<g-la l="python"><g-f>print</g-f><g-pb>(</g-pb><g-s>"options"</g-s><g-pb>)</g-pb>
+</g-la><g-pd>----</g-pd>
 
 <g-at>[source]</g-at>
 <g-pd>----</g-pd><g-tl>
