@@ -222,7 +222,8 @@ export function buildDispatch(
  * V8 a wasm call spills the token loop's locals, so calling a short body costs more than
  * inlining it, while duplicating it costs little. Large bodies stay shared, where size wins.
  */
-const outlineBodyMinimum = 3000;
+const outlineBodyMinimum = 1200;
+const outlineSavedMinimum = 3000;
 
 function consumes(m: Matcher | undefined): boolean {
   return (
@@ -413,7 +414,7 @@ function outlineMatchers(
     const first = saves.count();
     const body = sequence(matchers, "$fail");
     // Test the sequence before naming a function: short bodies are cheaper inlined.
-    if (body.length < outlineBodyMinimum) {
+    if (body.length < outlineBodyMinimum || (count - 1) * body.length < outlineSavedMinimum) {
       saves.restore(first);
       continue;
     }
