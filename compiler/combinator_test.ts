@@ -1,5 +1,4 @@
 import { test } from "avril:test";
-import { decode } from "#/abi/mod.ts";
 import type { Matcher } from "#/grammar/mod.ts";
 import {
   byte,
@@ -14,8 +13,7 @@ import {
 } from "#/grammar/mod.ts";
 import { compile } from "./mod.ts";
 import { buildModule } from "#/tools/module.ts";
-import { Engine } from "#/host/engine.ts";
-import { Arena } from "#/host/memory.ts";
+import { Highlighter } from "#/host/mod.ts";
 import { equal } from "#/testing/assert.ts";
 
 // An independent reading of docs/grammar.md for the matchers these grammars use. It shares
@@ -162,26 +160,17 @@ function sources(): Uint8Array[] {
 
 test("repeated single bytes paint the spans their reference semantics describe", async () => {
   const compiled = compile(grammar);
-  const arena = new Arena(1024 * 1024);
-  const engine = await Engine.create(
-    new WebAssembly.Module(new Uint8Array(await buildModule(compiled))),
-    {
-      arena,
-    },
-  );
-  const styles = new Map<string, number>();
-  for (const [index, style] of compiled.manifest.styles.entries())
-    styles.set(style.name, index + 1);
-  engine.useStyles(new Uint16Array(compiled.manifest.styles.map((_, index) => index + 1)));
-  const styleOf = (name: string) => styles.get(name)!;
+  const highlighter = new Highlighter({ checks: true });
+  await highlighter.add(new WebAssembly.Module(await buildModule(compiled)));
+  const styleOf = (name: string) => highlighter.styles.indexOf(name);
 
   for (const input of sources()) {
-    const context = arena.place(input);
-    const result = engine.call(context, new Uint32Array([0, input.length]));
+    const result = highlighter.process("repeats", input);
     if (result.status !== "ok") throw new Error("unexpected resource failure");
-    const spans = decode(result.records())
-      .filter((record) => record.kind === "span")
-      .map((record) => ({ end: record.end, style: record.style }));
+    const spans = Array.from({ length: result.spans.length / 2 }, (_, index) => ({
+      end: result.spans[index * 2]!,
+      style: result.spans[index * 2 + 1]!,
+    }));
     const message = `input ${JSON.stringify(new TextDecoder().decode(input))}`;
     try {
       equal(spans, expectedSpans(input, styleOf));
