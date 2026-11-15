@@ -167,8 +167,8 @@ export function buildDispatch(
   });
 
   // Built after dispatch so that every case is known; cases may add shapes.
-  const caseList = [...cases.values()];
-  for (const { arms } of caseList) for (const arm of arms) arm.match.forEach(countMatchers);
+  const caseList = suffixForest(cases, sharedStates.length > 0, fresh);
+  for (const { prefix } of caseList) for (const arm of prefix) arm.match.forEach(countMatchers);
   const outlined = outlineMatchers(
     caseList,
     known,
@@ -192,10 +192,11 @@ export function buildDispatch(
     speculationGuard,
     chargeTransition,
   };
-  const caseCode = caseList.map(
-    ({ arms, bytes, shared }) =>
-      `${arms.map((arm) => lowerArm(arm, bytes, shared, armContext)).join("\n")}\n(br $nomatch)`,
-  );
+  const caseCode = caseList.map(({ prefix, bytes, shared, next }, i) => {
+    const arms = prefix.map((arm) => lowerArm(arm, bytes, shared, armContext)).join("\n");
+    const tail = next ? (caseList[i + 1] === next ? "" : `(br ${next.label})`) : "(br $nomatch)";
+    return `${arms}\n${tail}`;
+  });
   const shapeList = [...shapes.values()];
   return {
     fresh,
@@ -374,7 +375,7 @@ function lowerArm(
 }
 
 function outlineMatchers(
-  caseList: Array<{ arms: readonly Arm[]; bytes: Set<number> }>,
+  caseList: Array<{ prefix: readonly Arm[]; bytes: Set<number> }>,
   known: (first: Matcher | undefined, bytes: Set<number>) => boolean,
   sequence: (items: readonly Matcher[], fail: string) => string,
   saves: { readonly count: () => number; readonly restore: (count: number) => void },
@@ -392,8 +393,8 @@ function outlineMatchers(
         (item.kind === "run" && item.untilColumn !== undefined),
     );
   const candidates = new Map<string, { matchers: readonly Matcher[]; count: number }>();
-  for (const { arms, bytes } of caseList)
-    for (const arm of arms) {
+  for (const { prefix, bytes } of caseList)
+    for (const arm of prefix) {
       const rest = arm.match.slice(known(arm.match[0], bytes) ? 1 : 0);
       if (
         rest.some(needsInlineState) ||
@@ -519,6 +520,76 @@ function lowerFallbacks(options: {
   });
 }
 
+type CaseEntry = { label: string; arms: readonly Arm[]; bytes: Set<number>; shared: boolean };
+type CaseNode = CaseEntry & { prefix: readonly Arm[]; next?: CaseNode };
+
+function caseKey(arms: readonly Arm[], shared: boolean, hasSharedStates: boolean): string {
+  return (
+    JSON.stringify(arms.map(({ match, then, redispatch }) => [match, then, redispatch ?? false])) +
+    (hasSharedStates ? `:${shared}` : "")
+  );
+}
+
+function suffixForest(
+  cases: Map<string, CaseEntry>,
+  hasSharedStates: boolean,
+  fresh: (hint: string) => string,
+): CaseNode[] {
+  const counts = new Map<string, number>();
+  for (const { arms, shared } of cases.values()) {
+    for (let k = 0; k < arms.length; k++) {
+      const key = caseKey(arms.slice(k), shared, hasSharedStates);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+  }
+
+  const nodes = new Map<string, CaseNode>();
+  for (const [key, entry] of cases) {
+    nodes.set(key, { ...entry, bytes: new Set(entry.bytes), prefix: entry.arms });
+  }
+  for (const { arms, shared } of cases.values()) {
+    for (let k = 1; k < arms.length; k++) {
+      const suffix = arms.slice(k);
+      const key = caseKey(suffix, shared, hasSharedStates);
+      if ((counts.get(key) ?? 0) >= 2 && !nodes.has(key)) {
+        nodes.set(key, {
+          label: fresh("byteCase_"),
+          arms: suffix,
+          bytes: new Set(),
+          shared,
+          prefix: suffix,
+        });
+      }
+    }
+  }
+
+  const children = new Map<CaseNode, CaseNode[]>();
+  for (const node of nodes.values()) {
+    for (let k = 1; k < node.arms.length; k++) {
+      const next = nodes.get(caseKey(node.arms.slice(k), node.shared, hasSharedStates));
+      if (next) {
+        node.prefix = node.arms.slice(0, k);
+        node.next = next;
+        const siblings = children.get(next) ?? [];
+        siblings.push(node);
+        children.set(next, siblings);
+        break;
+      }
+    }
+  }
+
+  const caseList: CaseNode[] = [];
+  function visit(node: CaseNode): void {
+    for (const child of children.get(node) ?? []) {
+      visit(child);
+      for (const byte of child.bytes) node.bytes.add(byte);
+    }
+    caseList.push(node);
+  }
+  for (const node of nodes.values()) if (!node.next) visit(node);
+  return caseList;
+}
+
 function codeBlockRegistry(options: {
   fresh: (hint: string) => string;
   sharedNames: ReadonlySet<string>;
@@ -529,14 +600,9 @@ function codeBlockRegistry(options: {
 }) {
   const { fresh, sharedNames, sharedStates, columns, runSlots, counterSlots } = options;
   // Arms sharing a byte, in order, form a case; equal cases are emitted once.
-  const cases = new Map<
-    string,
-    { label: string; arms: readonly Arm[]; bytes: Set<number>; shared: boolean }
-  >();
+  const cases = new Map<string, CaseEntry>();
   const caseOf = (arms: readonly Arm[], byte: number, shared: boolean) => {
-    const key =
-      JSON.stringify(arms.map(({ match, then }) => [match, then])) +
-      (sharedStates.length ? `:${shared}` : "");
+    const key = caseKey(arms, shared, sharedStates.length > 0);
     let entry = cases.get(key);
     if (!entry)
       cases.set(key, (entry = { label: fresh("byteCase_"), arms, bytes: new Set(), shared }));
