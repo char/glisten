@@ -1,6 +1,8 @@
 import { type ByteSet, type Matcher, union } from "#/grammar/mod.ts";
 import {
-  lowerLiteral,
+  byteStepsOf,
+  lowerByteSteps,
+  type ByteStep,
   lowerOne,
   lowerCharacter,
   lowerRun,
@@ -61,17 +63,41 @@ export type PrefixCache = {
   functions: Map<string, FunctionCode>;
 };
 
+export function lowerSequence(
+  matchers: readonly Matcher[],
+  fail: string,
+  context: LowerContext,
+  knownFirst = false,
+): string {
+  const code: string[] = [];
+  let steps: ByteStep[] = [];
+  const flush = () => {
+    if (steps.length) code.push(lowerByteSteps(steps, fail));
+    steps = [];
+  };
+  for (const [i, item] of matchers.entries()) {
+    const next = i === 0 && knownFirst ? undefined : byteStepsOf(item);
+    if (next) steps.push(...next);
+    else {
+      flush();
+      code.push(context.matcher(item, fail, i === 0 && knownFirst));
+    }
+  }
+  flush();
+  return code.join("\n");
+}
+
 function lowerEither(
   m: Extract<Matcher, { kind: "either" }>,
   fail: string,
   context: LowerContext,
 ): string {
-  const { fresh, save, matcher } = context;
+  const { fresh, save } = context;
   const start = save();
   const done = fresh("either");
   const alternatives = m.alternatives.map((alternative) => {
     const miss = fresh("alternative");
-    const matchers = alternative.map((item) => matcher(item, miss)).join("\n");
+    const matchers = lowerSequence(alternative, miss, context);
     return `(block ${miss} ${matchers}
         (br ${done}))
       (local.set $matchCursor (local.get ${start}))`;
@@ -87,11 +113,11 @@ function lowerOpt(
   fail: string,
   context: LowerContext,
 ): string {
-  const { fresh, save, matcher } = context;
+  const { fresh, save } = context;
   const start = save();
   const done = fresh("opt");
   const miss = fresh("miss");
-  const matchers = m.matchers.map((item) => matcher(item, miss)).join("\n");
+  const matchers = lowerSequence(m.matchers, miss, context);
   return `(local.set ${start} (local.get $matchCursor))
     (block ${done}
       (block ${miss} ${matchers}
@@ -133,7 +159,7 @@ function lowerCachedPrefix(
           : matcher({ kind: "one", set: m.first }, "$miss"),
         matcher({ kind: "run", set: m.rest, min: 0 }, "$miss"),
       ].join("\n");
-      const suffix = m.suffix.map((n) => matcher(n, "$suffixMiss")).join("\n");
+      const suffix = lowerSequence(m.suffix, "$suffixMiss", context);
       const locals = Array.from({ length: getSaves() - first }, (_, i) => {
         const savedPosition = `$backtrack${first + i}`;
         return `(local ${savedPosition} i32)`;
@@ -177,7 +203,7 @@ function lowerCachedPrefix(
   const start = save();
   const first = matcher({ kind: "one", set: m.first }, fail);
   const rest = matcher({ kind: "run", set: m.rest, min: 0 }, fail);
-  const suffix = m.suffix.map((item) => matcher(item, miss)).join("\n");
+  const suffix = lowerSequence(m.suffix, miss, context);
   return `(br_if ${fail} ${inCachedRange})
     (local.set ${start} (local.get $matchCursor))
     ${first}
@@ -196,10 +222,10 @@ function lowerNotAhead(
   fail: string,
   context: LowerContext,
 ): string {
-  const { fresh, save, matcher } = context;
+  const { fresh, save } = context;
   const start = save();
   const miss = fresh("notAhead");
-  const matchers = m.matchers.map((item) => matcher(item, miss)).join("\n");
+  const matchers = lowerSequence(m.matchers, miss, context);
   return `(local.set ${start} (local.get $matchCursor))
     (block ${miss} ${matchers}
       (br ${fail}))
@@ -211,9 +237,9 @@ function lowerAhead(
   fail: string,
   context: LowerContext,
 ): string {
-  const { save, matcher } = context;
+  const { save } = context;
   const start = save();
-  const matchers = m.matchers.map((item) => matcher(item, fail)).join("\n");
+  const matchers = lowerSequence(m.matchers, fail, context);
   return `(local.set ${start} (local.get $matchCursor))
     ${matchers}
     (local.set $matchCursor (local.get ${start}))`;
@@ -282,12 +308,12 @@ function lowerMany(
 ): string {
   const repeated = lowerRepeatedBytes(m, fail, context);
   if (repeated !== undefined) return repeated;
-  const { fresh, save, matcher } = context;
+  const { fresh, save } = context;
   const start = save();
   const done = fresh("repeat");
   const more = fresh("more");
   const miss = `${done}_miss`;
-  const matchers = m.matchers.map((item) => matcher(item, miss)).join("\n");
+  const matchers = lowerSequence(m.matchers, miss, context);
   return `(block ${done} (loop ${more}
     (local.set ${start} (local.get $matchCursor))
     (block ${miss} ${matchers}
@@ -304,9 +330,11 @@ export function lowerMatcher(
 ): string {
   switch (matcher.kind) {
     case "literal":
-      return lowerLiteral(matcher, fail);
-    case "one":
-      return lowerOne(matcher, fail, context.member);
+      return lowerByteSteps(byteStepsOf(matcher)!, fail);
+    case "one": {
+      const steps = byteStepsOf(matcher);
+      return steps ? lowerByteSteps(steps, fail) : lowerOne(matcher, fail, context.member);
+    }
     case "character":
       return lowerCharacter(fail);
     case "run":

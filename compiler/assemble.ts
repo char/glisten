@@ -70,7 +70,7 @@ export function assembleCompiled(
 
   const {
     fresh,
-    matcher,
+    sequence,
     getSaves,
     prefix,
     words,
@@ -189,7 +189,7 @@ export function assembleCompiled(
         hasInjections,
         spec,
         fresh,
-        matcher,
+        sequence,
       })
     : "";
 

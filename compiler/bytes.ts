@@ -19,33 +19,51 @@ const printableAscii = { first: 0x20, count: 0x7f - 0x20 };
 /** Below this bound, counting against the run's start is as cheap as clamping its end. */
 const clampedBoundMinimum = 4;
 
-type Literal = Extract<Matcher, { kind: "literal" }>;
+export type ByteStep = { byte: number; mask: number };
+
 type One = Extract<Matcher, { kind: "one" }>;
 type Run = Extract<Matcher, { kind: "run" }>;
 type Member = (byte: string, set: ByteSet) => string;
 
-export function lowerLiteral(m: Literal, fail: string): string {
-  const bytes = [...new TextEncoder().encode(m.text)];
+export function byteStepsOf(matcher: Matcher): ByteStep[] | undefined {
+  if (matcher.kind === "literal") {
+    return [...new TextEncoder().encode(matcher.text)].map((byte) => ({ byte, mask: 0 }));
+  }
+  if (matcher.kind === "one") {
+    const members = bytesOf(matcher.set);
+    if (members.length === 1) return [{ byte: members[0]!, mask: 0 }];
+    if (members.length === 2) {
+      const diff = members[0]! ^ members[1]!;
+      if ((diff & (diff - 1)) === 0) return [{ byte: members[1]!, mask: diff }];
+    }
+  }
+  return undefined;
+}
+
+export function lowerByteSteps(steps: readonly ByteStep[], fail: string): string {
+  if (steps.length === 0) return "";
+  const bounds =
+    steps.length === 1
+      ? `(i32.ge_u (local.get $matchCursor) (local.get $limit))`
+      : `(i32.lt_u (i32.sub (local.get $limit) (local.get $matchCursor)) (i32.const ${steps.length}))`;
   const loads: string[] = [];
-  for (let at = 0; at < bytes.length;) {
-    const width = bytes.length - at >= 4 ? 4 : bytes.length - at >= 2 ? 2 : 1;
-    const value = bytes.slice(at, at + width).reduceRight((v, b) => v * 256 + b, 0) | 0;
+  for (let at = 0; at < steps.length;) {
+    const width = steps.length - at >= 4 ? 4 : steps.length - at >= 2 ? 2 : 1;
+    let expected = 0;
+    let mask = 0;
+    for (let i = 0; i < width; i++) {
+      expected |= steps[at + i]!.byte << (i * 8);
+      mask |= steps[at + i]!.mask << (i * 8);
+    }
     const load = width === 4 ? "i32.load" : width === 2 ? "i32.load16_u" : "i32.load8_u";
-    const offset = `offset=${at}`;
-    loads.push(
-      `(br_if ${fail}
-        (i32.ne
-          (${load} ${offset} (i32.add (local.get $input) (local.get $matchCursor)))
-          (i32.const ${value})))`,
-    );
+    const loaded = `(${load} offset=${at} (i32.add (local.get $input) (local.get $matchCursor)))`;
+    const actual = mask ? `(i32.or ${loaded} (i32.const ${mask}))` : loaded;
+    loads.push(`(br_if ${fail} (i32.ne ${actual} (i32.const ${expected})))`);
     at += width;
   }
-  const length = bytes.length;
-  const comparisons = loads.join("\n");
-  return `(br_if ${fail}
-      (i32.lt_u (i32.sub (local.get $limit) (local.get $matchCursor)) (i32.const ${length})))
-    ${comparisons}
-    (local.set $matchCursor (i32.add (local.get $matchCursor) (i32.const ${length})))`;
+  return `(br_if ${fail} ${bounds})
+    ${loads.join("\n")}
+    (local.set $matchCursor (i32.add (local.get $matchCursor) (i32.const ${steps.length})))`;
 }
 
 export function lowerOne(m: One, fail: string, member: Member): string {

@@ -30,7 +30,7 @@ type ContainerContext = {
   hasInjections: boolean;
   spec: ReturnType<typeof speculationCode>;
   fresh: (hint: string) => string;
-  matcher: (matcher: Matcher, fail: string) => string;
+  sequence: (items: readonly Matcher[], fail: string) => string;
 };
 
 export function containerCode(context: ContainerContext): string {
@@ -54,7 +54,7 @@ export function containerCode(context: ContainerContext): string {
     hasInjections,
     spec,
     fresh,
-    matcher,
+    sequence,
   } = context;
   const local = (name: string, index: number) => `$${name}${index}`;
   const offset = (value: number) => `offset=${value}`;
@@ -188,7 +188,7 @@ export function containerCode(context: ContainerContext): string {
   };
   const attempt = (items: readonly Matcher[], limitLine: boolean) => {
     const miss = fresh("containerMiss");
-    const matchers = items.map((item) => matcher(item, miss)).join("\n");
+    const matchers = sequence(items, miss);
     const boundary = limitLine ? lineBoundaryCheck(items, miss) : "";
     return `(local.set $containerMatched (i32.const 0))
       (local.set $matchCursor (local.get $pos))

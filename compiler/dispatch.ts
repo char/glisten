@@ -1,5 +1,5 @@
 import { rangesOf, byteInRange, i32Or } from "./runtime.ts";
-import { lowerMatcher, type LowerContext, type PrefixCache } from "./matchers.ts";
+import { lowerMatcher, lowerSequence, type LowerContext, type PrefixCache } from "./matchers.ts";
 import { targetAssignment, lowerBranch, lowerInjectionActions } from "./effects.ts";
 import {
   bytesOf,
@@ -114,6 +114,8 @@ export function buildDispatch(
   };
   const matcher = (m: Matcher, fail: string, knownPrefix = false): string =>
     lowerMatcher(m, fail, knownPrefix, matcherContext);
+  const sequence = (items: readonly Matcher[], fail: string, knownFirst = false): string =>
+    lowerSequence(items, fail, matcherContext, knownFirst);
 
   const fallbacks = names.map((name) => fresh(`fallbackFor_${name}_`));
 
@@ -170,7 +172,7 @@ export function buildDispatch(
   const outlined = outlineMatchers(
     caseList,
     known,
-    matcher,
+    sequence,
     { count: () => saves, restore: (count) => (saves = count) },
     runParameters,
   );
@@ -178,7 +180,7 @@ export function buildDispatch(
     features,
     fresh,
     known,
-    matcher,
+    sequence,
     shapeOf,
     outlined,
     spec,
@@ -197,7 +199,7 @@ export function buildDispatch(
   const shapeList = [...shapes.values()];
   return {
     fresh,
-    matcher,
+    sequence,
     getSaves: () => saves,
     prefix,
     words,
@@ -238,7 +240,7 @@ function lowerArm(
     features: CompilerFeatures;
     fresh: (hint: string) => string;
     known: (first: Matcher | undefined, bytes: Set<number>) => boolean;
-    matcher: (item: Matcher, fail: string, knownPrefix?: boolean) => string;
+    sequence: (items: readonly Matcher[], fail: string, knownFirst?: boolean) => string;
     shapeOf: ReturnType<typeof codeBlockRegistry>["shapeOf"];
     outlined: Map<string, { name: string; code: string }>;
     spec: ReturnType<typeof speculationCode>;
@@ -255,7 +257,7 @@ function lowerArm(
     features,
     fresh,
     known,
-    matcher,
+    sequence,
     shapeOf,
     outlined,
     spec,
@@ -276,7 +278,7 @@ function lowerArm(
   const ops = arm.then.filter((effect) => effect.kind !== "paint");
   const targets = ops.flatMap((op, i) => targetAssignment(op, i, names));
   if (transition && ops.some((effect) => effect.kind === "abandon")) {
-    const match = arm.match.map((item) => matcher(item, miss)).join("\n");
+    const match = sequence(arm.match, miss);
     const rewind = spec.rewind;
     return `(block ${miss}
         (local.set $matchCursor (local.get $pos))
@@ -288,7 +290,7 @@ function lowerArm(
     const opener = ops.find((effect) => effect.kind === "speculate");
     const group = opener?.kind === "speculate" ? speculationGroup(opener) : undefined;
     const guard = speculationGuard(group, miss);
-    const match = arm.match.map((m) => matcher(m, miss)).join("\n");
+    const match = sequence(arm.match, miss);
     const saveSpeculation =
       group !== undefined ? `(local.set $specGroup ${group}) ${spec.save}` : "";
     const closeInjection = ops.some((effect) => effect.kind === "closeInjection")
@@ -315,6 +317,7 @@ function lowerArm(
         (br ${shape}))`;
   }
   const rest = arm.match.slice(skip ? 1 : 0);
+  const first = rest[0];
   const outlinedMatcher = outlined.get(JSON.stringify(rest));
   const body = outlinedMatcher
     ? `(local.set $matchCursor
@@ -325,18 +328,13 @@ function lowerArm(
             (local.get $docStart)
             ${runArguments}))
         (br_if ${miss} (i32.lt_s (local.get $matchCursor) (i32.const 0)))`
-    : rest
-        .map((m, i) =>
-          matcher(
-            m,
-            miss,
-            !skip &&
-              i === 0 &&
-              m.kind === "cachedPrefix" &&
-              [...bytes].every((byte) => bytesOf(m.first).includes(byte)),
-          ),
-        )
-        .join("\n");
+    : sequence(
+        rest,
+        miss,
+        !skip &&
+          first?.kind === "cachedPrefix" &&
+          [...bytes].every((byte) => bytesOf(first.first).includes(byte)),
+      );
   const branch = (effects: readonly Effect[]) =>
     lowerBranch(
       effects,
@@ -378,7 +376,7 @@ function lowerArm(
 function outlineMatchers(
   caseList: Array<{ arms: readonly Arm[]; bytes: Set<number> }>,
   known: (first: Matcher | undefined, bytes: Set<number>) => boolean,
-  matcher: (item: Matcher, fail: string) => string,
+  sequence: (items: readonly Matcher[], fail: string) => string,
   saves: { readonly count: () => number; readonly restore: (count: number) => void },
   runParameters: string,
 ): Map<string, { name: string; code: string }> {
@@ -412,7 +410,7 @@ function outlineMatchers(
   for (const [key, { matchers, count }] of candidates) {
     if (count < 2 || someMatcher(matchers, (m) => m.kind === "cachedPrefix")) continue;
     const first = saves.count();
-    const body = matchers.map((m) => matcher(m, "$fail")).join("\n");
+    const body = sequence(matchers, "$fail");
     // Test the sequence before naming a function: short bodies are cheaper inlined.
     if (body.length < outlineBodyMinimum) {
       saves.restore(first);
@@ -640,7 +638,7 @@ function dispatchTables(
 
 export type DispatchPlan = {
   fresh: (hint: string) => string;
-  matcher: (matcher: Matcher, fail: string, knownPrefix?: boolean) => string;
+  sequence: (items: readonly Matcher[], fail: string) => string;
   getSaves: () => number;
   prefix: PrefixCache;
   words: ReturnType<typeof wordFunctions>;
