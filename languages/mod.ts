@@ -1,141 +1,136 @@
-import type { LanguageSource } from "#/compiler/mod.ts";
-
-/** Every language, by module name (`dist/<name>.wasm`). */
-export const languages: Readonly<Record<string, () => Promise<{ default: LanguageSource }>>> = {
-  ada: () => import("./systems/ada/grammar.ts"),
-  agda: () => import("./proof/agda/grammar.ts"),
-  asciidoc: () => import("./markup/asciidoc/grammar.ts"),
-  astro: () => import("./web/astro/grammar.ts"),
-  awk: () => import("./scripting/awk/grammar.ts"),
-  bash: () => import("./shell/bash/grammar.ts"),
-  batch: () => import("./shell/batch/grammar.ts"),
-  c: () => import("./systems/c/grammar.ts"),
-  "c-sharp": () => import("./managed/c-sharp/grammar.ts"),
-  caddy: () => import("./config/caddy/grammar.ts"),
-  capnp: () => import("./data/capnp/grammar.ts"),
-  cedar: () => import("./policy/cedar/grammar.ts"),
-  cedarschema: () => import("./policy/cedarschema/grammar.ts"),
-  clojure: () => import("./functional/clojure/grammar.ts"),
-  cmake: () => import("./build/cmake/grammar.ts"),
-  cobol: () => import("./managed/cobol/grammar.ts"),
-  commonlisp: () => import("./functional/commonlisp/grammar.ts"),
-  cpp: () => import("./systems/cpp/grammar.ts"),
-  crystal: () => import("./scripting/crystal/grammar.ts"),
-  css: () => import("./web/css/grammar.ts"),
-  csv: () => import("./data/csv/grammar.ts"),
-  cuda: () => import("./shaders/cuda/grammar.ts"),
-  d: () => import("./systems/d/grammar.ts"),
-  dart: () => import("./managed/dart/grammar.ts"),
-  devicetree: () => import("./data/devicetree/grammar.ts"),
-  diff: () => import("./data/diff/grammar.ts"),
-  dockerfile: () => import("./build/dockerfile/grammar.ts"),
-  dot: () => import("./data/dot/grammar.ts"),
-  dotenv: () => import("./config/dotenv/grammar.ts"),
-  elisp: () => import("./functional/elisp/grammar.ts"),
-  elixir: () => import("./functional/elixir/grammar.ts"),
-  elm: () => import("./functional/elm/grammar.ts"),
-  erlang: () => import("./functional/erlang/grammar.ts"),
-  fish: () => import("./shell/fish/grammar.ts"),
-  fjson: () => import("./config/fjson/grammar.ts"),
-  fortran: () => import("./datasci/fortran/grammar.ts"),
-  "fortran-fixed": () => import("./datasci/fortran-fixed/grammar.ts"),
-  fsharp: () => import("./functional/fsharp/grammar.ts"),
-  gdscript: () => import("./scripting/gdscript/grammar.ts"),
-  gitattributes: () => import("./config/gitattributes/grammar.ts"),
-  gleam: () => import("./functional/gleam/grammar.ts"),
-  glsl: () => import("./shaders/glsl/grammar.ts"),
-  go: () => import("./managed/go/grammar.ts"),
-  gotmpl: () => import("./web/gotmpl/grammar.ts"),
-  graphql: () => import("./query/graphql/grammar.ts"),
-  groovy: () => import("./managed/groovy/grammar.ts"),
-  handlebars: () => import("./web/handlebars/grammar.ts"),
-  hare: () => import("./systems/hare/grammar.ts"),
-  haskell: () => import("./functional/haskell/grammar.ts"),
-  haxe: () => import("./managed/haxe/grammar.ts"),
-  hcl: () => import("./config/hcl/grammar.ts"),
-  hlsl: () => import("./shaders/hlsl/grammar.ts"),
-  html: () => import("./web/html/grammar.ts"),
-  idris: () => import("./functional/idris/grammar.ts"),
-  ini: () => import("./config/ini/grammar.ts"),
-  java: () => import("./managed/java/grammar.ts"),
-  javascript: () => import("./web/javascript/grammar.ts"),
-  jinja: () => import("./web/jinja/grammar.ts"),
-  jq: () => import("./query/jq/grammar.ts"),
-  jsdoc: () => import("./web/jsdoc/grammar.ts"),
-  json: () => import("./config/json/grammar.ts"),
-  jsx: () => import("./web/jsx/grammar.ts"),
-  julia: () => import("./datasci/julia/grammar.ts"),
-  just: () => import("./build/just/grammar.ts"),
-  kconfig: () => import("./build/kconfig/grammar.ts"),
-  kdl: () => import("./config/kdl/grammar.ts"),
-  kotlin: () => import("./managed/kotlin/grammar.ts"),
-  latex: () => import("./markup/latex/grammar.ts"),
-  lean: () => import("./proof/lean/grammar.ts"),
-  less: () => import("./web/less/grammar.ts"),
-  llvm: () => import("./systems/llvm/grammar.ts"),
-  liquid: () => import("./web/liquid/grammar.ts"),
-  lua: () => import("./scripting/lua/grammar.ts"),
-  make: () => import("./build/make/grammar.ts"),
-  markdown: () => import("./markup/markdown/grammar.ts"),
-  matlab: () => import("./datasci/matlab/grammar.ts"),
-  mermaid: () => import("./markup/mermaid/grammar.ts"),
-  meson: () => import("./build/meson/grammar.ts"),
-  nginx: () => import("./config/nginx/grammar.ts"),
-  nim: () => import("./systems/nim/grammar.ts"),
-  ninja: () => import("./build/ninja/grammar.ts"),
-  nix: () => import("./build/nix/grammar.ts"),
-  nushell: () => import("./shell/nushell/grammar.ts"),
-  objc: () => import("./systems/objc/grammar.ts"),
-  ocaml: () => import("./functional/ocaml/grammar.ts"),
-  odin: () => import("./systems/odin/grammar.ts"),
-  pascal: () => import("./systems/pascal/grammar.ts"),
-  perl: () => import("./scripting/perl/grammar.ts"),
-  php: () => import("./web/php/grammar.ts"),
-  plsql: () => import("./query/plsql/grammar.ts"),
-  powershell: () => import("./shell/powershell/grammar.ts"),
-  prolog: () => import("./proof/prolog/grammar.ts"),
-  proto: () => import("./data/proto/grammar.ts"),
-  python: () => import("./scripting/python/grammar.ts"),
-  r: () => import("./datasci/r/grammar.ts"),
-  regex: () => import("./query/regex/grammar.ts"),
-  rego: () => import("./policy/rego/grammar.ts"),
-  rescript: () => import("./functional/rescript/grammar.ts"),
-  ron: () => import("./config/ron/grammar.ts"),
-  ruby: () => import("./scripting/ruby/grammar.ts"),
-  rust: () => import("./systems/rust/grammar.ts"),
-  sass: () => import("./web/sass/grammar.ts"),
-  scala: () => import("./managed/scala/grammar.ts"),
-  scheme: () => import("./functional/scheme/grammar.ts"),
-  scss: () => import("./web/scss/grammar.ts"),
-  solidity: () => import("./contracts/solidity/grammar.ts"),
-  sparql: () => import("./query/sparql/grammar.ts"),
-  sql: () => import("./query/sql/grammar.ts"),
-  "ssh-config": () => import("./config/ssh-config/grammar.ts"),
-  svelte: () => import("./web/svelte/grammar.ts"),
-  swift: () => import("./managed/swift/grammar.ts"),
-  tcl: () => import("./scripting/tcl/grammar.ts"),
-  textproto: () => import("./data/textproto/grammar.ts"),
-  thrift: () => import("./data/thrift/grammar.ts"),
-  tlaplus: () => import("./proof/tlaplus/grammar.ts"),
-  toml: () => import("./config/toml/grammar.ts"),
-  tsql: () => import("./query/tsql/grammar.ts"),
-  tsv: () => import("./data/tsv/grammar.ts"),
-  tsx: () => import("./web/tsx/grammar.ts"),
-  twig: () => import("./web/twig/grammar.ts"),
-  typescript: () => import("./web/typescript/grammar.ts"),
-  typst: () => import("./markup/typst/grammar.ts"),
-  vb: () => import("./managed/vb/grammar.ts"),
-  vba: () => import("./managed/vba/grammar.ts"),
-  vbscript: () => import("./managed/vbscript/grammar.ts"),
-  verilog: () => import("./hdl/verilog/grammar.ts"),
-  vhdl: () => import("./hdl/vhdl/grammar.ts"),
-  vim: () => import("./scripting/vim/grammar.ts"),
-  vue: () => import("./web/vue/grammar.ts"),
-  wat: () => import("./systems/wat/grammar.ts"),
-  wgsl: () => import("./shaders/wgsl/grammar.ts"),
-  wit: () => import("./data/wit/grammar.ts"),
-  x86asm: () => import("./systems/x86asm/grammar.ts"),
-  xml: () => import("./markup/xml/grammar.ts"),
-  yaml: () => import("./config/yaml/grammar.ts"),
-  zig: () => import("./systems/zig/grammar.ts"),
-};
+export { default as ada } from "./systems/ada/grammar.ts";
+export { default as agda } from "./proof/agda/grammar.ts";
+export { default as asciidoc } from "./markup/asciidoc/grammar.ts";
+export { default as astro } from "./web/astro/grammar.ts";
+export { default as awk } from "./scripting/awk/grammar.ts";
+export { default as bash } from "./shell/bash/grammar.ts";
+export { default as batch } from "./shell/batch/grammar.ts";
+export { default as c } from "./systems/c/grammar.ts";
+export { default as "c-sharp" } from "./managed/c-sharp/grammar.ts";
+export { default as caddy } from "./config/caddy/grammar.ts";
+export { default as capnp } from "./data/capnp/grammar.ts";
+export { default as cedar } from "./policy/cedar/grammar.ts";
+export { default as cedarschema } from "./policy/cedarschema/grammar.ts";
+export { default as clojure } from "./functional/clojure/grammar.ts";
+export { default as cmake } from "./build/cmake/grammar.ts";
+export { default as cobol } from "./managed/cobol/grammar.ts";
+export { default as commonlisp } from "./functional/commonlisp/grammar.ts";
+export { default as cpp } from "./systems/cpp/grammar.ts";
+export { default as crystal } from "./scripting/crystal/grammar.ts";
+export { default as css } from "./web/css/grammar.ts";
+export { default as csv } from "./data/csv/grammar.ts";
+export { default as cuda } from "./shaders/cuda/grammar.ts";
+export { default as d } from "./systems/d/grammar.ts";
+export { default as dart } from "./managed/dart/grammar.ts";
+export { default as devicetree } from "./data/devicetree/grammar.ts";
+export { default as diff } from "./data/diff/grammar.ts";
+export { default as dockerfile } from "./build/dockerfile/grammar.ts";
+export { default as dot } from "./data/dot/grammar.ts";
+export { default as dotenv } from "./config/dotenv/grammar.ts";
+export { default as elisp } from "./functional/elisp/grammar.ts";
+export { default as elixir } from "./functional/elixir/grammar.ts";
+export { default as elm } from "./functional/elm/grammar.ts";
+export { default as erlang } from "./functional/erlang/grammar.ts";
+export { default as fish } from "./shell/fish/grammar.ts";
+export { default as fjson } from "./config/fjson/grammar.ts";
+export { default as fortran } from "./datasci/fortran/grammar.ts";
+export { default as "fortran-fixed" } from "./datasci/fortran-fixed/grammar.ts";
+export { default as fsharp } from "./functional/fsharp/grammar.ts";
+export { default as gdscript } from "./scripting/gdscript/grammar.ts";
+export { default as gitattributes } from "./config/gitattributes/grammar.ts";
+export { default as gleam } from "./functional/gleam/grammar.ts";
+export { default as glsl } from "./shaders/glsl/grammar.ts";
+export { default as go } from "./managed/go/grammar.ts";
+export { default as gotmpl } from "./web/gotmpl/grammar.ts";
+export { default as graphql } from "./query/graphql/grammar.ts";
+export { default as groovy } from "./managed/groovy/grammar.ts";
+export { default as handlebars } from "./web/handlebars/grammar.ts";
+export { default as hare } from "./systems/hare/grammar.ts";
+export { default as haskell } from "./functional/haskell/grammar.ts";
+export { default as haxe } from "./managed/haxe/grammar.ts";
+export { default as hcl } from "./config/hcl/grammar.ts";
+export { default as hlsl } from "./shaders/hlsl/grammar.ts";
+export { default as html } from "./web/html/grammar.ts";
+export { default as idris } from "./functional/idris/grammar.ts";
+export { default as ini } from "./config/ini/grammar.ts";
+export { default as java } from "./managed/java/grammar.ts";
+export { default as javascript } from "./web/javascript/grammar.ts";
+export { default as jinja } from "./web/jinja/grammar.ts";
+export { default as jq } from "./query/jq/grammar.ts";
+export { default as jsdoc } from "./web/jsdoc/grammar.ts";
+export { default as json } from "./config/json/grammar.ts";
+export { default as jsx } from "./web/jsx/grammar.ts";
+export { default as julia } from "./datasci/julia/grammar.ts";
+export { default as just } from "./build/just/grammar.ts";
+export { default as kconfig } from "./build/kconfig/grammar.ts";
+export { default as kdl } from "./config/kdl/grammar.ts";
+export { default as kotlin } from "./managed/kotlin/grammar.ts";
+export { default as latex } from "./markup/latex/grammar.ts";
+export { default as lean } from "./proof/lean/grammar.ts";
+export { default as less } from "./web/less/grammar.ts";
+export { default as llvm } from "./systems/llvm/grammar.ts";
+export { default as liquid } from "./web/liquid/grammar.ts";
+export { default as lua } from "./scripting/lua/grammar.ts";
+export { default as make } from "./build/make/grammar.ts";
+export { default as markdown } from "./markup/markdown/grammar.ts";
+export { default as matlab } from "./datasci/matlab/grammar.ts";
+export { default as mermaid } from "./markup/mermaid/grammar.ts";
+export { default as meson } from "./build/meson/grammar.ts";
+export { default as nginx } from "./config/nginx/grammar.ts";
+export { default as nim } from "./systems/nim/grammar.ts";
+export { default as ninja } from "./build/ninja/grammar.ts";
+export { default as nix } from "./build/nix/grammar.ts";
+export { default as nushell } from "./shell/nushell/grammar.ts";
+export { default as objc } from "./systems/objc/grammar.ts";
+export { default as ocaml } from "./functional/ocaml/grammar.ts";
+export { default as odin } from "./systems/odin/grammar.ts";
+export { default as pascal } from "./systems/pascal/grammar.ts";
+export { default as perl } from "./scripting/perl/grammar.ts";
+export { default as php } from "./web/php/grammar.ts";
+export { default as plsql } from "./query/plsql/grammar.ts";
+export { default as powershell } from "./shell/powershell/grammar.ts";
+export { default as prolog } from "./proof/prolog/grammar.ts";
+export { default as proto } from "./data/proto/grammar.ts";
+export { default as python } from "./scripting/python/grammar.ts";
+export { default as r } from "./datasci/r/grammar.ts";
+export { default as regex } from "./query/regex/grammar.ts";
+export { default as rego } from "./policy/rego/grammar.ts";
+export { default as rescript } from "./functional/rescript/grammar.ts";
+export { default as ron } from "./config/ron/grammar.ts";
+export { default as ruby } from "./scripting/ruby/grammar.ts";
+export { default as rust } from "./systems/rust/grammar.ts";
+export { default as sass } from "./web/sass/grammar.ts";
+export { default as scala } from "./managed/scala/grammar.ts";
+export { default as scheme } from "./functional/scheme/grammar.ts";
+export { default as scss } from "./web/scss/grammar.ts";
+export { default as solidity } from "./contracts/solidity/grammar.ts";
+export { default as sparql } from "./query/sparql/grammar.ts";
+export { default as sql } from "./query/sql/grammar.ts";
+export { default as "ssh-config" } from "./config/ssh-config/grammar.ts";
+export { default as svelte } from "./web/svelte/grammar.ts";
+export { default as swift } from "./managed/swift/grammar.ts";
+export { default as tcl } from "./scripting/tcl/grammar.ts";
+export { default as textproto } from "./data/textproto/grammar.ts";
+export { default as thrift } from "./data/thrift/grammar.ts";
+export { default as tlaplus } from "./proof/tlaplus/grammar.ts";
+export { default as toml } from "./config/toml/grammar.ts";
+export { default as tsql } from "./query/tsql/grammar.ts";
+export { default as tsv } from "./data/tsv/grammar.ts";
+export { default as tsx } from "./web/tsx/grammar.ts";
+export { default as twig } from "./web/twig/grammar.ts";
+export { default as typescript } from "./web/typescript/grammar.ts";
+export { default as typst } from "./markup/typst/grammar.ts";
+export { default as vb } from "./managed/vb/grammar.ts";
+export { default as vba } from "./managed/vba/grammar.ts";
+export { default as vbscript } from "./managed/vbscript/grammar.ts";
+export { default as verilog } from "./hdl/verilog/grammar.ts";
+export { default as vhdl } from "./hdl/vhdl/grammar.ts";
+export { default as vim } from "./scripting/vim/grammar.ts";
+export { default as vue } from "./web/vue/grammar.ts";
+export { default as wat } from "./systems/wat/grammar.ts";
+export { default as wgsl } from "./shaders/wgsl/grammar.ts";
+export { default as wit } from "./data/wit/grammar.ts";
+export { default as x86asm } from "./systems/x86asm/grammar.ts";
+export { default as xml } from "./markup/xml/grammar.ts";
+export { default as yaml } from "./config/yaml/grammar.ts";
+export { default as zig } from "./systems/zig/grammar.ts";

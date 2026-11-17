@@ -2,19 +2,20 @@ import { test } from "avril:test";
 import { exists, readFile, readTextFile, writeTextFile } from "avril:fs";
 import { env, readDir } from "avril:std";
 import { Highlighter } from "#/host/mod.ts";
-import { languages } from "./mod.ts";
+import catalog from "#/_generated/languages.json" with { type: "json" };
+
+const languages = new Set(catalog.map(({ language }) => language));
 
 // Each `languages/<category>/<name>/samples/<file>` renders to the HTML in `<file>.html`.
 // `avril task test:update` rewrites the snapshots; review them as ordinary diffs.
 const update = env.get("GLISTEN_UPDATE_SNAPSHOTS") === "1";
 
-// Every language is loaded, so samples also exercise their injections. Run
-// `avril task build` after changing grammars or the compiler; these tests use the last build.
+// Every language is loaded, so samples also exercise their injections.
 const highlighter = new Highlighter({ checks: true });
 // A missing or invalid module fails only its own language's tests; the others still run.
 const failures = new Map<string, unknown>();
 await Promise.all(
-  Object.keys(languages).map(async (name) => {
+  [...languages].map(async (name) => {
     const path = `dist/${name}.wasm`;
     try {
       if (!(await exists(path)))
@@ -47,11 +48,11 @@ for await (const category of readDir("languages"))
         directories.set(entry.name, `languages/${category.name}/${entry.name}`);
 
 test("every language directory is registered", () => {
-  const unregistered = [...directories.keys()].filter((name) => !(name in languages));
+  const unregistered = [...directories.keys()].filter((name) => !languages.has(name));
   if (unregistered.length) throw new Error(`Not in languages/mod.ts: ${unregistered.join(", ")}`);
 });
 
-for (const name of Object.keys(languages)) {
+for (const name of languages) {
   const directory = `${directories.get(name) ?? `languages/?/${name}`}/samples`;
   test(`${name} has samples`, async () => {
     if (failures.has(name)) throw failures.get(name);

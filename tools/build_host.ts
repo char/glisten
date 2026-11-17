@@ -14,3 +14,5 @@ export async function buildHost(): Promise<void> {
     await writeFile(`dist/${name}.d.ts`, await readFile(declaration));
   }
 }
+
+if (import.meta.main) await buildHost();
