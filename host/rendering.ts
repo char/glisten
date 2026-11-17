@@ -5,7 +5,7 @@ import { renderModule } from "./render_module.ts";
 
 const module = new WebAssembly.Module(renderModule);
 const encoder = new TextEncoder();
-const decoder = new TextDecoder();
+const decoder = new TextDecoder("utf-8", { ignoreBOM: true });
 
 type RendererExports = {
   render(source: number, records: number, count: number, table: number, output: number): number;
