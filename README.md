@@ -43,13 +43,25 @@ await highlighter.add(await WebAssembly.compileStreaming(fetch("./dist/javascrip
 const html = highlighter.highlight("javascript", 'console.log("hello, world!");');
 ```
 
-for on-demand loading, including nested injections, configure `loadLanguage` and
-use `highlightFull`:
+for on-demand loading, including nested injections, resolve names and aliases via
+`dist/languages.json` so `loadLanguage` only fetches known languages:
 
 ```typescript
+import catalog from "./dist/languages.json" with { type: "json" };
+import { Highlighter } from "./dist/host.js";
+
+const modules = new Map<string, string>();
+for (const { language, aliases } of catalog) {
+  for (const name of [language, ...aliases]) {
+    modules.set(name.toLowerCase(), `./dist/${language}.wasm`);
+  }
+}
+
 const highlighter = new Highlighter({
   loadLanguage: async (name) => {
-    return WebAssembly.compileStreaming(fetch(`/vendor/glisten/${name}.wasm`));
+    const url = modules.get(name);
+    if (url === undefined) return undefined;
+    return WebAssembly.compileStreaming(fetch(url));
   },
 });
 
