@@ -97,7 +97,7 @@ export class Highlighter {
   async highlightFull(language: string, source: string | Uint8Array): Promise<string> {
     this.assertActive();
     this.registry.requireLoader();
-    const input = typeof source === "string" ? source : source.slice();
+    const input = typeof source === "string" ? source : new Uint8Array(source);
     const attempted = new Set<string>();
 
     for (;;) {
