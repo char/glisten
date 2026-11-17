@@ -70,8 +70,3 @@ const html = await highlighter.highlightFull(
   '<script>console.log("hello, world!");</script>',
 );
 ```
-
-`highlightFull` requires a loader; returning `undefined` leaves that language's
-ranges unstyled by default. loader errors propagate. `highlight` stays synchronous
-and only uses registered languages. `process` returns owned byte spans, groups,
-and missing language names if you want to handle composition yourself.

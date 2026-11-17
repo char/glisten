@@ -1,9 +1,9 @@
 # Adding a language
 
 1. Write `languages/<category>/<name>/grammar.ts`, exporting a `defineGrammar` definition (import the API as `#/grammar/mod.ts`; `#/` is the repository root), in the category of the language's main use (see below). See the [grammar reference](grammar.md) and [style vocabulary](styles.md). Use existing grammars as examples.
-2. Re-export the grammar's default export as `<name>` in `languages/mod.ts`. Use the same name for the directory, export, and `dist/<name>.wasm` output. Define `aliases`, `extensions` (without leading dots), and exact `filenames` on the grammar object when appropriate. The compiler puts these fields in the manifest; the build generates the standalone [filename lookup API](filenames.md) catalog from those manifests.
+2. Statically re-export the grammar's default export as `<name>` in `languages/mod.ts`, matching the directory and grammar `name`. That export names its `dist/<name>.wasm` output. Define `aliases`, `extensions` (without leading dots), and exact `filenames` on the grammar object when appropriate. The compiler puts these fields in the manifest; the build generates the standalone [filename lookup API](filenames.md) catalog from those manifests.
 3. Add representative source files under `languages/<category>/<name>/samples/`, covering important constructs, edge cases, and injections. Each sample's rendered snapshot is stored alongside it as `<file>.html`.
-4. Run `avril task test:update`. It builds changed language modules before updating snapshots. Review the HTML diff, including escaping, boundaries, groups, and injected content; do not accept snapshot changes blindly. Run `avril task check`.
+4. Run `avril task test:update`. Review the HTML diff, including escaping, boundaries, groups, and injected content; do not accept snapshot changes blindly. Run `avril task check`.
 
 Keep grammars precise: follow the language's actual lexical and syntactic rules rather than using lookahead heuristics where a rule exists. Give subtle behavior its own sample, so its snapshot documents it. Heavier verification using corpora and tree-sitter oracles lives outside this repository.
 
